@@ -408,7 +408,7 @@ c(id){const p=P(id);if(!p||p.type!=='card')return V.nf();seen(p.id);const faved=
   return {title:KINDS[p.kind].name,back:true,bar,html:`<div class="dt rv">${kd(p.kind)}<h1>${p.title}</h1><p class="sum">${p.excerpt}</p>
   <div class="fitline"><b>适合谁</b><span>${p.fit}</span></div>${main}
   <div style="display:flex;align-items:center;margin-top:14px">${colSig(p.col)}<span style="margin-left:auto;font-size:11.5px;color:var(--mute)" class="num">${p.date}</span></div>
-  <div class="credit">本卡由老岳AI编辑部 · ${CO(p.col).group}整理，综合多个公开资料重写，老岳审核</div>
+  <div class="credit">本卡由老岳AI编辑部 · ${CO(p.col).group}借助 AI 综合多个公开资料整理，编辑部人工抽检</div>
   <div class="more" style="margin-top:20px"><h3>相关卡片</h3>${rel.map(it).join('')}</div>
   <div class="more"><h3>想看完整思路</h3>${POSTS.filter(x=>x.type==='article').slice(0,2).map(it).join('')}</div></div>`}},
 t(id){const t=TL(id);if(!t)return V.nf();const faved=S.faved.includes('t'+t.id);

@@ -693,7 +693,7 @@ t(id){const t=TL(id);if(!t)return V.nf();const c=TC(t.cat);const faved=S.faved.i
   </div>
   ${t.prompts.length?`<div class="sec"><h2>配合这些提示词用</h2><a class="more" data-go="prompts">提示词库 ${ic('right','width:14px;height:14px')}</a></div><div class="pgrid">${t.prompts.map(i=>pcard(P(i))).join('')}</div>`:''}
   ${t.alts.length?`<div class="sec"><h2>同类替代</h2></div><div class="tgrid" style="grid-template-columns:repeat(3,1fr)">${t.alts.map(i=>tl(TL(i))).join('')}</div>`:''}
-  <div class="card rwline" style="margin-top:20px">${colAv(t.col)}<span>本卡由老岳AI编辑部 · ${CO(t.col).group}整理，综合多个公开资料重写，老岳审核</span>${S.rewardOn?`<button class="btn y sm" onclick="rewardM('editor')">赞助 token</button>`:''}</div>
+  <div class="card rwline" style="margin-top:20px">${colAv(t.col)}<span>本卡由老岳AI编辑部 · ${CO(t.col).group}借助 AI 综合多个公开资料整理，编辑部人工抽检</span>${S.rewardOn?`<button class="btn y sm" onclick="rewardM('editor')">赞助 token</button>`:''}</div>
   </article><aside class="rail"><div class="card box"><h4>${c.name}<a data-go="tools/cat=${c.id}">全部</a></h4>${TOOLS.filter(x=>x.cat===c.id&&x.id!==t.id).map(x=>`<a class="p" data-go="t/${x.id}" style="display:flex;gap:10px;align-items:center;padding:7px 0"><span class="av" style="background:${x.c};border-radius:9px">${x.name[0]}</span><span style="font-size:13.5px"><b>${x.name}</b><small style="display:block;color:var(--mute);font-size:12px">${x.one}</small></span></a>`).join('')||'<span style="color:var(--mute);font-size:13px">暂无</span>'}</div>${subBox()}</aside></div>`}},
 lib(arg){const o=qs(arg);const k=o.kind||'',b=o.board||'',tm=o.t||'',kw=(o.q||'').trim(),tag=o.tag||'';
   const now='2026-11-09';const days=d=>(new Date(now)-new Date(d))/864e5;
@@ -732,7 +732,7 @@ c(id){const p=P(id);if(!p||p.type!=='card')return V.nf();seen(p.id);const faved=
   </div>
   <div class="sec"><h2>相关卡片</h2></div><div class="cgrid">${relC.map(cc).join('')}</div>
   <div class="sec"><h2>想看完整思路，读这两篇长文</h2></div><div class="card">${relA.map(item).join('')}</div>
-  <div class="card rwline" style="margin-top:16px">${colAv(p.col)}<span>本卡由老岳AI编辑部 · ${CO(p.col).group}整理，综合多个公开资料重写，老岳审核</span></div>
+  <div class="card rwline" style="margin-top:16px">${colAv(p.col)}<span>本卡由老岳AI编辑部 · ${CO(p.col).group}借助 AI 综合多个公开资料整理，编辑部人工抽检</span></div>
   ${S.rewardOn?`<div style="margin-top:16px">${rewardBlock('editor')}</div>`:''}
   </article><aside class="rail">${subBox()}<div class="card box"><h4>${(p.tags||[]).length?'标签':''}</h4>${(p.tags||[]).map(x=>`<a class="chip" data-go="lib/tag=${encodeURIComponent(x)}" style="margin:0 6px 6px 0"># ${x}</a>`).join('')}</div></aside></div>`}},
 qa(){return {t:'问答',h:`<div class="grid2"><section class="rv"><div class="card bhead qa-head"><i>?</i><div><h1>问答</h1><p>读者私下来信，作者挑出有代表性的，匿名公开作答</p></div>
