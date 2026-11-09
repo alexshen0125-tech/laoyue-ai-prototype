@@ -543,7 +543,11 @@ window.codeTo = function (q) {
   const p = window.POSTS.find(x => x.attach && x.attach.code === c); if (p) return { to: (p.type === 'article' ? 'p/' : 'c/') + p.id, code: c };
   return null;
 };
-window.hlText = (s, q) => { s = String(s); if (!q) return s; const e = q.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); return s.split(e).join('<mark>' + e + '</mark>'); };
+// 搜索归一（两端共用，11-09 产品评审 P0-02）：英文不区分大小写、全角转半角、忽略空格。所有搜索（全站 + 频道）都用 nzHas 匹配
+window.nz = s => String(s == null ? '' : s).replace(/[\uFF01-\uFF5E]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/[\s\u3000]+/g, '').toLowerCase();
+window.nzHas = (hay, q) => !q || window.nz(hay).includes(window.nz(q));
+// 命中高亮：不区分大小写（保留原文大小写）
+window.hlText = (s, q) => { s = String(s); q = String(q || '').trim(); if (!q) return s; const e = q.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); try { return s.replace(new RegExp(e, 'gi'), m => '<mark>' + m + '</mark>'); } catch (x) { return s; } };
 
 // ---------- 真实数据支持（11-09 老板：原型改用真实内容；real-data.js 由 build_real_data.py 生成，?demo=1 切回示例） ----------
 window.REAL = false;
