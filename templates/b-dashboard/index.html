@@ -64,6 +64,7 @@
   /* 尺寸 */
   --ctl-h:36px;                  /* PC 输入框/按钮高 */
   --ctl-h-lg:44px;               /* 移动端触控 ≥44 */
+  --bar-h:0px;                   /* 顶部「免费下载」条高度，由脚本控制 */
 }
 /* ============================ ② 基础 ============================ */
 *,*::before,*::after{box-sizing:border-box}
@@ -222,7 +223,7 @@ a{color:var(--accent);text-decoration:none}
 body.pp-hidden .pp{display:none}
 
 /* ============================ ⑪ 手机框（移动端模板用） ============================ */
-.stage{min-height:100vh;display:flex;align-items:center;justify-content:center;gap:56px;padding:40px 24px;background:radial-gradient(1200px 600px at 70% 20%,#EDEEF2 0%,var(--bg) 60%)}
+.stage{min-height:calc(100vh - var(--bar-h));display:flex;align-items:center;justify-content:center;gap:56px;padding:40px 24px;background:radial-gradient(1200px 600px at 70% 20%,#EDEEF2 0%,var(--bg) 60%)}
 .stage-note{max-width:300px;color:var(--ink-700)}
 .stage-note .eyebrow{display:inline-flex;height:24px;align-items:center;padding:0 10px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);font-size:11px;letter-spacing:.08em;color:var(--ink-500);margin-bottom:16px}
 .stage-note h1{font-size:var(--fs-24);color:var(--ink-900);margin-bottom:10px;line-height:1.3}
@@ -251,8 +252,8 @@ body.pp-hidden .pp{display:none}
 @media (max-width:430px){.stage{padding:0}.phone{width:100vw;height:100dvh;border-radius:0;padding:0;box-shadow:none}.screen{border-radius:0}.stage-note{display:none}}
 
 /* ============================ ⑫ PC 后台框架（侧栏 + 顶栏） ============================ */
-.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
-.side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:2px;padding:16px 12px;border-right:1px solid var(--line);background:var(--surface)}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:calc(100vh - var(--bar-h))}
+.side{position:sticky;top:var(--bar-h);height:calc(100vh - var(--bar-h));display:flex;flex-direction:column;gap:2px;padding:16px 12px;border-right:1px solid var(--line);background:var(--surface)}
 .brand{display:flex;align-items:center;gap:10px;height:40px;padding:0 8px;margin-bottom:14px;font-weight:600;font-size:15px}
 .brand-mark{width:28px;height:28px;border-radius:8px;background:var(--ink-900);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;letter-spacing:-.02em}
 .side-label{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:14px 10px 6px}
@@ -263,7 +264,7 @@ body.pp-hidden .pp{display:none}
 .side-foot{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid var(--line)}
 .avatar{width:32px;height:32px;border-radius:50%;background:var(--line-soft);color:var(--ink-700);display:grid;place-items:center;font-size:13px;font-weight:600;flex:none}
 .main{min-width:0;display:flex;flex-direction:column}
-.topbar{position:sticky;top:0;z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 32px;background:rgba(246,246,247,.86);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.topbar{position:sticky;top:var(--bar-h);z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 32px;background:rgba(246,246,247,.86);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
 .crumb{display:flex;align-items:center;gap:6px;font-size:var(--fs-13);color:var(--ink-500)}
 .crumb .ic{width:14px;height:14px}
 .crumb b{color:var(--ink-900);font-weight:500}
@@ -274,6 +275,76 @@ body.pp-hidden .pp{display:none}
 .page-hd .sub{font-size:var(--fs-13);color:var(--ink-500);margin-top:4px}
 .page-hd .acts{margin-left:auto;display:flex;gap:8px}
 @media (max-width:1100px){.app{grid-template-columns:64px minmax(0,1fr)}.side .t,.side-label,.side .badge,.side-foot .t,.brand .t{display:none}.nav-item{justify-content:center;padding:0}.content{padding:20px}.topbar{padding:0 20px}}
+
+/* ============================ ⑬ 通用小件：数量加减 / 圆形勾选 ============================ */
+.stepper{display:inline-flex;align-items:center;height:32px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);overflow:hidden}
+.stepper button{width:32px;height:100%;border:0;background:none;display:grid;place-items:center;color:var(--ink-700)}
+.stepper button:hover{background:var(--line-soft)}
+.stepper button:disabled{color:var(--ink-300);pointer-events:none}
+.stepper input{width:44px;height:100%;border:0;border-left:1px solid var(--line);border-right:1px solid var(--line);text-align:center;outline:none;font-variant-numeric:tabular-nums;background:none}
+.stepper.lg{height:40px}.stepper.lg button{width:40px}
+.rck{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.rck input{appearance:none;width:20px;height:20px;margin:0;border-radius:50%;border:1.5px solid var(--ink-300);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none;background:var(--surface)}
+.rck input:checked{background:var(--accent);border-color:var(--accent)}
+.rck input:checked::after{content:"";width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.rck input:disabled{background:var(--line-soft);border-color:var(--line)}
+
+/* ============================ ⑭ AI 提示词面板（每个模板必有） ============================ */
+.pq-fab{position:fixed;right:20px;bottom:64px;z-index:89;display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 12px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);color:var(--ink-900);font-size:12px;font-weight:600;box-shadow:var(--shadow-2);font-family:var(--font-sans)}
+.pq-fab .ic{width:16px;height:16px;color:var(--accent)}
+.pq-fab:hover{border-color:var(--ink-300)}
+body.pp-hidden .pq-fab{display:none}
+.pq-drawer{width:min(520px,100vw)}
+.pq-drawer .layer-bd{background:var(--bg);padding:16px}
+.pq-intro{font-size:var(--fs-13);color:var(--ink-500);margin-bottom:12px}
+.pq-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;margin-bottom:12px}
+.pq-card h3{font-size:var(--fs-14);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.pq-card h3 .no{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--ink-900);color:#fff;font-size:11px;font-variant-numeric:tabular-nums}
+.pq-when{font-size:var(--fs-12);color:var(--ink-500);margin-bottom:10px}
+.pq-body{font-size:13px;line-height:1.75;color:var(--ink-700);white-space:pre-wrap;word-break:break-word;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-md);padding:12px 14px;max-height:220px;overflow:auto;font-family:var(--font-sans)}
+.pq-card.open .pq-body{max-height:none}
+.pv{display:inline;padding:1px 6px;margin:0 1px;border-radius:5px;background:var(--accent-soft);color:var(--accent);font-weight:600;cursor:pointer;border:1px dashed transparent;white-space:nowrap}
+.pv:hover,.pv:focus-visible{border-color:var(--accent);outline:none}
+.pv.filled{background:var(--success-soft);color:var(--success)}
+.pv-in{font:inherit;font-size:13px;border:1px solid var(--accent);border-radius:5px;padding:1px 6px;outline:none;box-shadow:0 0 0 3px var(--accent-soft);min-width:80px;max-width:100%;background:var(--surface);color:var(--ink-900)}
+.pq-acts{display:flex;align-items:center;gap:8px;margin-top:10px}
+.pq-acts .sp{flex:1}
+.pq-acts .hint{font-size:12px;color:var(--ink-500)}
+.pq-acts .btn.done{background:var(--success);border-color:var(--success);color:#fff}
+.pq-col{width:340px;flex:none;max-height:844px;display:flex;flex-direction:column;gap:10px}
+.pq-col .pq-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-900)}
+.pq-col .pq-head .ic{color:var(--accent);width:16px;height:16px}
+.pq-col .pq-scroll{overflow:auto;padding-right:4px}
+.pq-col .pq-card{padding:14px;margin-bottom:10px}
+.pq-col .pq-body{max-height:120px}
+@media (max-width:1200px){.pq-col{width:100%;max-width:390px;max-height:none}}
+
+/* ============================ ⑮ 暗色主题（组件库画廊切换用） ============================ */
+:root[data-theme="dark"]{
+  --ink-900:#ECECEF;--ink-700:#C4C5CB;--ink-500:#9A9CA4;--ink-300:#5A5C64;
+  --line:#2E3036;--line-soft:#24262B;--bg:#121316;--surface:#1A1B1F;--surface-2:#202226;
+  --accent-soft:rgba(110,140,255,.16);--info-soft:rgba(110,140,255,.16);
+  --success:#4CC38A;--success-soft:rgba(76,195,138,.14);--warning:#F0B44C;--warning-soft:rgba(240,180,76,.14);--danger:#FF7A72;--danger-soft:rgba(255,122,114,.14);
+  --shadow-1:0 1px 2px rgba(0,0,0,.3);--shadow-2:0 8px 24px -6px rgba(0,0,0,.5);--shadow-3:0 24px 60px -12px rgba(0,0,0,.6);
+}
+
+/* ============================ ⑯ 顶部条：免费下载 · 双击就能打开 · 复制提示词直接给 AI 用 ============================ */
+body.has-tplbar{--bar-h:44px;padding-top:44px}
+.tplbar{position:fixed;left:0;right:0;top:0;height:44px;z-index:88;display:flex;align-items:center;gap:12px;padding:0 16px 0 20px;background:#16171A;color:#E9E9EC;font-size:13px;font-family:var(--font-sans)}
+.tplbar .tb-name{font-weight:600;color:#fff;white-space:nowrap}
+.tplbar .tb-sep{width:1px;height:14px;background:rgba(255,255,255,.18)}
+.tplbar .tb-line{color:#B9BAC0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tplbar .tb-line b{color:#fff;font-weight:500}
+.tplbar .sp{flex:1}
+.tplbar .tb-btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.18);background:transparent;color:#fff;font-size:12px;font-weight:600;white-space:nowrap;text-decoration:none}
+.tplbar .tb-btn:hover{border-color:rgba(255,255,255,.4)}
+.tplbar .tb-btn.primary{background:#fff;color:#16171A;border-color:#fff}
+.tplbar .tb-btn.primary:hover{filter:brightness(.94)}
+.tplbar .tb-btn .ic{width:15px;height:15px}
+.tplbar .tb-hide{width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+body.pp-hidden .tplbar{display:none}
+body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
+@media (max-width:820px){.tplbar .tb-line{display:none}}
 /*@END_KIT_CSS*/
 
 /* ============================ 本模板样式 ============================ */
@@ -397,6 +468,27 @@ const DATA = {
 };
 
 /* ==========================================================================
+   ①-2 AI 提示词（页面顶部「AI 提示词」可一键复制；{{变量}} 点一下就能填）
+   ========================================================================== */
+const PROMPTS = [
+ {
+  "title": "从零生成这个原型",
+  "when": "想让 AI 从头做一页同样的经营数据看板时用",
+  "text": "请帮我做一个可点击的数据看板原型：一屏看清卖了多少、跟上期比怎样、钱从哪来。\n\n页面结构：\n1. 左侧导航（工作台、经营看板〔当前〕、商品分析、客户分析、设置），顶部面包屑；页头标题「经营看板」+ 一句说明，右侧「导出数据」次按钮；\n2. 筛选一行（放在所有图表上方）：时间范围分段按钮（近 7 天 / 近 30 天 / 本季度〔按周〕）、门店下拉（全部门店 / 示例 1–N 号店）、「对比上期」勾选框；右侧写「示例数据 · 更新于 时间」；\n3. 4 张指标卡：销售额（万元）、订单数（单）、客单价（元）、退款率（%）；大数字 + 单位 + 较上期环比标签（箭头 + 百分比，绿底 = 变好、红底 = 变差；退款率是越低越好，下降显示绿色）；\n4. 销售额趋势图（内联 SVG 折线，单 Y 轴）：本期主色实线 + 浅色面积，上期灰色虚线，带图例；最后一个点直接标数值；右上角「图 / 表」切换；\n5. 品类构成：横向条形，按金额从大到小，每条右侧写金额和占比，底部写「N 个品类合计 X 元」；\n6. 门店排行表：排名（前三名黑底序号）、门店、销售额、占比（细条 + 百分比）、订单数、较上期（红绿标签）。\n所有数字由脚本顶部 DATA 算出，总数等于分项之和。\n\n状态（都要能切换查看）：正常、空（该时间段没有数据，给「看近 30 天」「看全部门店」两个出路）、加载（骨架，布局和正常态一致不跳动）、出错（说明 + 重新加载，筛选条件保留）、不对比上期（去掉上期线和较上期列，指标卡改显示口径说明）、表格视图。\n\n交互与反馈：\n- 切时间或门店：旧画面先变淡 0.4 秒再换成新数据，不闪白；时间选择记在本机；\n- 趋势图鼠标移动时竖线吸附到最近日期，提示框同时列本期和上期数值；点图表区后可用键盘 ← → 逐点查看；\n- 「表」视图逐日列本期、上期、变化百分比；\n- 导出：Toast「已导出『近 7 天 · 全部门店』数据」；\n- 颜色不是唯一区分：上期线用虚线 + 图例，环比用箭头 + 数字。\n\n设计要求：\n1. 中性配色、留白充足，像成熟的企业后台；颜色、字体、圆角、间距、阴影全部写成 :root 里的 CSS 变量，主色只用 --accent 一个变量，改一处就能换风格；圆角只用 4 档（6 / 10 / 16 / 999px）；\n2. 图标一律用内联线性 SVG（24 网格、1.6 描边），不用表情或特殊符号当图标；\n3. PC 按 1440 宽设计，1280 宽不出现横向滚动；可点元素不小于 32px；文字和背景对比度不低于 4.5:1；数字用等宽数字对齐；\n4. 动效只动 transform 和 opacity，用 cubic-bezier 缓动，尊重系统「减少动态效果」设置；\n5. 弹窗和抽屉：按 Esc、点遮罩都能关闭，打开时焦点锁在弹层里，关闭后焦点回到点开它的按钮；\n6. 示例数据全部虚构并在页面上标一次「示例数据」，不出现真实公司名和品牌；\n7. 页面右下角放一个可收起的「原型面板」，能一键切换各页面和各状态，按 H 隐藏，地址栏 #page=xx&state=xx 能直达某个状态。\n硬性要求：做成一个单文件 HTML，样式和脚本都写在文件里，不引用任何外部网址，双击离线就能打开；示例数据集中写在脚本顶部一个 DATA 对象里，页面由它渲染。\n交付：① 完整的 HTML 代码；② 一张「元素 | 交互 | 反馈」交互说明表；③ 列出做了哪些状态、各自怎么切换查看。"
+ },
+ {
+  "title": "改成我的业务",
+  "when": "手上有这个模板文件，想换成自己的指标和维度时用",
+  "text": "附件是一个单文件 HTML 数据看板原型。请把它改成「{{看板名称}}」，给「{{使用角色}}」看。\n\n1. 只改脚本顶部 DATA 和页面文案；不要改文件里 KIT 标记之间的共用样式和脚本，保留所有状态（正常 / 空 / 加载 / 出错 / 不对比 / 表格视图）和交互；\n2. 4 张指标卡改成：{{指标列表（单位，越高越好还是越低越好）}}，环比颜色按「越高越好 / 越低越好」判断；\n3. 每个指标下方写一句口径（怎么算的）；\n4. 构成图改按「{{构成维度}}」拆，排行改成按「{{排行对象}}」排；\n5. 所有数字必须由 DATA 算出，总数等于分项之和；示例数据标「示例数据」，不编真实数字。\n\n交付：改好的完整 HTML，加一张「指标 | 口径 | 越高越好还是越低越好」的表。"
+ },
+ {
+  "title": "在此基础上加页面 / 状态",
+  "when": "评审时被问「能点进去看明细吗？」需要补下钻或新视图时用",
+  "text": "附件是一个单文件 HTML 数据看板原型。请在它的基础上加：{{要加的页面或状态}}。\n\n常见例子（选一个或照着写）：\n- 「品类下钻」：点构成图的某一条，右侧抽屉显示该品类 Top 10 商品（商品名、销售额、占比、较上期），抽屉合计等于这条的金额，时间和门店筛选同样生效；\n- 「数据延迟态」：数据还没更新完时，顶部提示「今天的数据预计 10:00 更新完」，指标卡显示到昨天；\n- 「目标完成度」：每张指标卡加目标值和完成进度条。\n\n要求：\n1. 新页面或状态加进右下角「原型面板」，能一键切换查看；\n2. 新增数字同样由 DATA 算出、互相对得上；\n3. 沿用现有 CSS 变量和图表样式，不新增颜色，不做双 Y 轴；只改必要的地方。\n\n交付：完整 HTML，加一张新增部分的「元素 | 交互 | 反馈」说明表。"
+ }
+];
+
+/* ==========================================================================
    ② 下面是交互逻辑，一般不用改
    ========================================================================== */
 /*@KIT_JS*/
@@ -474,6 +566,16 @@ const DATA = {
     history:'<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5M12 8v4l3 1.8"/>',
     globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/>',
     shield:'<path d="M12 3.5 19 6v6c0 4.2-3 7.4-7 8.5-4-1.1-7-4.3-7-8.5V6z"/><path d="m9 12 2 2 4-4.2"/>',
+    play:'<path d="M8 5.5v13l10.5-6.5z"/>',
+    pause:'<path d="M8.5 5.5v13M15.5 5.5v13"/>',
+    share:'<path d="M14 5l6.5 6.5L14 18v-3.8c-4.6 0-7.6 1.4-10 4.8.8-4.9 3.5-9.4 10-10.3z"/>',
+    music:'<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
+    wifi:'<path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.2" r="1"/>',
+    flag:'<path d="M5.5 21V4.5M5.5 4.5h11l-2 4 2 4h-11"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+    moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    code:'<path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5"/>',
+    keyboard:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7.5 14h9"/>',
     gift:'<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M3.5 9h17M12 9v11M12 9S10.5 4.5 8 5s-1 4 4 4zM12 9s1.5-4.5 4-4 1 4-4 4z"/>'
   };
   var sp='<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">';
@@ -585,6 +687,68 @@ const DATA = {
     P.go(first,h.state||'normal');
   };
 
+
+  /* ---- AI 提示词面板（每个模板、组件库必有；build.py 会检查） ----
+     Proto.prompts([{title, when, text}])   text 里用 {{变量名}} 标变量，点击就地填写
+     PC：右下角「AI 提示词」按钮 → 右侧抽屉；页面有 .stage（手机框）时直接摆在手机框右侧 */
+  var PV={};
+  try{PV=JSON.parse(localStorage.getItem('tpl-pv:'+location.pathname)||'{}')}catch(e){}
+  function savePV(){try{localStorage.setItem('tpl-pv:'+location.pathname,JSON.stringify(PV))}catch(e){}}
+  P.fillPrompt=function(text){return text.replace(/\{\{([^}]+)\}\}/g,function(m,k){k=k.trim();return PV[k]?PV[k]:m})};
+  function bodyHTML(text){
+    return P.esc(text).replace(/\{\{([^}]+)\}\}/g,function(m,k){k=k.trim();var v=PV[k];return '<span class="pv'+(v?' filled':'')+'" role="button" tabindex="0" data-pv="'+P.esc(k)+'" title="点击填写">'+P.esc(v||k)+'</span>'});
+  }
+  P.promptCard=function(p,i){
+    var hasVar=/\{\{/.test(p.text);
+    return '<div class="pq-card" data-pq="'+i+'"><h3><span class="no">'+(i+1)+'</span>'+P.esc(p.title)+'</h3>'+(p.when?'<p class="pq-when">'+P.esc(p.when)+'</p>':'')+
+      '<div class="pq-body">'+bodyHTML(p.text)+'</div><div class="pq-acts"><span class="hint">'+(hasVar?'点高亮处填写，复制时自动替换':'复制后粘到任意 AI 对话里')+'</span><span class="sp"></span>'+
+      '<button class="btn btn-ghost" type="button" data-pq-more>展开</button><button class="btn btn-primary" type="button" data-pq-copy>'+P.ic('copy','ic-sm')+'复制</button></div></div>';
+  };
+  P.copyText=function(text,btn,msg){
+    var done=function(){if(btn){var h=btn.innerHTML;btn.classList.add('done');btn.innerHTML=P.ic('check','ic-sm')+'已复制';setTimeout(function(){btn.classList.remove('done');btn.innerHTML=h},2400)}P.toast(msg||'已复制，粘到 AI 对话里就能用','ok',{host:document.body})};
+    try{navigator.clipboard.writeText(text).then(done,function(){fallback()})}catch(e){fallback()}
+    function fallback(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();done()}
+  };
+  function wirePrompts(root,list){
+    root.addEventListener('click',function(e){
+      var c=e.target.closest('[data-pq]');if(!c)return;var p=list[+c.dataset.pq];
+      if(e.target.closest('[data-pq-copy]'))P.copyText(P.fillPrompt(p.text),e.target.closest('[data-pq-copy]'));
+      if(e.target.closest('[data-pq-more]')){var o=c.classList.toggle('open');e.target.closest('[data-pq-more]').textContent=o?'收起':'展开'}
+      var v=e.target.closest('[data-pv]');if(v)editVar(v,root,list);
+    });
+    root.addEventListener('keydown',function(e){var v=e.target.closest&&e.target.closest('[data-pv]');if(v&&(e.key==='Enter'||e.key===' ')){e.preventDefault();editVar(v,root,list)}});
+  }
+  function editVar(span,root,list){
+    var k=span.dataset.pv,inp=document.createElement('input');inp.className='pv-in';inp.value=PV[k]||'';inp.placeholder=k;inp.setAttribute('aria-label','填写 '+k);
+    inp.style.width=Math.max(80,Math.min(260,(inp.value||k).length*14+20))+'px';
+    span.replaceWith(inp);inp.focus();
+    var commit=function(){PV[k]=inp.value.trim();if(!PV[k])delete PV[k];savePV();P.$$('[data-pq]',root).forEach(function(c){c.querySelector('.pq-body').innerHTML=bodyHTML(list[+c.dataset.pq].text)})};
+    inp.addEventListener('blur',commit);
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur()}if(e.key==='Escape'){e.stopPropagation();inp.value=PV[k]||'';inp.blur()}});
+  }
+  P.prompts=function(list){
+    P._prompts=list;
+    if(!list||list.length<3)console.error('[提示词面板] 至少 3 条：从零生成 / 改成我的业务 / 加页面或状态');
+    var id=(location.pathname.split('/').filter(Boolean).slice(-2,-1)[0])||'template';
+    var bar=document.createElement('div');bar.className='tplbar';bar.setAttribute('role','region');bar.setAttribute('aria-label','模板说明');
+    bar.innerHTML='<span class="tb-name">'+P.esc(document.title.split(' · ')[0])+'</span><span class="tb-sep"></span><span class="tb-line"><b>免费下载</b> · 双击就能打开 · 复制提示词直接给 AI 用</span><span class="sp"></span><span data-tb-slot></span><a class="tb-btn primary" href="./'+P.esc(decodeURIComponent(id))+'.zip" download>'+P.ic('download')+'免费下载</a><button class="tb-btn tb-hide" type="button" aria-label="隐藏顶部条和原型面板（H）" title="隐藏（H）">'+P.ic('x')+'</button>';
+    document.body.prepend(bar);document.body.classList.add('has-tplbar');P._bar=bar;
+    bar.querySelector('.tb-hide').onclick=function(){document.body.classList.add('pp-hidden')};
+    var intro='<p class="pq-intro">复制下面的提示词，粘到任意 AI 对话里，就能生成或改造这个原型。要求它输出单文件 HTML。</p>';
+    var stage=document.querySelector('.stage');
+    if(stage){
+      var col=document.createElement('aside');col.className='pq-col';col.setAttribute('aria-label','AI 提示词');
+      col.innerHTML='<div class="pq-head">'+P.ic('spark')+'AI 提示词 · 复制就能用</div><div class="pq-scroll">'+list.map(P.promptCard).join('')+'</div>';
+      stage.appendChild(col);wirePrompts(col,list);
+      var jb=document.createElement('button');jb.type='button';jb.className='tb-btn';jb.innerHTML=P.ic('spark')+'AI 提示词 · 一键复制';jb.onclick=function(){col.scrollIntoView({behavior:'smooth',block:'center'});var c=col.querySelector('.pq-card');if(c){c.style.boxShadow='0 0 0 3px var(--accent-soft)';setTimeout(function(){c.style.boxShadow=''},1400)}};bar.querySelector('[data-tb-slot]').appendChild(jb);return;
+    }
+    var fab=document.createElement('button');fab.type='button';fab.className='tb-btn';fab.innerHTML=P.ic('spark')+'AI 提示词 · 一键复制';
+    var dw=document.createElement('aside');dw.className='drawer pq-drawer';dw.setAttribute('aria-label','AI 提示词');
+    dw.innerHTML='<div class="layer-hd"><h2>AI 提示词</h2><button class="btn btn-ghost btn-icon" type="button" data-pq-x aria-label="关闭">'+P.ic('x')+'</button></div><div class="layer-bd">'+intro+list.map(P.promptCard).join('')+'</div>';
+    P._bar.querySelector('[data-tb-slot]').appendChild(fab);document.body.appendChild(dw);wirePrompts(dw,list);
+    fab.onclick=function(){P.open(dw)};
+    dw.querySelector('[data-pq-x]').onclick=function(){P.close(dw)};
+  };
   /* ---- 骨架行 ---- */
   P.skRows=function(n,cols){var s='';for(var i=0;i<n;i++){s+='<tr>';for(var j=0;j<cols;j++)s+='<td><div class="sk" style="height:12px;width:'+(40+((i*7+j*13)%50))+'%"></div></td>';s+='</tr>'}return s};
   /* ---- 状态块 ---- */
@@ -772,6 +936,7 @@ Proto.init({
     render();
   }
 });
+Proto.prompts(PROMPTS);
 </script>
 </body>
 </html>
