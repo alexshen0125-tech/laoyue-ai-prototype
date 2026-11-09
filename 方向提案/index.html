@@ -1,0 +1,31 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>视觉方向提案</title><meta name="description" content="老岳AI产品论坛三个视觉方向提案入口">
+<style>
+:root{--y:#FFD84D;--ink:#161616;--bg:#F4F4F1;--line:#E6E6E1;--mute:#696963}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:1100px;margin:0 auto;padding:48px 16px 80px}h1{font-size:32px;margin:0 0 8px}main>p{color:var(--mute);margin:0 0 28px;line-height:1.7}
+.g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.d{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.d.rec{border:2px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.d b{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:10px;background:var(--ink);color:var(--y);font-size:20px}
+.d h2{margin:4px 0 0;font-size:20px}.d p{margin:0;font-size:14px;line-height:1.7;color:#3A3A36}
+.d em{font-style:normal;align-self:flex-start;background:var(--y);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700}
+.d a{display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line);text-decoration:none;color:inherit;font-size:14px}
+.d a:hover{border-color:var(--ink)}.d a span{color:var(--mute);font-size:12px}
+img{width:100%;border-radius:14px;border:1px solid var(--line);margin-top:28px;display:block}
+.n{margin-top:18px;font-size:13px;color:var(--mute);line-height:1.8}
+@media(max-width:820px){.g{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>老岳AI · 视觉方向提案</h1>
+<p>2026-11-10 · 回应老板「缺少高级的视觉体验和交互体验」。三个方向都用真实内容做了首页、提示词详情（就地填空 + 复制）、Skill 详情（含安装 Tab），PC 和手机都能看。按 <b>⌘K</b> 或 <b>/</b> 可以在任何一页调出搜索面板。</p>
+<div class="g">
+<div class="d"><b>A</b><h2>编辑部</h2><p>像高端期刊一样读：衬线大标题、发丝线、荧光笔黄；提示词是一张可以直接填写的稿纸。</p>
+<a href="A/index.html">首页<span>A/index</span></a><a href="A/prompt.html?id=1015">提示词详情<span>P-015</span></a><a href="A/skill.html?id=1#install">Skill 详情 · 安装<span>S-1000</span></a></div>
+<div class="d"><b>B</b><h2>工具台</h2><p>Linear / Raycast 式：深色可切浅色，⌘K 命令栏是首屏主角，生成式等高线封面和黄色光晕。</p>
+<a href="B/index.html">首页<span>B/index</span></a><a href="B/prompt.html?id=1015">提示词详情<span>P-015</span></a><a href="B/skill.html?id=1#install">Skill 详情 · 安装<span>S-1000</span></a></div>
+<div class="d rec"><b>C</b><h2>检索台</h2><em>推荐</em><p>首页就是搜索台：左边结果、右边预览，不跳页就能填空复制、复制安装命令；手机上点一条弹出底部抽屉。</p>
+<a href="C/index.html">首页<span>C/index</span></a><a href="C/prompt.html?id=1015">提示词详情<span>P-015</span></a><a href="C/skill.html?id=1">Skill 详情 · 安装<span>S-1000</span></a></div>
+</div>
+<img src="_对比.png" alt="三个方向在 1440 和 390 宽下的首页与详情对比">
+<p class="n">数据来自 real-data.js（与 forum.html 同源）。现有 forum.html / forum-miniapp.html 未改动，等老板选定方向后整体改。</p>
+</main></body></html>
