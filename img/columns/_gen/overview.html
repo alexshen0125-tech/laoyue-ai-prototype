@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1600px;background:#FFF8E7;font-family:"PingFang SC","Hiragino Sans GB",sans-serif;color:#161616;padding:56px 60px 60px}
+h1{font-size:40px;font-weight:700;letter-spacing:1px}
+.sub{font-size:20px;color:#5a5650;margin-top:10px}
+.legend{display:flex;gap:28px;align-items:center;margin:28px 0 34px;padding:18px 24px;background:#fff;border:2px solid #161616;border-radius:18px}
+.legend img{width:72px;height:72px;border-radius:50%}
+.legend .t{font-size:18px;line-height:1.6}
+.legend b{font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.card{background:#fff;border:2px solid #161616;border-radius:20px;padding:24px 22px 22px;box-shadow:5px 5px 0 #161616}
+.av{position:relative;width:150px;height:150px;margin:0 auto}
+.av img{width:150px;height:150px;border-radius:50%;display:block}
+.av .bd{position:absolute;right:2px;bottom:4px;width:40px;height:40px;border-radius:50%;background:#FFD84D;border:3px solid #161616;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.vs{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.vs img{width:44px;height:44px;border-radius:50%;border:2px solid #ddd}
+.vs span{font-size:13px;color:#8a857c;align-self:center}
+.name{font-size:30px;font-weight:700;text-align:center;margin-top:14px}
+.grp{font-size:15px;color:#6b665e;text-align:center;margin-top:4px}
+.pos{font-size:17px;line-height:1.55;margin-top:14px;min-height:80px}
+.meta{display:flex;justify-content:space-between;border-top:1.5px dashed #c9c2b3;margin-top:14px;padding-top:12px;font-size:15px;color:#5a5650}
+.meta b{color:#161616;font-size:18px}
+</style></head><body>
+<h1>老岳AI编辑部 · 8 个栏目</h1>
+<div class="sub">卡片内容按栏目署名，合计 5000 篇；老岳和特邀作者的长文署本人</div>
+<div class="legend"><img src="../../../../../配图/新号_头像/老岳_头像.png"><div class="t"><b>真人作者</b>：人像头像，无角标，署本人姓名</div>
+<div style="width:2px;height:60px;background:#ddd"></div>
+<img src="../doc.png"><div class="t"><b>编辑部栏目</b>：物件头像 + 右下角「编」字角标，署「栏目名 ｜ 老岳AI编辑部 · XX组」</div></div>
+<div class="grid" id="g"></div>
+<script>
+const C=[
+['doc','铅笔头','需求文档组','把需求写清楚：PRD、验收标准、需求澄清、用户研究','产品技能',720],
+['proto','积木盒','原型组','让评审有东西可点：一句话出原型、后台原型规矩、自己做小工具','原型分享',550],
+['prompt','气泡灯','提示词组','问得准才答得好：提问公式、场景提示词、防编造、模板库','提示词',800],
+['skill','小齿轮','Skill 与自动化组','把重复的活装进 AI：Skill 实测、写 Skill、工作流自动化','Skill 分享',800],
+['data','放大镜','数据与调研组','先看清再下结论：取数、竞品、做 AI 产品的评测','产品技能',580],
+['office','便利贴','办公提效组','每天那些杂活：PPT、安全红线、官方文档导读、省钱','AI 使用技巧',650],
+['case','拆箱','案例拆解组','把别人做成和做砸的项目拆开看，带走能复用的那块','行业实战',500],
+['career','信封','求职组','下一份工作：转 AI 产品经理、改简历、模拟面试','求职与转型',400]];
+document.getElementById('g').innerHTML=C.map(c=>`<div class="card"><div class="av"><img src="../${c[0]}.png"><div class="bd">编</div></div>
+<div class="vs"><span>备选</span><img src="../${c[0]}_v1.png"><img src="../${c[0]}_v2.png"></div>
+<div class="name">${c[1]}</div><div class="grp">老岳AI编辑部 · ${c[2]}</div><div class="pos">${c[3]}</div>
+<div class="meta"><span>${c[4]}</span><span><b>${c[5]}</b> 篇</span></div></div>`).join('');
+</script></body></html>
