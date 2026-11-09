@@ -544,3 +544,45 @@ window.codeTo = function (q) {
   return null;
 };
 window.hlText = (s, q) => { s = String(s); if (!q) return s; const e = q.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); return s.split(e).join('<mark>' + e + '</mark>'); };
+
+// ---------- 真实数据支持（11-09 老板：原型改用真实内容；real-data.js 由 build_real_data.py 生成，?demo=1 切回示例） ----------
+window.REAL = false;
+// 编号直达兼容真实编号：P-001 / TP-001 / M-001 / W-001 / C-001 / S-1000 / T-001（工具卡）
+(function () {
+  const old = window.codeTo;
+  window.codeTo = function (q) {
+    q = (q || '').trim(); const m = q.match(/^(TP|P|M|W|C|L|S|T)\s*-\s*(\d{1,4})$/i);
+    if (m && window.REAL) {
+      const code = m[1].toUpperCase() + '-' + m[2]; const norm = x => (x || '').toUpperCase().replace(/-0*/, '-');
+      const s = window.SKILLS.find(x => norm(x.code) === norm(code)); if (s) return { to: 's/' + s.id, code: s.code };
+      const p = window.POSTS.find(x => norm(x.rid) === norm(code)); if (p) return { to: 'c/' + p.id, code: p.rid };
+      const t = window.TOOLS.find(x => norm(x.rid) === norm(code)); if (t) return { to: 't/' + t.id, code: t.rid };
+      return null;
+    }
+    return old(q);
+  };
+})();
+window.skillSlug = s => s.slug || (s.md.match(/name: ([\w-]+)/) || [])[1] || ('skill-' + s.id);
+// 运营指标：真实数据里没有就显示「新」，不编数字
+window.metric = v => (v == null ? '<span class="newtag">新</span>' : v);
+// 轻量 Markdown → HTML（标题、段落、列表、表格、代码块、引用、粗体、行内代码）
+window.mdHTML = function (src, opt) {
+  opt = opt || {}; const e = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const inl = s => e(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/&lt;br&gt;/g, '<br>').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
+  const L = String(src || '').replace(/\r/g, '').split('\n'); const o = []; let i = 0, hid = 0;
+  const isList = l => /^\s*([-*]|\d+[.、)])\s+/.test(l);
+  while (i < L.length) {
+    const l = L[i];
+    if (/^```/.test(l)) { const b = []; i++; while (i < L.length && !/^```/.test(L[i])) b.push(L[i++]); i++; o.push(`<div class="mdcode"><button type="button" class="mdcp" onclick="copyTxt(this.nextElementSibling.textContent,'已复制')">复制</button><pre>${e(b.join('\n'))}</pre></div>`); continue; }
+    const m = l.match(/^(#{1,4})\s+(.*)/);
+    if (m) { const lv = Math.max(2, m[1].length) + (opt.shift || 0); const id = opt.toc && m[1].length === 2 ? ` id="h${hid++}"` : ''; o.push(`<h${Math.min(lv, 5)}${id}>${inl(m[2])}</h${Math.min(lv, 5)}>`); i++; continue; }
+    if (/^\|/.test(l)) { let rows = []; while (i < L.length && /^\|/.test(L[i])) rows.push(L[i++]); rows = rows.filter(r => !/^\|\s*:?-{2,}/.test(r)); const cells = r => r.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim()); o.push(`<div class="mdtbl"><table>${rows.map((r, j) => `<tr>${cells(r).map(c => j ? `<td>${inl(c)}</td>` : `<th>${inl(c)}</th>`).join('')}</tr>`).join('')}</table></div>`); continue; }
+    if (isList(l)) { const ord = /^\s*\d/.test(l); const it = []; while (i < L.length && (isList(L[i]) || (/^\s{2,}\S/.test(L[i]) && it.length))) { if (isList(L[i])) it.push(L[i].replace(/^\s*([-*]|\d+[.、)])\s+/, '')); else it[it.length - 1] += ' ' + L[i].trim(); i++; } o.push(`<${ord ? 'ol' : 'ul'}>${it.map(x => `<li>${inl(x)}</li>`).join('')}</${ord ? 'ol' : 'ul'}>`); continue; }
+    if (/^>\s?/.test(l)) { const q = []; while (i < L.length && /^>\s?/.test(L[i])) q.push(L[i++].replace(/^>\s?/, '')); o.push(`<blockquote>${inl(q.join(' '))}</blockquote>`); continue; }
+    if (/^-{3,}\s*$/.test(l) || !l.trim()) { i++; continue; }
+    const p = []; while (i < L.length && L[i].trim() && !/^(#{1,4}\s|```|\||>)/.test(L[i]) && !isList(L[i])) p.push(L[i++]);
+    o.push(`<p>${inl(p.join('\n')).replace(/\n/g, '<br>')}</p>`);
+  }
+  return o.join('');
+};
+window.mdToc = src => (String(src || '').match(/^##\s+.+$/gm) || []).map((h, i) => ['h' + i, h.replace(/^##\s+/, '').replace(/[*`]/g, '')]);

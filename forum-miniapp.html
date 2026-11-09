@@ -230,6 +230,25 @@ mark{background:var(--y);color:var(--ink);border-radius:3px;padding:0 1px}
 .sjump a:active{transform:scale(.96)}
 .shd{display:flex;align-items:center;margin:16px 2px 8px}.shd h4{font-size:14px}.shd a{margin-left:auto;font-size:12px;color:var(--mute);text-decoration:underline}
 .errbox .btn{margin-top:14px}
+/* 真实内容 */
+.newtag{display:inline-flex;align-items:center;height:17px;padding:0 5px;border-radius:4px;background:var(--y2);color:#7A5B00;font-size:10.5px;font-weight:700}
+.md{font-size:14.5px;line-height:1.8;color:var(--ink2);overflow-wrap:anywhere}.md p{margin:6px 0}.md ul,.md ol{padding-left:20px;margin:6px 0}
+.md h2,.md h3,.md h4{font-size:15px;color:var(--ink);margin:14px 0 4px}
+.md code,.prose code{font-family:Menlo,monospace;font-size:.86em;background:#F2F2EE;border-radius:4px;padding:0 4px}
+.md blockquote,.prose blockquote{border-left:3px solid var(--y);background:#FBFBF7;padding:8px 12px;border-radius:0 8px 8px 0;margin:8px 0}
+.mdtbl{overflow-x:auto;margin:8px 0;border:1px solid var(--line);border-radius:10px;-webkit-overflow-scrolling:touch}
+.mdtbl table{border-collapse:collapse;font-size:12.5px;line-height:1.6;min-width:100%}
+.mdtbl th,.mdtbl td{padding:7px 10px;border-top:1px solid var(--line2);text-align:left;vertical-align:top;min-width:88px}
+.mdtbl tr:first-child th{border-top:0;background:#FBFBF9;color:var(--mute);white-space:nowrap}
+.mdcode{position:relative;margin:8px 0;border-radius:10px;background:#1B1B19;overflow:hidden}
+.mdcode pre{margin:0;padding:12px;color:#E8E8E2;font:11.5px/1.75 Menlo,monospace;white-space:pre-wrap;word-break:break-word;max-height:360px;overflow:auto}
+.mdcode .mdcp{position:absolute;right:6px;top:6px;height:28px;padding:0 10px;border-radius:14px;background:var(--y);font-size:11.5px;font-weight:700}
+.csec{margin-top:18px}.csec>h3{font-size:15px;display:flex;align-items:center;gap:6px}.csec>h3:before{content:"";width:3px;height:14px;border-radius:2px;background:var(--y)}
+.srcs{margin-top:14px;padding:10px 12px;border-radius:10px;background:#F7F7F3;font-size:11.5px;color:var(--mute);line-height:1.65}
+.hero.noimg:before{background:radial-gradient(circle at 85% 15%,rgba(255,216,77,.3),transparent 50%),var(--ink)}.hero .bigq{position:absolute;right:16px;top:-8px;font:800 110px/1 Georgia,serif;color:rgba(255,216,77,.18);z-index:1}
+.hero.noimg h2{max-width:100%;margin-top:28px}
+.upline{font-size:11.5px;color:var(--mute);margin-top:6px;line-height:1.55}.upline b{color:var(--ink2);font-weight:600}
+.it h3,.pc h3,.skm .hd b,.dt h1{overflow-wrap:anywhere}
 /* 胶囊（多选） */
 .chips{display:flex;gap:8px;overflow-x:auto;margin:12px -16px 0;padding:0 16px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
@@ -417,7 +436,9 @@ textarea.inp{height:110px;padding:12px 14px;resize:none;line-height:1.6}
     <div class="home-ind"></div>
   </div>
 </div>
+<script>/* 截图用：?shot 关闭动效，避免截到渐入半透明 */if(/[?&]shot/.test(location.search))document.write('<style>*,*:before,*:after{animation:none!important;transition:none!important}.rv2{opacity:1!important;transform:none!important}</style>')</script>
 <script src="forum-data.js"></script>
+<script>/* 默认加载真实内容；URL 带 ?demo=1 切回示例数据 */if(!/[?&]demo=1(&|$)/.test(location.search))document.write('<script src="real-data.js"><\/script>')</script>
 <script>
 const $=s=>document.querySelector(s);let S=applyDemo(store.get());
 if(/bare/.test(location.search))document.body.classList.add('bare');
@@ -428,7 +449,7 @@ const av=(id,c='')=>{const u=U(id);return u.av?`<img class="av ${c}" src="${u.av
 const colAv=(id,c='s')=>{const k=CO(id);return `<img class="av ${c}" src="img/columns/${id}.png" alt="" onerror="this.outerHTML='<span class=&quot;av ${c}&quot; style=&quot;background:${k.c}&quot;>${k.name[0]}</span>'">`};
 const colSig=id=>`<a class="colsig" data-go="col/${id}">${colAv(id)}<span><b>${CO(id).name}</b><em>老岳AI编辑部 · ${CO(id).group}</em></span></a>`;
 const kd=k=>`<span class="kd kd-${k}">${KINDS[k].name}</span>`;
-const skBy=x=>x.by==='laoyue'?`${av('laoyue','s')}<span>老岳 · 亲手做、自己在用</span>`:`${colAv('skill')}<span>小齿轮 ｜ 老岳AI编辑部 · Skill 与自动化组</span>`;
+const skBy=x=>x.upstream?`${colAv('skill')}<span>原作者 ${x.upstream.author} · ${x.upstream.license} ｜ 老岳AI编辑部 中文整理与实测</span>`:x.by==='laoyue'?`${av('laoyue','s')}<span>老岳 · 亲手做、自己在用</span>`:`${colAv('skill')}<span>小齿轮 ｜ 老岳AI编辑部 · Skill 与自动化组</span>`;
 const anon=()=>`<span class="anon">匿</span>`;
 const cards=k=>POSTS.filter(p=>p.type==='card'&&(!k||p.kind===k));
 const go=h=>{location.hash=h};
@@ -445,8 +466,8 @@ function copyTxt(t,msg){try{navigator.clipboard&&navigator.clipboard.writeText(t
 const FILL={};
 const vars=p=>[...new Set((p.prompt.match(/\{\{(.+?)\}\}/g)||[]).map(x=>x.slice(2,-2)))];
 const ptext=(p,clk)=>{const f=FILL[p.id]||{};return esc(p.prompt).replace(/\{\{(.+?)\}\}/g,(m,k)=>f[k]?`<span class="var filled" ${clk?`role="button" tabindex="0" onclick="fillVar(${p.id},'${esc(k)}')"`:''}>${esc(f[k])}</span>`:`<span class="var" data-k="${esc(k)}" ${clk?`role="button" tabindex="0" onclick="fillVar(${p.id},'${esc(k)}')"`:''}>${esc(k)}</span>`)};
-function fillVar(id,k){const p=P(id),v=vars(p),i=v.indexOf(k),long=/粘贴/.test(k),val=(FILL[id]||{})[k]||'';
-  $('#sheet').innerHTML=`<div class="grab"></div><h4>填写「${esc(k)}」<small>${i+1} / ${v.length}</small></h4><p class="ctx2">${long?'把内容粘贴进来；也可以先不填，复制后到 AI 对话框里再贴':'写你自己的情况，复制时会替换进提示词'}</p>
+function fillVar(id,k){const p=P(id),v=vars(p),i=v.indexOf(k),long=/粘贴|材料|原文|记录|全文|内容|描述|清单|列表|数据|反馈|转写|简历|JD|PRD|稿/.test(k),val=(FILL[id]||{})[k]||'';
+  $('#sheet').innerHTML=`<div class="grab"></div><h4>填写「${esc(k)}」<small>${i+1} / ${v.length}</small></h4><p class="ctx2">${(p.vars||[]).find(x=>x.name===k)?(()=>{const h=p.vars.find(x=>x.name===k);return h.hint+(h.example?'，例如：'+h.example:'')})():long?'把内容粘贴进来；也可以先不填，复制后到 AI 对话框里再贴':'写你自己的情况，复制时会替换进提示词'}</p>
   ${long?`<textarea class="inp" id="vin" placeholder="${esc(k)}" style="height:120px">${esc(val)}</textarea>`:`<input class="inp" id="vin" placeholder="${esc(k)}" value="${esc(val)}" enterkeyhint="next">`}
   <div class="row"><button class="btn gh" onclick="saveVar(${id},'${esc(k)}',false)">完成</button><button class="btn y" onclick="saveVar(${id},'${esc(k)}',true)">${i<v.length-1?'下一处':'完成并复制'}</button></div>`;
   $('#smask').classList.add('on');$('#sheet').classList.add('on');setTimeout(()=>{const x=$('#vin');x&&x.focus()},320);
@@ -464,12 +485,12 @@ function copyPrompt(id,force){const p=P(id),v=vars(p),f=FILL[id]||{},miss=v.filt
 /* ---------- 片段 ---------- */
 function it(p){if(p.type==='card')return `<a class="it" data-go="c/${p.id}"><div class="m"><h3>${p.title}</h3><div class="mt">${kd(p.kind)}${colAv(p.col)}<span>${CO(p.col).name}</span><span class="r num">${p.date.slice(5)}</span></div></div></a>`;
   if(p.type==='question')return qit(p);
-  return `<a class="it" data-go="p/${p.id}"><div class="m"><h3>${p.pick?'<span class="tg jh">精华</span>':''}${p.title}</h3><div class="mt">${av(p.author,'s')}<span>${U(p.author).name}</span><span>·</span><span>${B(p.board).name}</span><span class="r">${p.reads} 阅读</span></div></div>${p.cover?`<div class="th"><img src="${p.cover}" alt=""></div>`:''}</a>`}
+  return `<a class="it" data-go="p/${p.id}"><div class="m"><h3>${p.pick?'<span class="tg jh">精华</span>':''}${p.title}</h3><div class="mt">${av(p.author,'s')}<span>${U(p.author).name}</span><span>·</span><span>${B(p.board).name}</span><span class="r">${p.reads==null?metric(null):p.reads+' 阅读'}</span></div></div>${p.cover?`<div class="th"><img src="${p.cover}" alt=""></div>`:''}</a>`}
 function qit(p){return `<a class="qit" data-go="q/${p.id}"><h3>${p.featured?'<span class="tg jx">精选</span>':''}<span class="tg lx">读者来信</span>${p.title}</h3><div class="ex">${p.excerpt}</div>
   <div class="mt">${anon()}<span>匿名读者${p.asker?' · '+p.asker:''}</span><span style="margin-left:auto" class="stack">${p.who.map(w=>av(w,'s')).join('')}</span><span>${p.who.length===1?U(p.who[0]).name+' 答':p.who.length+' 位作者答'}</span></div></a>`}
 function pc(p){return `<a class="card pc" data-go="c/${p.id}"><h3>${p.title}</h3><div class="pv">${ptext(p)}</div><div class="ft">${colAv(p.col)}<span style="font-size:11.5px;color:var(--mute)">${CO(p.col).name}</span><button class="btn y" onclick="event.stopPropagation();go('c/${p.id}')">${svg('copy').replace('<svg','<svg width="14" height="14" style="stroke:currentColor;fill:none;stroke-width:2"')}去填写复制</button></div></a>`}
 function tl(t){return `<a class="tl" data-go="t/${t.id}"><span class="lg" style="background:${t.c}">${t.name[0]}</span><div><b>${t.name}</b><small>${t.one}</small></div></a>`}
-function skm(x){const c=SKC(x.cat);return `<a class="card skm" data-go="s/${x.id}"><div class="hd"><span class="sic" aria-hidden="true">${c.icon}</span><div><b>${x.name}</b><small>${c.name} · <span class="num">${x.ver}</span> · ${svg('dl')}<span class="num">${fmt(x.dl)}</span></small></div>${x.demo?'<span class="dchip">示例</span>':''}</div>
+function skm(x){const c=SKC(x.cat);return `<a class="card skm" data-go="s/${x.id}"><div class="hd"><span class="sic" aria-hidden="true">${c.icon}</span><div><b>${x.name}</b><small>${c.name} · <span class="num">${x.ver}</span>${x.dl==null?'':` · ${svg('dl')}<span class="num">${fmt(x.dl)}</span>`}</small></div>${x.demo?'<span class="dchip">示例</span>':''}</div>
   <div class="ul"><p class="u"><b>用处</b><span>${x.one}</span></p><p class="h"><b>怎么用</b><span>说<q>${x.triggers[0]}</q>就触发</span></p></div><div class="ba"><div class="b"><em>用前</em><p>${x.before}</p></div><div class="a"><em>用后</em><p>${x.after}</p></div></div><div class="skby">${skBy(x)}</div></a>`}
 function guideBody(){const G=SKILL_GUIDE;return `<div class="gb"><em>Skill 是什么</em><p class="what">${G.what}</p><em>三步用法</em><ol><li>下载 Skill 包（在电脑上）</li><li>放进 AI 工具的 Skill 目录</li><li>新开对话，说一句触发的话</li></ol>
   <em>和提示词的区别</em><table><thead><tr><th></th><th>提示词</th><th>Skill</th></tr></thead><tbody>${G.vs.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table>
@@ -492,7 +513,7 @@ function tb(ch,ph,sorts){const q=_Q[ch]||'';return `<div class="stb"><label clas
   <div class="sline"><span id="cnt" class="cnt2" aria-live="polite"></span>${sorts?`<span class="seg2">${sorts.map(([k,n])=>`<a class="${(_SO[ch]||sorts[0][0])===k?'on':''}" onclick="_SO['${ch}']='${k}';window._n=6;route(true)">${n}</a>`).join('')}</span>`:''}</div></div>`}
 function chq(ch,v,clr){_Q[ch]=(v||'').trim();if(clr){const i=$('#chq');i.value='';i.focus()}const c=document.querySelector('.stb .clr');if(c)c.hidden=!_Q[ch];window._n=6;clearTimeout(window._dt);window._dt=setTimeout(fillList,clr?0:200)}
 function clrAll(ch){_Q[ch]='';if(ch==='prompts')window._sel=[];if(ch==='skills')window._sc='';route(true)}
-const cntTxt=(ch,n,all,unit)=>_Q[ch]||n!==all?`找到 <b>${fmt(n)}</b> ${unit}${_Q[ch]?` · 含「${esc(_Q[ch])}」`:''}<a onclick="clrAll('${ch}')">清除</a>`:`共 <b>${fmt(all)}</b> ${unit}（示例数）`;
+const cntTxt=(ch,n,all,unit)=>_Q[ch]||n!==all?`找到 <b>${fmt(n)}</b> ${unit}${_Q[ch]?` · 含「${esc(_Q[ch])}」`:''}<a onclick="clrAll('${ch}')">清除</a>`:`共 <b>${fmt(all)}</b> ${unit}${REAL?'':'（示例数）'}`;
 const noRes=(ch,what)=>empty('⌕',`没找到「${esc(_Q[ch])}」相关的${what}`,'换个说法试试；没搜到的词会成为下一批内容的方向',`<button class="btn gh" onclick="clrAll('${ch}')">清除搜索</button> <a class="btn y" data-go="ask">私下告诉作者想看什么</a>`);
 function fillList(){if(!window._lf)return;const l=$('#lst');if(!l)return;
   if(/[?&]error/.test(location.search)){l.innerHTML=`<div class="errbox">${empty('!','内容没加载出来','网络不太稳定，你的搜索词和筛选都还在',`<button class="btn y" onclick="history.replaceState(null,'',location.pathname+location.search.replace(/[?&]error/,'')+location.hash);fillList()">重试</button>`)}</div>`;return}
@@ -513,33 +534,33 @@ function empty(i,t,s,b){return `<div class="empty"><div class="ei">${i}</div><b>
 const TABS=[['home','首页'],['prompts','提示词'],['skills','Skill 库'],['qa','问答'],['me','我的']];
 /* ---------- 页面 ---------- */
 const V={
-home(){const a=P(1);
+home(){const a=REAL?POSTS.find(p=>p.type==='article'):P(1);
   return {title:'老岳AI产品论坛',tab:'home',html:`<div class="pad rv" style="padding-top:0">
   <div class="stb" style="padding-bottom:6px"><a class="sbox" data-go="search" role="search" aria-label="全站搜索">${svg('search')}<span style="color:var(--mute);font-size:15px">搜长文、提示词、Skill、资料编号</span></a></div>
   <div class="scale"><a data-go="prompts"><small>站内内容</small><b>${fmt(STATS.total)}</b></a><a data-go="prompts"><small>提示词</small><b>${fmt(STATS.prompt)}</b></a><a data-go="skills"><small>Skill</small><b>${fmt(STATS.skill)}</b></a><a data-go="lib/template"><small>模板</small><b>${fmt(STATS.template)}</b></a><a data-go="lib/case"><small>方法与案例</small><b>${fmt(STATS.term+STATS.case)}</b></a><a data-go="articles"><small>深度长文</small><b>${fmt(STATS.article)}</b></a></div><div class="demo">以上为示例数</div>
-  <a class="hero" data-go="p/${a.id}"><img src="${a.cover}" alt=""><span class="eb">本周精华 · 长文</span><h2>${a.title}</h2><p>${U(a.author).name} · ${a.reads} 阅读</p></a>
-  <div class="sec"><h4>最常复制的提示词</h4><a data-go="prompts">全部 ›</a></div>${[22,21].map(id=>pc(P(id))).join('')}
-  <div class="sec"><h4>Skill 库</h4><a data-go="skills/guide" style="margin-left:6px;font-weight:600;color:var(--mute);text-decoration:underline;text-underline-offset:3px">Skill 怎么用？</a><a data-go="skills">全部 ›</a></div>${SKILLS.slice().sort((a,b)=>b.dl-a.dl).slice(0,2).map(skm).join('')}
+  <a class="hero ${a.cover?'':'noimg'}" data-go="p/${a.id}">${a.cover?`<img src="${a.cover}" alt="">`:'<span class="bigq" aria-hidden="true">“</span>'}<span class="eb">本周精华 · 长文</span><h2>${a.title}</h2><p>${U(a.author).name}${a.reads==null?' · 新文章':' · '+a.reads+' 阅读'}</p></a>
+  <div class="sec"><h4>${REAL?'新上的提示词':'最常复制的提示词'}</h4><a data-go="prompts">全部 ›</a></div>${(REAL?cards('prompt').slice(0,2):[P(22),P(21)]).map(pc).join('')}
+  <div class="sec"><h4>Skill 库</h4><a data-go="skills/guide" style="margin-left:6px;font-weight:600;color:var(--mute);text-decoration:underline;text-underline-offset:3px">Skill 怎么用？</a><a data-go="skills">全部 ›</a></div>${SKILLS.slice().sort((a,b)=>REAL?0:b.dl-a.dl).slice(0,2).map(skm).join('')}
   <div class="sec"><h4>作者长文</h4><a data-go="articles">全部 ›</a></div><div class="list">${POSTS.filter(p=>p.type==='article').slice(1,4).map(it).join('')}</div>
   <div class="sec"><h4>资料库</h4><small>模板 · 工具卡 · 方法 · 案例</small><a data-go="lib">全部 ›</a></div><div class="list">${cards().filter(p=>p.kind!=='prompt').slice(0,3).map(it).join('')}</div>
   </div>`}},
 prompts(){const sel=window._sel||[];
   const lf=()=>{const q=_Q.prompts||'';let L=cards('prompt').filter(p=>(!sel.length||(p.scenes||[]).some(s=>sel.includes(s)))&&(!q||(p.title+p.prompt+p.excerpt).includes(q)));
-    if(_SO.prompts==='new')L.sort((a,b)=>b.date.localeCompare(a.date));else L.sort((a,b)=>b.favs-a.favs);const n=window._n||6;
+    if(_SO.prompts==='new')L.sort((a,b)=>b.date.localeCompare(a.date));else if(!REAL)L.sort((a,b)=>b.favs-a.favs);const n=window._n||6;
     const h=L.length?L.slice(0,n).map(pc).join('')+(L.length>n?`<div id="more">${skel(2)}</div>`:`<div class="more-ld">${q||sel.length?'就这些了':'已经到底了 · 更多在持续更新'}</div>`):(q?noRes('prompts','提示词'):empty('✎','这些场景下还没有提示词','换几个场景试试',`<button class="btn gh" onclick="clrAll('prompts')">清除场景</button>`));
     return [h,(q||sel.length)?cntTxt('prompts',L.length,-1,'条'):cntTxt('prompts',STATS.prompt,STATS.prompt,'条')]};
-  return {title:'提示词库',tab:'prompts',lf,html:`<div class="pad rv" style="padding-top:0">${tb('prompts','搜提示词：PRD、纪要、面试…',[['hot','最常复制'],['new','最新']])}
+  return {title:'提示词库',tab:'prompts',lf,html:`<div class="pad rv" style="padding-top:0">${tb('prompts','搜提示词：PRD、纪要、面试…',[['hot',REAL?'推荐':'最常复制'],['new','最新']])}
   <div class="chips" style="margin-top:4px" role="group" aria-label="场景，可多选">${SCENES.map(s=>`<a class="chip ${sel.includes(s)?'on':''}" role="checkbox" aria-checked="${sel.includes(s)}" onclick="window._sel=${JSON.stringify(sel).replace(/"/g,"'")};_sel.includes('${s}')?_sel.splice(_sel.indexOf('${s}'),1):_sel.push('${s}');try{localStorage.setItem('lysel',JSON.stringify(_sel))}catch(e){};window._n=6;route(true)">${s}</a>`).join('')}</div>
   ${sel.length?`<div class="selbar">已选 ${sel.length} 个场景 · 满足任一即显示（已记住，下次自动带上）<a onclick="window._sel=[];try{localStorage.removeItem('lysel')}catch(e){};route(true)">清除</a></div>`:''}
   <div id="lst"></div></div>`}},
 skills(a){if(a==='guide')return V.skguide();const c=window._sc||'';
-  const lf=()=>{const q=_Q.skills||'';const L=SKILLS.filter(x=>(!c||x.cat===c)&&(!q||(x.name+x.one+x.code+x.triggers.join('')).toLowerCase().includes(q.toLowerCase())));if(_SO.skills==='new')L.sort((a,b)=>b.date.localeCompare(a.date));else L.sort((a,b)=>b.dl-a.dl);
+  const lf=()=>{const q=_Q.skills||'';const L=SKILLS.filter(x=>(!c||x.cat===c)&&(!q||(x.name+x.one+x.code+x.triggers.join('')).toLowerCase().includes(q.toLowerCase())));if(_SO.skills==='new')L.sort((a,b)=>b.date.localeCompare(a.date));else if(!REAL)L.sort((a,b)=>b.dl-a.dl);
     const h=L.length?L.map(skm).join('')+`<div class="more-ld">${q||c?'这类先展示这些样例':'已经到底了 · 更多在持续更新'}</div>`:(q?noRes('skills','Skill'):empty('⚙','这类 Skill 还在做','换个用途看看',`<button class="btn gh" onclick="clrAll('skills')">看全部</button>`));
     const all=c?SKC(c).n:STATS.skill;return [h,q?cntTxt('skills',L.length,-1,'个'):cntTxt('skills',all,all,'个')]};
-  return {title:'Skill 库',tab:'skills',lf,html:`<div class="pad rv" style="padding-top:0">${tb('skills','搜 Skill：纪要、评审、S0006…',[['dl','下载最多'],['new','最近更新']])}${sgCard()}
+  return {title:'Skill 库',tab:'skills',lf,html:`<div class="pad rv" style="padding-top:0">${tb('skills','搜 Skill：纪要、评审、S0006…',[['dl',REAL?'推荐':'下载最多'],['new','最近更新']])}${sgCard()}
   <div class="chips" role="group" aria-label="按用途"><a class="chip ${!c?'on':''}" onclick="window._sc='';route(true)">全部</a>${SKILLCATS.map(x=>`<a class="chip ${c===x.id?'on':''}" onclick="window._sc='${x.id}';route(true)">${x.name}<small>${x.n}</small></a>`).join('')}</div>
   <div id="lst"></div></div>`}},
-skguide(){return {title:'Skill 怎么用？',back:true,html:`<div class="dt rv"><h1 style="margin-top:0">Skill 怎么用？</h1><p class="sum">第一次用的人看这一页就够。</p>${guideBody()}<div class="sec" style="margin-top:22px"><h4>先从这两个开始</h4></div>${SKILLS.slice().sort((a,b)=>b.dl-a.dl).slice(0,2).map(skm).join('')}</div>`}},
+skguide(){return {title:'Skill 怎么用？',back:true,html:`<div class="dt rv"><h1 style="margin-top:0">Skill 怎么用？</h1><p class="sum">第一次用的人看这一页就够。</p>${guideBody()}<div class="sec" style="margin-top:22px"><h4>先从这两个开始</h4></div>${SKILLS.slice().sort((a,b)=>REAL?0:b.dl-a.dl).slice(0,2).map(skm).join('')}</div>`}},
 s(id){const x=SKL(id);if(!x)return V.nf();const c=SKC(x.cat),k='s'+x.id,faved=S.faved.includes(k);
   const md=esc(x.md).split('\n').map(l=>/^(---|name:|description:|## )/.test(l)?`<span class="k">${l}</span>`:l).join('\n')+'\n<span class="m">……（完整内容见下载包）</span>';
   const files=x.files.map(([n,d])=>n==='SKILL.md'?`<details><summary class="row"><code>${n}</code><span>${d}</span><span class="tgl"></span></summary><pre>${md}</pre></details>`:`<div class="row"><code>${n}</code><span>${d}</span></div>`).join('');
@@ -547,7 +568,7 @@ s(id){const x=SKL(id);if(!x)return V.nf();const c=SKC(x.cat),k='s'+x.id,faved=S.
   return {title:'Skill',back:true,bar:`<button class="ib ${faved?'on':''}" onclick="tog('faved','${k}',this)"><b>${faved?'★':'☆'}</b><span class="t">${faved?'已收藏':'收藏'}</span></button><button class="ib" onclick="toast('转发给微信好友',true)"><b>↗</b>转发</button><button class="main" onclick="copyTxt('${x.code}','${msg}');this.classList.add('done');this.innerHTML=svg('ok')+'已复制编号 ${x.code}'">${svg('copy')}复制 Skill 编号</button>`,
   html:`<div class="dt rv"><div style="display:flex;gap:12px;align-items:center"><span class="sic" style="width:52px;height:52px;border-radius:15px;font-size:21px">${c.icon}</span><div style="min-width:0"><div style="font-size:11.5px;color:var(--mute)">Skill 库 · ${c.name}</div><h1 style="margin:0;font-size:20px">${x.name}${x.demo?' <span class="dchip" style="vertical-align:3px">示例</span>':''}</h1></div></div>
   <p class="sum" style="margin-top:10px">${x.one}</p>
-  <div class="facts"><span>版本&nbsp;<b class="num">${x.ver}</b></span><span>更新&nbsp;<span class="num">${x.date.slice(5)}</span></span><span>编号&nbsp;<b class="num">${x.code}</b></span><span><span class="num">${fmt(x.dl)}</span>&nbsp;次下载 · 示例数</span></div>
+  <div class="facts"><span>版本&nbsp;<b class="num">${x.ver}</b></span><span>更新&nbsp;<span class="num">${x.date.slice(5)}</span></span><span>编号&nbsp;<b class="num">${x.code}</b></span>${x.dl==null?'<span>新上架</span>':`<span><span class="num">${fmt(x.dl)}</span>&nbsp;次下载 · 示例数</span>`}</div>
   <div class="pcdl" style="margin-top:12px;border:0;padding:0;background:none"><div class="how" style="margin:0">${svg('pc')}<span>Skill 包请在电脑上下载安装：电脑打开「老岳AI产品论坛」网页版，搜编号 <span class="code">${x.code}</span>，免费、不用登录。</span></div></div>
   <div class="part"><div class="ph2"><span class="no">01</span><h2>用处</h2></div>
   <div class="h3">解决什么问题</div><p class="pain">${x.pain}</p>
@@ -557,19 +578,19 @@ s(id){const x=SKL(id);if(!x)return V.nf();const c=SKC(x.cat),k='s'+x.id,faved=S.
   <div class="part"><div class="ph2"><span class="no">02</span><h2>用法</h2><a data-go="skills/guide">Skill 怎么用？</a></div>
   <div class="h3">① 安装<small>选你用的 AI，复制命令到电脑终端</small></div><div id="inst">${instHTML(x)}</div>
   <div class="h3">② 怎么触发<small>点一下复制</small></div><div class="trg">${x.triggers.map(t=>`<button data-t="${esc(t)}" onclick="copyTrg(this)"><span class="qm">“</span><span>${t}</span><span class="c">复制</span></button>`).join('')}</div>
-  <div class="h3">③ 一次完整使用示例</div><div class="chat">${x.chat.map(([r,t,d],i)=>`<div class="msg ${r==='you'?'you':'ai'} ${d?'dv':''}"><span class="mav">${r==='you'?'你':'AI'}</span><div><small>${['你说','它先问你','你答','它交付'][i]||''}</small><div class="bub">${t}</div></div></div>`).join('')}</div>
-  <div class="h3">④ 常见问题</div><div class="faq">${SKILL_FAQ.map(([q,a2],i)=>`<details ${i?'':'open'}><summary>${q}</summary><p>${a2}</p></details>`).join('')}</div>
+  <div class="h3">③ 一次完整使用示例</div><div class="chat">${x.chat.map(([r,t,d],i)=>`<div class="msg ${r==='you'?'you':'ai'} ${d?'dv':''}"><span class="mav">${r==='you'?'你':'AI'}</span><div><small>${x.chat[i][3]||['你说','它先问你','你答','它交付'][i]||''}</small><div class="bub">${t}</div></div></div>`).join('')}</div>
+  <div class="h3">④ 常见问题</div><div class="faq">${(x.faq||SKILL_FAQ).map(([q,a2],i)=>`<details ${i?'':'open'}><summary>${q}</summary><p>${a2}</p></details>`).join('')}</div>
   <div class="h3">⑤ 包里有什么<small><span class="num">${x.files.length}</span> 个文件</small></div><div class="ftree">${files}</div></div>
   <div class="skby" style="border:0;margin-top:16px;padding-top:0">${skBy(x)}</div>
-  <div class="credit">${x.by==='laoyue'?'这个 Skill 由老岳亲手做、自己每天在用，版本更新会写在包里的更新记录':'本卡由老岳AI编辑部 · Skill 与自动化组借助 AI 综合多个公开资料整理，编辑部人工抽检'}</div>
+  <div class="credit">${x.upstream?`原作者：${x.upstream.author} · 来源：GitHub ${x.upstream.repo} · 许可证：${x.upstream.license}。老岳AI编辑部 中文整理与实测，上游文件原样保留`:x.by==='laoyue'?'这个 Skill 由老岳亲手做、自己每天在用，版本更新会写在包里的更新记录':'本卡由老岳AI编辑部 · Skill 与自动化组借助 AI 综合多个公开资料整理，编辑部人工抽检'}</div>
   ${x.prompts.length?`<div class="more" style="margin-top:20px"><h3>不想装？先用提示词试试</h3>${x.prompts.map(i=>it(P(i))).join('')}</div>`:''}
   ${x.articles.length?`<div class="more"><h3>想看完整思路</h3>${x.articles.map(i=>it(P(i))).join('')}</div>`:''}</div>`}},
 qa(){const lf=()=>{const q=_Q.qa||'';let L=POSTS.filter(p=>p.type==='question'&&(!q||(p.title+p.excerpt+(ANSWERS[p.id]||[]).map(a=>a.t).join('')).includes(q)));if(_SO.qa!=='new')L=L.slice().sort((a,b)=>(b.featured?1:0)-(a.featured?1:0));
-    return [L.length?`<div class="list">${L.map(qit).join('')}</div><div class="more-ld">已经到底了</div>`:noRes('qa','问答'),q?cntTxt('qa',L.length,-1,'条'):cntTxt('qa',STATS.qa,STATS.qa,'条')]};
+    return [L.length?`<div class="list">${L.map(qit).join('')}</div><div class="more-ld">已经到底了</div>`:_Q.qa?noRes('qa','问答'):empty('?','问答还在整理，首批作答即将上线','先私下提一个问题，作者挑出有代表性的匿名公开作答',`<a class="btn y" data-go="ask">私下提问</a>`),q?cntTxt('qa',L.length,-1,'条'):cntTxt('qa',STATS.qa,STATS.qa,'条')]};
   return {title:'问答',tab:'qa',lf,extra:`<a class="fab" data-go="ask">私下向作者提问 <small>不公开 · 不用登录</small></a>`,html:`<div class="pad rv" style="padding:0 16px 84px">${tb('qa','搜问答：作品集、竞品数字…',[['jx','精选优先'],['new','最新']])}
   <div class="qhd" style="margin-top:6px"><h2>读者来信 · 作者答</h2><p>你私下提的问题，作者挑出有代表性的，去掉个人信息后公开作答</p>
   <div class="steps"><span><i>1</i>私下提问</span><em>›</em><span><i>2</i>作者挑选</span><em>›</em><span><i>3</i>匿名作答</span></div></div>
-  <div class="sec"><h4>精选与最新</h4></div><div id="lst"></div></div>`}},
+  ${POSTS.some(p=>p.type==='question')?'<div class="sec"><h4>精选与最新</h4></div>':''}<div id="lst"></div></div>`}},
 me(){return {title:'我的',tab:'me',dark:true,html:`<div class="mehd"><div class="who"><span class="av xl" style="background:var(--y);color:var(--ink)">我</span><div><b>本机记录</b><small>不用注册登录，内容全部免费看</small></div></div></div>
   <div class="local"><i>i</i><span>收藏、看过和提问记录只保存在这台手机上；删除小程序或清理缓存会丢失。</span></div>
   <div class="card grid3"><a data-go="fav"><b>${S.faved.length}</b>收藏</a><a data-go="seen"><b>${S.seen.length}</b>看过</a><a data-go="myask"><b>${S.asks.length}</b>我的提问</a></div>
@@ -581,10 +602,10 @@ articles(){const lf=()=>{const q=_Q.articles||'';let L=POSTS.filter(p=>p.type===
 lib(k){k=k||'';const isT=k==='tool';
   const lf=()=>{const q=_Q['lib'+k]||'';const m=x=>!q||String(x).includes(q);
     if(isT){const T=TOOLS.filter(t=>m(t.name+t.one+t.pm));return [T.length?TOOLCATS.map(x=>{const L=T.filter(t=>t.cat===x.id);return L.length?`<div class="sec"><h4>${x.name}</h4><small class="num">${x.n} 个</small></div><div class="tg2">${L.map(tl).join('')}</div>`:''}).join('')+'<div class="more-ld">更多工具持续核对中</div>':noRes('lib'+k,'工具卡'),q?cntTxt('lib'+k,T.length,-1,'个'):cntTxt('lib'+k,STATS.tool,STATS.tool,'个')]}
-    let L=cards().filter(p=>p.kind!=='prompt'&&(!k||p.kind===k)&&m(p.title+p.excerpt+(p.attach?p.attach.code:'')));if(_SO['lib'+k]==='hot')L.sort((a,b)=>b.favs-a.favs);else L.sort((a,b)=>b.date.localeCompare(a.date));
+    let L=cards().filter(p=>p.kind!=='prompt'&&(!k||p.kind===k)&&m(p.title+p.excerpt+(p.attach?p.attach.code:'')));if(_SO['lib'+k]==='hot')L.sort((a,b)=>b.favs-a.favs);else if(!REAL||_SO['lib'+k]==='new')L.sort((a,b)=>b.date.localeCompare(a.date));const n=Math.max(12,(window._n||6)*2);const all0=L.length;L=L.slice(0,n);
     const all=k?STATS[k]:STATS.template+STATS.term+STATS.case+STATS.tool;
-    return [L.length?`<div class="list">${L.map(it).join('')}</div>${!k&&!q?`<div class="sec"><h4>工具卡</h4><small>按用途找</small><a data-go="lib/tool">全部 ›</a></div><div class="tg2">${TOOLS.slice(0,4).map(tl).join('')}</div>`:''}<div class="more-ld">已经到底了</div>`:noRes('lib'+k,'资料'),q?cntTxt('lib'+k,L.length,-1,'份'):cntTxt('lib'+k,all,all,'份')]};
-  return {title:isT?'工具卡':'资料库',back:true,lf,html:`<div class="pad rv" style="padding-top:0">${tb('lib'+k,isT?'搜工具卡：纪要、透视表…':'搜资料：模板名或编号 R0006…',isT?null:[['new','最新'],['hot','最多收藏']])}
+    return [L.length?`<div class="list">${L.map(it).join('')}</div>${all0>L.length?`<div id="more">${skel(1)}</div>`:''}${!k&&!q?`<div class="sec"><h4>工具卡</h4><small>按用途找</small><a data-go="lib/tool">全部 ›</a></div><div class="tg2">${TOOLS.slice(0,4).map(tl).join('')}</div>`:''}<div class="more-ld">已经到底了</div>`:noRes('lib'+k,'资料'),q?cntTxt('lib'+k,all0,-1,'份'):cntTxt('lib'+k,all,all,'份')]};
+  return {title:isT?'工具卡':'资料库',back:true,lf,html:`<div class="pad rv" style="padding-top:0">${tb('lib'+k,isT?'搜工具卡：纪要、透视表…':'搜资料：模板名或编号 R0006…',isT?null:(REAL?[['rec','推荐'],['new','最新']]:[['new','最新'],['hot','最多收藏']]))}
   <div class="chips" style="margin-top:4px">${[['','全部'],['template','模板'],['tool','工具卡'],['term','方法术语'],['case','案例拆解']].map(([x,n])=>`<a class="chip ${k===x?'on':''}" data-go="lib/${x}">${n}</a>`).join('')}</div>
   <div class="note" style="margin-top:12px">${isT?'按产品经理的用途分类，写清能帮你干什么、上手三步。':'可以在手机上看和复制要点；模板源文件请在<b>电脑上</b>打开网页版，搜资料编号下载。'}</div><div id="lst"></div></div>`}},
 col(id){const k=CO(id);if(!k)return V.nf();const ch='col'+id;const lf=()=>{const q=_Q[ch]||'';const m=x=>!q||String(x).includes(q);const L=cards().filter(p=>p.col===id&&m(p.title+p.excerpt)),T=TOOLS.filter(t=>t.col===id&&m(t.name+t.one)),SK2=id==='skill'?SKILLS.filter(x=>x.by!=='laoyue'&&m(x.name+x.one+x.code)):[];const n=L.length+T.length+SK2.length;
@@ -593,8 +614,11 @@ col(id){const k=CO(id);if(!k)return V.nf();const ch='col'+id;const lf=()=>{const
   return {title:k.name,back:true,lf,html:`<div class="pad rv" style="padding-top:0">${tb(ch,`在「${k.name}」栏目里搜`)}<div class="card" style="padding:16px;display:flex;gap:12px;align-items:center">${colAv(id,'xl')}<div><b style="font-size:17px">${k.name}</b><div style="font-size:11.5px;color:var(--mute)">老岳AI编辑部 · ${k.group} · 编辑部栏目</div><div style="font-size:13px;color:var(--ink2);margin-top:4px;line-height:1.6">${k.desc}</div></div></div><div id="lst"></div></div>`}},
 c(id){const p=P(id);if(!p||p.type!=='card')return V.nf();seen(p.id);const faved=S.faved.includes(p.id);let main='',bar='';
   const fav=`<button class="ib ${faved?'on':''}" onclick="tog('faved',${p.id},this)"><b>${faved?'★':'☆'}</b><span class="t">${faved?'已收藏':'收藏'}</span></button><button class="ib" onclick="toast('转发给微信好友',true)"><b>↗</b>转发</button>`;
-  if(p.kind==='prompt'){const v=vars(p),f=FILL[p.id]||{},n=v.filter(k=>f[k]).length;main=`<div class="pbox"><div class="ph"><span>点高亮处填写 · 已填 <span class="num">${n}/${v.length}</span></span>${n?`<a style="text-decoration:underline" onclick="delete FILL[${p.id}];route(true)">清空</a>`:''}</div><div class="pt">${ptext(p,true)}</div></div>`;
-    bar=fav+`<button class="main" onclick="copyPrompt(${p.id})">${svg('copy')}复制提示词</button>`}
+  const rs=p.sections?`${p.sections.map(x=>`<section class="csec"><h3>${x.h}</h3><div class="md">${mdHTML(x.md)}</div></section>`).join('')}${p.srcs&&p.srcs.length?`<div class="srcs">参考资料：${p.srcs.map(esc).join('、')}（综合重写，不放原文链接）</div>`:''}`:'';
+  if(p.sections&&p.kind==='template'){main=`<div class="mdcode" style="margin-top:14px"><pre>${esc(p.tpl||'')}</pre></div>`+rs;bar=fav+`<button class="main" onclick="copyTxt(${esc(JSON.stringify(p.tpl||'')).replace(/&quot;/g,"'").replace(/\n/g,'\\n')},'已复制模板');this.classList.add('done');this.innerHTML=svg('ok')+'已复制'">${svg('copy')}复制模板</button>`}
+  else if(p.sections&&p.kind!=='prompt'){main=rs;const t=p.title+'\n'+p.excerpt+'\n\n'+p.sections.map(x=>x.h+'\n'+x.md.replace(/[*`#|]/g,'')).join('\n\n');bar=fav+`<button class="main" onclick="copyTxt(${esc(JSON.stringify(t)).replace(/&quot;/g,"'").replace(/\n/g,'\\n')},'已复制要点');this.classList.add('done');this.innerHTML=svg('ok')+'已复制'">${svg('copy')}复制要点</button>`}
+  else if(p.kind==='prompt'){const v=vars(p),f=FILL[p.id]||{},n=v.filter(k=>f[k]).length;main=`<div class="pbox"><div class="ph"><span>点高亮处填写 · 已填 <span class="num">${n}/${v.length}</span></span>${n?`<a style="text-decoration:underline" onclick="delete FILL[${p.id}];route(true)">清空</a>`:''}</div><div class="pt">${ptext(p,true)}</div></div>`;
+    main+=rs;bar=fav+`<button class="main" onclick="copyPrompt(${p.id})">${svg('copy')}复制提示词</button>`}
   else if(p.kind==='template'){const a=p.attach;main=`<div class="pcdl"><div class="hd"><span class="fbadge">${a.name.split('.').pop().toUpperCase()}</span><div><b>${a.name}</b><small>${a.size} · ${fmt(a.dl)} 人用过</small></div></div>${p.files?`<ul class="inc">${p.files.map(f=>{const [n,...d]=f.split(' ');return `<li><code>${n}</code>${d.join(' ')}</li>`}).join('')}</ul>`:''}
     <div class="how">${svg('pc')}<span>源文件请在电脑上下载：电脑打开「老岳AI产品论坛」网页版，搜资料编号 <span class="code">${a.code}</span> 即可免费下载。</span></div></div>${p.cover?`<img src="${p.cover}" alt="" style="width:100%;border-radius:10px;border:1px solid var(--line);margin-top:12px">`:''}`;
     bar=fav+`<button class="main" onclick="copyTxt('${a.code}','已复制资料编号 <b>${a.code}</b><br><span style=&quot;font-size:12px;color:#BDBDB6&quot;>电脑上打开网页版搜它就能下载</span>');this.classList.add('done');this.innerHTML=svg('ok')+'已复制编号'">${svg('copy')}复制资料编号</button>`}
@@ -602,7 +626,7 @@ c(id){const p=P(id);if(!p||p.type!=='card')return V.nf();seen(p.id);const faved=
   else{main=`<ol class="pts">${p.points.map(x=>`<li>${x}</li>`).join('')}</ol>`;const t=p.title+'\n'+p.points.map((x,i)=>`${i+1}. ${x}`).join('\n');bar=fav+`<button class="main" onclick="copyTxt(${esc(JSON.stringify(t)).replace(/&quot;/g,"'")},'已复制要点');this.classList.add('done');this.innerHTML=svg('ok')+'已复制'">${svg('copy')}复制要点</button>`}
   const rel=cards().filter(x=>x.id!==p.id&&(x.kind===p.kind||x.board===p.board)).slice(0,3);
   return {title:KINDS[p.kind].name,back:true,bar,html:`<div class="dt rv">${kd(p.kind)}<h1>${p.title}</h1><p class="sum">${p.excerpt}</p>
-  <div class="fitline"><b>适合谁</b><span>${p.fit}</span></div>${main}
+  ${p.fit?`<div class="fitline"><b>${p.sections?'什么时候用':'适合谁'}</b><span>${p.fit}</span></div>`:''}${main}
   <div style="display:flex;align-items:center;margin-top:14px">${colSig(p.col)}<span style="margin-left:auto;font-size:11.5px;color:var(--mute)" class="num">${p.date}</span></div>
   <div class="credit">本卡由老岳AI编辑部 · ${CO(p.col).group}借助 AI 综合多个公开资料整理，编辑部人工抽检</div>
   <div class="more" style="margin-top:20px"><h3>相关卡片</h3>${rel.map(it).join('')}</div>
@@ -618,17 +642,17 @@ t(id){const t=TL(id);if(!t)return V.nf();const faved=S.faved.includes('t'+t.id);
   ${t.prompts.length?`<div class="more" style="margin-top:20px"><h3>配合这些提示词用</h3>${t.prompts.map(i=>it(P(i))).join('')}</div>`:''}
   ${t.alts.length?`<div class="more"><h3>同类替代</h3><div class="tg2" style="margin-top:8px">${t.alts.map(i=>tl(TL(i))).join('')}</div></div>`:''}</div>`}},
 p(id){const p=P(id);if(!p||p.type!=='article')return V.nf();seen(p.id);const liked=S.liked.includes(p.id),faved=S.faved.includes(p.id);const AD=ADDENDA[p.id]||[];const ip=P(91)||mkInline();
-  const body=p.id===1?`<p>直接让 AI 写 PRD，出来的东西看着很全，评审时研发一问边界，三不知。问题不在 AI，在于我们跳过了「拆需求」这一步。</p>
+  const body=REAL&&p.body?mdHTML(p.body):p.id===1?`<p>直接让 AI 写 PRD，出来的东西看着很全，评审时研发一问边界，三不知。问题不在 AI，在于我们跳过了「拆需求」这一步。</p>
   <h2>第 1 步：先拆需求，不写 PRD</h2><p>把需求拆成「谁、在什么场景、要完成什么、现在怎么做」四句话。下面这条提示词点高亮处填写：</p>
   <div class="pbox"><div class="ph"><span>提示词 · 拆需求</span><button class="btn y" style="height:30px;font-size:12px" onclick="copyPrompt(91)">${svg('copy').replace('<svg','<svg width="13" height="13" style="stroke:currentColor;fill:none;stroke-width:2"')}复制</button></div><div class="pt">${ptext(ip,true)}</div></div>
   <h2>第 2 步：列功能清单，P0 最多 3 个</h2><p>P0 超过 3 个，说明还没想清楚先做什么。</p><img src="${p.cover}" alt="">
   <h2>第 3 步：每个 P0 过 6 类边界</h2><blockquote>数据为空、重复提交、权限、库存并发、网络中断、极端数量。</blockquote>
   <h2>第 4 步：让 AI 扮研发、再扮测试挑刺</h2><p>按 P0 / P1 / P2 排好，评审前自己先修一遍。</p>`:`<p>${p.excerpt}</p>${p.cover?`<img src="${p.cover}" alt="">`:''}<p style="color:var(--mute)">（正文示例）</p>`;
-  return {title:'长文',back:true,prog:true,bar:`<button class="ib ${liked?'on':''}" onclick="tog('liked',${p.id},this)"><b>${liked?'♥':'♡'}</b>${p.likes+(liked?1:0)}</button><button class="ib ${faved?'on':''}" onclick="tog('faved',${p.id},this)"><b>${faved?'★':'☆'}</b><span class="t">${faved?'已收藏':'收藏'}</span></button><button class="ib" onclick="toast('转发给微信好友',true)"><b>↗</b>转发</button><a class="main ink" data-go="ask/${p.id}">私下问作者</a>`,
+  return {title:'长文',back:true,prog:true,bar:`<button class="ib ${liked?'on':''}" onclick="tog('liked',${p.id},this)"><b>${liked?'♥':'♡'}</b>${p.likes==null?(liked?'有用':'有用'):p.likes+(liked?1:0)}</button><button class="ib ${faved?'on':''}" onclick="tog('faved',${p.id},this)"><b>${faved?'★':'☆'}</b><span class="t">${faved?'已收藏':'收藏'}</span></button><button class="ib" onclick="toast('转发给微信好友',true)"><b>↗</b>转发</button><a class="main ink" data-go="ask/${p.id}">私下问作者</a>`,
   html:`<div class="dt rv"><div class="crumb">${B(p.board).name} · 长文</div><h1>${p.pick?'<span class="tg jh" style="vertical-align:3px">精华</span>':''}${p.title}</h1>
-  <div class="by">${av(p.author,'l')}<div><div class="n">${U(p.author).name} <span class="off">${U(p.author).badge}</span></div><small>${p.time} · ${p.reads} 阅读</small></div></div>
+  <div class="by">${av(p.author,'l')}<div><div class="n">${U(p.author).name} <span class="off">${U(p.author).badge}</span></div><small>${p.time}${p.reads==null?' · '+metric(null):' · '+p.reads+' 阅读'}</small></div></div>
   <div class="prose">${body}</div>
-  ${p.attach?`<div class="pcdl"><div class="hd"><span class="fbadge">${p.attach.name.split('.').pop().toUpperCase()}</span><div><b>${p.attach.name}</b><small>${p.attach.size}</small></div></div><div class="how">${svg('pc')}<span>附件请在电脑上打开网页版下载，搜资料编号 <span class="code">${p.attach.code}</span>。</span></div></div>`:''}
+  ${p.attach?`<div class="pcdl"><div class="hd"><span class="fbadge">${p.attach.name.split('.').pop().toUpperCase()}</span><div><b>${p.attach.name}</b><small>${p.attach.size}</small></div></div><div class="how">${svg('pc')}<span>附件请在电脑上打开网页版下载${p.attach.code?`，搜资料编号 <span class="code">${p.attach.code}</span>`:'，搜这篇文章的标题即可'}。</span></div></div>`:''}
   ${AD.length?`<div class="addn"><h3>作者补充 <small>根据读者来信更新</small></h3>${AD.map(x=>`<div class="adi"><div class="q">${x.from}：${x.q}</div><div class="a"><b>${U(p.author).name}</b>${x.a}</div></div>`).join('')}</div>`:''}
   <div class="more"><h3>接着读</h3>${POSTS.filter(x=>x.id!==p.id&&x.type==='article').slice(0,3).map(it).join('')}</div></div>`}},
 q(id){const p=P(id);if(!p||p.type!=='question')return V.nf();seen(p.id);const A=ANSWERS[p.id]||[];const faved=S.faved.includes(p.id);
@@ -671,6 +695,7 @@ function route(keep){const h=(location.hash||'#home').slice(1).split('/');if(h[0
   ph.className='phone'+(r.tab?' has-tab':'')+(r.bar?' has-bar':'')+(r.dark?' dark':'');
   $('.topbg').style.background=r.dark?'var(--ink)':'';$('.sb').style.color=r.dark?'#fff':'';$('#navb').style.color=r.dark?'#fff':'';
   $('#navb').innerHTML=`${r.back?`<a class="back" aria-label="返回" onclick="history.length>1?history.back():go('home')">‹</a>`:''}<span>${r.title}</span><span class="cap" style="${r.dark?'background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25)':''}"><span>···</span><i></i><span><b class="o" style="${r.dark?'border-color:#fff':''}"></b></span></span>`;
+  if(REAL)r.html=r.html.replace(/<div class="demo">以上为示例数<\/div>|（示例数，下面展示样例）|（示例数）|（示例）| · 示例数|示例数/g,'');
   $('#scr').innerHTML=r.html;$('#prog').hidden=!r.prog;
   window._lf=r.lf||null;if(r.lf){if(window._skel){$('#lst').innerHTML=skel(4)}else fillList()}
   if(r.sfocus)setTimeout(()=>{const i=$('#sq');if(i){i.focus();const n=i.value.length;i.setSelectionRange(n,n)}},60);
@@ -691,6 +716,6 @@ if(/sel/.test(location.search))window._sel=['需求分析','数据分析'];else 
 // 演示：?sq=词 预填搜索页；?cq=词 预填频道搜索；?recent 预置最近搜索
 {const g=k=>(location.search.match(new RegExp(k+'=([^&]+)'))||[])[1];if(g('sq'))window._sq=decodeURIComponent(g('sq'));if(g('cq'))_Q.prompts=_Q.skills=_Q.qa=decodeURIComponent(g('cq'));if(/recent/.test(location.search)){recent.push('周报');recent.push('会议纪要');recent.push('PRD 模板')}}
 window._skel=true;route();{const sc=(location.search.match(/scroll=(\w+)/)||[])[1];if(sc)setTimeout(()=>{const e=document.getElementById(sc);if(e)$('#scr').scrollTop=e.offsetTop-110},500)}setTimeout(()=>{window._skel=false;if(!/skeleton/.test(location.search)&&window._lf)fillList()},280);
-if(/sheet/.test(location.search))setTimeout(()=>fillVar(22,'粘贴 PRD'),100);
-if(/miss/.test(location.search))setTimeout(()=>copyPrompt(22),100);
+if(/sheet/.test(location.search)&&P(22))setTimeout(()=>fillVar(22,'粘贴 PRD'),100);
+if(/miss/.test(location.search)&&P(22))setTimeout(()=>copyPrompt(22),100);
 </script></body></html>
