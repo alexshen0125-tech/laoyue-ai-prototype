@@ -1,0 +1,74 @@
+/* ======================================================================
+   老岳AI产品论坛 · 主题 token 层（PC 网页 forum.html + 小程序 forum-miniapp.html 共用）
+   方向 B「工具台」· 2026-11-10 老板选定
+   规则：页面里的样式只引用这里的变量，不写死颜色。默认深色，可切浅色（html[data-theme=light]），选择存本机 ly_theme。
+   品牌：墨 #161616 + 品牌黄 #FFD84D；黄色实心一屏只给一个主操作（一键复制 / 免费下载 / 一键安装）。
+   ====================================================================== */
+:root{
+  /* 字体 */
+  --sans:"Geist","Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --serif:"Noto Serif SC","Songti SC",serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  /* 字号 7 档（R-2） */
+  --fs1:12px;--fs2:13px;--fs3:15px;--fs4:17px;--fs5:20px;--fs6:26px;--fs7:32px;
+  /* 间距 */
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--s8:72px;
+  /* 圆角 4 档（R-15） */
+  --r1:6px;--r2:10px;--r:16px;--r4:999px;
+  /* 动效 */
+  --ease:cubic-bezier(.16,1,.3,1);--e-out:cubic-bezier(.16,1,.3,1);--spring:cubic-bezier(.34,1.4,.64,1);
+  --t1:120ms;--t2:220ms;--t3:480ms;
+  /* 常量（深浅两套都不变） */
+  --y:#FFD84D;--on-y:#161616;--dk:#161616;--dk2:#2A2A27;--dk-tx:#EDEDE8;--dk-mute:#9C9C95;
+
+  /* ---------- 深色（默认）---------- */
+  color-scheme:dark;
+  --bg:#0C0C0B;--bg2:#121211;--card:#161615;--card2:#1B1B19;--sunk:#212120;
+  --line:#2C2C29;--line2:#232321;--line3:#3B3B37;
+  --ink:#EDEDE8;--ink2:#CBCBC4;--mute:#9C9C95;--mute2:#8E8E87;--deco:#5E5E58;--on-ink:#161616;
+  --y2:#2E2912;--y3:#1F1C10;--y-ink:#FFE38A;--y-line:#7A6720;
+  --ok:#3FCF8E;--okbg:#0F2A1F;--okline:#1F4D3A;--okink:#8BE6BD;
+  --q:#8AB4FF;--qbg:#152038;--p:#B9A6FF;--pbg:#211B38;--pline:#3A3060;--warn:#FF8F6B;--warnbg:#2E1912;
+  --fg-rgb:237 237 232;--shadow-rgb:0 0 0;
+  --glow:rgba(255,216,77,.13);--grid:rgba(255,255,255,.045);
+  --hi:inset 0 1px 0 rgba(255,255,255,.05);
+  --sh1:0 1px 0 rgba(0,0,0,.4);--sh2:0 24px 60px -24px rgba(0,0,0,.7);
+}
+:root[data-theme=light]{
+  color-scheme:light;
+  --bg:#F4F4F1;--bg2:#EBEBE6;--card:#FFFFFF;--card2:#FBFBF9;--sunk:#F2F2EE;
+  --line:#E6E6E1;--line2:#EFEFEB;--line3:#D6D6D0;
+  --ink:#161616;--ink2:#2A2A28;--mute:#696963;--mute2:#6E6E67;--deco:#B9B9B2;--on-ink:#FFFFFF;
+  --y2:#FFF4C2;--y3:#FFFAE3;--y-ink:#5C4600;--y-line:#E5C24A;
+  --ok:#0E7350;--okbg:#E7F5EE;--okline:#BFE3D2;--okink:#164A36;
+  --q:#2F5FD0;--qbg:#EAF1FF;--p:#5B3CC4;--pbg:#F1ECFF;--pline:#E4DCFF;--warn:#B23A0B;--warnbg:#FFE8E3;
+  --fg-rgb:22 22 22;--shadow-rgb:22 22 22;
+  --glow:rgba(255,216,77,.34);--grid:rgba(22,22,22,.045);
+  --hi:inset 0 1px 0 rgba(255,255,255,.9);
+  --sh1:0 1px 0 rgba(22,22,22,.04);--sh2:0 24px 50px -24px rgba(22,22,22,.22);
+}
+
+/* ---------- 共用组件（两端一致）---------- */
+/* 顶部光晕 + 遮罩网格（只在页面顶部，固定层，不挡点击） */
+.aura{position:absolute;left:0;right:0;top:0;height:640px;pointer-events:none;z-index:0;overflow:hidden}
+.aura:before{content:"";position:absolute;left:50%;top:-320px;width:1100px;height:680px;transform:translateX(-50%);background:radial-gradient(closest-side,var(--glow),transparent 70%)}
+.aura:after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 0%,#000 30%,transparent 75%);mask-image:radial-gradient(ellipse 70% 60% at 50% 0%,#000 30%,transparent 75%)}
+/* 免费标识：克制但清楚（语义绿描边小字） */
+.free{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 7px;border-radius:5px;border:1px solid color-mix(in srgb,var(--ok) 55%,transparent);color:var(--ok);font-size:12px;font-weight:700;line-height:1;white-space:nowrap;flex:none;vertical-align:1px}
+/* 深浅切换按钮 */
+.thm{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);box-shadow:var(--hi);flex:none;transition:transform var(--t1) var(--e-out),border-color var(--t2)}
+.thm:hover{border-color:var(--line3)}.thm:active{transform:scale(.92)}
+.thm svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.thm .sun{display:block}.thm .moon{display:none}:root[data-theme=light] .thm .sun{display:none}:root[data-theme=light] .thm .moon{display:block}
+/* 编号生成的等高线封面容器 */
+.cart{position:absolute;inset:0;pointer-events:none;overflow:hidden;color:var(--ink)}
+.cart svg{position:absolute;inset:0;width:100%;height:100%}
+/* 复制成功：回弹 + 黄色光环 */
+@keyframes ly-pop{30%{transform:scale(.95)}65%{transform:scale(1.03)}100%{transform:none}}
+@keyframes ly-ring{from{box-shadow:0 0 0 0 rgba(255,216,77,.55)}to{box-shadow:0 0 0 14px rgba(255,216,77,0)}}
+.ly-copied{animation:ly-pop 520ms var(--spring),ly-ring 760ms var(--e-out)}
+/* 页面切换 / 列表进入 */
+@keyframes ly-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.pg-in{animation:ly-in 420ms var(--e-out)}
+@keyframes ly-blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.ly-copied,.pg-in{animation:none!important}.aura:before{display:none}}

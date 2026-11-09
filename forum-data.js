@@ -97,6 +97,7 @@ window.KINDS = {
   case:     { name: '案例拆解', short: '案例',  act: '复制' },
   tool:     { name: '工具卡',   short: '工具',  act: '复制' },
   skill:    { name: 'Skill',    short: 'Skill', act: '下载' },
+  eval:     { name: 'AI 测评与指南', short: '测评指南', act: '阅读' },   // form：review 使用测评 / tip 使用技巧 / guide 上手指南 / compare 选型对比
 };
 // 首页规模感：分类计数（示例数，上线时取真实统计）
 window.STATS = { total: 5126, article: 186, prompt: 1840, template: 760, tool: 620, term: 910, case: 430, qa: 380 };
@@ -551,11 +552,11 @@ window.hlText = (s, q) => { s = String(s); q = String(q || '').trim(); if (!q) r
 
 // ---------- 真实数据支持（11-09 老板：原型改用真实内容；real-data.js 由 build_real_data.py 生成，?demo=1 切回示例） ----------
 window.REAL = false;
-// 编号直达兼容真实编号：P-001 / TP-001 / M-001 / W-001 / C-001 / S-1000 / T-001（工具卡）
+// 编号直达兼容真实编号：AE-001（AI 测评与指南）/ P-001 / TP-001 / M-001 / W-001 / C-001 / S-1000 / T-001（工具卡）
 (function () {
   const old = window.codeTo;
   window.codeTo = function (q) {
-    q = (q || '').trim(); const m = q.match(/^(TP|P|M|W|C|L|S|T)\s*-\s*(\d{1,4})$/i);
+    q = (q || '').trim(); const m = q.match(/^(AE|TP|P|M|W|C|L|S|T)\s*-\s*(\d{1,4})$/i);
     if (m && window.REAL) {
       const code = m[1].toUpperCase() + '-' + m[2]; const norm = x => (x || '').toUpperCase().replace(/-0*/, '-');
       const s = window.SKILLS.find(x => norm(x.code) === norm(code)); if (s) return { to: 's/' + s.id, code: s.code };
