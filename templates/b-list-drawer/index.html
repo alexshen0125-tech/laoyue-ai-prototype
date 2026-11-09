@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>列表 + 筛选 + 批量 + 详情抽屉 · 原型模板</title>
+<!--
+  原型模板 · 积木盒 | 老岳AI编辑部 · 原型组
+  改风格：改下面 :root 里的变量（--accent 换主色）
+  改数据：改 <script> 顶部 DATA
+  演示：右下角「原型面板」切页面和状态；按 H 隐藏面板；URL 可直达 #page=list&state=empty
+-->
+<style>
+/*@KIT_CSS*/
+/* ==========================================================================
+   ① 改风格只改这一块：颜色 / 字体 / 圆角 / 间距 / 阴影
+   改 --accent 一处即可换主色；墨色 5 级控制全部文字和线条
+   ========================================================================== */
+:root{
+  /* 主色（按钮、选中、链接）。换品牌色只改这两行 */
+  --accent:#2F54D4;
+  --accent-soft:#EEF2FD;
+  --accent-ink:#FFFFFF;          /* 主色按钮上的文字色 */
+
+  /* 墨色：文字与线条 */
+  --ink-900:#16171A;             /* 标题、正文 */
+  --ink-700:#44464D;             /* 次要正文 */
+  --ink-500:#6B6D75;             /* 说明、元信息（白底对比度 ≥4.5） */
+  --ink-300:#C7C9CF;             /* 占位、禁用 */
+  --line:#E6E7EA;                /* 分隔线 */
+  --line-soft:#F0F1F3;
+
+  /* 背景 */
+  --bg:#F6F6F7;                  /* 页面底色 */
+  --surface:#FFFFFF;             /* 卡片 / 表格 */
+  --surface-2:#FAFAFB;           /* 表头、悬停 */
+
+  /* 语义色（只用于状态） */
+  --success:#0E7A4F;  --success-soft:#E8F5EE;
+  --warning:#9A5B00;  --warning-soft:#FFF4E0;
+  --danger:#C42B24;   --danger-soft:#FDECEB;
+  --info:#2F54D4;     --info-soft:#EEF2FD;
+
+  /* 字体 */
+  --font-sans:"PingFang SC","HarmonyOS Sans SC","Source Han Sans SC","Noto Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --fs-12:12px; --fs-13:13px; --fs-14:14px; --fs-16:16px; --fs-20:20px; --fs-24:24px; --fs-32:32px;
+
+  /* 圆角 4 档 */
+  --r-sm:6px; --r-md:10px; --r-lg:16px; --r-full:999px;
+
+  /* 间距 */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px; --sp-10:40px;
+
+  /* 阴影：只用很淡的扩散阴影 */
+  --shadow-1:0 1px 2px rgba(22,23,26,.04),0 1px 1px rgba(22,23,26,.03);
+  --shadow-2:0 8px 24px -6px rgba(22,23,26,.10),0 2px 6px rgba(22,23,26,.04);
+  --shadow-3:0 24px 60px -12px rgba(22,23,26,.22),0 4px 12px rgba(22,23,26,.06);
+
+  /* 动效 */
+  --ease:cubic-bezier(.22,.8,.24,1);
+  --dur:220ms;
+
+  /* 尺寸 */
+  --ctl-h:36px;                  /* PC 输入框/按钮高 */
+  --ctl-h-lg:44px;               /* 移动端触控 ≥44 */
+}
+/* ============================ ② 基础 ============================ */
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:var(--fs-14);line-height:1.6;color:var(--ink-900);background:var(--bg);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,p{margin:0}
+h1,h2,h3{text-wrap:balance;font-weight:600;letter-spacing:-.01em}
+p{text-wrap:pretty}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent);text-decoration:none}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-size:.92em;letter-spacing:0}
+.muted{color:var(--ink-500)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
+.ic{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ic-sm{width:16px;height:16px}
+.ic-lg{width:24px;height:24px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;transition-duration:1ms!important}}
+
+/* ============================ ③ 按钮 ============================ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:var(--ctl-h);padding:0 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface);color:var(--ink-900);font-size:var(--fs-14);font-weight:500;white-space:nowrap;transition:background var(--dur) var(--ease),border-color var(--dur) var(--ease),transform 80ms var(--ease),box-shadow var(--dur) var(--ease)}
+.btn:hover{border-color:var(--ink-300);background:var(--surface-2)}
+.btn:active{transform:scale(.98)}
+.btn[disabled],.btn.is-disabled{opacity:.45;pointer-events:none}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 1px 2px rgba(22,23,26,.12)}
+.btn-primary:hover{background:var(--accent);border-color:var(--accent);filter:brightness(1.07)}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--ink-700)}
+.btn-ghost:hover{background:var(--line-soft);border-color:transparent}
+.btn-danger{color:var(--danger)}
+.btn-danger:hover{border-color:var(--danger);background:var(--danger-soft)}
+.btn-danger-solid{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn-danger-solid:hover{background:var(--danger);filter:brightness(1.07)}
+.btn-link{border:0;background:none;padding:0 4px;height:auto;color:var(--accent);font-weight:500}
+.btn-link:hover{background:none;text-decoration:underline;text-underline-offset:3px}
+.btn-icon{width:var(--ctl-h);padding:0}
+.btn-lg{height:48px;padding:0 22px;font-size:var(--fs-16);border-radius:var(--r-md)}
+.btn-block{width:100%}
+.btn .spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============================ ④ 表单控件 ============================ */
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>label,.label{font-size:var(--fs-13);color:var(--ink-700);font-weight:500}
+.label .req{color:var(--danger);margin-left:2px}
+.label .opt{color:var(--ink-500);font-weight:400;margin-left:4px}
+.input,.select,.textarea{height:var(--ctl-h);width:100%;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);outline:none;font-size:var(--fs-14)}
+.textarea{height:auto;min-height:88px;padding:10px 12px;resize:vertical;line-height:1.6}
+.input::placeholder,.textarea::placeholder{color:var(--ink-300)}
+.input:hover,.select:hover,.textarea:hover{border-color:var(--ink-300)}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.input.is-error,.textarea.is-error,.select.is-error{border-color:var(--danger);box-shadow:0 0 0 3px var(--danger-soft)}
+.field-hint{font-size:var(--fs-12);color:var(--ink-500)}
+.field-err{font-size:var(--fs-12);color:var(--danger)}
+.select{appearance:none;padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6D75' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.input-wrap{position:relative;display:flex;align-items:center}
+.input-wrap>.ic{position:absolute;left:10px;color:var(--ink-500);pointer-events:none}
+.input-wrap>.input{padding-left:34px}
+.input-wrap>.clear{position:absolute;right:4px;width:28px;height:28px;border:0;background:none;border-radius:var(--r-sm);color:var(--ink-500);display:grid;place-items:center}
+.input-wrap>.clear:hover{background:var(--line-soft)}
+.check{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.check input{appearance:none;width:16px;height:16px;margin:0;border:1.5px solid var(--ink-300);border-radius:4px;background:var(--surface);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none}
+.check input:checked,.check input:indeterminate{background:var(--accent);border-color:var(--accent)}
+.check input:checked::after{content:"";width:8px;height:4px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.check input:indeterminate::after{content:"";width:8px;height:2px;background:#fff;border-radius:1px}
+.seg{display:inline-flex;padding:3px;background:var(--line-soft);border-radius:var(--r-md);gap:2px}
+.seg button{height:30px;padding:0 12px;border:0;background:transparent;border-radius:calc(var(--r-md) - 3px);color:var(--ink-700);font-size:var(--fs-13);font-weight:500;transition:all var(--dur) var(--ease)}
+.seg button[aria-pressed="true"],.seg button.on{background:var(--surface);color:var(--ink-900);box-shadow:var(--shadow-1)}
+
+/* ============================ ⑤ 标签 / 徽标 ============================ */
+.tag{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border-radius:var(--r-full);font-size:var(--fs-12);font-weight:500;white-space:nowrap;background:var(--line-soft);color:var(--ink-700)}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.9}
+.tag.plain::before{display:none}
+.tag-success{background:var(--success-soft);color:var(--success)}
+.tag-warning{background:var(--warning-soft);color:var(--warning)}
+.tag-danger{background:var(--danger-soft);color:var(--danger)}
+.tag-info{background:var(--info-soft);color:var(--info)}
+.tag-neutral{background:var(--line-soft);color:var(--ink-500)}
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+.badge-accent{background:var(--accent);color:var(--accent-ink)}
+.badge-danger{background:var(--danger);color:#fff}
+.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+
+/* ============================ ⑥ 卡片 / 表格 ============================ */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
+.table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-14)}
+.table th{position:sticky;top:0;z-index:1;background:var(--surface-2);text-align:left;font-weight:500;font-size:var(--fs-13);color:var(--ink-500);height:40px;padding:0 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.table td{height:52px;padding:0 12px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.table tbody tr{transition:background 120ms var(--ease)}
+.table tbody tr:hover{background:var(--surface-2)}
+.table td .check,.table th .check{vertical-align:middle;display:inline-flex}
+.table tbody tr.is-selected{background:var(--accent-soft)}
+.table tbody tr.is-current td{background:var(--accent-soft)}
+.table tbody tr.is-current td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.table .r{text-align:right}
+.th-sort{display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:0;color:inherit;font-weight:inherit;font-size:inherit}
+.th-sort .ic{width:14px;height:14px;opacity:.5}
+.th-sort[aria-sort] .ic{opacity:1;color:var(--ink-900)}
+
+/* ============================ ⑦ 骨架 / 空态 / 出错 ============================ */
+.sk{position:relative;overflow:hidden;background:var(--line-soft);border-radius:var(--r-sm)}
+.sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:shimmer 1.4s var(--ease) infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:64px 24px;color:var(--ink-500)}
+.state .state-ic{width:56px;height:56px;border-radius:var(--r-lg);display:grid;place-items:center;background:var(--line-soft);color:var(--ink-500);margin-bottom:6px}
+.state .state-ic .ic{width:26px;height:26px}
+.state.is-error .state-ic{background:var(--danger-soft);color:var(--danger)}
+.state h3{font-size:var(--fs-16);color:var(--ink-900);font-weight:600}
+.state p{max-width:360px;font-size:var(--fs-13)}
+.state .acts{display:flex;gap:8px;margin-top:8px}
+
+/* ============================ ⑧ 弹层：遮罩 / 抽屉 / 弹窗 / 底部弹层 ============================ */
+.mask{position:fixed;inset:0;background:rgba(22,23,26,.36);opacity:0;transition:opacity var(--dur) var(--ease);z-index:40}
+.mask.show{opacity:1}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100vw);background:var(--surface);box-shadow:var(--shadow-3);z-index:41;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 320ms var(--ease)}
+.drawer:not(.show),.sheet:not(.show){visibility:hidden;box-shadow:none;transition:transform 320ms var(--ease),visibility 0s linear 320ms,box-shadow 0s linear 320ms}
+.drawer.show{transform:none}
+.drawer:focus,.modal:focus,.sheet:focus{outline:none}
+.layer-hd{display:flex;align-items:center;gap:12px;padding:18px 24px;border-bottom:1px solid var(--line)}
+.layer-hd h2{font-size:var(--fs-16);flex:1;min-width:0}
+.layer-bd{flex:1;overflow:auto;padding:20px 24px}
+.layer-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--line);background:var(--surface)}
+.modal{position:fixed;left:50%;top:50%;width:min(440px,calc(100vw - 32px));background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow-3);z-index:41;transform:translate(-50%,-48%) scale(.97);opacity:0;transition:transform var(--dur) var(--ease),opacity var(--dur) var(--ease);display:flex;flex-direction:column;max-height:calc(100vh - 64px)}
+.modal.show{transform:translate(-50%,-50%);opacity:1}
+.modal .layer-hd{border-bottom:0;padding-bottom:4px}
+.modal .layer-bd{padding-top:8px}
+.modal .layer-ft{border-top:0;padding-top:4px;padding-bottom:20px}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:var(--r-lg) var(--r-lg) 0 0;box-shadow:var(--shadow-3);z-index:41;transform:translateY(100%);transition:transform 320ms var(--ease);max-height:86%;display:flex;flex-direction:column}
+.sheet.show{transform:none}
+.sheet .grabber{width:36px;height:4px;border-radius:2px;background:var(--line);margin:8px auto 0}
+
+/* ============================ ⑨ Toast ============================ */
+.toast-host{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--r-md);background:var(--ink-900);color:#fff;font-size:var(--fs-14);box-shadow:var(--shadow-2);animation:toastIn 260ms var(--ease);pointer-events:auto}
+.toast .ic{width:16px;height:16px}
+.toast.ok .ic{color:#5BD39A}.toast.err .ic{color:#FF8A80}
+.toast .undo{border:0;background:none;color:#fff;font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:0 0 0 8px}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}}
+
+/* ============================ ⑩ 原型面板（演示用，按 H 隐藏） ============================ */
+.pp{position:fixed;right:20px;bottom:20px;z-index:90;font-size:12px;color:#E9E9EC;font-family:var(--font-sans)}
+.pp-toggle{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 12px;border-radius:var(--r-full);border:1px solid rgba(255,255,255,.08);background:rgba(22,23,26,.92);color:#fff;font-size:12px;font-weight:500;box-shadow:var(--shadow-2);backdrop-filter:blur(12px)}
+.pp-toggle .dot{width:6px;height:6px;border-radius:50%;background:#5BD39A}
+.pp-body{position:absolute;right:0;bottom:46px;width:280px;padding:14px;border-radius:14px;background:rgba(22,23,26,.95);border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow-3);backdrop-filter:blur(16px);display:none}
+.pp.open .pp-body{display:block;animation:toastIn 200ms var(--ease)}
+.pp h4{margin:0 0 8px;font-size:11px;font-weight:500;color:#9A9BA2;letter-spacing:.06em}
+.pp-group{margin-bottom:12px}
+.pp-list{display:flex;flex-wrap:wrap;gap:6px}
+.pp-list button{height:28px;padding:0 10px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.12);background:transparent;color:#D6D7DB;font-size:12px}
+.pp-list button:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.pp-list button.on{background:#fff;color:#16171A;border-color:#fff}
+.pp-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);color:#9A9BA2}
+.pp-foot kbd{font-family:var(--font-mono);font-size:11px;padding:1px 6px;border:1px solid rgba(255,255,255,.2);border-radius:4px;color:#D6D7DB}
+body.pp-hidden .pp{display:none}
+
+/* ============================ ⑪ 手机框（移动端模板用） ============================ */
+.stage{min-height:100vh;display:flex;align-items:center;justify-content:center;gap:56px;padding:40px 24px;background:radial-gradient(1200px 600px at 70% 20%,#EDEEF2 0%,var(--bg) 60%)}
+.stage-note{max-width:300px;color:var(--ink-700)}
+.stage-note .eyebrow{display:inline-flex;height:24px;align-items:center;padding:0 10px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);font-size:11px;letter-spacing:.08em;color:var(--ink-500);margin-bottom:16px}
+.stage-note h1{font-size:var(--fs-24);color:var(--ink-900);margin-bottom:10px;line-height:1.3}
+.stage-note p{font-size:var(--fs-13);color:var(--ink-500);margin-bottom:16px}
+.stage-note ol{margin:0;padding-left:18px;font-size:var(--fs-13);color:var(--ink-700);line-height:2}
+.phone{position:relative;width:390px;height:844px;flex:none;border-radius:54px;padding:12px;background:#0E0F11;box-shadow:0 0 0 1px #2A2B2F inset,0 40px 80px -20px rgba(22,23,26,.35),0 12px 24px -8px rgba(22,23,26,.2)}
+.screen{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column;isolation:isolate}
+.statusbar{height:47px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;font-size:15px;font-weight:600;position:relative;z-index:5}
+.statusbar .island{position:absolute;left:50%;top:11px;width:120px;height:34px;border-radius:20px;background:#0E0F11;transform:translateX(-50%)}
+.statusbar .sys{display:flex;gap:6px;align-items:center}
+.statusbar .bat{width:25px;height:12px;border:1.5px solid currentColor;border-radius:4px;position:relative;opacity:.9}
+.statusbar .bat::after{content:"";position:absolute;inset:1.5px;right:5px;background:currentColor;border-radius:1.5px}
+.homebar{position:absolute;left:50%;bottom:8px;width:134px;height:5px;border-radius:3px;background:var(--ink-900);transform:translateX(-50%);z-index:50;opacity:.85}
+.navbar{height:48px;flex:none;display:flex;align-items:center;gap:4px;padding:0 8px;position:relative}
+.navbar h1{position:absolute;left:56px;right:56px;text-align:center;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.tap{min-width:44px;min-height:44px;display:inline-grid;place-items:center;border:0;background:none;border-radius:var(--r-md);color:var(--ink-900)}
+.tap:active{background:var(--line-soft)}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.bottombar{flex:none;padding:10px 16px 30px;border-top:1px solid var(--line);background:var(--surface);display:flex;align-items:center;gap:12px}
+.screen .toast-host{position:absolute;top:60px}
+.screen .mask{position:absolute}
+.screen .modal{position:absolute}
+
+@media (max-width:900px){.stage{flex-direction:column;gap:24px}.stage-note{max-width:390px}}
+@media (max-width:430px){.stage{padding:0}.phone{width:100vw;height:100dvh;border-radius:0;padding:0;box-shadow:none}.screen{border-radius:0}.stage-note{display:none}}
+
+/* ============================ ⑫ PC 后台框架（侧栏 + 顶栏） ============================ */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:2px;padding:16px 12px;border-right:1px solid var(--line);background:var(--surface)}
+.brand{display:flex;align-items:center;gap:10px;height:40px;padding:0 8px;margin-bottom:14px;font-weight:600;font-size:15px}
+.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--ink-900);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;letter-spacing:-.02em}
+.side-label{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:14px 10px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;height:38px;padding:0 10px;border-radius:var(--r-sm);color:var(--ink-700);font-size:var(--fs-14);border:0;background:none;width:100%;text-align:left;transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+.nav-item:hover{background:var(--line-soft);color:var(--ink-900)}
+.nav-item.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.nav-item .badge{margin-left:auto}
+.side-foot{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid var(--line)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--line-soft);color:var(--ink-700);display:grid;place-items:center;font-size:13px;font-weight:600;flex:none}
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 32px;background:rgba(246,246,247,.86);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.crumb{display:flex;align-items:center;gap:6px;font-size:var(--fs-13);color:var(--ink-500)}
+.crumb .ic{width:14px;height:14px}
+.crumb b{color:var(--ink-900);font-weight:500}
+.topbar .sp{flex:1}
+.content{padding:24px 32px 64px;max-width:1360px;width:100%}
+.page-hd{display:flex;align-items:flex-end;gap:16px;margin-bottom:20px}
+.page-hd h1{font-size:var(--fs-24);line-height:1.25}
+.page-hd .sub{font-size:var(--fs-13);color:var(--ink-500);margin-top:4px}
+.page-hd .acts{margin-left:auto;display:flex;gap:8px}
+@media (max-width:1100px){.app{grid-template-columns:64px minmax(0,1fr)}.side .t,.side-label,.side .badge,.side-foot .t,.brand .t{display:none}.nav-item{justify-content:center;padding:0}.content{padding:20px}.topbar{padding:0 20px}}
+/*@END_KIT_CSS*/
+
+/* ============================ 本模板样式 ============================ */
+.filters{display:grid;grid-template-columns:minmax(200px,1.3fr) minmax(130px,.8fr) minmax(130px,.8fr) minmax(290px,1.3fr) auto;gap:12px;align-items:end;padding:16px;margin-bottom:16px}
+.filters .btns{display:flex;gap:8px}
+.date-range{display:flex;align-items:center;gap:6px}
+.date-range .input{padding:0 8px}
+.listcard{overflow:hidden}
+.list-tools{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:4px;margin-right:auto}
+.tab{height:32px;padding:0 12px;border-radius:var(--r-sm);border:0;background:none;color:var(--ink-700);font-weight:500;display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-14)}
+.tab:hover{background:var(--line-soft)}
+.tab.on{background:var(--ink-900);color:#fff}
+.tab.on .badge{background:rgba(255,255,255,.18);color:#fff}
+.batchbar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--surface-2);border-bottom:1px solid var(--line);font-size:var(--fs-13);color:var(--ink-500);min-height:52px}
+.batchbar .cnt{margin-right:8px;color:var(--ink-700)}
+.batchbar .cnt b{color:var(--accent);font-variant-numeric:tabular-nums}
+.batchbar .btn{height:32px}
+.table-wrap{overflow:auto;max-height:calc(100vh - 360px);min-height:420px}
+.table td:first-child,.table th:first-child{width:44px;padding-right:0}
+.row-link{border:0;background:none;padding:0;color:var(--ink-900);font-family:var(--font-mono);font-size:13px;cursor:pointer}
+.row-link:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.cell-ops{display:flex;gap:2px;justify-content:flex-end}
+.cell-ops .btn{height:30px;padding:0 8px}
+.pager{display:flex;align-items:center;gap:12px;padding:12px 16px;font-size:var(--fs-13);color:var(--ink-500)}
+.pager .sp{flex:1}
+.pager .pages{display:flex;gap:4px}
+.pager .pages button{min-width:32px;height:32px;border-radius:var(--r-sm);border:1px solid transparent;background:none;color:var(--ink-700);font-variant-numeric:tabular-nums}
+.pager .pages button:hover{background:var(--line-soft)}
+.pager .pages button.on{border-color:var(--line);background:var(--surface);color:var(--ink-900);font-weight:600;box-shadow:var(--shadow-1)}
+.pager .select{width:auto;height:32px}
+.result-hint{font-size:var(--fs-13);color:var(--ink-500);margin:-6px 0 12px}
+.result-hint b{color:var(--ink-900);font-variant-numeric:tabular-nums}
+.result-hint .btn-link{font-size:var(--fs-13)}
+.restore{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:12px;border-radius:var(--r-md);background:var(--info-soft);color:var(--info);font-size:var(--fs-13)}
+.restore .btn-link{margin-left:auto}
+
+/* 抽屉内容 */
+.dl{display:grid;grid-template-columns:96px 1fr;gap:10px 16px;font-size:var(--fs-14)}
+.dl dt{color:var(--ink-500)}
+.dl dd{margin:0;min-width:0}
+.sec{padding:20px 0;border-bottom:1px solid var(--line-soft)}
+.sec:first-child{padding-top:4px}
+.sec:last-child{border-bottom:0}
+.sec h3{font-size:var(--fs-14);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.items{width:100%;border-collapse:collapse;font-size:var(--fs-13)}
+.items th{text-align:left;color:var(--ink-500);font-weight:500;padding:6px 0;border-bottom:1px solid var(--line)}
+.items td{padding:9px 0;border-bottom:1px solid var(--line-soft)}
+.items .r{text-align:right}
+.items tfoot td{border:0;padding-top:12px;font-weight:600}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{position:relative;padding:0 0 16px 22px;font-size:var(--fs-13)}
+.tl li::before{content:"";position:absolute;left:4px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--ink-300)}
+.tl li::after{content:"";position:absolute;left:7px;top:18px;bottom:0;width:1px;background:var(--line)}
+.tl li:last-child::after{display:none}
+.tl li:first-child::before{background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.tl .t{color:var(--ink-500);font-variant-numeric:tabular-nums}
+.drawer-status{display:flex;align-items:center;gap:10px;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" aria-label="主导航">
+    <div class="brand"><span class="brand-mark">示</span><span class="t">示例后台</span></div>
+    <button class="nav-item" type="button"><svg class="ic"><use href="#i-home"/></svg><span class="t">工作台</span></button>
+    <div class="side-label">业务</div>
+    <button class="nav-item on" type="button" aria-current="page"><svg class="ic"><use href="#i-file"/></svg><span class="t">订单管理</span><span class="badge" id="navBadge">0</span></button>
+    <button class="nav-item" type="button"><svg class="ic"><use href="#i-users"/></svg><span class="t">客户管理</span></button>
+    <button class="nav-item" type="button"><svg class="ic"><use href="#i-layers"/></svg><span class="t">商品管理</span></button>
+    <button class="nav-item" type="button"><svg class="ic"><use href="#i-chart"/></svg><span class="t">数据报表</span></button>
+    <div class="side-label">系统</div>
+    <button class="nav-item" type="button"><svg class="ic"><use href="#i-settings"/></svg><span class="t">设置</span></button>
+    <div class="side-foot"><span class="avatar">王</span><span class="t" style="font-size:13px">王小明<br><span class="muted" style="font-size:12px">运营专员 · 示例</span></span></div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <nav class="crumb" aria-label="面包屑">业务 <svg class="ic"><use href="#i-chev-r"/></svg> <b>订单管理</b></nav>
+      <span class="sp"></span>
+      <button class="btn btn-ghost btn-icon" type="button" aria-label="通知"><svg class="ic"><use href="#i-bell"/></svg></button>
+    </div>
+
+    <div class="content">
+      <div class="page-hd">
+        <div><h1>订单管理</h1><p class="sub">查一批、处理一批：筛选后勾选批量确认，点订单号看详情</p></div>
+        <div class="acts">
+          <button class="btn" type="button" id="exportAll"><svg class="ic"><use href="#i-download"/></svg>导出</button>
+          <button class="btn btn-primary" type="button" id="createBtn"><svg class="ic"><use href="#i-plus"/></svg>新建订单</button>
+        </div>
+      </div>
+
+      <div id="restore"></div>
+
+      <form class="card filters" id="filters" role="search" onsubmit="return false">
+        <div class="field">
+          <label for="fKw">关键词</label>
+          <div class="input-wrap">
+            <svg class="ic"><use href="#i-search"/></svg>
+            <input class="input" id="fKw" placeholder="订单号 / 客户名称" autocomplete="off">
+            <button class="clear" type="button" id="kwClear" aria-label="清除关键词" hidden><svg class="ic ic-sm"><use href="#i-x"/></svg></button>
+          </div>
+        </div>
+        <div class="field"><label for="fOwner">负责人</label><select class="select" id="fOwner"></select></div>
+        <div class="field"><label for="fPay">支付方式</label><select class="select" id="fPay"></select></div>
+        <div class="field"><label for="fFrom">下单日期</label>
+          <div class="date-range"><input class="input num" type="date" id="fFrom" aria-label="开始日期"><span class="muted">至</span><input class="input num" type="date" id="fTo" aria-label="结束日期"></div>
+        </div>
+        <div class="btns"><button class="btn" type="button" id="resetBtn">重置</button></div>
+      </form>
+
+      <p class="result-hint" id="resultHint" aria-live="polite"></p>
+
+      <section class="card listcard" aria-label="订单列表">
+        <div class="list-tools">
+          <div class="tabs" role="tablist" id="tabs"></div>
+        </div>
+        <div class="batchbar" id="batchbar">
+          <span class="cnt" id="selCnt">勾选订单后可批量处理</span>
+          <button class="btn" type="button" data-batch="confirm" disabled><svg class="ic"><use href="#i-check"/></svg>批量确认</button>
+          <button class="btn" type="button" data-batch="export" disabled><svg class="ic"><use href="#i-download"/></svg>导出所选</button>
+          <button class="btn btn-danger" type="button" data-batch="cancel" disabled><svg class="ic"><use href="#i-x"/></svg>批量取消</button>
+          <button class="btn btn-ghost" type="button" id="clearSel" hidden>清空勾选</button>
+        </div>
+        <div class="table-wrap" id="tableWrap">
+          <table class="table" id="table">
+            <thead><tr>
+              <th><label class="check"><input type="checkbox" id="checkAll" aria-label="全选本页"></label></th>
+              <th>订单号</th>
+              <th>客户</th>
+              <th class="r"><button class="th-sort" type="button" data-sort="amount">金额（元）<svg class="ic"><use href="#i-sort"/></svg></button></th>
+              <th>状态</th>
+              <th>支付方式</th>
+              <th>负责人</th>
+              <th><button class="th-sort" type="button" data-sort="created">下单时间<svg class="ic"><use href="#i-sort"/></svg></button></th>
+              <th class="r">操作</th>
+            </tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div class="pager" id="pager"></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- 详情抽屉 -->
+<aside class="drawer" id="drawer" aria-labelledby="dwTitle">
+  <div class="layer-hd">
+    <div style="flex:1;min-width:0"><h2 id="dwTitle" class="mono"></h2><div class="drawer-status" id="dwStatus"></div></div>
+    <button class="btn btn-ghost btn-icon" type="button" id="dwPrev" aria-label="上一条"><svg class="ic"><use href="#i-chev-u"/></svg></button>
+    <button class="btn btn-ghost btn-icon" type="button" id="dwNext" aria-label="下一条"><svg class="ic"><use href="#i-chev-d"/></svg></button>
+    <button class="btn btn-ghost btn-icon" type="button" data-close aria-label="关闭"><svg class="ic"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="layer-bd" id="dwBody"></div>
+  <div class="layer-ft" id="dwFoot"></div>
+</aside>
+
+<script>
+/* ==========================================================================
+   ① 改数据只改这里（示例数据，全部虚构）
+   ========================================================================== */
+const DATA = {
+  statuses: [ // 状态枚举：id / 名称 / 标签颜色
+    { id: 'pending',  name: '待确认', tone: 'warning' },
+    { id: 'toship',   name: '待发货', tone: 'info' },
+    { id: 'done',     name: '已完成', tone: 'success' },
+    { id: 'canceled', name: '已取消', tone: 'neutral' }
+  ],
+  owners: ['王小明', '李晓雨', '陈一舟', '赵可'],
+  pays: ['在线支付', '月结', '货到付款'],
+  customers: ['青禾小馆', '南岸咖啡', '山野面馆', '拾味轻食', '橙子烘焙', '北街火锅', '一碗汤粉', '晴天茶饮', '老街卤味', '海边寿司'],
+  products: [['鸡胸肉 2kg', 58], ['生菜 5kg', 36], ['牛奶 1L×12', 96], ['高筋面粉 25kg', 168], ['鸡蛋 30枚', 32], ['番茄 5kg', 42]],
+  total: 46,           // 生成多少条示例订单
+  pageSize: 10
+};
+
+/* ==========================================================================
+   ② 下面是交互逻辑，一般不用改
+   ========================================================================== */
+/*@KIT_JS*/
+/* ==========================================================================
+   原型工具包（不用改）：图标、页面/状态切换、弹层、Toast
+   用法：页面里写 <svg class="ic"><use href="#i-search"/></svg>
+   ========================================================================== */
+(function(){
+  /* ---- 线性图标（24 网格，1.6 描边）。要加图标：照格式加一行 ---- */
+  var ICONS={
+    search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    filter:'<path d="M4 5h16l-6 8v5l-4 2v-7z"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    minus:'<path d="M5 12h14"/>',
+    x:'<path d="M6 6l12 12M18 6 6 18"/>',
+    check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    'chev-d':'<path d="m6 9 6 6 6-6"/>',
+    'chev-u':'<path d="m6 15 6-6 6 6"/>',
+    'chev-r':'<path d="m9 6 6 6-6 6"/>',
+    'chev-l':'<path d="m15 6-6 6 6 6"/>',
+    sort:'<path d="m8 9 4-4 4 4M8 15l4 4 4-4"/>',
+    more:'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>',
+    download:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14"/>',
+    upload:'<path d="M12 19V8m0 0-4 4m4-4 4 4M5 5h14"/>',
+    refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/>',
+    alert:'<path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.5M12 17.2v.1"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.1"/>',
+    'check-c':'<circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.7 2.7L16 9.6"/>',
+    'x-c':'<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',
+    inbox:'<path d="M3 13h5l1.5 3h5L16 13h5"/><path d="M5.5 5h13L21 13v6H3v-6z"/>',
+    file:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
+    home:'<path d="M4 10.5 12 4l8 6.5V20h-5.5v-6h-5v6H4z"/>',
+    grid:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+    chart:'<path d="M4 20V4M4 20h16"/><path d="m8 15 3.5-4 3 2.5L20 7"/>',
+    bars:'<path d="M5 20v-7M10 20V6M15 20v-9M20 20V9"/>',
+    pie:'<path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
+    bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5h4"/>',
+    user:'<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+    users:'<circle cx="9" cy="9" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M15.5 6.2a3 3 0 0 1 0 5.6M17 14.2A5.5 5.5 0 0 1 20.5 19"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>',
+    calendar:'<rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+    cart:'<path d="M3 4h2.5l2 11h11l2-8H7"/><circle cx="9.5" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/>',
+    bag:'<path d="M5 8h14l-1 12H6z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/>',
+    heart:'<path d="M12 19.5s-7.5-4.4-7.5-9.7A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6c0 5.3-7.5 9.7-7.5 9.7z"/>',
+    trash:'<path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/>',
+    edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+    send:'<path d="M12 19V5m0 0-6 6m6-6 6 6"/>',
+    spark:'<path d="M12 3.5 13.8 10.2 20.5 12 13.8 13.8 12 20.5 10.2 13.8 3.5 12 10.2 10.2z"/>',
+    copy:'<rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/>',
+    'thumb-u':'<path d="M7.5 10.5V20H4.5v-9.5zM7.5 10.5 11 4a2 2 0 0 1 2.6 1.9V9h4.7a2 2 0 0 1 2 2.4l-1.4 6.8a2 2 0 0 1-2 1.8H7.5"/>',
+    'thumb-d':'<path d="M7.5 13.5V4H4.5v9.5zM7.5 13.5 11 20a2 2 0 0 0 2.6-1.9V15h4.7a2 2 0 0 0 2-2.4l-1.4-6.8A2 2 0 0 0 16.9 4H7.5"/>',
+    stop:'<rect x="7" y="7" width="10" height="10" rx="2"/>',
+    lock:'<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+    phone:'<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/>',
+    eye:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+    'eye-off':'<path d="M4 4l16 16M10.5 6a9.7 9.7 0 0 1 1.5-.1C18 5.9 21.5 12 21.5 12a16 16 0 0 1-2.6 3.3M6.6 7.2C4 9 2.5 12 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+    pin:'<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+    ticket:'<path d="M4 7.5h16v3a1.8 1.8 0 0 0 0 3.5v3H4v-3a1.8 1.8 0 0 0 0-3.5z"/><path d="M14.5 7.5v10" stroke-dasharray="2 2"/>',
+    wallet:'<rect x="3.5" y="6" width="17" height="13" rx="2"/><path d="M3.5 9.5h17M15.5 14h2"/>',
+    logout:'<path d="M14 4.5H6.5v15H14M10.5 12H20m0 0-3.5-3.5M20 12l-3.5 3.5"/>',
+    layers:'<path d="m12 4 8.5 4.5L12 13 3.5 8.5z"/><path d="m3.5 12.5 8.5 4.5 8.5-4.5"/>',
+    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    msg:'<path d="M4.5 5.5h15v10h-8l-4.5 3.5v-3.5H4.5z"/>',
+    link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    paperclip:'<path d="m19 11.5-7.2 7.2a4.5 4.5 0 0 1-6.4-6.4l7.6-7.6a3 3 0 0 1 4.2 4.2L9.6 16.5a1.5 1.5 0 0 1-2.1-2.1l6.7-6.7"/>',
+    flow:'<circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M6 8.2v3.3A2.5 2.5 0 0 0 8.5 14h7A2.5 2.5 0 0 1 18 16.5v-.1"/>',
+    approve:'<path d="M9 4.5h6l1 2.5h3v13H5V7h3z"/><path d="m9 14 2 2 4-4.5"/>',
+    arrow:'<path d="M5 12h14m0 0-5-5m5 5-5 5"/>',
+    'arrow-up':'<path d="M7 14 12 9l5 5"/>',
+    'arrow-dn':'<path d="M7 10l5 5 5-5"/>',
+    star:'<path d="m12 4 2.4 5 5.4.6-4 3.7 1.1 5.4L12 16l-4.9 2.7 1.1-5.4-4-3.7 5.4-.6z"/>',
+    headset:'<path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13.5" width="4" height="6" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6" rx="1.5"/><path d="M18.5 19.5c0 1-1.5 1.5-4 1.5"/>',
+    book:'<path d="M5 4.5h10.5A2.5 2.5 0 0 1 18 7v12.5H7.5A2.5 2.5 0 0 1 5 17z"/><path d="M5 17a2.5 2.5 0 0 1 2.5-2.5H18"/>',
+    history:'<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5M12 8v4l3 1.8"/>',
+    globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/>',
+    shield:'<path d="M12 3.5 19 6v6c0 4.2-3 7.4-7 8.5-4-1.1-7-4.3-7-8.5V6z"/><path d="m9 12 2 2 4-4.2"/>',
+    gift:'<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M3.5 9h17M12 9v11M12 9S10.5 4.5 8 5s-1 4 4 4zM12 9s1.5-4.5 4-4 1 4-4 4z"/>'
+  };
+  var sp='<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">';
+  for(var k in ICONS) sp+='<symbol id="i-'+k+'" viewBox="0 0 24 24">'+ICONS[k]+'</symbol>';
+  sp+='</svg>';
+  document.addEventListener('DOMContentLoaded',function(){document.body.insertAdjacentHTML('afterbegin',sp)});
+
+  var P=window.Proto={};
+  P.ic=function(n,cls){return '<svg class="ic '+(cls||'')+'" aria-hidden="true"><use href="#i-'+n+'"/></svg>'};
+  P.esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  P.money=function(n,d){d=d==null?2:d;return Number(n).toLocaleString('zh-CN',{minimumFractionDigits:d,maximumFractionDigits:d})};
+  P.$=function(s,r){return (r||document).querySelector(s)};
+  P.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  /* ---- Toast：Proto.toast('已保存','ok') ---- */
+  P.toast=function(msg,type,opt){
+    opt=opt||{};
+    var host=(opt.host||document.querySelector('.screen')||document.body).querySelector(':scope > .toast-host');
+    var root=opt.host||document.querySelector('.screen')||document.body;
+    if(!host){host=document.createElement('div');host.className='toast-host';host.setAttribute('role','status');host.setAttribute('aria-live','polite');root.appendChild(host)}
+    var t=document.createElement('div');t.className='toast '+(type||'');
+    var icn=type==='ok'?'check-c':type==='err'?'x-c':'info';
+    t.innerHTML=P.ic(icn)+'<span>'+P.esc(msg)+'</span>'+(opt.undo?'<button class="undo" type="button">撤销</button>':'');
+    if(opt.undo) t.querySelector('.undo').onclick=function(){opt.undo();t.remove()};
+    host.appendChild(t);
+    setTimeout(function(){t.style.transition='opacity .3s';t.style.opacity='0';setTimeout(function(){t.remove()},300)},opt.ms||2400);
+  };
+
+  /* ---- 弹层：Esc / 点遮罩关闭、焦点锁定、关闭后焦点回到触发处 ---- */
+  var stack=[];
+  P.open=function(el,opt){
+    opt=opt||{};
+    var host=opt.host||document.body;
+    var mask=document.createElement('div');mask.className='mask';host.appendChild(mask);
+    el.setAttribute('role',el.getAttribute('role')||'dialog');el.setAttribute('aria-modal','true');
+    if(el.parentNode!==host) host.appendChild(el);
+    var item={el:el,mask:mask,back:document.activeElement,onClose:opt.onClose};
+    stack.push(item);
+    void el.offsetWidth;void mask.offsetWidth;(function(){mask.classList.add('show');el.classList.add('show');
+      var f=el.querySelector('[autofocus]');if(f)f.focus({preventScroll:true});else{if(!el.hasAttribute('tabindex'))el.setAttribute('tabindex','-1');el.focus({preventScroll:true})}})();
+    mask.onclick=function(){if(!opt.locked)P.close(el)};
+    return el;
+  };
+  P.close=function(el){
+    var i=-1;for(var j=stack.length-1;j>=0;j--){if(!el||stack[j].el===el){i=j;break}}
+    if(i<0)return;var it=stack.splice(i,1)[0];
+    it.el.classList.remove('show');it.mask.classList.remove('show');
+    setTimeout(function(){it.mask.remove();if(it.el.dataset.temp)it.el.remove()},320);
+    if(it.back&&it.back.focus)it.back.focus({preventScroll:true});
+    if(it.onClose)it.onClose();
+  };
+  document.addEventListener('keydown',function(e){
+    var top=stack[stack.length-1];
+    if(e.key==='Escape'&&top){e.preventDefault();P.close(top.el);return}
+    if(e.key==='Tab'&&top){
+      var f=P.$$('a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])',top.el).filter(function(n){return n.offsetParent!==null});
+      if(!f.length)return;var a=f[0],b=f[f.length-1];
+      if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus()}
+      else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus()}
+      else if(!top.el.contains(document.activeElement)){e.preventDefault();a.focus()}
+    }
+  });
+
+  /* ---- 确认弹窗：Proto.confirm({title,body,ok,danger}).then(...) ---- */
+  P.confirm=function(o){
+    return new Promise(function(res){
+      var m=document.createElement('div');m.className='modal';m.dataset.temp=1;
+      m.setAttribute('aria-labelledby','cf-t');
+      m.innerHTML='<div class="layer-hd"><h2 id="cf-t">'+P.esc(o.title)+'</h2></div><div class="layer-bd"><p class="muted" style="font-size:14px">'+(o.html||P.esc(o.body||''))+'</p></div><div class="layer-ft"><button class="btn" data-k="0" type="button">'+(o.cancel||'取消')+'</button><button class="btn '+(o.danger?'btn-danger-solid':'btn-primary')+'" data-k="1" type="button">'+P.esc(o.ok||'确定')+'</button></div>';
+      var done=false;
+      m.addEventListener('click',function(e){var b=e.target.closest('[data-k]');if(!b)return;done=true;P.close(m);res(b.dataset.k==='1')});
+      P.open(m,{host:o.host,onClose:function(){if(!done)res(false)}});
+      setTimeout(function(){m.querySelector('[data-k="1"]').focus()},30);
+    });
+  };
+
+  /* ---- 页面 / 状态切换 + 原型面板 ----
+     Proto.init({pages:[{id,name}], states:[{id,name}], render:function(page,state){}})
+     URL 直达：#page=list&state=empty ；按 H 隐藏面板 */
+  P.state={};
+  function parse(){var o={};location.hash.replace(/^#/,'').split('&').forEach(function(kv){var p=kv.split('=');if(p[0])o[p[0]]=decodeURIComponent(p[1]||'')});return o}
+  P.go=function(page,state,silent){
+    var c=P.cfg;page=page||P.state.page;
+    if(state==null) state=(page!==P.state.page)?'normal':P.state.state;
+    P.state={page:page,state:state||'normal'};
+    var h='#page='+page+(P.state.state!=='normal'?'&state='+P.state.state:'');
+    if(location.hash!==h) history.replaceState(null,'',h);
+    c.render(P.state.page,P.state.state);
+    syncPanel();
+  };
+  function syncPanel(){
+    P.$$('.pp [data-pg]').forEach(function(b){b.classList.toggle('on',b.dataset.pg===P.state.page)});
+    var sts=stateList();
+    var box=P.$('.pp [data-states]');if(!box)return;
+    box.innerHTML=sts.map(function(s){return '<button type="button" data-st="'+s.id+'" class="'+(s.id===P.state.state?'on':'')+'">'+s.name+'</button>'}).join('');
+  }
+  function stateList(){var c=P.cfg,pg=c.pages.filter(function(p){return p.id===P.state.page})[0]||{};return pg.states||c.states||[{id:'normal',name:'正常'}]}
+  P.init=function(cfg){
+    P.cfg=cfg;
+    var h=parse();
+    var first=(cfg.pages.filter(function(p){return p.id===h.page})[0]||cfg.pages[0]).id;
+    var pp=document.createElement('div');pp.className='pp';
+    pp.innerHTML='<div class="pp-body" role="region" aria-label="原型面板"><div class="pp-group"><h4>页面</h4><div class="pp-list">'+cfg.pages.map(function(p){return '<button type="button" data-pg="'+p.id+'">'+p.name+'</button>'}).join('')+'</div></div><div class="pp-group"><h4>状态</h4><div class="pp-list" data-states></div></div><div class="pp-foot"><span>'+P.esc(cfg.title||'原型模板')+'</span><span><kbd>H</kbd> 隐藏</span></div></div><button class="pp-toggle" type="button" aria-expanded="false"><span class="dot"></span>原型面板</button>';
+    document.body.appendChild(pp);
+    pp.querySelector('.pp-toggle').onclick=function(){var o=pp.classList.toggle('open');this.setAttribute('aria-expanded',o)};
+    pp.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.pg)P.go(b.dataset.pg,'normal');if(b.dataset.st)P.go(null,b.dataset.st)});
+    document.addEventListener('keydown',function(e){if((e.key==='h'||e.key==='H')&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&!e.metaKey&&!e.ctrlKey)document.body.classList.toggle('pp-hidden')});
+    if(/(^|[?&])shot\b/.test(location.search))document.body.classList.add('pp-hidden');
+    P.go(first,h.state||'normal');
+  };
+
+  /* ---- 骨架行 ---- */
+  P.skRows=function(n,cols){var s='';for(var i=0;i<n;i++){s+='<tr>';for(var j=0;j<cols;j++)s+='<td><div class="sk" style="height:12px;width:'+(40+((i*7+j*13)%50))+'%"></div></td>';s+='</tr>'}return s};
+  /* ---- 状态块 ---- */
+  P.stateBlock=function(o){return '<div class="state '+(o.error?'is-error':'')+'"><div class="state-ic">'+P.ic(o.icon||(o.error?'alert':'inbox'))+'</div><h3>'+P.esc(o.title)+'</h3>'+(o.body?'<p>'+P.esc(o.body)+'</p>':'')+(o.acts?'<div class="acts">'+o.acts+'</div>':'')+'</div>'};
+})();
+/*@END_KIT_JS*/
+
+const { $, $$, ic, esc, money, toast } = Proto;
+const ST = Object.fromEntries(DATA.statuses.map(s => [s.id, s]));
+const pad = n => String(n).padStart(2, '0');
+
+// 生成示例订单（固定种子，每次打开一样）
+let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+const ORDERS = Array.from({ length: DATA.total }, (_, i) => {
+  const d = new Date(2026, 10, 10, 18, 0); d.setHours(d.getHours() - Math.floor(i * 9 + rnd() * 6));
+  const lines = Array.from({ length: 1 + Math.floor(rnd() * 3) }, () => { const p = DATA.products[Math.floor(rnd() * DATA.products.length)]; return { name: p[0], price: p[1], qty: 1 + Math.floor(rnd() * 6) }; });
+  const st = i < 6 ? 'pending' : ['pending', 'toship', 'toship', 'done', 'done', 'done', 'canceled'][Math.floor(rnd() * 7)];
+  return {
+    id: 'SO' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + String(1000 + DATA.total - i).slice(-4),
+    customer: DATA.customers[Math.floor(rnd() * DATA.customers.length)],
+    owner: DATA.owners[Math.floor(rnd() * DATA.owners.length)],
+    pay: DATA.pays[Math.floor(rnd() * DATA.pays.length)],
+    status: st, created: d, lines,
+    amount: lines.reduce((s, l) => s + l.price * l.qty, 0),
+    log: [{ t: d, who: '系统', what: '客户下单' }]
+  };
+});
+const fmt = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const day = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+// 视图状态
+const V = { tab: 'all', kw: '', owner: '', pay: '', from: '', to: '', sort: { key: 'created', dir: 'desc' }, page: 1, sel: new Set(), demo: 'normal' };
+const MEMO = 'tpl-list-filter';
+
+// 填筛选项
+$('#fOwner').innerHTML = '<option value="">全部负责人</option>' + DATA.owners.map(o => `<option>${esc(o)}</option>`).join('');
+$('#fPay').innerHTML = '<option value="">全部方式</option>' + DATA.pays.map(o => `<option>${esc(o)}</option>`).join('');
+
+function filtered(ignoreTab) {
+  const kw = V.kw.trim().toLowerCase().replace(/\s+/g, '');
+  return ORDERS.filter(o =>
+    (ignoreTab || V.tab === 'all' || o.status === V.tab) &&
+    (!kw || o.id.toLowerCase().includes(kw) || o.customer.toLowerCase().includes(kw)) &&
+    (!V.owner || o.owner === V.owner) && (!V.pay || o.pay === V.pay) &&
+    (!V.from || day(o.created) >= V.from) && (!V.to || day(o.created) <= V.to)
+  ).sort((a, b) => { const k = V.sort.key, m = V.sort.dir === 'asc' ? 1 : -1; return (a[k] > b[k] ? 1 : a[k] < b[k] ? -1 : 0) * m; });
+}
+const hasFilter = () => !!(V.kw || V.owner || V.pay || V.from || V.to);
+
+function renderTabs() {
+  const base = filtered(true);
+  const tabs = [{ id: 'all', name: '全部' }, ...DATA.statuses];
+  $('#tabs').innerHTML = tabs.map(t => {
+    const n = t.id === 'all' ? base.length : base.filter(o => o.status === t.id).length;
+    return `<button class="tab ${V.tab === t.id ? 'on' : ''}" role="tab" aria-selected="${V.tab === t.id}" data-tab="${t.id}" type="button">${t.name}<span class="badge">${V.demo === 'loading' ? '–' : n}</span></button>`;
+  }).join('');
+  $('#navBadge').textContent = ORDERS.filter(o => o.status === 'pending').length;
+}
+
+function renderBatch() {
+  const n = V.sel.size;
+  $('#selCnt').innerHTML = n ? `已选 <b>${n}</b> 条` : '勾选订单后可批量处理';
+  $$('[data-batch]').forEach(b => b.disabled = !n);
+  $('#clearSel').hidden = !n;
+}
+
+function renderTable() {
+  const tb = $('#tbody');
+  $('#pager').style.display = '';
+  if (V.demo === 'loading') { tb.innerHTML = Proto.skRows(8, 9); $('#pager').style.display = 'none'; $('#resultHint').textContent = '正在加载…'; return; }
+  if (V.demo === 'error') {
+    tb.innerHTML = `<tr><td colspan="9">${Proto.stateBlock({ error: true, title: '列表没加载出来', body: '网络开小差了，已保留你的筛选条件。', acts: '<button class="btn btn-primary" type="button" data-retry>重新加载</button>' })}</td></tr>`;
+    $('#pager').style.display = 'none'; $('#resultHint').textContent = ''; return;
+  }
+  if (V.demo === 'empty') {
+    tb.innerHTML = `<tr><td colspan="9">${Proto.stateBlock({ icon: 'inbox', title: '还没有订单', body: '客户下单后会出现在这里；也可以先手动建一张。', acts: '<button class="btn btn-primary" type="button" data-create>新建订单</button><button class="btn" type="button">导入订单</button>' })}</td></tr>`;
+    $('#pager').style.display = 'none'; $('#resultHint').textContent = ''; return;
+  }
+  const rows = filtered();
+  const pages = Math.max(1, Math.ceil(rows.length / DATA.pageSize));
+  V.page = Math.min(V.page, pages);
+  const slice = rows.slice((V.page - 1) * DATA.pageSize, V.page * DATA.pageSize);
+
+  $('#resultHint').innerHTML = hasFilter() || V.tab !== 'all'
+    ? `找到 <b>${rows.length}</b> 条${V.kw ? ` · 含「${esc(V.kw)}」` : ''} <button class="btn-link" type="button" data-clear>清除筛选</button>`
+    : `共 <b>${rows.length}</b> 条订单 <span class="demo-mark">示例数据</span>`;
+
+  if (!rows.length) {
+    tb.innerHTML = `<tr><td colspan="9">${Proto.stateBlock({ icon: 'search', title: '没有符合条件的订单', body: '试试换个关键词，或放宽日期范围。', acts: '<button class="btn" type="button" data-clear>清除筛选</button>' })}</td></tr>`;
+    $('#pager').style.display = 'none'; syncCheckAll([]); return;
+  }
+  tb.innerHTML = slice.map(o => {
+    const s = ST[o.status], on = V.sel.has(o.id);
+    return `<tr class="${on ? 'is-selected' : ''} ${o.id === curId ? 'is-current' : ''}" data-id="${o.id}">
+      <td><label class="check"><input type="checkbox" data-sel="${o.id}" ${on ? 'checked' : ''} aria-label="勾选 ${o.id}"></label></td>
+      <td><button class="row-link" type="button" data-open="${o.id}">${o.id}</button></td>
+      <td>${esc(o.customer)}</td>
+      <td class="r num">${money(o.amount)}</td>
+      <td><span class="tag tag-${s.tone}">${s.name}</span></td>
+      <td>${esc(o.pay)}</td>
+      <td>${esc(o.owner)}</td>
+      <td class="num muted">${fmt(o.created)}</td>
+      <td class="r"><div class="cell-ops">
+        ${o.status === 'pending' ? `<button class="btn btn-link" type="button" data-confirm="${o.id}">确认</button>` : ''}
+        <button class="btn btn-link" type="button" data-open="${o.id}">查看</button>
+      </div></td></tr>`;
+  }).join('');
+  syncCheckAll(slice);
+
+  // 分页
+  let pg = '';
+  for (let i = 1; i <= pages; i++) pg += `<button type="button" class="${i === V.page ? 'on' : ''}" data-page="${i}" aria-label="第 ${i} 页" ${i === V.page ? 'aria-current="page"' : ''}>${i}</button>`;
+  $('#pager').innerHTML = `<span>第 ${(V.page - 1) * DATA.pageSize + 1}–${Math.min(V.page * DATA.pageSize, rows.length)} 条，共 ${rows.length} 条</span><span class="sp"></span>
+    <button class="btn btn-ghost btn-icon" type="button" data-page="${V.page - 1}" ${V.page === 1 ? 'disabled' : ''} aria-label="上一页"><svg class="ic"><use href="#i-chev-l"/></svg></button>
+    <div class="pages">${pg}</div>
+    <button class="btn btn-ghost btn-icon" type="button" data-page="${V.page + 1}" ${V.page === pages ? 'disabled' : ''} aria-label="下一页"><svg class="ic"><use href="#i-chev-r"/></svg></button>`;
+}
+
+function syncCheckAll(slice) {
+  const all = $('#checkAll'); const n = slice.filter(o => V.sel.has(o.id)).length;
+  all.checked = slice.length > 0 && n === slice.length; all.indeterminate = n > 0 && n < slice.length;
+  all.disabled = !slice.length;
+}
+function syncSortHead() {
+  $$('[data-sort]').forEach(b => { if (b.dataset.sort === V.sort.key) b.setAttribute('aria-sort', V.sort.dir === 'asc' ? 'ascending' : 'descending'); else b.removeAttribute('aria-sort'); });
+}
+function renderAll() { renderTabs(); renderTable(); renderBatch(); syncSortHead(); }
+
+// 记住上次筛选（存本机），恢复时提示并可清除
+function saveMemo() { try { localStorage.setItem(MEMO, JSON.stringify({ owner: V.owner, pay: V.pay })); } catch (e) {} }
+function loadMemo() {
+  try { const m = JSON.parse(localStorage.getItem(MEMO) || 'null'); if (m && (m.owner || m.pay)) { V.owner = m.owner; V.pay = m.pay; $('#fOwner').value = m.owner; $('#fPay').value = m.pay;
+    $('#restore').innerHTML = `<div class="restore">${ic('info')}已按你上次选的「${esc([m.owner, m.pay].filter(Boolean).join(' / '))}」筛好<button class="btn-link" type="button" data-clear>清除</button></div>`; } } catch (e) {}
+}
+
+// ----- 事件 -----
+let kwTimer;
+$('#fKw').addEventListener('input', e => { $('#kwClear').hidden = !e.target.value; clearTimeout(kwTimer); kwTimer = setTimeout(() => { V.kw = e.target.value; V.page = 1; renderAll(); }, 220); });
+$('#kwClear').onclick = () => { $('#fKw').value = ''; $('#kwClear').hidden = true; V.kw = ''; renderAll(); $('#fKw').focus(); };
+['fOwner', 'fPay', 'fFrom', 'fTo'].forEach(id => $('#' + id).addEventListener('change', e => { const k = { fOwner: 'owner', fPay: 'pay', fFrom: 'from', fTo: 'to' }[id]; V[k] = e.target.value; V.page = 1; saveMemo(); renderAll(); }));
+function clearFilters() { Object.assign(V, { kw: '', owner: '', pay: '', from: '', to: '', tab: 'all', page: 1 }); $('#filters').reset(); $('#kwClear').hidden = true; $('#restore').innerHTML = ''; saveMemo(); renderAll(); }
+$('#resetBtn').onclick = clearFilters;
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('button,input'); if (!t) return;
+  if (t.dataset.tab) { V.tab = t.dataset.tab; V.page = 1; renderAll(); }
+  if (t.dataset.page) { V.page = +t.dataset.page; renderTable(); $('#tableWrap').scrollTop = 0; }
+  if (t.dataset.sort) { const k = t.dataset.sort; V.sort = { key: k, dir: V.sort.key === k && V.sort.dir === 'desc' ? 'asc' : 'desc' }; renderTable(); syncSortHead(); }
+  if ('clear' in t.dataset) clearFilters();
+  if ('retry' in t.dataset) { Proto.go('list', 'loading'); setTimeout(() => Proto.go('list', 'normal'), 700); }
+  if ('create' in t.dataset || t.id === 'createBtn') toast('这里接「新建订单」页（可用分步表单模板）');
+  if (t.id === 'exportAll') toast(`已开始导出当前筛选的 ${filtered().length} 条，完成后在「导出记录」下载`, 'ok');
+  if (t.dataset.open) openDrawer(t.dataset.open);
+  if (t.dataset.confirm) confirmOrders([t.dataset.confirm]);
+  if (t.dataset.batch) batch(t.dataset.batch);
+  if (t.id === 'clearSel') { V.sel.clear(); renderTable(); renderBatch(); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.sel) { t.checked ? V.sel.add(t.dataset.sel) : V.sel.delete(t.dataset.sel); t.closest('tr').classList.toggle('is-selected', t.checked); renderBatch(); syncCheckAll(currentSlice()); }
+  if (t.id === 'checkAll') { currentSlice().forEach(o => t.checked ? V.sel.add(o.id) : V.sel.delete(o.id)); renderTable(); renderBatch(); }
+});
+const currentSlice = () => filtered().slice((V.page - 1) * DATA.pageSize, V.page * DATA.pageSize);
+// 点行空白处也能打开详情
+$('#tbody').addEventListener('click', e => { if (e.target.closest('button,input,label')) return; const tr = e.target.closest('tr[data-id]'); if (tr) openDrawer(tr.dataset.id); });
+
+// ----- 批量 -----
+async function confirmOrders(ids) {
+  const list = ids.map(id => ORDERS.find(o => o.id === id));
+  const ok = list.filter(o => o.status === 'pending'), skip = list.length - ok.length;
+  if (!ok.length) { toast('所选订单都不是「待确认」，不需要确认', 'err'); return; }
+  if (ids.length > 1) {
+    const go = await Proto.confirm({ title: `确认 ${ok.length} 张订单？`, html: `确认后订单进入「待发货」。${skip ? `<br>另有 ${skip} 张不是「待确认」，会自动跳过。` : ''}`, ok: `确认 ${ok.length} 张` });
+    if (!go) return;
+  }
+  const before = ok.map(o => [o, o.status]);
+  ok.forEach(o => { o.status = 'toship'; o.log.unshift({ t: new Date(), who: '王小明', what: '确认订单' }); });
+  V.sel.clear(); renderAll(); refreshDrawer();
+  toast(`已确认 ${ok.length} 张订单`, 'ok', { undo: () => { before.forEach(([o, s]) => { o.status = s; o.log.shift(); }); renderAll(); refreshDrawer(); toast('已撤销'); }, ms: 4000 });
+}
+async function batch(kind) {
+  const ids = [...V.sel];
+  if (kind === 'confirm') return confirmOrders(ids);
+  if (kind === 'export') { toast(`已导出 ${ids.length} 条`, 'ok'); return; }
+  if (kind === 'cancel') {
+    const can = ids.map(id => ORDERS.find(o => o.id === id)).filter(o => o.status === 'pending' || o.status === 'toship');
+    if (!can.length) { toast('已完成或已取消的订单不能再取消', 'err'); return; }
+    const go = await Proto.confirm({ title: `取消 ${can.length} 张订单？`, html: `取消后不能恢复，客户会收到取消通知。${ids.length - can.length ? `<br>另有 ${ids.length - can.length} 张已完成/已取消，会自动跳过。` : ''}`, ok: `取消 ${can.length} 张`, cancel: '再想想', danger: true });
+    if (!go) return;
+    can.forEach(o => { o.status = 'canceled'; o.log.unshift({ t: new Date(), who: '王小明', what: '取消订单' }); });
+    V.sel.clear(); renderAll(); toast(`已取消 ${can.length} 张订单`, 'ok');
+  }
+}
+
+// ----- 抽屉 -----
+let curId = null;
+function openDrawer(id) {
+  curId = id; fillDrawer();
+  if (!$('#drawer').classList.contains('show')) Proto.open($('#drawer'), { onClose: () => { curId = null; $$('#tbody tr').forEach(r => r.classList.remove('is-current')); } });
+}
+function refreshDrawer() { if (curId) fillDrawer(); }
+function fillDrawer() {
+  const o = ORDERS.find(x => x.id === curId), s = ST[o.status];
+  $$('#tbody tr').forEach(r => r.classList.toggle('is-current', r.dataset.id === curId));
+  $('#dwTitle').textContent = o.id;
+  $('#dwStatus').innerHTML = `<span class="tag tag-${s.tone}">${s.name}</span><span class="muted" style="font-size:13px">${fmt(o.created)} 下单</span>`;
+  $('#dwBody').innerHTML = `
+    <div class="sec"><h3>基本信息</h3><dl class="dl">
+      <dt>客户</dt><dd>${esc(o.customer)}</dd>
+      <dt>负责人</dt><dd>${esc(o.owner)}</dd>
+      <dt>支付方式</dt><dd>${esc(o.pay)}</dd>
+      <dt>收货地址</dt><dd>示例路 ${88 + o.amount % 100} 号 · 联系人 138****${String(o.amount).padStart(4, '0').slice(-4)}</dd>
+    </dl></div>
+    <div class="sec"><h3>商品明细 <span class="badge">${o.lines.length}</span></h3>
+      <table class="items"><thead><tr><th>商品</th><th class="r">单价</th><th class="r">数量</th><th class="r">小计</th></tr></thead>
+      <tbody>${o.lines.map(l => `<tr><td>${esc(l.name)}</td><td class="r num">${money(l.price)}</td><td class="r num">${l.qty}</td><td class="r num">${money(l.price * l.qty)}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td colspan="3">合计</td><td class="r num">¥${money(o.amount)}</td></tr></tfoot></table></div>
+    <div class="sec"><h3>操作记录</h3><ul class="tl">${o.log.map(l => `<li><div>${esc(l.who)} · ${esc(l.what)}</div><div class="t">${fmt(l.t)}</div></li>`).join('')}</ul></div>`;
+  const foot = [];
+  if (o.status === 'pending' || o.status === 'toship') foot.push(`<button class="btn btn-danger" type="button" id="dwCancel">取消订单</button>`);
+  foot.push(`<span style="flex:1"></span>`);
+  if (o.status === 'pending') foot.push(`<button class="btn btn-primary" type="button" id="dwConfirm">确认订单</button>`);
+  else foot.push(`<button class="btn" type="button" data-close>关闭</button>`);
+  $('#dwFoot').innerHTML = foot.join('');
+  const rows = filtered(), i = rows.findIndex(x => x.id === curId);
+  $('#dwPrev').disabled = i <= 0; $('#dwNext').disabled = i < 0 || i >= rows.length - 1;
+}
+$('#drawer').addEventListener('click', async e => {
+  const t = e.target.closest('button'); if (!t) return;
+  if ('close' in t.dataset) Proto.close($('#drawer'));
+  if (t.id === 'dwConfirm') confirmOrders([curId]);
+  if (t.id === 'dwCancel') { V.sel = new Set([curId]); await batch('cancel'); refreshDrawer(); }
+  if (t.id === 'dwPrev' || t.id === 'dwNext') { const rows = filtered(), i = rows.findIndex(x => x.id === curId); const n = rows[i + (t.id === 'dwNext' ? 1 : -1)]; if (n) { curId = n.id; fillDrawer(); } }
+});
+
+// ----- 原型面板：页面与状态 -----
+loadMemo();
+Proto.init({
+  title: '列表 + 详情抽屉',
+  pages: [
+    { id: 'list', name: '订单列表', states: [{ id: 'normal', name: '正常' }, { id: 'empty', name: '空' }, { id: 'loading', name: '加载' }, { id: 'error', name: '出错' }, { id: 'noresult', name: '无结果' }, { id: 'selected', name: '已勾选' }] },
+    { id: 'drawer', name: '详情抽屉' }
+  ],
+  render(page, state) {
+    if (page !== 'drawer' && $('#drawer').classList.contains('show')) Proto.close($('#drawer'));
+    V.demo = ['empty', 'loading', 'error'].includes(state) ? state : 'normal';
+    if (state === 'noresult') { V.kw = '找不到的词'; $('#fKw').value = V.kw; $('#kwClear').hidden = false; }
+    else if (V.kw === '找不到的词') { V.kw = ''; $('#fKw').value = ''; $('#kwClear').hidden = true; }
+    if (state === 'selected') { V.sel = new Set(currentSlice().slice(0, 3).map(o => o.id)); }
+    renderAll();
+    if (page === 'drawer') openDrawer(filtered()[0].id);
+  }
+});
+</script>
+</body>
+</html>
