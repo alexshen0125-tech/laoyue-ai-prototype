@@ -303,9 +303,9 @@ textarea.vin{display:block;width:100%;min-height:72px;margin:4px 0;line-height:1
 .defbox+.defbox{margin-top:10px;background:#FBFBF9;border-color:var(--line2);font-size:14.5px}
 .defbox b{display:block;font-size:12px;color:#5B3CC4;margin-bottom:4px;letter-spacing:.5px}
 .defbox+.defbox b{color:var(--mute)}
-.pts{list-style:none;display:grid;gap:8px}
-.pts li{display:flex;gap:12px;padding:12px 14px;border-radius:12px;background:#FBFBF9;border:1px solid var(--line2);font-size:15px;line-height:1.7}
-.pts li:before{content:counter(list-item);flex:none;width:24px;height:24px;border-radius:50%;background:var(--ok);color:#fff;font-family:Menlo,monospace;font-weight:800;font-size:12px;display:grid;place-items:center;margin-top:2px}
+.pts{list-style:none;display:grid;gap:8px;counter-reset:c}
+.pts li{counter-increment:c;display:flex;gap:12px;padding:12px 14px;border-radius:12px;background:#FBFBF9;border:1px solid var(--line2);font-size:15px;line-height:1.7}
+.pts li:before{content:counter(c);flex:none;width:24px;height:24px;border-radius:50%;background:var(--ok);color:#fff;font-family:Menlo,monospace;font-weight:800;font-size:12px;display:grid;place-items:center;margin-top:2px}
 .rwline{display:flex;align-items:center;gap:12px;padding:14px 18px;font-size:13.5px;color:var(--ink2)}
 .rwline small{color:var(--mute)}
 .rwline .btn{margin-left:auto}
@@ -344,6 +344,16 @@ textarea.vin{display:block;width:100%;min-height:72px;margin:4px 0;line-height:1
 .reward p{font-size:13.5px;color:var(--mute);line-height:1.75}
 .reward .how{display:flex;align-items:center;gap:8px;margin-top:16px;font-size:12.5px;color:var(--ink2)}
 .reward .how .m{display:none}
+.reward .rwopen{display:none}
+.reward.open .rwopen{display:block;animation:rise .4s var(--ease)}
+.reward:not(.open) .core{grid-template-columns:1fr}
+.reward .rwfold{margin-top:16px}
+.reward .vol{font-size:12px;margin-top:6px}
+.swrow{display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid var(--line2)}
+.swrow b{display:block;font-size:14.5px}.swrow small{font-size:12.5px;color:var(--mute)}
+.sw{margin-left:auto;width:46px;height:28px;border-radius:999px;border:0;background:#D6D6D0;position:relative;flex:none;transition:background .2s var(--ease)}
+.sw i{position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .25s var(--ease)}
+.sw.on{background:var(--ok)}.sw.on i{transform:translateX(18px)}
 .zsm{width:196px;padding:12px 12px 10px;border-radius:16px;background:#fff;border:1px solid var(--line);text-align:center;box-shadow:0 18px 36px -20px rgba(22,22,22,.35)}
 .zsm .qr{width:172px;height:172px;border-radius:10px;position:relative;background:linear-gradient(#fff,#fff) 50% 50%/46px 46px no-repeat,conic-gradient(from 90deg at 2px 2px,#fff 25%,transparent 0) 0 0/8px 8px,repeating-linear-gradient(90deg,#1b1b1b 0 4px,#fff 4px 7px,#1b1b1b 7px 9px,#fff 9px 14px),#fff}
 .zsm .qr i{position:absolute;width:34px;height:34px;border:6px solid #1b1b1b;border-radius:6px;background:radial-gradient(#1b1b1b 40%,#fff 42%)}
@@ -464,7 +474,8 @@ footer a:hover{color:var(--ink);text-decoration:underline}
   .nav,.sch,.kbd{display:none}
   .usr{margin-left:auto}.usr .hide-m{display:none}
   .btn{min-height:44px}.btn.sm{min-height:36px}
-  .grid3,.grid2,.gridL{grid-template-columns:1fr;padding:12px 0 56px;gap:16px}
+  .grid3,.grid2,.gridL{grid-template-columns:minmax(0,1fr);padding:12px 0 56px;gap:16px}
+  .pfoot{flex-wrap:wrap}.pbox .ph{flex-wrap:wrap;gap:6px}.byline .tm{display:none}.acts{gap:8px}.act{width:84px}
   .side,.rail{display:none}
   .art,.cd{padding:22px 18px}.art h1{font-size:23px}.cd h1{font-size:21px}
   .addn{padding:22px 18px}
@@ -508,8 +519,8 @@ const anon=(c='')=>`<span class="anon ${c}" aria-hidden="true">匿</span>`;
 const uname=id=>{const u=U(id);return `<a ${id==='editor'?'':`data-go="u/${id}"`} style="font-weight:600">${u.name}</a>${u.badge?` <span class="off">${u.badge}</span>`:''}`};
 const askerTxt=p=>`<span class="asker">${anon('s')}<span>匿名读者${p.asker?` · <b>${p.asker}</b>`:''}</span></span>`;
 const CO=id=>COLUMNS.find(c=>c.id===id);
-const colAv=(id,c='s')=>{const k=CO(id);return `<img class="av ${c}" src="img/columns/${id}.png" alt="" onerror="this.outerHTML='<span class=&quot;av ${c}&quot; style=&quot;background:${k.c}&quot;>${k.mark}</span>'">`};
-const colSig=(id,c='s')=>`<a class="colsig" data-go="col/${id}">${colAv(id,c)}<span><b>${CO(id).name}</b><em>老岳AI编辑部</em></span></a>`;
+const colAv=(id,c='s')=>{const k=CO(id);return `<img class="av ${c}" src="img/columns/${id}.png" alt="" onerror="this.outerHTML='<span class=&quot;av ${c}&quot; style=&quot;background:${k.c}&quot;>${k.name[0]}</span>'">`};
+const colSig=(id,c='s')=>`<a class="colsig" data-go="col/${id}" title="编辑部栏目，不是个人账号">${colAv(id,c)}<span><b>${CO(id).name}</b><em>老岳AI编辑部 · ${CO(id).group}</em></span></a>`;
 const kd=k=>`<span class="kd kd-${k}">${(KINDS[k]||{name:'工具'}).name}</span>`;
 const newLetters=()=>LETTERS.filter(l=>l.status==='new').length+S.asks.filter(a=>a.status==='pending').length;
 const cards=k=>POSTS.filter(p=>p.type==='card'&&(!k||p.kind===k));
@@ -520,16 +531,17 @@ function toast(t,k){const e=$('#toast');e.innerHTML=(k?ic(k,'width:16px;height:1
 function openM(html,cls){const b=$('#mbox');b.className='modal '+(cls||'');b.innerHTML=`<button class="x" onclick="closeM()" aria-label="关闭">×</button>`+html;$('#m').classList.add('on');window._lf=document.activeElement;setTimeout(()=>{const f=b.querySelector('input,textarea,button:not(.x)');f&&f.focus()},60)}
 function closeM(){$('#m').classList.remove('on');window._lf&&window._lf.focus&&window._lf.focus()}
 function save(){store.set(S);renderTop()}
+function setReward(v){S.rewardOn=v;save();toast(v?'全站赞助已<b>打开</b>（演示）':'全站赞助已<b>关闭</b>，前台不显示任何赞助模块');route(true)}
 function setRole(r){S.role=r;save();toast(r==='author'?'已切换为<b>作者</b>（演示）':'已切换为<b>读者</b>（演示）');if(r==='reader'&&/^#studio/.test(location.hash))go('home');else route(true)}
 function renderTop(){
   const h=(location.hash||'#home').slice(1).split('/')[0];
-  const map={p:'articles',c:'lib',t:'tools',q:'qa',board:'articles',col:'lib'};const cur=map[h]||h;
+  const map={p:'articles',c:'lib',t:'tools',q:'qa',board:'articles',col:'lib'};let cur=map[h]||h;const hp=(location.hash||'').slice(1).split('/');if(h==='c'&&P(hp[1])&&P(hp[1]).kind==='prompt')cur='prompts';
   const items=[['home','首页'],['articles','长文'],['prompts','提示词库'],['tools','AI 工具库'],['lib','资料库'],['qa','问答']];
   $('#nav').innerHTML=items.map(([k,t])=>`<a data-go="${k}" class="${cur===k?'on':''}" ${cur===k?'aria-current="page"':''}>${t}</a>`).join('');
   $('#usr').innerHTML=isAuthor()
     ?`<a class="btn ghost sm hide-m" data-go="studio/inbox">读者来信 <span class="num" style="background:var(--y);border-radius:5px;padding:0 5px">${newLetters()}</span></a><a class="btn y sm" data-go="studio/a">＋ 写文章</a><a data-go="studio/reward" aria-label="作者后台">${av('laoyue')}</a>`
     :`<button class="btn quiet sm hide-m" onclick="ask()">私下提问</button><a class="btn quiet sm" data-go="me">我的</a><button class="btn y sm" onclick="subscribe()">${ic('mail','width:15px;height:15px')}${S.sub?'已订阅':'订阅更新'}</button>`;
-  $('#rolesw').innerHTML=`演示身份<span class="seg">${[['reader','读者'],['author','作者']].map(([k,n])=>`<a class="${S.role===k?'on':''}" onclick="setRole('${k}')">${n}</a>`).join('')}</span>`;
+  $('#rolesw').innerHTML=`演示身份<span class="seg">${[['reader','读者'],['author','作者']].map(([k,n])=>`<a class="${S.role===k?'on':''}" onclick="setRole('${k}')">${n}</a>`).join('')}</span>　赞助<span class="seg">${[[true,'开'],[false,'关']].map(([k,n])=>`<a class="${S.rewardOn===k?'on':''}" onclick="setReward(${k})">${n}</a>`).join('')}</span>`;
 }
 /* ---------- 提示词：变量就地填写 ---------- */
 const FILL={};
@@ -614,7 +626,12 @@ function subscribe(){openM(`<h3>${ic('mail','width:22px;height:22px')}订阅更�
   <div class="foot"><small>每周最多 2 封 · 不发广告</small><button class="btn y" style="margin-left:auto">订阅</button></div></form>`}`)}
 function doSub(e){e=(e||'').trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){toast('邮箱格式不对，再检查一下');return false}S.sub=e;save();route(true);toast(`已订阅，确认邮件发到 <b>${esc(e)}</b>`,'ok');return true}
 function zsm(id){const u=U(U(id).rewardTo||id);return `<div class="zsm"><div class="qr"><i></i><i></i><i></i>${u.av?`<img src="${u.av}" alt="">`:''}</div><div class="lab"><i>¥</i>微信赞赏码 · ${u.name}</div><small>示例占位，作者上传后替换</small></div>`}
-function rewardM(id){const u=U(U(id).rewardTo||id);openM(`<h3>请${u.name}喝杯咖啡</h3><p>自愿打赏，不影响任何内容的阅读和下载。钱直接到作者微信，网站不经手。</p><div style="display:grid;place-items:center;margin:22px 0 6px">${zsm(id)}</div><p style="text-align:center;font-size:12.5px">用手机微信「扫一扫」上面的赞赏码</p>`)}
+const rwTitle=id=>{const u=U(U(id).rewardTo||id);return `赞助${u.name}一些 token，继续创作内容`};
+function rewardBlock(id){const u=U(U(id).rewardTo||id);return `<div class="bezel reward rv2" id="rwb"><div class="core"><div><div class="who">${av(U(id).rewardTo||id)}<span><b style="color:var(--ink)">${u.name}</b>${id==='editor'?' · 编辑部负责人':' 写了这篇'}</span></div>
+  <h3>${rwTitle(id)}</h3><p>钱直接到${id==='laoyue'||id==='editor'?'老岳':'作者本人'}的微信，网站不经手。</p>
+  <div class="rwfold"><button class="btn y" aria-expanded="false" onclick="const b=this.closest('.reward');b.classList.toggle('open');this.setAttribute('aria-expanded',b.classList.contains('open'));this.querySelector('.t').textContent=b.classList.contains('open')?'收起':'赞助 token'"><span class="t">赞助 token</span></button></div>
+  <div class="rwopen"><div class="how">${ic('phone','width:16px;height:16px')}<span class="d">打开手机微信「扫一扫」右侧赞赏码</span><span class="m">长按保存图片后，用微信扫一扫识别</span></div><p class="vol">自愿赞助，不影响任何内容的阅读和下载</p></div></div><div class="rwopen rwq">${zsm(id)}</div></div></div>`}
+function rewardM(id){openM(`<h3>${rwTitle(id)}</h3><p>自愿赞助，不影响任何内容的阅读和下载。钱直接到${id==='laoyue'||id==='editor'?'老岳':'作者本人'}的微信，网站不经手。</p><div style="display:grid;place-items:center;margin:22px 0 6px">${zsm(id)}</div><p style="text-align:center;font-size:12.5px">用手机微信「扫一扫」上面的赞赏码</p>`)}
 function authorEntry(){openM(`<h3>${ic('lock','width:20px;height:20px')}作者入口</h3><p>仅限受邀作者。读者不需要登录，所有内容和附件都可以直接看、直接下载。</p>
   <form onsubmit="event.preventDefault();closeM();S.role='author';save();go('studio/inbox')" style="margin-top:20px"><div class="fld"><label for="au-e">作者邮箱</label><input class="inp" id="au-e" type="email" placeholder="受邀时登记的邮箱"></div><div class="fld"><label for="au-p">密码</label><input class="inp" id="au-p" type="password" placeholder="••••••••"></div>
   <div class="foot"><small>忘记密码请联系老岳重置</small><button class="btn" style="margin-left:auto">登录（原型：模拟）</button></div></form>`)}
@@ -658,17 +675,17 @@ prompts(arg){const o=qs(arg);const sel=(o.s||'').split(',').filter(Boolean);cons
   </div>`}},
 tools(arg){const o=qs(arg);const cat=o.cat;const kw=(o.q||'').trim();
   const L=TOOLS.filter(t=>(!cat||t.cat===cat)&&(!kw||(t.name+t.one+t.pm).includes(kw)));
-  const nav=`<aside class="side" aria-label="工具分类"><a data-go="tools" class="${!cat?'on':''}"><i>⌂</i>全部工具<small>${fmt(STATS.tool)}</small></a><div class="lbl">按用途</div>${TOOLCATS.map(c=>`<a data-go="tools/cat=${c.id}" class="${cat===c.id?'on':''}"><i>${c.icon}</i>${c.name}<small>${TOOLS.filter(t=>t.cat===c.id).length}</small></a>`).join('')}</aside>`;
-  const head=`<div class="card bhead"><i>⚙</i><div><h1>${cat?TC(cat).name:'AI 工具库'}</h1><p>按产品经理的用途分类，每个都写清能帮你干什么、上手三步、适合与不适合</p></div><div class="st"><span><b>${fmt(cat?TOOLS.filter(t=>t.cat===cat).length:STATS.tool)}</b>个${cat?'':'（示例）'}</span></div></div>
+  const nav=`<aside class="side" aria-label="工具分类"><a data-go="tools" class="${!cat?'on':''}"><i>⌂</i>全部工具<small>${fmt(STATS.tool)}</small></a><div class="lbl">按用途</div>${TOOLCATS.map(c=>`<a data-go="tools/cat=${c.id}" class="${cat===c.id?'on':''}"><i>${c.icon}</i>${c.name}<small>${c.n}</small></a>`).join('')}</aside>`;
+  const head=`<div class="card bhead"><i>⚙</i><div><h1>${cat?TC(cat).name:'AI 工具库'}</h1><p>按产品经理的用途分类，每个都写清能帮你干什么、上手三步、适合与不适合</p></div><div class="st"><span><b>${fmt(cat?TC(cat).n:STATS.tool)}</b>个（示例）</span></div></div>
    <div class="card filterbar" style="padding:14px 18px"><div class="frow"><form class="fsearch" style="max-width:none" onsubmit="event.preventDefault();go('tools/'+toQs({cat:'${cat||''}',q:this.k.value.trim()}))">${ic('search','width:16px;height:16px;color:var(--mute)')}<input name="k" value="${esc(kw)}" placeholder="按名称或用途搜，如：纪要、原型、透视表" aria-label="搜索工具"></form><span style="font-size:12.5px;color:var(--mute)">工具信息每月核对，详情页标了核对日期</span></div></div>`;
   let body;
-  if(kw||cat)body=L.length?`<div class="tgrid">${L.map(tl).join('')}</div>${pager(cat?L.length:L.length,o.page,'tools',o)}`:`<div class="card">${empty('⚙',`没找到「${esc(kw)}」相关的工具`,'换个说法试试，比如用途「纪要」「原型」',`<a class="btn ghost sm" data-go="tools">看全部工具</a>`)}</div>`;
-  else body=TOOLCATS.map(c=>{const T=TOOLS.filter(t=>t.cat===c.id);return `<section class="tcat" id="cat-${c.id}"><div class="sec"><h2><i>${c.icon}</i>${c.name}</h2><a class="more" data-go="tools/cat=${c.id}">查看更多 ${ic('right','width:14px;height:14px')}</a></div><div class="tgrid">${T.map(tl).join('')}</div></section>`}).join('');
+  if(kw||cat)body=L.length?`<div class="tgrid">${L.map(tl).join('')}</div>${pager(cat&&!kw?TC(cat).n:L.length,o.page,'tools',o)}`:`<div class="card">${empty('⚙',`没找到「${esc(kw)}」相关的工具`,'换个说法试试，比如用途「纪要」「原型」',`<a class="btn ghost sm" data-go="tools">看全部工具</a>`)}</div>`;
+  else body=TOOLCATS.map(c=>{const T=TOOLS.filter(t=>t.cat===c.id);return `<section class="tcat" id="cat-${c.id}"><div class="sec"><h2><i>${c.icon}</i>${c.name}</h2><small><span class="num">${c.n}</span> 个（示例）</small><a class="more" data-go="tools/cat=${c.id}">查看更多 ${ic('right','width:14px;height:14px')}</a></div><div class="tgrid">${T.map(tl).join('')}</div></section>`}).join('');
   return {t:'AI 工具库',sk:'grid',h:`<div class="gridL">${nav}<section class="rv">${head}${body}</section></div>`}},
 t(id){const t=TL(id);if(!t)return V.nf();const c=TC(t.cat);const faved=S.faved.includes('t'+t.id);
   return {t:t.name,h:`<div class="grid2"><article class="rv"><div class="card">
   <div class="thead"><span class="lg" style="background:${t.c}">${t.name[0]}</span><div style="flex:1;min-width:0"><div class="crumb" style="margin-bottom:6px"><a data-go="tools">AI 工具库</a> / <a data-go="tools/cat=${c.id}">${c.name}</a></div><h1>${t.name}${t.demo?'<span class="chip">示例名</span>':''}</h1><p>${t.one}</p>
-   <div class="facts"><span class="chip">${t.free}</span><span class="chip">核对于 <span class="num">${t.checked}</span></span>${colSig('tools')}</div></div></div>
+   <div class="facts"><span class="chip">${t.free}</span><span class="chip">核对于 <span class="num">${t.checked}</span></span>${colSig(t.col)}</div></div></div>
   <div class="tsec"><h3>能帮产品经理干什么</h3><p style="font-size:15.5px;line-height:1.85">${t.pm}</p></div>
   <div class="tsec"><h3>上手三步</h3><ol class="steps3">${t.steps.map(s=>`<li>${s}</li>`).join('')}</ol></div>
   <div class="tsec"><div class="fitg"><div class="yes"><b>适合</b>${t.fit.join('；')||'—'}</div><div class="no"><b>不适合</b>${t.unfit.join('；')||'暂无'}</div></div></div>
@@ -676,7 +693,7 @@ t(id){const t=TL(id);if(!t)return V.nf();const c=TC(t.cat);const faved=S.faved.i
   </div>
   ${t.prompts.length?`<div class="sec"><h2>配合这些提示词用</h2><a class="more" data-go="prompts">提示词库 ${ic('right','width:14px;height:14px')}</a></div><div class="pgrid">${t.prompts.map(i=>pcard(P(i))).join('')}</div>`:''}
   ${t.alts.length?`<div class="sec"><h2>同类替代</h2></div><div class="tgrid" style="grid-template-columns:repeat(3,1fr)">${t.alts.map(i=>tl(TL(i))).join('')}</div>`:''}
-  <div class="card rwline" style="margin-top:20px">${colAv('tools')}<span>「工具测评组」出品 · 老岳AI编辑部 <small>· 觉得有用，可以请老岳喝杯咖啡</small></span><button class="btn quiet sm" onclick="rewardM('editor')">☕ 打赏</button></div>
+  <div class="card rwline" style="margin-top:20px">${colAv(t.col)}<span>本卡由老岳AI编辑部 · ${CO(t.col).group}整理，综合多个公开资料重写，老岳审核</span>${S.rewardOn?`<button class="btn y sm" onclick="rewardM('editor')">赞助 token</button>`:''}</div>
   </article><aside class="rail"><div class="card box"><h4>${c.name}<a data-go="tools/cat=${c.id}">全部</a></h4>${TOOLS.filter(x=>x.cat===c.id&&x.id!==t.id).map(x=>`<a class="p" data-go="t/${x.id}" style="display:flex;gap:10px;align-items:center;padding:7px 0"><span class="av" style="background:${x.c};border-radius:9px">${x.name[0]}</span><span style="font-size:13.5px"><b>${x.name}</b><small style="display:block;color:var(--mute);font-size:12px">${x.one}</small></span></a>`).join('')||'<span style="color:var(--mute);font-size:13px">暂无</span>'}</div>${subBox()}</aside></div>`}},
 lib(arg){const o=qs(arg);const k=o.kind||'',b=o.board||'',tm=o.t||'',kw=(o.q||'').trim(),tag=o.tag||'';
   const now='2026-11-09';const days=d=>(new Date(now)-new Date(d))/864e5;
@@ -715,7 +732,8 @@ c(id){const p=P(id);if(!p||p.type!=='card')return V.nf();seen(p.id);const faved=
   </div>
   <div class="sec"><h2>相关卡片</h2></div><div class="cgrid">${relC.map(cc).join('')}</div>
   <div class="sec"><h2>想看完整思路，读这两篇长文</h2></div><div class="card">${relA.map(item).join('')}</div>
-  <div class="card rwline" style="margin-top:16px">${colAv(p.col)}<span>本卡由「${CO(p.col).name}」出品 · 老岳AI编辑部 <small>· 自愿打赏，不影响任何内容的阅读和下载</small></span><button class="btn quiet sm" onclick="rewardM('editor')">☕ 请老岳喝杯咖啡</button></div>
+  <div class="card rwline" style="margin-top:16px">${colAv(p.col)}<span>本卡由老岳AI编辑部 · ${CO(p.col).group}整理，综合多个公开资料重写，老岳审核</span></div>
+  ${S.rewardOn?`<div style="margin-top:16px">${rewardBlock('editor')}</div>`:''}
   </article><aside class="rail">${subBox()}<div class="card box"><h4>${(p.tags||[]).length?'标签':''}</h4>${(p.tags||[]).map(x=>`<a class="chip" data-go="lib/tag=${encodeURIComponent(x)}" style="margin:0 6px 6px 0"># ${x}</a>`).join('')}</div></aside></div>`}},
 qa(){return {t:'问答',h:`<div class="grid2"><section class="rv"><div class="card bhead qa-head"><i>?</i><div><h1>问答</h1><p>读者私下来信，作者挑出有代表性的，匿名公开作答</p></div>
     <div class="ctl">${isAuthor()?`<a class="btn" data-go="studio/inbox">去看读者来信</a><small>只有作者能看到来信原文</small>`:`<button class="btn" onclick="ask()">向作者提问</button><small>私下提交 · 不用登录</small>`}</div>
@@ -744,10 +762,7 @@ p(id){const p=P(id);if(!p||p.type!=='article')return V.nf();seen(p.id);const lik
   const toc=p.id===1?[['s1','先拆需求'],['s2','P0 最多 3 个'],['s3','过 6 类边界'],['s4','扮研发和测试挑刺'],['end','读完之后']]:[];
   const dlBtn=a?`<div class="bezel dlc"><div class="core"><span class="ft">${a.name.split('.').pop().toUpperCase()}</span><div><b>${a.name}</b><small><span class="num">${a.size}</span> · <span class="num">${fmt(a.dl)}</span> 人下载过 · <span class="free">免费，不用登录</span></small></div>
     <button class="btn lg ${got?'done':''}" onclick="dl(${p.id},this)"><span class="t">${got?'再次下载':'免费下载'}</span><span class="ico">${ic(got?'ok':'dl')}</span></button></div></div>`:'';
-  const rw=au.reward?`<div class="bezel reward rv2"><div class="core"><div><div class="who">${av(p.author)}<span><b style="color:var(--ink)">${au.name}</b> 写了这篇</span></div>
-      <h3>觉得有用，请作者喝杯咖啡</h3><p>自愿打赏，不影响任何内容的阅读和下载。<br>钱直接到作者微信，网站不经手。</p>
-      <div class="how">${ic('phone','width:16px;height:16px')}<span class="d">打开手机微信「扫一扫」右侧赞赏码</span><span class="m">长按保存图片后，用微信扫一扫识别</span></div></div>${zsm(p.author)}</div></div>`
-    :(isAuthor()?`<div class="card rwline">你还没有设置赞赏码，读者看不到打赏模块 <a class="btn y sm" data-go="studio/reward">去设置</a></div>`:'');
+  const rw=S.rewardOn&&au.reward?rewardBlock(p.author):(S.rewardOn&&isAuthor()&&!au.reward?`<div class="card rwline">这位作者还没设置赞赏码，读者看不到赞助模块 <a class="btn y sm" data-go="studio/reward">去设置</a></div>`:'');
   return {t:p.title,art:true,h:`<div class="grid2"><article class="rv" id="art"><div class="card art">
   <div class="crumb"><a data-go="articles">长文</a> / <a data-go="board/${p.board}">${B(p.board).name}</a></div>
   <h1>${p.pick?'<span class="tagq p" style="font-size:13px;vertical-align:5px">精华</span> ':''}${p.title}</h1>
@@ -777,7 +792,7 @@ q(id){const p=P(id);if(!p||p.type!=='question')return V.nf();seen(p.id);const A=
   <div class="meta">${askerTxt(p)}<span class="dot"></span><span>${p.time}</span><span class="dot"></span><span>浏览 <span class="num">${p.reads}</span></span><span class="sp"><button class="btn ghost sm ${faved?'done':''}" aria-pressed="${faved}" onclick="tog('faved',${p.id});route(true)">${faved?'★ 已收藏':'☆ 收藏'}</button>${isAuthor()?`<button class="btn sm" onclick="document.getElementById('ansbox').focus()">以作者身份补充回答</button>`:`<button class="btn sm" onclick="ask()">我也有类似问题</button>`}</span></div></div>
   <div style="padding:12px 30px;border-top:1px solid var(--line2);font-weight:700;display:flex;align-items:center;gap:8px">作者回答 <span class="num" style="color:var(--mute);font-weight:400">${A.length}</span><span style="margin-left:auto;font-size:12.5px;color:var(--mute);font-weight:400">回答只来自老岳和受邀作者</span></div>
   ${A.map(a=>`<div class="ans"><div class="ah">${av(a.u)}<div style="font-size:14px">${uname(a.u)}<div style="font-size:12px;color:var(--mute)">${U(a.u).title} · ${a.time}</div></div><span class="by">作者答</span></div>
-    <p style="margin-top:12px;font-size:15.5px;line-height:1.85">${a.t}</p><div class="ops"><button class="btn ghost sm" onclick="this.classList.toggle('done');toast('谢谢，作者会看到这条反馈','ok')">▲ 有帮助 <span class="num">${a.likes}</span></button>${U(a.u).reward?`<button class="btn quiet sm" onclick="rewardM('${a.u}')">☕ 请作者喝咖啡</button>`:''}</div></div>`).join('')}
+    <p style="margin-top:12px;font-size:15.5px;line-height:1.85">${a.t}</p><div class="ops"><button class="btn ghost sm" onclick="this.classList.toggle('done');toast('谢谢，作者会看到这条反馈','ok')">▲ 有帮助 <span class="num">${a.likes}</span></button>${S.rewardOn&&U(a.u).reward?`<button class="btn quiet sm" onclick="rewardM('${a.u}')">赞助 token</button>`:''}</div></div>`).join('')}
   ${isAuthor()?`<div style="padding:22px 30px;border-top:1px solid var(--line2)"><div style="display:flex;gap:12px">${av('laoyue')}<textarea id="ansbox" class="inp" style="height:96px" placeholder="以作者身份补充回答" aria-label="补充回答"></textarea></div><div style="display:flex;align-items:center;gap:12px;margin-top:10px;padding-left:44px"><label class="check"><input type="checkbox"> 设为精选问答</label><button class="btn sm" style="margin-left:auto" onclick="toast('回答已发布','ok')">发布回答</button></div></div>`
    :`<div class="ansnote">${anon('s')}<span>提问者已匿名。有类似问题？<a onclick="ask()">私下问作者</a>，不用登录。</span></div>`}
   </div></article>${rail()}</div>`}},
@@ -797,14 +812,15 @@ me(tab){const tabs=[['fav','收藏'],['seen','看过'],['dl','下载过'],['ask'
   <div class="card"><div class="tabs" role="tablist">${tabs.map(([k,n])=>`<a role="tab" aria-selected="${t===k}" class="${t===k?'on':''}" data-go="me/${k}">${n}</a>`).join('')}<span class="r"><a style="text-decoration:underline" onclick="if(confirm('清空这台设备上的收藏、看过、下载过和提问记录？')){Object.assign(S,{faved:[],seen:[],got:[],asks:[],liked:[]});save();route(true);toast('已清空本机记录')}">清空本机记录</a></span></div>
   ${body}</div></div>`}},
 studio(tab,lid){if(!isAuthor())return {t:'作者后台',h:`<div class="grid2"><section class="rv"><div class="card">${empty('✎','作者后台只对受邀作者开放','读者不需要登录：内容直接看，附件直接下载。',`<button class="btn y sm" onclick="ask()">私下提问</button><button class="btn ghost sm" onclick="authorEntry()">我是作者，去登录</button>`)}</div></section>${rail()}</div>`};
-  const tabs=[['inbox','读者来信'],['a','写长文'],['card','写卡片'],['reward','赞赏码'],['ans','回答来信']];const t=tabs.find(x=>x[0]===tab)?tab:'inbox';
+  const tabs=[['inbox','读者来信'],['a','写长文'],['card','写卡片'],['reward','赞助设置'],['ans','回答来信']];const t=tabs.find(x=>x[0]===tab)?tab:'inbox';
   let body='';
   if(t==='inbox')body=`<div class="banner">读者私下提交的问题，<b>只有作者能看到</b>。选中后去掉个人信息，写成公开问答或补充到文章末尾。</div>`+LETTERS.concat(S.asks.filter(a=>a.status==='pending').map(a=>({id:a.id,to:a.to,board:'pm',time:'刚刚',asker:'',title:a.title,body:'（演示：你刚才以读者身份提交的问题）',email:a.email,status:'new'}))).map(x=>`<div class="letter">${anon()}<div class="main"><h3>${esc(x.title)}</h3><p>${x.body}</p><div class="meta" style="margin-top:8px"><span>${x.asker?'自称：'+x.asker:'未留称呼'}</span><span class="dot"></span><span>问 ${x.to==='any'?'哪位作者都行':U(x.to).name}</span><span class="dot"></span><span>${B(x.board).name}</span><span class="dot"></span><span>${x.time}</span><span class="dot"></span><span>${x.email===false?'未留邮箱':'作答后自动邮件通知'}</span></div></div>
     <div class="ops">${x.status==='new'?`<span class="st-chip st-new">新来信</span><a class="btn sm" data-go="studio/ans/${x.id}">选中作答</a><button class="btn ghost sm" onclick="toast('已标记为不回答，不会公开')">不回答</button>`:'<span class="st-chip st-ok">已选中 · 作答中</span>'}</div></div>`).join('');
-  else if(t==='reward')body=`<div class="write"><div class="rwset"><div>
+  else if(t==='reward')body=`<div class="write"><div class="swrow"><div><b>全站赞助总开关</b><small>仅老岳（管理员）可改 · 默认关闭。关闭时前台所有赞助模块完全不显示</small></div><button class="sw ${S.rewardOn?'on':''}" role="switch" aria-checked="${S.rewardOn}" onclick="setReward(!S.rewardOn)"><i></i></button></div>
+    <div class="swrow"><div><b>我的内容显示赞助模块</b><small>单作者开关；写长文时还可以按篇单独关闭。总开关关闭时不生效</small></div><button class="sw on" role="switch" aria-checked="true" onclick="this.classList.toggle('on');this.setAttribute('aria-checked',this.classList.contains('on'))"><i></i></button></div>
+    <div class="rwset" style="margin-top:22px"><div>
     <div class="fld"><label>我的微信赞赏码 <small>显示在你每篇长文、回答的底部</small></label><div class="drop">拖拽图片到这里，或 <a style="text-decoration:underline;color:var(--ink)">选择图片</a><br><small>微信 › 我 › 服务 › 钱包 › 赞赏码 › 保存赞赏码图片</small></div></div>
-    <ul class="tick" style="margin:6px 0 16px"><li>只收<b>微信赞赏码</b>：读者扫码后看到的是“赞赏作者”</li><li class="x">不要传普通收款码、支付宝码、银行卡</li><li>钱直接进你的微信零钱，网站不经手、不抽成</li><li>小程序里不会出现赞赏码（平台规定）</li></ul>
-    <label class="check"><input type="checkbox" checked> 在我的内容底部显示赞赏码</label>
+    <ul class="tick" style="margin:6px 0 16px"><li>只收<b>微信赞赏码</b>：读者扫码后看到的是“赞赏作者”</li><li class="x">不要传普通收款码、支付宝码、银行卡</li><li>钱直接进你的微信零钱，网站不经手、不抽成</li><li>小程序里不会出现赞赏码（平台规定）</li><li>前台文案：「赞助你一些 token，继续创作内容」</li></ul>
     <div class="foot" style="margin-top:18px"><small>保存后立即生效</small><button class="btn y" style="margin-left:auto" onclick="toast('赞赏码已保存','ok')">保存</button></div></div>
     <div><div style="font-size:12.5px;color:var(--mute);margin-bottom:8px">读者看到的样子</div>${zsm('laoyue')}</div></div></div>`;
   else if(t==='card')body=`<div class="write"><div class="fld"><label>卡片形态</label><div class="opts">${['提示词卡','模板','方法 / 术语卡','案例拆解','AI 工具'].map((n,i)=>`<button class="opt ${i?'':'on'}" onclick="pickOpt(this)">${n}</button>`).join('')}</div></div>
@@ -812,7 +828,8 @@ studio(tab,lid){if(!isAuthor())return {t:'作者后台',h:`<div class="grid2"><s
     <div class="fld"><label>提示词正文 <small>要读者填的地方写成 {{变量名}}，例：你是 {{岗位}}，请……</small></label><textarea class="inp" style="height:140px" aria-label="提示词正文"></textarea></div>
     <div class="fld"><label>适合谁 <small>一句话：什么人在什么时候用</small></label><input class="inp" aria-label="适合谁"></div>
     <div class="fld"><label>场景 <small>可多选</small></label><div class="opts">${SCENES.map((s,i)=>`<button class="opt ${i<1?'on':''}" onclick="this.classList.toggle('on')">${s}</button>`).join('')}</div></div>
-    <div class="foot"><small>卡片统一以「老岳AI编辑部」署名</small><button class="btn ghost" style="margin-left:auto" onclick="toast('草稿已保存','ok')">存草稿</button><button class="btn y" onclick="toast('已提交','ok')">发布</button></div></div>`;
+    <div class="fld"><label>署名栏目 <small>卡片署编辑部栏目，页面小字标注「老岳AI编辑部」</small></label><div class="opts">${COLUMNS.map((c,i)=>`<button class="opt ${i?'':'on'}" onclick="pickOpt(this)">${colAv(c.id)}${c.name}</button>`).join('')}</div></div>
+    <div class="foot"><small>发布后出现在提示词库 / 资料库和栏目页</small><button class="btn ghost" style="margin-left:auto" onclick="toast('草稿已保存','ok')">存草稿</button><button class="btn y" onclick="toast('已提交','ok')">发布</button></div></div>`;
   else{const L=t==='ans'&&(LETTERS.find(x=>x.id==lid)||LETTERS[0]);
     body=`<div class="write">${t==='ans'?`<div class="quote"><small>读者来信原文（只有作者能看到）· ${L.asker?'自称：'+L.asker:'未留称呼'} · ${L.time}</small><b>${esc(L.title)}</b><div style="color:var(--mute);margin-top:4px">${L.body}</div></div>
   <div class="fld"><label>公开标题 <small>可改写，去掉公司名、人名等能认出提问者的信息</small></label><input class="inp title" value="${esc(L.title)}"></div>
@@ -822,18 +839,19 @@ studio(tab,lid){if(!isAuthor())return {t:'作者后台',h:`<div class="grid2"><s
   :`<div class="fld"><input class="inp title" placeholder="标题，写清楚能解决什么问题" aria-label="标题"></div>
   <div class="fld"><label>版块</label><div class="opts">${BOARDS.map((b,i)=>`<button class="opt ${i===0?'on':''}" onclick="pickOpt(this)">${b.name}</button>`).join('')}</div></div>
   <div class="fld"><textarea class="inp" placeholder="正文，支持 Markdown；提示词写成 {{变量}}，读者可就地填写后复制" aria-label="正文"></textarea></div>
-  <div class="fld"><label>附件 <small>选填 · 单个不超过 20 MB · 读者免费下载，不用登录</small></label><div class="drop">拖拽文件到这里，或 <a style="text-decoration:underline;color:var(--ink)">选择文件</a></div></div>`}
+  <div class="fld"><label>附件 <small>选填 · 单个不超过 20 MB · 读者免费下载，不用登录</small></label><div class="drop">拖拽文件到这里，或 <a style="text-decoration:underline;color:var(--ink)">选择文件</a></div></div>
+  <label class="check" style="margin-bottom:12px"><input type="checkbox" checked> 本篇显示赞助模块 <small style="color:var(--mute)">（单篇开关；全站总开关当前${S.rewardOn?'已打开':'关闭，前台不显示'}）</small></label>`}
   <div class="foot"><small>老岳发布直接公开；受邀作者提交后由老岳审核</small><button class="btn ghost" style="margin-left:auto" onclick="toast('草稿已保存','ok')">存草稿</button><button class="btn y" onclick="toast('已提交','ok')">${t==='ans'?'发布回答':'提交'}</button></div></div>`}
   return {t:'作者后台',h:`<div class="rv" style="padding:28px 0 96px"><div class="card prof">${av('laoyue','xl')}<div><h1>作者后台 <span class="off">老岳 · 主理人</span></h1><p>写长文、写卡片、回答读者来信、设置自己的微信赞赏码</p></div><div class="st"><span><b>${newLetters()}</b>新来信</span><span><b>${U('laoyue').posts}</b>长文</span></div><button class="btn ghost" onclick="S.role='reader';save();go('home')">退出</button></div>
   <div class="card"><div class="tabs" role="tablist">${tabs.filter(x=>x[0]!=='ans'||t==='ans').map(([k,n])=>`<a role="tab" aria-selected="${t===k}" class="${t===k?'on':''}" data-go="studio/${k}">${n}</a>`).join('')}</div>${body}</div></div>`}},
 col(id){const k=CO(id);if(!k)return V.nf();const L=cards().filter(p=>p.col===id),T=TOOLS.filter(t=>t.col===id);const allP=L.length&&L.every(p=>p.kind==='prompt');
-  return {t:k.name,h:`<div class="grid2"><section class="rv"><div class="card bhead">${colAv(id,'l')}<div><h1>${k.name}</h1><p>${k.desc}</p><p style="font-size:12px;margin-top:4px">老岳AI编辑部栏目 · 老岳维护</p></div><div class="st"><span><b>${L.length+T.length}</b>示例内容</span></div></div>
+  return {t:k.name,h:`<div class="grid2"><section class="rv"><div class="card bhead">${colAv(id,'l')}<div><h1>${k.name}</h1><p>${k.desc}</p><p style="font-size:12px;margin-top:4px">老岳AI编辑部 · ${k.group} · 编辑部栏目，不是个人账号</p></div><div class="st"><span><b>${fmt(k.n)}</b>篇（示例）</span></div></div>
   <div class="caps" style="margin-bottom:14px">${COLUMNS.map(c=>`<a class="cap ${c.id===id?'on':''}" style="height:32px" data-go="col/${c.id}">${c.name}</a>`).join('')}</div>
   ${T.length?`<div class="tgrid" style="grid-template-columns:repeat(3,1fr)">${T.map(tl).join('')}</div>`:''}
   ${L.length?`<div class="${allP?'pgrid':'cgrid'}" style="${allP?'':'grid-template-columns:repeat(2,1fr)'}">${L.map(p=>allP?pcard(p):cc(p)).join('')}</div>`:''}
   ${!L.length&&!T.length?`<div class="card">${empty('◇','栏目还在准备','订阅后第一时间收到提醒',`<button class="btn y sm" onclick="subscribe()">订阅更新</button>`)}</div>`:''}
   </section>${rail()}</div>`}},
-about(){return {t:'内容说明',h:`<div class="grid2"><section class="rv"><div class="card art"><h1>内容说明</h1><div class="prose"><p>站内所有内容都是我们自己写的：深度长文由老岳和受邀作者署名；提示词卡、模板、方法术语卡、案例拆解和 AI 工具库由老岳AI编辑部的各个栏目（提示词小组、工具测评组、原型实验室等）出品，老岳维护。</p><p>首期不开放读者评论和发帖；读者的问题可以私下提交，作者挑选后匿名公开作答。所有内容免费阅读，附件免费下载，不需要注册登录。作者在文末放了自己的微信赞赏码，是否打赏完全自愿，不影响任何内容。</p></div></div></section>${rail()}</div>`}},
+about(){return {t:'内容说明',h:`<div class="grid2"><section class="rv"><div class="card art"><h1>内容说明</h1><div class="prose"><p>站内所有内容都是我们自己写的：深度长文由老岳和受邀作者署名；提示词卡、模板、方法术语卡、案例拆解和 AI 工具库由老岳AI编辑部的 8 个栏目（铅笔头、积木盒、气泡灯等，均为编辑部栏目，不是个人账号）出品，老岳维护。</p><p>首期不开放读者评论和发帖；读者的问题可以私下提交，作者挑选后匿名公开作答。所有内容免费阅读，附件免费下载，不需要注册登录。作者可以在文末放自己的微信赞赏码，是否赞助完全自愿，不影响任何内容的阅读和下载。</p></div></div></section>${rail()}</div>`}},
 nf(){return {t:'找不到页面',h:`<div class="grid2"><section class="rv"><div class="card">${empty('⌀','这篇内容找不到了','可能已被下线，或者链接不完整',`<a class="btn y sm" data-go="home">回首页</a><a class="btn ghost sm" data-go="prompts">逛逛提示词库</a>`)}</div></section>${rail()}</div>`}},
 };
 function feedTabs(list){const t=window._tab||'rec';let L=list.slice();if(t==='new')L=L.slice().reverse();if(t==='pick')L=L.filter(p=>p.pick);
@@ -843,7 +861,7 @@ function mkInline(){const p={id:91,type:'inline',kind:'prompt',title:'拆需求'
 /* ---------- 路由 ---------- */
 let io,tocIO;
 function route(keep){const raw=(location.hash||'#home').slice(1);const h=raw.split('/');
-  const jump={ask:()=>ask(),subscribe:()=>subscribe(),reward:()=>rewardM('laoyue'),author:()=>authorEntry()};
+  const jump={ask:()=>ask(),subscribe:()=>subscribe(),reward:()=>{S.rewardOn=true;route(true);rewardM('laoyue')},author:()=>authorEntry()};
   if(jump[h[0]]){location.replace(h[0]==='reward'?'#p/1':'#home');setTimeout(jump[h[0]],0);return}
   if(h[0]==='res'){location.replace('#lib/kind=template');return}
   const v=V[h[0]]||V.nf;const y=scrollY;const arg=h[0]==='studio'?h[1]:h.slice(1).join('/');const r=v(arg,h[2]);
@@ -851,8 +869,9 @@ function route(keep){const raw=(location.hash||'#home').slice(1);const h=raw.spl
   renderTop();$('#prog').hidden=!r.art;keep===true?scrollTo(0,y):scrollTo(0,0);
   document.querySelectorAll('[data-go],a[onclick]').forEach(e=>{if(!e.hasAttribute('tabindex'))e.tabIndex=0;if(!e.getAttribute('role'))e.setAttribute('role','link')});
   io&&io.disconnect();io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px'});
-  document.querySelectorAll('.rv2').forEach(e=>io.observe(e));
+  document.querySelectorAll('.rv2').forEach(e=>{if(e.getBoundingClientRect().top<innerHeight)e.classList.add('in');else io.observe(e)});
   tocIO&&tocIO.disconnect();const tl=document.querySelectorAll('[data-toc]');if(tl.length){tocIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)tl.forEach(a=>a.classList.toggle('on',a.dataset.toc===e.target.id))}),{rootMargin:'-20% 0px -70% 0px'});tl.forEach(a=>{const t=document.getElementById(a.dataset.toc);t&&tocIO.observe(t)})}
+  if(/rwopen/.test(location.search))document.querySelectorAll('.reward').forEach(b=>b.classList.add('open'));
   prog();
 }
 function prog(){const a=$('#art');if(!a||$('#prog').hidden)return;const r=a.getBoundingClientRect();const p=Math.min(1,Math.max(0,(innerHeight*.3-r.top)/(r.height-innerHeight*.3)));$('#prog i').style.transform=`scaleX(${p})`}

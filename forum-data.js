@@ -22,7 +22,7 @@ window.USERS = {
   ajie:   { name: '阿杰做B端', c: '#2F6FEB', title: 'SaaS 产品负责人', badge: '特邀', posts: 18, reward: true },
   k:      { name: '老K',       c: '#495057', title: '供应链系统产品', badge: '特邀', posts: 15, reward: true },
   momo:   { name: 'Momo',      c: '#C2255C', title: '交互设计转产品', badge: '特邀', posts: 11, reward: false },
-  // 卡片类内容统一署名；赞赏指向老岳（编辑部由老岳维护）
+  // 栏目卡片的赞赏指向老岳（编辑部负责人）
   editor: { name: '老岳AI编辑部', c: '#161616', mark: '编', title: '栏目内容由编辑部出品 · 老岳维护', badge: '编辑部', posts: 0, reward: true, rewardTo: 'laoyue' },
 };
 window.AUTHORS = ['laoyue', 'nanf', 'ajie', 'k', 'momo'];
@@ -219,49 +219,53 @@ window.SCENES = ['需求分析', 'PRD 与评审', '竞品与调研', '数据分�
 window.STATS.tool = 620;
 
 // ---------- AI 工具库（示例）----------
-// 说明：AI 工具名在原型里一律用「示例名」，真实工具名上线前由老板拍板（与公司铁律 4「不提具体 AI 工具名」冲突）。
+// 说明：工具卡可写真实工具名（老板 11-09 定）；原型里 AI 工具先用「示例名」，上线由工具测评组按实测填写。
 // 不放官网链接（站内不放外链口径），读者按名称自行搜索。free 字段只在网页版展示，小程序不展示。
 window.TOOLCATS = [
-  { id: 'write', name: '写作与文档', icon: '✎' }, { id: 'meet', name: '会议与纪要', icon: '◷' },
-  { id: 'proto', name: '原型与设计', icon: '▣' }, { id: 'data', name: '数据分析', icon: '▤' },
-  { id: 'research', name: '调研与搜索', icon: '⌕' }, { id: 'draw', name: '流程图与画图', icon: '◇' },
-  { id: 'auto', name: '自动化与 Skill', icon: '⚙' }, { id: 'office', name: '效率办公', icon: '◎' },
+  { id: 'write', n: 128, name: '写作与文档', icon: '✎' }, { id: 'meet', n: 46, name: '会议与纪要', icon: '◷' },
+  { id: 'proto', n: 72, name: '原型与设计', icon: '▣' }, { id: 'data', n: 81, name: '数据分析', icon: '▤' },
+  { id: 'research', n: 64, name: '调研与搜索', icon: '⌕' }, { id: 'draw', n: 39, name: '流程图与画图', icon: '◇' },
+  { id: 'auto', n: 97, name: '自动化与 Skill', icon: '⚙' }, { id: 'office', n: 93, name: '效率办公', icon: '◎' },
 ];
 const T = (o) => Object.assign({ checked: '2026-11-0' + (1 + (o.id % 8)), demo: true }, o);
 window.TOOLS = [
-  T({ id: 1, cat: 'write', name: '文档助手 A（示例）', c: '#2F6FEB', one: '长文档起草、改写、按模板出 PRD', free: '免费额度 + 付费', count: 0,
+  T({ id: 1, cat: 'write', name: '文档助手 A', c: '#2F6FEB', one: '长文档起草、改写、按模板出 PRD', free: '免费额度 + 付费', count: 0,
     pm: '把会议结论、零散想法整理成一页纸需求；按你给的范文结构写 PRD 初稿。', steps: ['把团队认可的一份 PRD 贴进去当范文', '说清「照这份结构写」，再贴需求要点', '让它列出没想清楚的地方，逐条补'], fit: ['要写大量文档的产品经理', '有固定模板的团队'], unfit: ['涉及公司保密数据、不能外传的内容'], alts: [2, 3], prompts: [22, 21] }),
-  T({ id: 2, cat: 'write', name: '写作助手 B（示例）', c: '#0E9F6E', one: '中文表达润色，语气可调', free: '免费', pm: '把技术味很重的说明改成老板能读懂的话。', steps: ['贴原文', '说清读者是谁', '要求不加形容词'], fit: ['给老板写汇报'], unfit: ['需要严谨数据的报告'], alts: [1], prompts: [43] }),
-  T({ id: 3, cat: 'write', name: '知识库问答 C（示例）', c: '#7048E8', one: '上传文档后按资料回答并标出处', free: '免费额度 + 付费', pm: '把产品手册、规则文档丢进去，客服和新人问问题直接查。', steps: ['上传规则文档', '问一个你知道答案的问题试准确度', '答错的地方补文档'], fit: ['规则多、新人多的团队'], unfit: ['文档常变但没人维护'], alts: [1], prompts: [] }),
-  T({ id: 4, cat: 'meet', name: '录音转写 D（示例）', c: '#C2255C', one: '会议录音实时转文字，区分说话人', free: '免费额度 + 付费', pm: '会后 5 分钟出纪要，不用边听边记。', steps: ['会前开录', '会后导出文字稿', '贴进「会议纪要 4 块」提示词卡'], fit: ['会多的产品经理'], unfit: ['涉密会议'], alts: [5], prompts: [7] }),
+  T({ id: 2, cat: 'write', name: '写作助手 B', c: '#0E9F6E', one: '中文表达润色，语气可调', free: '免费', pm: '把技术味很重的说明改成老板能读懂的话。', steps: ['贴原文', '说清读者是谁', '要求不加形容词'], fit: ['给老板写汇报'], unfit: ['需要严谨数据的报告'], alts: [1], prompts: [43] }),
+  T({ id: 3, cat: 'write', name: '知识库问答 C', c: '#7048E8', one: '上传文档后按资料回答并标出处', free: '免费额度 + 付费', pm: '把产品手册、规则文档丢进去，客服和新人问问题直接查。', steps: ['上传规则文档', '问一个你知道答案的问题试准确度', '答错的地方补文档'], fit: ['规则多、新人多的团队'], unfit: ['文档常变但没人维护'], alts: [1], prompts: [] }),
+  T({ id: 4, cat: 'meet', name: '录音转写 D', c: '#C2255C', one: '会议录音实时转文字，区分说话人', free: '免费额度 + 付费', pm: '会后 5 分钟出纪要，不用边听边记。', steps: ['会前开录', '会后导出文字稿', '贴进「会议纪要 4 块」提示词卡'], fit: ['会多的产品经理'], unfit: ['涉密会议'], alts: [5], prompts: [7] }),
   T({ id: 5, cat: 'meet', name: '手机系统录音转写', c: '#495057', one: '手机自带录音 + 转写，零安装', free: '免费', pm: '临时会议、电话沟通也能留文字记录。', steps: ['打开系统录音并开启转写', '结束后导出文字', '配合纪要提示词整理'], fit: ['不想装新软件的人'], unfit: ['多人会议要区分说话人'], alts: [4], prompts: [7], demo: false }),
-  T({ id: 6, cat: 'proto', name: '原型生成 E（示例）', c: '#D9480F', one: '一句话描述生成可点击的网页原型', free: '免费额度 + 付费', pm: '评审前快速出一个能点的原型，比画线框图快。', steps: ['写清页面、字段和一个主操作', '生成后逐个点一遍', '让它改成你的配色和间距'], fit: ['要快速验证想法'], unfit: ['已有成熟设计规范要严格还原'], alts: [7], prompts: [44] }),
-  T({ id: 7, cat: 'proto', name: '设计稿助手 F（示例）', c: '#0B7285', one: '从截图或草图生成设计稿', free: '付费', pm: '把手绘草图变成规整的设计稿给设计参考。', steps: ['拍草图', '描述组件', '导出给设计'], fit: ['没有设计资源的小团队'], unfit: ['需要像素级还原'], alts: [6], prompts: [44] }),
+  T({ id: 6, cat: 'proto', name: '原型生成 E', c: '#D9480F', one: '一句话描述生成可点击的网页原型', free: '免费额度 + 付费', pm: '评审前快速出一个能点的原型，比画线框图快。', steps: ['写清页面、字段和一个主操作', '生成后逐个点一遍', '让它改成你的配色和间距'], fit: ['要快速验证想法'], unfit: ['已有成熟设计规范要严格还原'], alts: [7], prompts: [44] }),
+  T({ id: 7, cat: 'proto', name: '设计稿助手 F', c: '#0B7285', one: '从截图或草图生成设计稿', free: '付费', pm: '把手绘草图变成规整的设计稿给设计参考。', steps: ['拍草图', '描述组件', '导出给设计'], fit: ['没有设计资源的小团队'], unfit: ['需要像素级还原'], alts: [6], prompts: [44] }),
   T({ id: 8, cat: 'data', name: '数据透视表', c: '#12805C', one: '不写公式，拖字段就能按维度汇总', free: '免费', pm: '老板要数时，按渠道、按周看订单量和金额。', steps: ['选中整张表 › 插入 › 数据透视表', '「行」放渠道，「列」放周，「值」放金额', '值字段改成求和，再加一个计数'], fit: ['不会写 SQL 的产品经理'], unfit: ['百万行以上的数据'], alts: [9], prompts: [42], demo: false }),
-  T({ id: 9, cat: 'data', name: '表格分析 G（示例）', c: '#5C940D', one: '上传表格用中文提问出图表', free: '免费额度 + 付费', pm: '「按周看复购率」这类问题，直接问出图。', steps: ['上传脱敏后的表格', '用中文提问', '核对它用的口径'], fit: ['临时分析'], unfit: ['未脱敏的用户数据'], alts: [8], prompts: [42, 41] }),
-  T({ id: 10, cat: 'research', name: '联网搜索 H（示例）', c: '#1971C2', one: '带出处的联网搜索和总结', free: '免费', pm: '竞品调研时先拉一遍公开信息，每条带出处方便核对。', steps: ['问具体问题，不问「介绍一下」', '要求每条带出处', '用「数字核查」提示词再过一遍'], fit: ['竞品调研、行业扫描'], unfit: ['需要内部数据的问题'], alts: [], prompts: [33] }),
+  T({ id: 9, cat: 'data', name: '表格分析 G', c: '#5C940D', one: '上传表格用中文提问出图表', free: '免费额度 + 付费', pm: '「按周看复购率」这类问题，直接问出图。', steps: ['上传脱敏后的表格', '用中文提问', '核对它用的口径'], fit: ['临时分析'], unfit: ['未脱敏的用户数据'], alts: [8], prompts: [42, 41] }),
+  T({ id: 10, cat: 'research', name: '联网搜索 H', c: '#1971C2', one: '带出处的联网搜索和总结', free: '免费', pm: '竞品调研时先拉一遍公开信息，每条带出处方便核对。', steps: ['问具体问题，不问「介绍一下」', '要求每条带出处', '用「数字核查」提示词再过一遍'], fit: ['竞品调研、行业扫描'], unfit: ['需要内部数据的问题'], alts: [], prompts: [33] }),
   T({ id: 11, cat: 'draw', name: 'Mermaid', c: '#FF3670', one: '用几行文字画流程图、状态图', free: '免费', pm: '改需求时改文字就行，不用拖半天图。', steps: ['新建 mermaid 代码块', '写 flowchart TD，一行一个「A --> B」', '状态流转用 stateDiagram-v2'], fit: ['常画业务流程的人'], unfit: ['要精细排版的海报图'], alts: [12], prompts: [], demo: false }),
-  T({ id: 12, cat: 'draw', name: '在线白板 I（示例）', c: '#E8590C', one: '多人实时画图、贴便签', free: '免费额度 + 付费', pm: '需求讨论时一起画流程、贴想法。', steps: ['建一块白板', '拉人进来', '会后导出图片放进文档'], fit: ['远程讨论'], unfit: ['要版本管理的正式文档'], alts: [11], prompts: [] }),
+  T({ id: 12, cat: 'draw', name: '在线白板 I', c: '#E8590C', one: '多人实时画图、贴便签', free: '免费额度 + 付费', pm: '需求讨论时一起画流程、贴想法。', steps: ['建一块白板', '拉人进来', '会后导出图片放进文档'], fit: ['远程讨论'], unfit: ['要版本管理的正式文档'], alts: [11], prompts: [] }),
   T({ id: 13, cat: 'auto', name: '浏览器开发者工具', c: '#343A40', one: '30 秒看懂接口返回了什么', free: '免费', pm: '联调时不用等研发截图，自己看数据。', steps: ['右键 › 检查 › Network', '勾选 Fetch/XHR', '点请求 › Preview 看字段'], fit: ['常联调的产品经理'], unfit: [], alts: [], prompts: [], demo: false }),
-  T({ id: 14, cat: 'auto', name: 'Skill 管理 J（示例）', c: '#862E9C', one: '把常用提示词做成可复用的技能包', free: '免费', pm: '团队统一 PRD 格式：所有人装同一个 Skill。', steps: ['把模板和要求写进 Skill', '写清触发条件', '团队统一安装'], fit: ['多人产品团队'], unfit: ['一次性的任务'], alts: [], prompts: [37] }),
-  T({ id: 15, cat: 'office', name: '日程助手 K（示例）', c: '#2B8A3E', one: '用一句话排会、找空档', free: '免费额度 + 付费', pm: '「下周找 3 个研发都有空的 1 小时」一句话搞定。', steps: ['授权日历', '一句话说需求', '确认后发邀请'], fit: ['会议多'], unfit: ['跨公司日历'], alts: [], prompts: [] }),
-  T({ id: 16, cat: 'office', name: '翻译助手 L（示例）', c: '#1098AD', one: '整篇文档翻译，保留格式', free: '免费', pm: '看海外竞品文档、给海外团队发需求。', steps: ['上传文档', '指定术语表', '人工过一遍关键句'], fit: ['出海业务'], unfit: ['合同等法律文本'], alts: [], prompts: [] }),
+  T({ id: 14, cat: 'auto', name: 'Skill 管理 J', c: '#862E9C', one: '把常用提示词做成可复用的技能包', free: '免费', pm: '团队统一 PRD 格式：所有人装同一个 Skill。', steps: ['把模板和要求写进 Skill', '写清触发条件', '团队统一安装'], fit: ['多人产品团队'], unfit: ['一次性的任务'], alts: [], prompts: [37] }),
+  T({ id: 15, cat: 'office', name: '日程助手 K', c: '#2B8A3E', one: '用一句话排会、找空档', free: '免费额度 + 付费', pm: '「下周找 3 个研发都有空的 1 小时」一句话搞定。', steps: ['授权日历', '一句话说需求', '确认后发邀请'], fit: ['会议多'], unfit: ['跨公司日历'], alts: [], prompts: [] }),
+  T({ id: 16, cat: 'office', name: '翻译助手 L', c: '#1098AD', one: '整篇文档翻译，保留格式', free: '免费', pm: '看海外竞品文档、给海外团队发需求。', steps: ['上传文档', '指定术语表', '人工过一遍关键句'], fit: ['出海业务'], unfit: ['合同等法律文本'], alts: [], prompts: [] }),
 ];
 
 
-// ---------- 编辑部栏目 IP（占位，内容部设计中；头像放 img/columns/<id>.png，缺图时用色块+字）----------
+// ---------- 编辑部栏目 IP（内容部《栏目IP设定》v1.0；头像 img/columns/<id>.png，右下角「编」字角标）----------
+// 署名写法：栏目名 ｜ 老岳AI编辑部 · XX组；页面明写「编辑部栏目，不是个人账号」
 window.COLUMNS = [
-  { id: 'prompt', name: '提示词小组', mark: '词', c: '#B7791F', desc: '每天打磨能直接复制的提示词，变量都留好了，填上就能用。' },
-  { id: 'tools',  name: '工具测评组', mark: '测', c: '#2F6FEB', desc: '替产品经理试工具：能帮你干什么、上手三步、适合与不适合，每月核对一次。' },
-  { id: 'proto',  name: '原型实验室', mark: '原', c: '#C2255C', desc: '能点的原型和后台页面模板，配色间距抽成变量，改成你的业务半小时。' },
-  { id: 'job',    name: '求职研究所', mark: '职', c: '#0E7350', desc: '简历、作品集、面试和述职，按招聘方的视角拆给你看。' },
-  { id: 'method', name: '方法词典',   mark: '典', c: '#5B3CC4', desc: '产品经理常用的方法和 AI 术语，一句话讲清 + 一个例子。' },
-  { id: 'case',   name: '案例拆解室', mark: '拆', c: '#D9480F', desc: '拆真实场景里的产品决策：用户怎么做、方案怎么改、结果怎么量。' },
+  { id: 'doc',    name: '铅笔头', group: '需求文档组',        c: '#B7791F', n: 720, desc: '把需求写清楚：PRD、验收标准、需求澄清、用户研究。' },
+  { id: 'proto',  name: '积木盒', group: '原型组',            c: '#C2255C', n: 550, desc: '让评审有东西可点：一句话出原型、后台原型规矩、自己做小工具。' },
+  { id: 'prompt', name: '气泡灯', group: '提示词组',          c: '#E8A400', n: 800, desc: '问得准才答得好：提问公式、场景提示词、防编造、模板库。' },
+  { id: 'skill',  name: '小齿轮', group: 'Skill 与自动化组',  c: '#495057', n: 800, desc: '把重复的活装进 AI：Skill 清单实测、写 Skill、工作流自动化。' },
+  { id: 'data',   name: '放大镜', group: '数据与调研组',      c: '#2F6FEB', n: 580, desc: '先看清再下结论：取数、竞品、做 AI 产品的评测与设计。' },
+  { id: 'office', name: '便利贴', group: '办公提效组',        c: '#0E9F6E', n: 650, desc: '每天那些杂活：PPT、安全红线、官方文档导读、省钱与长对话。' },
+  { id: 'case',   name: '拆箱',   group: '案例拆解组',        c: '#D9480F', n: 500, desc: '把别人做成（和做砸）的项目拆开看。' },
+  { id: 'career', name: '信封',   group: '求职组',            c: '#5B3CC4', n: 400, desc: '下一份工作：转 AI 产品经理、改简历、模拟面试。' },
 ];
 (function () {
-  const m = { 3: 'proto', 7: 'prompt', 21: 'prompt', 22: 'prompt', 23: 'job', 24: 'method', 25: 'proto', 28: 'method', 29: 'method', 30: 'method', 31: 'case', 32: 'job', 33: 'prompt', 34: 'method', 36: 'case', 37: 'prompt', 38: 'method', 39: 'job', 41: 'prompt', 42: 'prompt', 43: 'job', 44: 'proto' };
+  const m = { 3: 'proto', 7: 'prompt', 21: 'doc', 22: 'doc', 23: 'career', 24: 'doc', 25: 'proto', 28: 'data', 29: 'doc', 30: 'data', 31: 'case', 32: 'career', 33: 'data', 34: 'office', 36: 'case', 37: 'skill', 38: 'doc', 39: 'career', 41: 'data', 42: 'data', 43: 'career', 44: 'proto' };
+  const tc = { write: 'office', meet: 'office', proto: 'proto', data: 'data', research: 'data', draw: 'office', auto: 'skill', office: 'office' };
   window.POSTS.forEach(p => { if (p.type === 'card') p.col = m[p.id] || 'prompt'; });
-  window.TOOLS.forEach(t => { t.col = 'tools'; });
+  window.TOOLS.forEach(t => { t.col = tc[t.cat]; });
 })();
 
 // 作者补充：替代公开评论区。读者私下来信里的好问题/建议，作者挑出来，在文末用自己的话补充。
@@ -317,7 +321,7 @@ window.LETTERS = [
 
 // 读者不登录：「我的」= 本机记录（localStorage，只存在这台设备）
 window.store = {
-  def: { role: 'reader', liked: [], faved: [], seen: [], got: [], asks: [], sub: '' },
+  def: { role: 'reader', rewardOn: false, liked: [], faved: [], seen: [], got: [], asks: [], sub: '' },
   get() { try { return Object.assign({}, this.def, JSON.parse(localStorage.getItem('lyforum2') || '{}')); } catch (e) { return Object.assign({}, this.def); } },
   set(s) { try { localStorage.setItem('lyforum2', JSON.stringify(s)); } catch (e) {} },
 };
@@ -326,8 +330,8 @@ window.today = () => new Date().toISOString().slice(0, 10);
 window.applyDemo = function (S) {
   const m = (location.search.match(/demo=(\w+)/) || [])[1];
   if (!m) return S;
-  if (m === 'empty') return Object.assign({}, store.def);
-  return Object.assign({}, store.def, { role: m === 'author' ? 'author' : 'reader', liked: [4], faved: [1, 22, 4], seen: [1, 21, 2, 7, 28], got: [24],
+  if (m === 'empty') return Object.assign({}, store.def, { rewardOn: /reward=on/.test(location.search) });
+  return Object.assign({}, store.def, { rewardOn: /reward=on/.test(location.search), role: m === 'author' ? 'author' : 'reader', liked: [4], faved: [1, 22, 4], seen: [1, 21, 2, 7, 28], got: [24],
     asks: [{ id: 1, title: 'AI 写的竞品报告里有数字，我不敢直接给老板，怎么核才放心？', to: 'any', time: '11/07', email: true, status: 'answered', post: 11 },
            { id: 2, title: '用 AI 做需求访谈提纲，怎么避免问出引导性问题？', to: 'laoyue', time: '11/09', email: false, status: 'pending' }] });
 };
