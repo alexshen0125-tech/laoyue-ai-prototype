@@ -427,3 +427,120 @@ window.applyDemo = function (S) {
     asks: [{ id: 1, title: 'AI 写的竞品报告里有数字，我不敢直接给老板，怎么核才放心？', to: 'any', time: '11/07', email: true, status: 'answered', post: 11 },
            { id: 2, title: '用 AI 做需求访谈提纲，怎么避免问出引导性问题？', to: 'laoyue', time: '11/09', email: false, status: 'pending' }] });
 };
+
+// ---------- Skill 用处 / 用法（11-09 老板：Skill 要写清「用处」和「用法」）----------
+// pain=一句话痛点；when/not=什么时候用/别用；chat=一次完整使用示例（你说 → 它问 → 你答 → 它交付）
+window.SKILL_MORE = {
+  1: { pain: '需求在脑子里很清楚，写成文档就漏边界，评审被研发追问到卡壳。',
+    when: ['小需求、一页能写完的需求', '评审前一天要出能看的文档'], not: ['大版本、要写十几章完整 PRD 的需求', '只是想问「PRD 怎么写」这类概念'],
+    chat: [['you', '帮我把这个需求写成一页纸 PRD：门店订货首页加「再来一单」，上次买的一键加购，下架的跳过。'],
+      ['ai', '先确认 2 点：①「上次」指上一单，还是上周同一天的订单？②加购后数量能改吗？'],
+      ['you', '上周同一天；数量可以改。'],
+      ['ai', '一页纸 PRD：背景 2 句｜目标：补货下单时长 6 分钟 → 1 分钟｜P0 三个：带出上周同日订单 / 下架商品跳过并提示 / 加购后可改数量｜6 类边界逐条写清（上周无订单、库存不足……）', 1]] },
+  2: { pain: 'PRD 自己看不出毛病，一到评审就被问「库存不够怎么办」「重复提交呢」。',
+    when: ['约评审前一天自查', '交给研发前想先把明显的坑填上'], not: ['还没写完、只有几句话的需求', '想让 AI 帮你写 PRD（用「一页纸 PRD 生成器」）'],
+    chat: [['you', '站在研发角度帮我挑挑刺。（贴上 PRD）'],
+      ['ai', '这份 PRD 主要给后端还是前端看？要不要加测试视角？'],
+      ['you', '后端，加上测试。'],
+      ['ai', '问题清单 12 条：P0 4 条（库存并发扣减没写、重复提交没防、……），P1 5 条，P2 3 条；每条标出在哪一段、建议怎么补。', 1]] },
+  3: { pain: '画一个后台列表页线框要半天，字段一改就得重画。',
+    when: ['后台列表、订单管理这类「筛选 + 表格」页面', '要给老板演示能点的页面'], not: ['C 端营销页、要设计感的页面', '已有设计稿、要像素级还原'],
+    chat: [['you', '帮我做一个订单列表页原型，字段：订单号、客户、金额、状态、下单时间。'],
+      ['ai', '状态有哪几种？列表上要哪些批量操作？'],
+      ['you', '待支付、待发货、已完成；批量导出。'],
+      ['ai', '交付 list.html：顶部按状态和时间筛选，表格 5 列，勾选后可批量导出，点一行从右侧抽屉看详情；颜色间距都在 tokens.css 里。', 1]] },
+  4: { pain: '竞品报告搜一圈拼起来，数字没出处，老板一句「这个准吗」就答不上来。',
+    when: ['老板要一份能看的竞品对比', '评估要不要跟进某个竞品功能'], not: ['要内部数据才能回答的问题', '只想了解一个产品是干什么的'],
+    chat: [['you', '帮我做 A 和 B 的竞品对比，看「下单」这件事谁更快。'],
+      ['ai', '对比对象是商家端还是买家端？有没有你亲手试过的部分？'],
+      ['you', '买家端；A 我亲手试过，B 没有。'],
+      ['ai', '对比表：下单步数 A 4 步 / B 5 步【待实测】｜三条结论，每条带出处；B 的数据全部标【待实测】。', 1]] },
+  5: { pain: '指标突然掉了，先凭感觉猜原因，查半天才发现是统计口径改了。',
+    when: ['老板问「昨天怎么掉了 / 涨了」', '周报里要解释指标异动'], not: ['还没有数据、只是想定指标', '要写 SQL 取数（它只给排查顺序）'],
+    chat: [['you', '昨天订单量比上周同期掉了 20%，帮我排查。'],
+      ['ai', '是全天都掉，还是某个时段？最近有没有发版或活动结束？'],
+      ['you', '晚上 8 点后掉得多，前天发过版。'],
+      ['ai', '排查清单 5 步，每步写清看哪张表、哪个字段；建议先查第 1 步「口径」和第 5 步「发版」——晚高峰集中下跌，优先怀疑新版本下单页。', 1]] },
+  6: { pain: '会开完纪要拖到第二天，待办没人认领，下次会又从头讨论。',
+    when: ['每次开完会要发纪要', '有录音转写文字，想 5 分钟整理完'], not: ['没有录音、只有零散笔记（先手动补全）', '涉密会议，录音不能给 AI'],
+    chat: [['you', '帮我整理这段会议录音。（贴上转写文字）'],
+      ['ai', '参会人有哪些？待办的截止日期按会上说的，还是默认本周五？'],
+      ['you', '我、阿杰、老K；默认本周五。'],
+      ['ai', '纪要 4 块：结论 3 条｜待办 5 条（负责人 + 截止），其中 1 条没人认领，标【待定】｜分歧 1 条｜下次议题 2 个。', 1]] },
+  7: { pain: '做述职 PPT 先找模板再填内容，做到凌晨，开场还是「今年我主要做了以下工作」。',
+    when: ['年终述职、季度汇报', '要把几条结论快速做成能投屏的页面'], not: ['要精美动画、品牌定制的发布会 PPT', '还没想清楚今年做成了什么'],
+    chat: [['you', '帮我做述职 PPT，今年做了：再来一单、评审提效、新人带教。'],
+      ['ai', '每件事有结果数字吗？听众是直属领导还是更高一层？'],
+      ['you', '下单时长 6 → 1 分钟；评审轮次 3 → 1；带了 2 个新人。听众是总监。'],
+      ['ai', '交付 deck.html：开场 1 句结论 + 3 页各一个数字 + 明年要的 2 项支持，共 6 页，可直接投屏。', 1]] },
+  8: { pain: '简历投了几十份没回音，自己看不出哪句是空话。',
+    when: ['投了很多份没回音', '要针对某个岗位改一版'], not: ['还没有任何经历可写', '想让 AI 编造经历（它不会编）'],
+    chat: [['you', '帮我改改简历，投 AI 产品经理。（贴上简历）'],
+      ['ai', '你最想让面试官记住的是哪一段？有没有能写出来的结果数字？'],
+      ['you', '订单模块那段；下单时长从 6 分钟降到 1 分钟。'],
+      ['ai', '30 秒视角：面试官只记住了公司名｜3 句空话已标出｜改写：「重做再来一单，补货下单从 6 分钟降到 1 分钟，使用率 42%」。', 1]] },
+  9: { pain: '验收标准写成「功能正常」，测试只能自己猜怎么测。',
+    when: ['PRD 写完、要补验收标准', '测试说「这个没法测」'], not: ['需求本身还没定', '要写自动化测试代码'],
+    chat: [['you', '给这个需求写验收标准：订单金额满 5000 要主管审批。'],
+      ['ai', '审批超时怎么处理？金额正好 5000 算不算？'],
+      ['you', '超时 24 小时自动退回；正好 5000 要审批。'],
+      ['ai', '验收标准 4 条（Given/When/Then）：正向 2 条、边界 1 条（正好 5000）、异常 1 条（超时 24 小时自动退回并通知下单人）。', 1]] },
+  10: { pain: '手上几百条用户吐槽，逐条看完也说不清大家主要在嫌什么。',
+    when: ['版本规划前想看用户最在意什么', '客服记录、商店评论攒了一大批'], not: ['只有十来条反馈（自己看更快）', '要做严谨的问卷统计分析'],
+    chat: [['you', '帮我把这些用户反馈归一下类。（贴上 300 条评论）'],
+      ['ai', '反馈来自哪个版本？要不要把「好评」单独拿出来？'],
+      ['you', '最近两个版本；好评单独放。'],
+      ['ai', '归成 5 类，按条数排序：加载慢 38% / 找不到入口 21% / ……每类附 2 句原话和改法；好评 46 条单独列出。', 1]] },
+};
+window.SKILLS.forEach(s => Object.assign(s, window.SKILL_MORE[s.id] || {}));
+window.SKILL_FAQ = [
+  ['说了触发的话，AI 没反应？', '先确认整个文件夹放进了 Skill 目录，并且新开了一个对话；还不行就把话说直白一点，带上 Skill 名字，比如「用一页纸 PRD 生成器帮我……」。'],
+  ['怎么改成我们团队自己的版本？', '打开 SKILL.md，改「步骤」和「输出格式」两段；模板文件直接换成你们自己的，文件名和文件夹名别改。改完新开对话试一句。'],
+  ['会不会把我的资料传出去？', 'Skill 包本身只是说明和模板文件，不联网、不上传。你贴给 AI 的内容按你所用 AI 工具的规则处理，涉密内容先脱敏。'],
+];
+// 新手说明：Skill 是什么、和提示词的区别、三步用法、什么时候用哪个
+window.SKILL_GUIDE = {
+  what: '装进 AI 助手里的技能包。装上以后，你说一句话，AI 就按固定套路把一件活干完。',
+  vs: [['怎么用', '每次复制、粘贴进对话框', '装一次，反复用'], ['怎么启动', '你手动贴进去', '说一句话自动触发'], ['能带什么', '只有一段文字', '可以带模板、检查清单、示例文件'], ['适合', '偶尔干一次的活', '每周都要干、要固定格式的活']],
+  useSkill: ['同一件活每周都要干（纪要、周报、评审自查）', '团队要统一格式（大家装同一个 Skill）', '需要带模板或检查清单才干得好'],
+  usePrompt: ['偶尔干一次，不值得装', '换了电脑或用别人的账号，不方便装', '想先试试效果，再决定要不要装'],
+};
+
+// ---------- 按 AI 分 Tab 的一键安装（11-09 老板：此处可写具体 AI 产品名；目录以官方文档为准，见 网站/2026-11-09_各AI的Skill安装方式核实.md）----------
+// 下载地址占位：https://laoyueai.top/s/<skill-id>.zip（skill-id = Skill 英文名）
+window.SKILL_AI = [
+  { id: 'claude', name: 'Claude Code', dir: '~/.claude/skills', win: '$HOME\\.claude\\skills', verify: '新开会话输入 /{slug}，或说一句下面的触发说法，它按步骤输出就是装好了' },
+  { id: 'codex', name: 'Codex CLI', dir: '~/.agents/skills', win: '$HOME\\.agents\\skills', verify: '新开会话输入 /skills 能看到 {slug}；也可以输入 ${slug} 直接点名调用' },
+  { id: 'cursor', name: 'Cursor', dir: '~/.cursor/skills', win: '$HOME\\.cursor\\skills', verify: '在 Agent 对话框输入 / 搜「{slug}」，搜得到就是装好了' },
+  { id: 'gemini', name: 'Gemini CLI', dir: '~/.gemini/skills', win: '$HOME\\.gemini\\skills', verify: '新开会话说一句触发说法，弹出「启用 Skill」确认，点同意即生效' },
+  { id: 'web', name: '网页版 AI', sub: 'DeepSeek / Kimi / 豆包 / 通义', web: true, verify: '粘贴后说一句触发说法，它按步骤输出就能用' },
+];
+window.skillSlug = s => (s.md.match(/name: ([\w-]+)/) || [])[1] || ('skill-' + s.id);
+window.skillCmd = function (s, ai, os) {
+  const slug = window.skillSlug(s), url = 'https://laoyueai.top/s/' + slug + '.zip';
+  if (os === 'win') return 'New-Item -ItemType Directory -Force "' + ai.win + '" | Out-Null\nInvoke-WebRequest "' + url + '" -OutFile "$env:TEMP\\' + slug + '.zip"\nExpand-Archive "$env:TEMP\\' + slug + '.zip" -DestinationPath "' + ai.win + '" -Force';
+  return 'mkdir -p ' + ai.dir + ' && \\\ncurl -fL -o /tmp/' + slug + '.zip ' + url + ' && \\\nunzip -o /tmp/' + slug + '.zip -d ' + ai.dir;
+};
+window.skillFull = s => s.md.replace(/……$/, '') + '\n\n（完整版以下载包为准）';
+// 记住上次选的 AI 和系统（本机，独立于演示身份）
+window.instPref = {
+  get() { let o = {}; try { o = JSON.parse(localStorage.getItem('lyinst') || '{}'); } catch (e) {} return { ai: o.ai || 'claude', os: o.os || (/Windows/i.test(navigator.userAgent) ? 'win' : 'mac') }; },
+  set(k, v) { try { const o = JSON.parse(localStorage.getItem('lyinst') || '{}'); o[k] = v; localStorage.setItem('lyinst', JSON.stringify(o)); } catch (e) {} },
+};
+
+// ---------- 搜索（两端共用）：最近搜索（本机）、常搜热词、编号直达 ----------
+window.HOTWORDS = ['PRD', '会议纪要', '竞品', '简历', '周报', '访谈', '评审', 'R0006', 'S0006'];
+window.recent = {
+  get() { try { return JSON.parse(localStorage.getItem('lyrecent') || '[]'); } catch (e) { return []; } },
+  push(q) { q = (q || '').trim(); if (q.length < 2) return; try { const L = [q].concat(this.get().filter(x => x !== q)).slice(0, 8); localStorage.setItem('lyrecent', JSON.stringify(L)); } catch (e) {} },
+  clear() { try { localStorage.removeItem('lyrecent'); } catch (e) {} },
+};
+// 输入 R0006 / r6 / S-1003 / S0006 这类编号 → 返回详情路由；找不到返回 null
+window.codeTo = function (q) {
+  const m = (q || '').trim().match(/^([RS])\s*-?\s*0*(\d{1,4})$/i); if (!m) return null;
+  const c = m[1].toUpperCase() + m[2].padStart(4, '0');
+  const s = window.SKILLS.find(x => x.code === c); if (s) return { to: 's/' + s.id, code: c };
+  const p = window.POSTS.find(x => x.attach && x.attach.code === c); if (p) return { to: (p.type === 'article' ? 'p/' : 'c/') + p.id, code: c };
+  return null;
+};
+window.hlText = (s, q) => { s = String(s); if (!q) return s; const e = q.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); return s.split(e).join('<mark>' + e + '</mark>'); };
