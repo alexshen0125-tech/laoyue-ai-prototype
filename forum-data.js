@@ -95,6 +95,8 @@ window.KINDS = {
   template: { name: '模板',     short: '模板',  act: '下载' },
   term:     { name: '方法 / 术语卡', short: '方法术语', act: '复制' },
   case:     { name: '案例拆解', short: '案例',  act: '复制' },
+  tool:     { name: '工具卡',   short: '工具',  act: '复制' },
+  skill:    { name: 'Skill',    short: 'Skill', act: '下载' },
 };
 // 首页规模感：分类计数（示例数，上线时取真实统计）
 window.STATS = { total: 5126, article: 186, prompt: 1840, template: 760, tool: 620, term: 910, case: 430, qa: 380 };
@@ -179,7 +181,7 @@ window.POSTS.push(
     title: 'Skill 触发描述改写：写清什么时候用、什么时候不用',
     excerpt: '把你的 Skill 描述贴进去，改写成带用户原话例子的触发条件。',
     fit: '自己写的 Skill 总是不触发的人。',
-    scenes: ['Skill 与自动化'],
+    scenes: ['自动化与工作流'],
     prompt: '下面是我写的一个 Skill 的描述，它的用途是 {{Skill 用途}}。请改写成：\n1. 一句话说它做什么；\n2. 什么时候用：列 3 句用户可能的原话；\n3. 什么时候不用：列 2 个容易混淆的场景。\n原描述：{{粘贴描述}}' }),
   C({ id: 38, kind: 'term', board: 'pm', date: '2026-10-20', time: '3 周前', views: '1.6k', likes: 110, favs: 352, tags: ['方法', '验收'],
     title: 'Given / When / Then：一句话写清验收标准',
@@ -215,17 +217,17 @@ window.POSTS.push(
     prompt: '下面是 {{页面名称}} 的交互说明。请按 7 条逐条检查并给「通过 / 不通过 + 改法」：\n1. 线上步骤 ≤ 线下步骤；2. 输入方向 = 用户想的方向；3. 能选就不让填；4. 不让用户心算；5. 高频选项有默认值；6. 改了 A，关联的 B 自动变；7. 核心操作 ≤ 3 步。\n交互说明：{{粘贴说明}}' }),
 );
 
-window.SCENES = ['需求分析', 'PRD 与评审', '竞品与调研', '数据分析', '会议与沟通', '原型设计', '汇报写作', '求职面试', 'Skill 与自动化'];
-window.STATS.tool = 620;
+window.SCENES = ['需求分析', 'PRD 与评审', '竞品与调研', '数据分析', '会议与沟通', '原型设计', '汇报写作', '求职面试', '自动化与工作流'];
+window.STATS.tool = 300; // 11-09 老板：工具卡降为资料库形态，约 300
 
-// ---------- AI 工具库（示例）----------
+// ---------- 工具卡（示例；11-09 起不再是一级频道，作为资料库的一种形态 kind=tool）----------
 // 说明：工具卡可写真实工具名（老板 11-09 定）；原型里 AI 工具先用「示例名」，上线由工具测评组按实测填写。
 // 不放官网链接（站内不放外链口径），读者按名称自行搜索。free 字段只在网页版展示，小程序不展示。
 window.TOOLCATS = [
-  { id: 'write', n: 128, name: '写作与文档', icon: '✎' }, { id: 'meet', n: 46, name: '会议与纪要', icon: '◷' },
-  { id: 'proto', n: 72, name: '原型与设计', icon: '▣' }, { id: 'data', n: 81, name: '数据分析', icon: '▤' },
-  { id: 'research', n: 64, name: '调研与搜索', icon: '⌕' }, { id: 'draw', n: 39, name: '流程图与画图', icon: '◇' },
-  { id: 'auto', n: 97, name: '自动化与 Skill', icon: '⚙' }, { id: 'office', n: 93, name: '效率办公', icon: '◎' },
+  { id: 'write', n: 62, name: '写作与文档', icon: '✎' }, { id: 'meet', n: 22, name: '会议与纪要', icon: '◷' },
+  { id: 'proto', n: 36, name: '原型与设计', icon: '▣' }, { id: 'data', n: 40, name: '数据分析', icon: '▤' },
+  { id: 'research', n: 32, name: '调研与搜索', icon: '⌕' }, { id: 'draw', n: 20, name: '流程图与画图', icon: '◇' },
+  { id: 'auto', n: 48, name: '自动化与工作流', icon: '⚙' }, { id: 'office', n: 40, name: '效率办公', icon: '◎' },
 ];
 const T = (o) => Object.assign({ checked: '2026-11-0' + (1 + (o.id % 8)), demo: true }, o);
 window.TOOLS = [
@@ -248,6 +250,96 @@ window.TOOLS = [
   T({ id: 16, cat: 'office', name: '翻译助手 L', c: '#1098AD', one: '整篇文档翻译，保留格式', free: '免费', pm: '看海外竞品文档、给海外团队发需求。', steps: ['上传文档', '指定术语表', '人工过一遍关键句'], fit: ['出海业务'], unfit: ['合同等法律文本'], alts: [], prompts: [] }),
 ];
 
+
+
+// ---------- Skill 库（示例；11-09 老板定：Skill 单独成频道，放在原 AI 工具库位置）----------
+// 署名：小齿轮 ｜ 老岳AI编辑部 · Skill 与自动化组；老岳亲自做的署老岳（by: 'laoyue'）
+window.STATS.skill = 420;
+window.SKILLCATS = [
+  { id: 'prd', name: '写需求 / PRD', icon: '✎', n: 86 }, { id: 'proto', name: '原型', icon: '▣', n: 48 },
+  { id: 'review', name: '评审挑刺', icon: '◎', n: 52 }, { id: 'research', name: '竞品调研', icon: '⌕', n: 44 },
+  { id: 'data', name: '数据分析', icon: '▤', n: 46 }, { id: 'meeting', name: '会议纪要', icon: '◷', n: 38 },
+  { id: 'deck', name: '汇报 PPT', icon: '▭', n: 52 }, { id: 'career', name: '求职', icon: '↗', n: 54 },
+];
+const SK = (o) => Object.assign({ by: 'skill', demo: true }, o);
+// 安装三步：通用说明，不写具体 AI 产品名（各家目录位置不同，读者按自己用的工具设置找「技能 / Skills」）
+window.SKILL_INSTALL = [
+  ['下载并解压', '得到一个以 Skill 英文名命名的文件夹，里面有 SKILL.md 和若干模板、清单文件。文件夹名不要改。'],
+  ['放进 AI 工具的 Skill 目录', '打开你常用 AI 工具的设置，找到「技能 / Skills」，选「导入」或把整个文件夹放进它指定的目录。'],
+  ['新开对话，说一句触发', '用下面任意一句「触发说法」开口。它按 SKILL.md 里的步骤输出，就说明装好了。'],
+];
+window.SKILLS = [
+  SK({ id: 1, size: '18 KB', cat: 'prd', by: 'laoyue', code: 'S0001', ver: 'v1.3', date: '2026-11-08', dl: 2140, name: '一页纸 PRD 生成器',
+    one: '把零散的需求要点，按「背景 / 目标 / P0 / 边界」写成一页纸 PRD。', fit: '小需求不想写长文档、但要过评审的时候',
+    before: '「做个再来一单，上次买的一键加购，下架的跳过」——一句话丢给研发，评审被问了 20 分钟。',
+    after: '一页纸：背景 2 句、目标带数字、P0 只有 3 个、6 类边界逐条写清，评审 10 分钟过。',
+    triggers: ['帮我把这个需求写成一页纸 PRD', '按我们团队的格式整理一下这个需求', '这个需求先出个 P0 清单'],
+    files: [['SKILL.md', '触发条件、步骤、输出格式'], ['templates/一页纸.md', '一页纸模板'], ['checklists/六类边界.md', '边界检查表'], ['examples/再来一单.md', '一份写好的示例']],
+    md: '---\nname: one-page-prd\ndescription: 当用户要把需求要点整理成 PRD、一页纸、P0 清单时使用；只是问概念时不用。\n---\n\n## 步骤\n1. 先用 4 句话复述需求（谁 / 场景 / 要完成什么 / 现在怎么做），有缺口先问用户\n2. 列功能清单，P0 不超过 3 个\n3. 每个 P0 过 6 类边界……', prompts: [22, 21], articles: [1] }),
+  SK({ id: 2, size: '24 KB', cat: 'review', code: 'S0002', ver: 'v1.1', date: '2026-11-07', dl: 1630, name: '研发视角评审挑刺',
+    one: '扮演后端 + 测试两个角色，按 P0/P1/P2 挑出 PRD 里会被追问的地方。', fit: '评审前一天，自己先把坑填上',
+    before: 'PRD 写完直接约评审，研发一问「库存不够怎么办」「重复提交呢」就卡住。',
+    after: '评审前拿到 12 条问题清单，P0 的 4 条当天补完，评审只剩 2 个讨论点。',
+    triggers: ['帮我评审一下这份 PRD', '站在研发角度挑挑刺', '这份需求测试会问什么'],
+    files: [['SKILL.md', '两个角色的提问规则'], ['checklists/评审问题库.md', '常见追问 60 条'], ['examples/评审输出.md', '输出示例']],
+    md: '---\nname: prd-review\ndescription: 当用户要评审、挑刺、自查 PRD 或需求文档时使用。\n---\n\n## 角色\n- 后端研发：关注数据、并发、接口\n- 测试：关注边界、异常、回归……', prompts: [22, 44], articles: [6] }),
+  SK({ id: 3, size: '46 KB', cat: 'proto', code: 'S0003', ver: 'v1.0', date: '2026-11-05', dl: 980, name: '后台列表页原型生成',
+    one: '说清字段和操作，生成「筛选 + 表格 + 抽屉详情」的可点 HTML 原型。', fit: '做 B 端后台，要快速给老板演示',
+    before: '画一个列表页线框图要半天，字段改一次重画一次。',
+    after: '写 8 行字段说明，10 分钟出能点的页面，配色间距都是变量，改字段只改文字。',
+    triggers: ['帮我做一个订单列表页原型', '后台列表页，字段是……', '加一个右侧抽屉看详情'],
+    files: [['SKILL.md', '页面结构规则'], ['templates/list.html', '列表页骨架'], ['templates/tokens.css', '颜色与间距变量']],
+    md: '---\nname: admin-list-proto\ndescription: 当用户要做后台列表页、表格页、带筛选的管理页原型时使用。\n---\n\n## 页面结构\n筛选区 → 批量操作 → 表格 → 分页；详情一律用右侧抽屉……', prompts: [44], articles: [10] }),
+  SK({ id: 4, size: '38 KB', cat: 'research', code: 'S0004', ver: 'v1.2', date: '2026-11-04', dl: 1210, name: '竞品对比报告',
+    one: '按用户任务比步数、比赚钱方式，结论分「已确认 / 待实测」。', fit: '老板要一份能看的竞品对比，时间只有一小时',
+    before: '搜一圈拼成十页文档，数字没出处，老板一句「这个准吗」答不上来。',
+    after: '一张对比表 + 三条结论，每个数字带出处，没核实的标【待实测】。',
+    triggers: ['帮我做 A 和 B 的竞品对比', '按用户任务比一下这几个产品', '出一份竞品报告'],
+    files: [['SKILL.md', '调研步骤与核实规则'], ['templates/对比表.md', '对比表模板'], ['templates/报告.html', '网页版报告']],
+    md: '---\nname: competitor-report\ndescription: 当用户要做竞品分析、产品对比、行业扫描时使用。\n---\n\n## 规则\n- 每个数字写出处；没有出处标【待实测】\n- 按用户任务比步数，不按功能列表比……', prompts: [33], articles: [4] }),
+  SK({ id: 5, size: '9 KB', cat: 'data', code: 'S0005', ver: 'v1.0', date: '2026-11-03', dl: 760, name: '数据异动排查',
+    one: '指标突然涨跌时，按口径 → 时间 → 维度 → 外部 → 版本五步给出排查清单。', fit: '老板问「昨天怎么掉了」',
+    before: '看到下单量掉 20%，先猜是不是活动结束了，查了半天发现是统计口径改了。',
+    after: '5 分钟拿到排查清单，每步写清看哪张表、哪个字段，第 1 步就定位到口径变化。',
+    triggers: ['昨天订单量掉了 20%，帮我排查', '这个指标为什么突然涨了'],
+    files: [['SKILL.md', '五步排查规则'], ['checklists/排查清单.md', '可打印清单']],
+    md: '---\nname: metric-anomaly\ndescription: 当用户问某个指标为什么涨跌、要排查数据异动时使用。\n---\n\n## 五步\n1. 统计口径有没有变\n2. 哪个时间段变的……', prompts: [42], articles: [] }),
+  SK({ id: 6, size: '12 KB', cat: 'meeting', by: 'laoyue', code: 'S0006', ver: 'v2.0', date: '2026-11-09', dl: 3120, name: '会议纪要 4 块',
+    one: '录音转写贴进来，输出结论 / 待办 / 分歧 / 下次议题，没人认领的待办标【待定】。', fit: '会后要 5 分钟内发纪要',
+    before: '会开完，纪要拖到第二天，待办没人认领，下次会又从头讨论。',
+    after: '会后 5 分钟发出，待办带负责人和日期，没人认领的写【待定】，不会编人名。',
+    triggers: ['帮我整理这段会议录音', '出一份会议纪要', '把这次会的待办列一下'],
+    files: [['SKILL.md', '4 块结构与规则'], ['templates/纪要.md', '纪要模板'], ['examples/周会.md', '示例']],
+    md: '---\nname: meeting-minutes\ndescription: 当用户贴会议录音转写、要整理纪要或待办时使用。\n---\n\n## 输出\n结论 / 待办（负责人 + 截止）/ 分歧 / 下次议题\n## 禁止\n不要编造负责人……', prompts: [7], articles: [] }),
+  SK({ id: 7, size: '52 KB', cat: 'deck', code: 'S0007', ver: 'v1.1', date: '2026-11-02', dl: 1450, name: '述职 PPT 网页版',
+    one: '先写 5 句结论，再生成一页一句话的网页版 PPT，可直接投屏。', fit: '年终述职、季度汇报',
+    before: '先找模板再填内容，做到凌晨，开场第一句还是「今年我主要做了以下工作」。',
+    after: '1 小时搭完：5 句结论、每页一个数字，开场一句话讲清今年做成了什么。',
+    triggers: ['帮我做述职 PPT', '把这几条结论做成汇报页', '出一个网页版 PPT'],
+    files: [['SKILL.md', '结构与文案规则'], ['templates/deck.html', '网页版 PPT 模板'], ['examples/年终述职.html', '示例']],
+    md: '---\nname: review-deck\ndescription: 当用户要做述职、汇报、季度总结 PPT 时使用。\n---\n\n## 结构\n结论 → 证据 → 下一步；每页只放一句话 + 一个数字……', prompts: [43], articles: [10] }),
+  SK({ id: 8, size: '11 KB', cat: 'career', code: 'S0008', ver: 'v1.0', date: '2026-11-01', dl: 1880, name: '简历挑刺与改写',
+    one: '站在招聘方角度 30 秒看简历，挑出空话并改成「做了什么 + 结果数字」。', fit: '投了很多份没回音',
+    before: '「负责订单模块的需求分析和产品设计」——面试官看完记不住任何东西。',
+    after: '「重做再来一单，补货下单从 6 分钟降到 1 分钟，使用率 42%」——一句话有动作有结果。',
+    triggers: ['帮我改改简历', '这份简历哪里有问题', '按这个岗位出一版匹配的简历'],
+    files: [['SKILL.md', '挑刺与改写规则'], ['templates/简历.md', '结果导向模板']],
+    md: '---\nname: resume-review\ndescription: 当用户要修改、评价、按岗位定制简历时使用。\n---\n\n## 步骤\n1. 30 秒视角：记住了什么\n2. 找出 3 句空话……', prompts: [23], articles: [8] }),
+  SK({ id: 9, size: '8 KB', cat: 'prd', code: 'S0009', ver: 'v1.0', date: '2026-10-30', dl: 690, name: '验收标准生成（Given/When/Then）',
+    one: '按功能点生成正向 + 异常各至少一条可测试的验收标准。', fit: 'PRD 写完，验收标准还是「功能正常」',
+    before: '验收标准写「下单功能正常」，测试只能自己猜怎么测。',
+    after: '每个功能点 2~4 条 Given/When/Then，异常场景写清系统怎么提示。',
+    triggers: ['给这个需求写验收标准', '补一下 AC', '把验收写成 Given When Then'],
+    files: [['SKILL.md', '验收标准规则'], ['templates/AC表.md', '验收表模板']],
+    md: '---\nname: acceptance-criteria\ndescription: 当用户要为需求补验收标准、AC、测试用例时使用。\n---\n\n## 规则\n每个功能点至少 1 条正向 + 1 条异常……', prompts: [22], articles: [1] }),
+  SK({ id: 10, size: '14 KB', cat: 'research', code: 'S0010', ver: 'v1.0', date: '2026-10-28', dl: 1020, name: '用户反馈归类',
+    one: '把几百条客服记录或商店评论归成不超过 5 类，计数、挑代表原话、给改法。', fit: '手上一堆吐槽，不知道先改哪个',
+    before: '300 条评论逐条看了一下午，最后凭印象说「大家主要嫌慢」，老板问占多少答不上来。',
+    after: '10 分钟拿到 5 类：每类条数、2 句原话、建议改法，「加载慢」占 38% 排第一。',
+    triggers: ['帮我把这些用户反馈归一下类', '这些评论主要在吐槽什么', '按问题类型统计一下这批客服记录'],
+    files: [['SKILL.md', '归类规则与输出格式'], ['templates/归类表.md', '归类结果表'], ['examples/商店评论.md', '示例']],
+    md: '---\nname: feedback-cluster\ndescription: 当用户贴一批反馈、评论、客服记录，要归类、统计、找主要问题时使用。\n---\n\n## 规则\n- 不超过 5 类，分不进去的放「其他」\n- 每类写条数和 2 句原话……', prompts: [41], articles: [] }),
+];
 
 // ---------- 编辑部栏目 IP（内容部《栏目IP设定》v1.0；头像 img/columns/<id>.png，右下角「编」字角标）----------
 // 署名写法：栏目名 ｜ 老岳AI编辑部 · XX组；页面明写「编辑部栏目，不是个人账号」
