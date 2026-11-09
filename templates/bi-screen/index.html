@@ -342,9 +342,12 @@ body.has-tplbar{--bar-h:44px;padding-top:44px}
 .tplbar .tb-btn.primary:hover{filter:brightness(.94)}
 .tplbar .tb-btn .ic{width:15px;height:15px}
 .tplbar .tb-hide{width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+.drawer{top:var(--bar-h,0px)}
 body.pp-hidden .tplbar{display:none}
 body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
 @media (max-width:820px){.tplbar .tb-line{display:none}}
+:root[data-theme="dark"]{color-scheme:dark}
+:root[data-theme="dark"] .badge-danger{background:#C9372F;color:#fff}
 :root[data-theme="dark"] .toast{background:#2A2C31;color:#F2F2F4;box-shadow:0 0 0 1px #3A3C42,var(--shadow-2)}
 :root[data-theme="dark"] .brand-mark,:root[data-theme="dark"] .ai-mark{background:#ECECEF;color:#16171A}
 :root[data-theme="dark"] .tab.on{color:#16171A}
