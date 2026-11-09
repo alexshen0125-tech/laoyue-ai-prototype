@@ -743,6 +743,7 @@ home(){const a=REAL?POSTS.find(p=>p.type==='article'):P(1);const dm=P(1089)||car
   ${dm?`<div class="mdemo"><div class="in"><div class="mcap"><b>1</b>点空格改字<b>2</b>一键复制<b>3</b>粘到 AI</div><h3><span>${dm.title}</span><span class="free">免费</span></h3><div class="pt">${ptext(dm,true)}</div><button class="go" onclick="copyPrompt(${dm.id})">${svg('copy')}一键复制</button></div></div>`:''}
   <a class="hero ${a.cover?'':'noimg'}" data-go="p/${a.id}">${a.cover?`<img src="${a.cover}" alt="">`:art('A'+a.id,390,180)}<span class="eb">本周精华 · 长文</span><h2>${a.title}</h2><p>${U(a.author).name}${a.reads==null?' · 新文章':' · '+a.reads+' 阅读'}</p></a>
   <div class="sec"><h4>${REAL?'新上的提示词':'最常复制的提示词'}</h4><a data-go="prompts">全部${chev}</a></div>${(REAL?cards('prompt').slice(0,2):[P(22),P(21)]).map(pc).join('')}
+  ${(()=>{const E=cards().filter(p=>p.kind==='eval');if(!E.length)return '';const pk=['review','compare','guide','tip'].map(f=>E.find(p=>p.form===f)).filter(Boolean).slice(0,3);return `<div class="sec"><h4>AI 测评与指南</h4><small>哪件活用哪个 AI</small><a data-go="lib/eval">全部 ${E.length} 篇${chev}</a></div><div class="list">${pk.map(it).join('')}</div>`})()}
   <div class="sec"><h4>Skill 库</h4><a data-go="skills/guide" class="howl">Skill 怎么用？</a><a data-go="skills">全部${chev}</a></div>${SKILLS.slice().sort((a,b)=>REAL?0:b.dl-a.dl).slice(0,2).map(skm).join('')}
   <div class="sec"><h4>作者长文</h4><a data-go="articles">全部${chev}</a></div><div class="list">${POSTS.filter(p=>p.type==='article').slice(1,4).map(it).join('')}</div>
   <div class="sec"><h4>资料库</h4><small>模板 · 工具卡 · 方法 · 案例</small><a data-go="lib">全部${chev}</a></div><div class="list">${cards().filter(p=>p.kind!=='prompt').slice(0,3).map(it).join('')}</div>
@@ -888,8 +889,9 @@ function route(keep){const h=(location.hash||'#home').slice(1).split('/');if(h[0
   $('#scr').scrollTop=keep===true?sc:0;
   document.querySelectorAll('[data-go],a[onclick]').forEach(e=>{if(!e.hasAttribute('tabindex'))e.tabIndex=0});
   const cur=h.join('/');
-  const G1=[['home','首页'],['prompts','提示词库'],['skills','Skill 库'],['qa','作者答疑'],['me','我的']],G2=[['s/6','Skill 详情（用处 / 用法）'],['skills/guide','Skill 新手说明'],['search','搜索页（真能搜）'],['articles','长文列表'],['c/22','提示词详情（就地填写）'],['c/24','模板详情（电脑下载）'],['c/31','案例拆解'],['lib/tool','资料库 · 工具卡'],['t/1','工具卡详情'],['p/1','长文详情'],['q/2','答疑详情'],['lib','资料库'],['col/doc','栏目页'],['fav','我的收藏']];
-  const g=L=>L.map(([k,n])=>`<a data-go="${k}" class="${cur===k?'on':''}">${n}<code>#${k}</code></a>`).join('');$('#g1').innerHTML=g(G1);$('#g2').innerHTML=g(G2);
+  const fc=k=>{const p=cards().find(x=>x.kind===k&&(k!=='template'||x.attach||x.tpl));return p?'c/'+p.id:null},fq=(POSTS.find(p=>p.type==='question')||{}).id;
+  const G1=[['home','首页'],['prompts','提示词库'],['skills','Skill 库'],['qa','作者答疑'],['me','我的']],G2=[['s/6','Skill 详情（用处 / 用法）'],['skills/guide','Skill 新手说明'],['search','搜索页（真能搜）'],['articles','长文列表'],[fc('prompt'),'提示词详情（就地填写）'],[fc('template'),'模板详情（电脑下载）'],[fc('case'),'案例拆解'],[fc('eval'),'AI 测评详情（评分表）'],[window.EVALFORMS?'lib/eval':null,'资料库 · AI 测评与指南'],['lib/tool','资料库 · 工具卡'],['t/1','工具卡详情'],['p/1','长文详情'],[fq?'q/'+fq:null,'答疑详情'],['lib','资料库'],['col/doc','栏目页'],['fav','我的收藏']];
+  const g=L=>L.filter(([k])=>k).map(([k,n])=>`<a data-go="${k}" class="${cur===k?'on':''}">${n}<code>#${k}</code></a>`).join('');$('#g1').innerHTML=g(G1);$('#g2').innerHTML=g(G2);
 }
 $('#scr').addEventListener('scroll',()=>{if($('#prog').hidden)return;const s=$('#scr');$('#prog i').style.transform=`scaleX(${Math.min(1,s.scrollTop/(s.scrollHeight-s.clientHeight||1))})`},{passive:true});
 document.addEventListener('click',e=>{const a=e.target.closest('[data-go]');if(a){e.preventDefault();if(location.hash==='#'+a.dataset.go)route();else go(a.dataset.go)}});

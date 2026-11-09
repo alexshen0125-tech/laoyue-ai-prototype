@@ -1055,15 +1055,56 @@ footer{position:relative;z-index:1}
 @keyframes ly-grow{from{transform:scaleX(0);transform-origin:left}to{transform:none;transform-origin:left}}
 @media (max-width:760px){.score table{min-width:520px}.evm{gap:6px 10px}}
 
+/* ---------- ⌘K 命令面板（B 方向核心） ---------- */
+.ckm{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:12vh 16px 16px}
+.ckm.on{display:flex}
+.ck{width:100%;max-width:660px;max-height:76vh;display:flex;flex-direction:column;border-radius:var(--r);border:1px solid var(--line3);background:var(--card);box-shadow:var(--sh2),var(--hi),0 0 0 6px var(--y2);overflow:hidden}
+.ckm.on .ck{animation:ck-in 200ms var(--e-out)}
+@keyframes ck-in{from{opacity:0;transform:translateY(-6px) scale(.985)}to{opacity:1;transform:none}}
+.ck-in{display:flex;align-items:center;gap:12px;height:60px;padding:0 14px 0 18px;border-bottom:1px solid var(--line)}
+.ck-in svg{width:20px;height:20px;flex:none;color:var(--ink)}
+.ck-in input{flex:1;min-width:0;height:100%;border:0;outline:0;background:transparent;color:var(--ink);font:500 17px var(--sans)}
+.ck-in input::placeholder{color:var(--mute)}
+.ck-in kbd,.ck-ft kbd{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:6px;border:1px solid var(--line3);background:var(--sunk);font:12px var(--mono);color:var(--mute)}
+.ck-x{all:unset;cursor:pointer;display:grid;place-items:center;min-width:44px;height:44px;margin-right:-8px;border-radius:10px;color:var(--mute)}
+.ck-x:hover{color:var(--ink);background:var(--sunk)}.ck-x:focus-visible{outline:2px solid var(--y)}
+.ck-ls{flex:1;overflow-y:auto;padding:6px 8px 10px;overscroll-behavior:contain}
+.ck-g{padding:12px 10px 6px;font-size:12px;font-weight:600;color:var(--mute);display:flex;gap:8px}
+.ck-g small{font-weight:400;margin-left:auto}
+.ck-o{display:flex;align-items:center;gap:12px;min-height:46px;padding:8px 10px;border-radius:10px;cursor:pointer;color:var(--ink);position:relative}
+.ck-o .ic{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--sunk);color:var(--ink2);flex:none;font-size:12px;font-weight:700}
+.ck-o .ic svg{width:15px;height:15px}
+.ck-o .tx{flex:1;min-width:0}
+.ck-o .tx b{display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ck-o .tx small{display:block;font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.ck-o .rt{font-size:12px;color:var(--mute);flex:none;font-family:var(--mono)}
+.ck-o,.ck-o *{text-decoration:none!important}.ck-o[aria-selected=true]{background:var(--sunk)}
+.ck-o[aria-selected=true]:before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;background:var(--y)}
+.ck-o[aria-selected=true] .rt.go{color:var(--ink)}
+.ck-o.code .ic{background:var(--y);color:var(--on-y)}
+.ck-o.all .ic{background:var(--dk);color:var(--y)}
+.ck-none{padding:28px 16px;text-align:center;color:var(--mute);font-size:14px}
+.ck-ft{display:flex;align-items:center;gap:14px;padding:10px 16px;border-top:1px solid var(--line);font-size:12px;color:var(--mute);background:var(--card2)}
+.ck-ft span{display:inline-flex;align-items:center;gap:5px}
+.ck-ft .free{margin-left:auto}
+@media (max-width:760px){.ckm{padding:8px}.ck{max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px)}.ck-ft span.k{display:none}.ck-in .esc{display:none}}
+@media (prefers-reduced-motion:reduce){.ckm.on .ck{animation:none}}
+
 @media (prefers-reduced-motion:reduce){.cbar .caret{animation:none}.cgrid>*,.skgrid>*,.pgrid>*{animation:none}}
 </style></head><body>
 <div class="aura" aria-hidden="true"></div>
+<div class="ckm" id="ckm" onclick="if(event.target===this)closeCmdk()"><div class="ck" role="dialog" aria-modal="true" aria-label="命令面板：搜索或跳转">
+ <div class="ck-in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4-4"/></svg><input id="ckq" type="text" autocomplete="off" spellcheck="false" placeholder="搜关键词，或输入编号 P-015 / AE-001" role="combobox" aria-expanded="true" aria-controls="ckl" aria-autocomplete="list"><kbd class="esc">Esc</kbd><button class="ck-x" type="button" onclick="closeCmdk()" aria-label="关闭命令面板"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+ <div class="ck-ls" id="ckl" role="listbox" aria-label="搜索结果"></div>
+ <div class="ck-ft"><span class="k"><kbd>↑</kbd><kbd>↓</kbd>选择</span><span class="k"><kbd>↵</kbd>打开</span><span class="k"><kbd>Esc</kbd>关闭</span><span class="free">全部免费 · 不用登录</span></div>
+</div></div>
+
 <a class="sr" href="#app">跳到正文</a>
 <header><div class="wrap hdr">
   <a class="brand" data-go="home" aria-label="老岳AI产品论坛 首页"><img src="img/laoyue.png" alt=""><span>老岳AI产品论坛</span></a>
   <nav class="nav" id="nav" aria-label="主导航"></nav>
-  <form class="sch" onsubmit="event.preventDefault();recent.push(this.q.value);location.hash='search/q='+encodeURIComponent(this.q.value.trim())" onfocusin="if(!this.q.value&&!/^#search/.test(location.hash))go('search')"><svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4-4"/></svg><input id="q" name="q" placeholder="搜提示词、Skill、资料编号" aria-label="全站搜索"><span class="kbd">⌘K</span></form>
-  <a class="sbtn" data-go="search" aria-label="搜索"><svg class="i" viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4-4"/></svg></a><div class="usr" id="usr"></div><button class="thm" id="thm" type="button" onclick="toggleTheme()" aria-label="切换浅色/深色"><svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+  <form class="sch" onsubmit="event.preventDefault();recent.push(this.q.value);location.hash='search/q='+encodeURIComponent(this.q.value.trim())" onfocusin="if(!/^#search/.test(location.hash)){openCmdk(this.q.value)}"><svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4-4"/></svg><input id="q" name="q" placeholder="搜提示词、Skill、资料编号" aria-label="全站搜索"><span class="kbd">⌘K</span></form>
+  <a class="sbtn" role="button" tabindex="0" onclick="openCmdk()" aria-haspopup="dialog" aria-label="搜索"><svg class="i" viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4-4"/></svg></a><div class="usr" id="usr"></div><button class="thm" id="thm" type="button" onclick="toggleTheme()" aria-label="切换浅色/深色"><svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
 </div><div class="progress" id="prog" hidden><i></i></div></header>
 <main id="app" class="wrap" tabindex="-1"></main>
 <footer><div class="wrap">
@@ -1085,9 +1126,46 @@ function art(seed,w,h){w=w||600;h=h||260;let x=2166136261;for(const c of String(
 function toggleTheme(){const d=document.documentElement,t=d.dataset.theme==='light'?'dark':'light';if(t==='light')d.dataset.theme='light';else delete d.dataset.theme;try{localStorage.setItem('ly_theme',t)}catch(e){}toast(t==='light'?'已切到浅色，下次打开还是浅色':'已切到深色，下次打开还是深色')}
 /* 复制 / 下载成功：按钮回弹 + 光环（所有带 done 状态的按钮通用） */
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;setTimeout(()=>{if(b.isConnected&&b.classList.contains('done')){b.classList.remove('ly-copied');void b.offsetWidth;b.classList.add('ly-copied');setTimeout(()=>b.classList.remove('ly-copied'),800)}},30)});
-document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)&&!document.activeElement.isContentEditable){e.preventDefault();go('search')}});
+document.addEventListener('keydown',e=>{if(e.key==='/'&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName)&&!document.activeElement.isContentEditable){e.preventDefault();openCmdk()}});
 </script>
 <script src="forum-data.js"></script>
+<script>
+/* ---------- ⌘K 命令面板：输入即搜（120ms 防抖）、分组结果、↑↓ 回车、编号直达、最近搜索、Esc 关闭、焦点锁定、关闭后焦点回到触发处 ---------- */
+const CK={i:0,items:[],ret:null,closedAt:0,t:0};
+function openCmdk(q){if(Date.now()-CK.closedAt<350)return;const m=document.getElementById('ckm');if(m.classList.contains('on'))return;CK.ret=document.activeElement;m.classList.add('on');document.documentElement.style.overflow='hidden';const i=document.getElementById('ckq');i.value=q||'';ckRender();setTimeout(()=>{i.focus();i.setSelectionRange(i.value.length,i.value.length)},0)}
+function closeCmdk(){const m=document.getElementById('ckm');if(!m.classList.contains('on'))return;m.classList.remove('on');document.documentElement.style.overflow='';CK.closedAt=Date.now();const r=CK.ret;CK.ret=null;if(r&&r.isConnected&&r.focus&&r.id!=='q')r.focus();else if(r&&r.id==='q')r.blur()}
+function ckData(q){const G=[],add=(g,L,more)=>{if(L.length)G.push({g,L,more})};const m=x=>nzHas(x,q),H=x=>hlText(esc(x),q);
+  if(!q){const R=recent.get();add('最近搜索',R.slice(0,5).map(x=>({ic:ic('clock'),t:esc(x),sub:'再搜一次',act:'q',v:x})));
+    add('大家常搜',HOTWORDS.slice(0,6).map(x=>({ic:'#',t:esc(x),sub:/^[A-Z]+-?\d/.test(x)?'编号直达':'搜索这个词',act:'q',v:x})));
+    add('快速跳转',[['prompts','提示词库','填空就能复制'],['skills','Skill 库','装进 AI 按步骤干活'],['lib/kind=eval','AI 测评与指南','哪件活用哪个 AI，有实测'],['lib','资料库','模板、工具卡、方法、案例'],['articles','作者长文','老岳署名原创']].filter(x=>x[0]!=='lib/kind=eval'||window.EVALFORMS).map(([to,t,sub])=>({ic:ic('right'),t,sub,to})));return G}
+  const cj=codeTo(q);if(cj)add('编号直达',[{ic:'#',t:'打开 '+esc(cj.code),sub:'回车直接打开',to:cj.to,cls:'code'}]);
+  const C=cards();
+  add('提示词',C.filter(p=>p.kind==='prompt'&&(m(p.title)||m((p.scenes||[]).concat(p.tags||[]).join(' '))||m(p.rid))).slice(0,5).map(p=>({ic:'P',t:H(p.title),sub:(p.scenes||p.tags||[]).slice(0,2).join(' · '),rt:p.rid||'',to:'c/'+p.id})));
+  add('Skill',SKILLS.filter(x=>m(x.name)||m(x.one)||m(x.code)||(x.triggers||[]).some(m)).slice(0,4).map(x=>({ic:'S',t:H(x.name),sub:x.one,rt:x.code||'',to:'s/'+x.id})));
+  add('AI 测评与指南',C.filter(p=>p.kind==='eval'&&(m(p.title)||m((p.tags||[]).join(' '))||m(p.rid))).slice(0,3).map(p=>({ic:'AE',t:H(p.title),sub:(p.fname||'')+' · '+(p.nature||''),rt:p.rid||'',to:'c/'+p.id})));
+  add('长文',POSTS.filter(p=>p.type==='article'&&(m(p.title)||m((p.tags||[]).join(' ')))).slice(0,4).map(p=>({ic:ic('file'),t:H(p.title),sub:(p.tags||[]).slice(0,3).join(' · '),to:'p/'+p.id})));
+  add('资料',C.filter(p=>!['prompt','eval'].includes(p.kind)&&(m(p.title)||m((p.tags||[]).join(' '))||m(p.rid)||(p.attach&&m(p.attach.code)))).slice(0,4).map(p=>({ic:'R',t:H(p.title),sub:(KINDS[p.kind]||{}).name||'',rt:p.rid||(p.attach&&p.attach.code)||'',to:'c/'+p.id})));
+  add('工具卡',TOOLS.filter(t=>m(t.name)||m(t.one)).slice(0,3).map(t=>({ic:'T',t:H(t.name),sub:t.one,to:'t/'+t.id})));
+  G.push({g:'',L:[{ic:ic('search'),t:`查看「${esc(q)}」的全部结果`,sub:'打开搜索页，按类型看完整列表',to:'search/q='+encodeURIComponent(q),cls:'all',rt:'↵'}]});return G}
+function ckRender(){const q=document.getElementById('ckq').value.trim();const G=ckData(q);CK.items=[];CK.q=q;
+  const h=G.map(g=>`${g.g?`<div class="ck-g" role="presentation">${g.g}</div>`:''}${g.L.map(o=>{const k=CK.items.push(o)-1;return `<div class="ck-o ${o.cls||''}" id="cko${k}" role="option" aria-selected="false" data-k="${k}"><span class="ic" aria-hidden="true">${o.ic}</span><span class="tx"><b>${o.t}</b>${o.sub?`<small>${esc(o.sub)}</small>`:''}</span>${o.rt?`<span class="rt ${o.to?'go':''}">${esc(o.rt)}</span>`:''}</div>`}).join('')}`).join('');
+  const l=document.getElementById('ckl');l.innerHTML=(q&&CK.items.length===1?`<div class="ck-none">没找到「${esc(q)}」。换个说法，比如场景词「周报」「原型」</div>`:'')+h;CK.i=q&&CK.items.length>1&&CK.items[0].cls!=='code'?0:0;ckSel(0)}
+function ckSel(k){const n=CK.items.length;if(!n)return;CK.i=(k+n)%n;document.querySelectorAll('#ckl .ck-o').forEach(e=>e.setAttribute('aria-selected',+e.dataset.k===CK.i));const e=document.getElementById('cko'+CK.i);document.getElementById('ckq').setAttribute('aria-activedescendant','cko'+CK.i);e&&e.scrollIntoView({block:'nearest'})}
+function ckOpen(k){const o=CK.items[k];if(!o)return;const i=document.getElementById('ckq');if(o.act==='q'){i.value=o.v;ckRender();i.focus();return}
+  if(CK.q)recent.push(CK.q);const cj=o.cls==='code';closeCmdk();go(o.to);if(cj)setTimeout(()=>toast(`编号 <b>${esc(CK.q||'')}</b> 已直达`,'ok'),80)}
+(function(){const m=document.getElementById('ckm'),i=document.getElementById('ckq'),l=document.getElementById('ckl');
+  i.addEventListener('input',()=>{clearTimeout(CK.t);CK.t=setTimeout(ckRender,120)});
+  l.addEventListener('mousemove',e=>{const o=e.target.closest('.ck-o');if(o&&+o.dataset.k!==CK.i)ckSel(+o.dataset.k)});
+  l.addEventListener('click',e=>{const o=e.target.closest('.ck-o');if(o)ckOpen(+o.dataset.k)});
+  m.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeCmdk();return}
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();e.stopPropagation();if(CK.t){clearTimeout(CK.t);CK.t=0;if(CK.q!==i.value.trim())ckRender()}ckSel(CK.i+(e.key==='ArrowDown'?1:-1));return}
+    if(e.key==='Enter'&&e.target===i){e.preventDefault();e.stopPropagation();if(CK.q!==i.value.trim())ckRender();ckOpen(CK.i);return}
+    if(e.key==='Tab'){e.preventDefault();e.stopPropagation();const f=[i,m.querySelector('.ck-x')];const a=f.indexOf(document.activeElement);f[(a+(e.shiftKey?-1:1)+f.length)%f.length].focus()}
+    if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();e.stopPropagation();closeCmdk()}});
+})();
+</script>
+
 <script>/* 默认加载真实内容；URL 带 ?demo=1 切回示例数据 */if(!/[?&]demo=1(&|$)/.test(location.search))document.write('<script src="real-data.js"><\/script>')</script>
 <script>
 const $=s=>document.querySelector(s);let S=applyDemo(store.get());
@@ -1322,8 +1400,8 @@ home(){const arts=POSTS.filter(p=>p.type==='article');const [a,b,c]=REAL?arts:[P
   const dm=P(1089)||cards('prompt')[0];if(dm&&!FILL[dm.id]&&dm.vars&&dm.vars.length){FILL[dm.id]={};dm.vars.forEach(v=>{if(v.example)FILL[dm.id][v.name]=v.example})}
   const hero=`<section class="bhero"><div class="bh-l"><span class="pill"><b>免费</b>不用登录 · 没有付费墙 · 不跳网盘</span>
    <h1>全部免费，<span>复制就能用</span></h1><p class="sub">${fmt(STATS.prompt)} 条提示词、${fmt(STATS.skill)} 个 Skill、${fmt(STATS.template)} 份模板。搜到就拿走，不用注册。</p>
-   <button class="cbar" type="button" onclick="go('search')" aria-label="打开搜索（⌘K）">${ic('search')}<span class="caret" aria-hidden="true"></span><span class="ph">写 PRD、做竞品、会议纪要，或输入编号 P-015 / S-1000</span><span class="ks" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span></button>
-   <div class="quick">${['PRD','竞品','会议纪要','周报','简历','原型'].map(q=>`<a data-go="search/q=${encodeURIComponent(q)}">${q}</a>`).join('')}</div></div>
+   <button class="cbar" type="button" onclick="openCmdk()" aria-haspopup="dialog" aria-label="打开命令面板搜索（⌘K）">${ic('search')}<span class="caret" aria-hidden="true"></span><span class="ph">写 PRD、做竞品、会议纪要，或输入编号 P-015 / S-1000</span><span class="ks" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span></button>
+   <div class="quick">${['PRD','竞品','会议纪要','周报','简历','原型'].map(q=>`<a role="button" tabindex="0" onclick="openCmdk('${q}')">${q}</a>`).join('')}</div></div>
    ${dm?`<div class="bh-r"><div class="bh-cap"><b>1</b>改空格里的字<b>2</b>一键复制<b>3</b>粘到你常用的 AI</div><div class="bh-demo"><div class="card pc"><div class="hd"><h3 style="flex:1"><a data-go="c/${dm.id}">${dm.title}</a></h3><span class="free">免费</span></div>${pboxHTML(dm,true)}</div></div></div>`:''}</section>`;
   const st=[['all','站内内容','total','篇','lib'],['article','深度长文','article','篇','articles'],['prompt','提示词','prompt','条','prompts'],['skill','Skill','skill','个','skills'],['template','模板','template','份','lib/kind=template'],['case','方法与案例','case','个','lib/kind=term']];
   return {t:'首页',h:hero+`<div class="grid2" style="padding-top:28px"><section class="rv">
@@ -1630,7 +1708,7 @@ function prog(){const a=$('#art');if(!a||$('#prog').hidden)return;const r=a.getB
 let tick=false;addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(()=>{prog();tick=false})}},{passive:true});
 document.addEventListener('click',e=>{const a=e.target.closest('[data-go]');if(a){e.preventDefault();if(location.hash==='#'+a.dataset.go)route();else go(a.dataset.go)}});
 document.addEventListener('keydown',e=>{if(e.key==='Tab'&&$('#m').classList.contains('on')){const f=[...$('#mbox').querySelectorAll('button,input,textarea,a[onclick],[tabindex]')].filter(x=>!x.disabled&&x.offsetParent);if(f.length){const a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}}}
-  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();go('search')}if(e.key==='Escape'&&!e.target.classList.contains('vin'))closeM();
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openCmdk()}if(e.key==='Escape'&&!e.target.classList.contains('vin'))closeM();
   if(e.key==='Enter'&&e.target.matches('[data-go],a[onclick]')){e.preventDefault();e.target.click()}});
 window.addEventListener('hashchange',()=>route());
 // 首屏加载态：先出骨架再出内容（URL 带 ?skeleton 时停在骨架屏，便于截图评审）
