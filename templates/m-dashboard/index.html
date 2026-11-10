@@ -1,4 +1,16 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>手机经营数据看板 · 积木盒</title><style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>手机经营看板 · 原型模板</title>
+<!--
+  原型模板 · 积木盒 | 老岳AI编辑部 · 原型组
+  改风格：改下面 :root 里的变量（--accent 换主色）
+  改数据：改 <script> 顶部 DATA
+  演示：右下角「原型面板」切页面和状态；按 H 隐藏面板；URL 可直达 #page=home&state=offline
+-->
+<style>
 /*@KIT_CSS*/
 /* ==========================================================================
    ① 改风格只改这一块：颜色 / 字体 / 圆角 / 间距 / 阴影
@@ -329,7 +341,7 @@ body.has-tplbar{--bar-h:44px;padding-top:44px}
 .tplbar .tb-btn.primary{background:#fff;color:#16171A;border-color:#fff}
 .tplbar .tb-btn.primary:hover{filter:brightness(.94)}
 .tplbar .tb-btn .ic{width:15px;height:15px}
-.tplbar .tb-hide{width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+.tplbar .tb-hide{flex-shrink:0;width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
 .drawer{top:var(--bar-h,0px)}
 body.pp-hidden .tplbar{display:none}
 body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
@@ -340,11 +352,235 @@ body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
 :root[data-theme="dark"] .brand-mark,:root[data-theme="dark"] .ai-mark{background:#ECECEF;color:#16171A}
 :root[data-theme="dark"] .tab.on{color:#16171A}
 /*@END_KIT_CSS*/
+/* ============================ 本模板样式 ============================ */
+:root{--up:#C42B24;--down:#0E7A4F;--cmp:#9AA0AC}
+/* 中国习惯：涨红跌绿。要改成国际习惯，把 --up / --down 对调 */
+.view{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--bg);position:relative}
+.navbar{background:var(--surface);border-bottom:1px solid var(--line-soft)}
+.navbar .right{margin-left:auto;display:flex;align-items:center}
+.nb-title{position:absolute;left:56px;right:56px;text-align:center;font-size:17px;font-weight:600;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.storepick{display:flex;align-items:center;gap:4px;height:44px;padding:0 6px 0 10px;border:0;background:none;font-size:17px;font-weight:600;color:var(--ink-900);max-width:230px}
+.storepick span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.storepick .ic{flex:none;color:var(--ink-500)}
+.upd{font-size:11px;color:var(--ink-500);text-align:right;line-height:1.3;padding-right:2px}
+.rng{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:10px 12px 0;padding:3px;border-radius:var(--r-md);background:var(--line-soft)}
+.rng button{height:36px;border:0;background:none;border-radius:8px;font-size:14px;color:var(--ink-700)}
+.rng button[aria-pressed="true"]{background:var(--surface);color:var(--ink-900);font-weight:600;box-shadow:0 1px 3px rgba(22,23,26,.12)}
+.offline{margin:10px 12px 0;display:flex;gap:8px;align-items:center;padding:10px 12px;border-radius:var(--r-md);background:var(--warning-soft);color:var(--warning);font-size:13px;line-height:1.5}
+.offline .ic{flex:none}
+.offline button{margin-left:auto;min-height:36px;padding:0 12px;border:1px solid currentColor;border-radius:var(--r-full);background:none;color:inherit;font-size:13px;flex:none}
+.hero{margin:10px 12px 0;padding:16px 16px 14px;border-radius:var(--r-lg);background:linear-gradient(150deg,#1D2B6B 0%,#2F54D4 100%);color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-50px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero small{font-size:13px;opacity:.92;display:flex;align-items:center;gap:6px}
+.hero .big{display:block;font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em;margin:4px 0 2px;line-height:1.2}
+.hero .cmp{font-size:13px;display:flex;gap:12px;flex-wrap:wrap}
+.hero .cmp b{font-weight:600}
+.hero .goal{margin-top:12px;font-size:12px}
+.hero .goal .bar{height:6px;border-radius:3px;background:rgba(255,255,255,.22);margin-top:6px;position:relative;overflow:visible}
+.hero .goal .bar i{display:block;height:100%;border-radius:3px;background:#fff}
+.hero .goal .bar em{position:absolute;top:-3px;width:2px;height:12px;background:#FFD27A;border-radius:1px}
+.hero .goal .row{display:flex;justify-content:space-between}
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 12px 0}
+.kc{border:0;background:var(--surface);border-radius:var(--r-lg);padding:12px 14px;text-align:left;color:var(--ink-900);min-height:88px;display:flex;flex-direction:column;gap:2px}
+.kc small{font-size:12px;color:var(--ink-500);display:flex;align-items:center;gap:4px}
+.kc b{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.chg{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:2px}
+.chg.up{color:var(--up)}.chg.dn{color:var(--down)}.chg.na{color:var(--ink-500);font-weight:400}
+.chg .ic{width:12px;height:12px;stroke-width:2.4}
+.card{margin:10px 12px 0;background:var(--surface);border-radius:var(--r-lg);padding:4px 14px 12px}
+.card-hd{display:flex;align-items:center;min-height:44px;gap:8px}
+.card-hd b{font-size:15px}
+.card-hd .more{margin-left:auto;border:0;background:none;font-size:13px;color:var(--ink-500);display:flex;align-items:center;min-height:44px;padding:0 0 0 8px}
+.lg{display:flex;gap:14px;font-size:12px;color:var(--ink-500);margin-bottom:6px}
+.lg i{display:inline-block;width:12px;height:3px;border-radius:2px;vertical-align:middle;margin-right:4px}
+.chart{position:relative;touch-action:pan-y}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart svg text{font-size:10px;fill:var(--ink-500)}
+.chart:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:6px}
+.tip{position:absolute;top:0;transform:translateX(-50%);background:var(--ink-900);color:#fff;border-radius:8px;padding:6px 8px;font-size:12px;line-height:1.5;white-space:nowrap;pointer-events:none;font-variant-numeric:tabular-nums;z-index:2}
+.tip b{font-weight:600}
+.tip span{color:#C9CCD4}
+.chint{font-size:12px;color:var(--ink-500);margin-top:4px}
+.mix{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;margin:4px 0 10px}
+.mix i{display:block;height:100%}
+.mixl{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.mixl div{font-size:12px;color:var(--ink-500)}
+.mixl b{display:block;font-size:15px;color:var(--ink-900);font-variant-numeric:tabular-nums;font-weight:600}
+.mixl i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}
+.al{display:flex;align-items:center;gap:10px;width:100%;min-height:56px;border:0;background:none;padding:8px 0;text-align:left;border-top:1px solid var(--line-soft);color:var(--ink-900)}
+.al:first-of-type{border-top:0}
+.al .lv{width:8px;height:8px;border-radius:50%;flex:none}
+.lv.h{background:var(--danger)}.lv.m{background:#C98A1B}.lv.l{background:var(--ink-300)}
+.al .m{flex:1;min-width:0;font-size:14px;line-height:1.45}
+.al .m small{display:block;font-size:12px;color:var(--ink-500)}
+.al .ic{color:var(--ink-300);flex:none}
+.al.done .m{color:var(--ink-500)}
+.rk{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:60px;border:0;background:none;padding:8px 0;text-align:left;border-top:1px solid var(--line-soft);color:var(--ink-900)}
+.rk:first-of-type{border-top:0}
+.rk .no{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--line-soft);color:var(--ink-700);font-variant-numeric:tabular-nums}
+.rk .no.t{background:#FFF0D6;color:#8A5400}
+.rk .m{min-width:0}
+.rk .m b{display:block;font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rk .m small{font-size:12px;color:var(--ink-500)}
+.rk .v{text-align:right;font-variant-numeric:tabular-nums}
+.rk .v b{display:block;font-size:15px;font-weight:600}
+.rk .bar{height:4px;border-radius:2px;background:var(--line-soft);margin-top:5px;overflow:hidden}
+.rk .bar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.rk .spark{display:block;margin-top:4px}
+.newtag{font-size:11px;padding:0 6px;border-radius:4px;background:var(--info-soft);color:var(--info);margin-left:6px;font-weight:500;vertical-align:1px}
+.tabbar{flex:none;display:grid;grid-template-columns:repeat(4,1fr);padding:2px 4px 28px;background:var(--surface);border-top:1px solid var(--line);position:relative;z-index:5}
+.tabbar button{height:50px;border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;color:var(--ink-500);position:relative}
+.tabbar button .ic{width:22px;height:22px}
+.tabbar button.on{color:var(--accent);font-weight:600}
+.tabbar .badge{position:absolute;top:4px;left:calc(50% + 6px);min-width:16px;height:16px;font-size:10px;padding:0 4px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 12px 0;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:36px;padding:0 14px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);font-size:13px;color:var(--ink-700)}
+.chip[aria-pressed="true"]{border-color:var(--ink-900);background:var(--ink-900);color:#fff;font-weight:500}
+.def{font-size:12px;color:var(--ink-500);line-height:1.8;padding:2px 0 4px}
+.def b{color:var(--ink-700);font-weight:600}
+.drow{display:grid;grid-template-columns:minmax(0,1fr) 84px 64px;gap:8px;align-items:center;min-height:48px;border-top:1px solid var(--line-soft);font-size:14px}
+.drow:first-of-type{border-top:0}
+.drow span:nth-child(2),.drow span:nth-child(3){text-align:right;font-variant-numeric:tabular-nums}
+.drow.hd{min-height:32px;font-size:12px;color:var(--ink-500)}
+.foot-note{text-align:center;font-size:12px;color:var(--ink-500);padding:16px 24px 24px;line-height:1.7}
+.sheet .sheet-hd{display:flex;align-items:center;padding:10px 8px 4px 16px}
+.sheet .sheet-hd b{font-size:16px}
+.sheet .sheet-hd .tap{margin-left:auto}
+.sheet .sheet-bd{padding:4px 16px 30px;overflow:auto}
+.sopt{display:flex;align-items:center;gap:10px;width:100%;min-height:54px;border:0;border-bottom:1px solid var(--line-soft);background:none;font-size:16px;color:var(--ink-900);text-align:left;padding:0 4px}
+.sopt small{font-size:12px;color:var(--ink-500);margin-left:auto}
+.sopt .ic{color:var(--accent)}
+.sopt[aria-disabled="true"]{color:var(--ink-500)}
+.sopt[aria-disabled="true"] .ic{color:var(--ink-500)}
+.adt{font-size:14px;line-height:1.8;color:var(--ink-700)}
+.adt dl{display:grid;grid-template-columns:72px 1fr;gap:6px 10px;margin:10px 0 14px;font-size:14px}
+.adt dt{color:var(--ink-500)}.adt dd{margin:0;color:var(--ink-900)}
+.sh-acts{display:flex;gap:10px;margin-top:8px}
+.sh-acts .btn{flex:1;height:48px;border-radius:var(--r-full);font-size:15px}
+.sk-c{margin:10px 12px 0;border-radius:var(--r-lg);background:var(--surface);padding:14px}
+.sk-c .sk{margin-bottom:10px}
+.screen .state{padding:48px 24px}
+.ptr{display:flex;align-items:center;justify-content:center;gap:6px;height:40px;font-size:12px;color:var(--ink-500)}
+.ptr .spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="stage-note">
+    <span class="eyebrow">原型模板 · 手机 App</span>
+    <h1>手机经营看板</h1>
+    <p>连锁餐饮区域经理在手机上看 6 家门店：今天卖了多少、跟上周同期比怎样、哪家掉队、哪里出了问题。评审常问的都能点：口径怎么算、新店怎么比、没网怎么办、店长能看到什么。</p>
+    <ol>
+      <li>看板（全部门店 / 店长只看本店 / 新店无数据 / 离线缓存 / 无权限）</li>
+      <li>指标详情（口径说明 + 按门店拆分）</li>
+      <li>门店排行（按营业额 / 增长 / 客单价排序，按区域筛）</li>
+      <li>预警（高 / 中 / 低，标记已处理）</li>
+    </ol>
+  </div>
+  <div class="phone">
+    <div class="screen" id="screen">
+      <div class="statusbar"><span class="num">14:20</span><span class="island"></span><span class="sys"><svg class="ic ic-sm"><use href="#i-wifi"/></svg><span class="bat"></span></span></div>
+      <div class="view" id="view"></div>
+      <nav class="tabbar" id="tabbar" aria-label="底部导航"></nav>
+      <div class="homebar"></div>
+    </div>
+  </div>
+</div>
+<div class="sheet" id="sh" aria-labelledby="sh-t"></div>
 
-:root{--accent:#245953;--accent-soft:color-mix(in srgb,var(--accent) 10%,white);--paper:#f4f3ee;--editorial:#183d38;--space:24px;--cover-a:#dbe6df;--cover-b:#e8d9bf;--chart-height:150px}
-body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32px 32px 180px}.mast{display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:24px}.mast .sp{flex:1}.mast strong{font-size:20px}.edition{font-family:var(--font-mono);color:var(--accent);font-size:12px;letter-spacing:2px}.hero .edition{color:rgba(255,255,255,.78)}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.nav .on{background:var(--accent);color:var(--accent-ink)}.hero{padding:32px;background:var(--editorial);color:var(--accent-ink);border-radius:var(--r-lg);margin-bottom:24px}.hero h1{font-size:32px;margin:8px 0}.hero p{opacity:.9;max-width:650px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.two{display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:24px}.card{padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);min-width:0}.card h2{font-size:20px;margin:0 0 16px}.card h3{font-size:16px;margin:8px 0}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}.toolbar input{flex:1;min-width:140px}.field{display:grid;gap:8px;margin:16px 0}.field input,.field textarea,.field select,.toolbar input,.toolbar select{padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);max-width:100%}.field textarea{min-height:100px}.stat{font-size:32px;font-family:var(--font-mono);font-weight:600;margin:12px 0}.row{padding:16px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}.row .grow{flex:1;min-width:0}.caption{color:var(--ink-500);font-size:13px}.notice{padding:14px 18px;background:var(--accent-soft);border-left:3px solid var(--accent);margin:16px 0}.error{color:var(--danger);min-height:20px}.empty-box{text-align:center;padding:64px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}.empty-box h2{margin:16px}.loading-grid{display:grid;gap:20px}.loading-grid .sk{height:100px}.scroll-table{overflow:auto}.cover-art{height:160px;border-radius:var(--r-sm);background:var(--cover-a);display:flex;align-items:center;justify-content:center;font-size:36px;font-family:serif;color:var(--editorial);margin-bottom:16px}.card:nth-child(even) .cover-art{background:var(--cover-b)}.chart{display:flex;gap:14px;align-items:end;height:var(--chart-height);margin:24px 0}.bar{flex:1;background:var(--accent);min-width:24px;border:0;border-radius:var(--r-sm) var(--r-sm) 0 0;color:var(--accent-ink);cursor:pointer}.reading{font-family:serif;font-size:var(--reader-size,20px);line-height:2.1;max-width:680px;margin:auto}.reading.night{background:var(--ink-900);color:var(--surface);padding:24px;border-radius:var(--r-md)}.steps{display:flex;gap:16px;padding:16px 0;flex-wrap:wrap}.steps span{padding:8px 14px;background:var(--surface);border-radius:var(--r-full)}.steps .active{background:var(--accent);color:var(--accent-ink)}.meter{width:100%;accent-color:var(--accent)}.mobile .workspace{width:min(100%,430px);background:var(--bg);padding:24px 20px 180px;min-height:844px;border:1px solid var(--line);border-radius:var(--r-lg);margin:24px auto}.mobile .grid,.mobile .two{grid-template-columns:1fr}.mobile .hero{padding:24px}.mobile .hero h1{font-size:26px}.mobile button,.mobile input,.mobile select{min-height:44px}.mobile .chart{overflow:auto}.question{padding:20px;border:1px solid var(--line);border-radius:var(--r-md);margin:16px 0}.question label{display:block;padding:12px}.score{font:600 64px var(--font-mono);color:var(--accent)}.mobile .modal:not(.pq-drawer){top:auto;bottom:16px;left:50%;max-height:80dvh;border-radius:var(--r-lg) var(--r-lg) 0 0;transform:translate(-50%,16px);transition:transform var(--dur) var(--ease),opacity var(--dur) var(--ease)}.mobile .modal.show{transform:translate(-50%,0)}button:disabled{cursor:not-allowed}input[type=checkbox],input[type=radio]{accent-color:var(--accent)}@media(max-width:800px){.workspace{padding:20px 16px 180px}.grid,.two{grid-template-columns:1fr}.hero h1{font-size:26px}.mast{flex-wrap:wrap}.table{min-width:560px}}
+<script>
+/* ==========================================================================
+   ① 改数据只改这里（示例数据，全部虚构）
+   ========================================================================== */
+const DATA = {
+  now: '11-11 周二 14:20', updated: '14:20',
+  // 门店：名称、区域、开业日（新店不和同期比）
+  stores: [['滨江店', '城东'], ['万象城店', '城西'], ['大学城店', '城南'], ['西溪店', '城西'], ['火车东站店', '城东'], ['良渚店', '城北', '11-08 开业']],
+  margin: [62.4, 64.1, 58.7, 61.9, 55.2, 60.3],         // 毛利率 %（按商品标准成本估算）
+  monthGoal: 4800000,                                    // 本月营业额目标
+  // 每个时间范围：各店营业额、订单数、对比期营业额（null = 新店没有对比期）、趋势（x 轴标签、本期、对比期）、渠道（堂食 / 外卖 / 自提）
+  ranges: {
+    today: { name: '今天', cmpName: '上周二同期', note: '截至 14:00',
+      sales: [18640, 22315, 9872, 14206, 16930, 3418], orders: [412, 468, 386, 297, 521, 96], prev: [17210, 24980, 8105, 13690, 15480, null],
+      x: ['7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'],
+      cur: [2140, 6880, 8215, 7430, 13960, 21870, 16205, 8681], cmp: [1980, 6410, 7960, 7120, 12870, 20350, 15240, 7535, 5860, 6240, 11380, 18920, 16450, 9870, 5120, 2310],
+      ch: [39276, 32445, 13660] },
+    yday: { name: '昨天', cmpName: '上周一', note: '全天',
+      sales: [31250, 38960, 15480, 24310, 28770, 6120], orders: [702, 815, 610, 498, 893, 171], prev: [29880, 40120, 13950, 23640, 26910, null],
+      x: ['7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22'],
+      cur: [2050, 6720, 8040, 7300, 13410, 21060, 15880, 8120, 6150, 6580, 11960, 19700, 8960, 5120, 2610, 1230], cmp: [1950, 6300, 7610, 6880, 12540, 19460, 14720, 7690, 5840, 6210, 11020, 18150, 8420, 4860, 2000, 850],
+      ch: [64180, 58310, 22400] },
+    week: { name: '近 7 天', cmpName: '前 7 天', note: '11-05～11-11（今天截至 14:00）',
+      sales: [221430, 268950, 104320, 165780, 196640, 66101], orders: [4980, 5710, 4090, 3420, 6130, 1812], prev: [214060, 276300, 98450, 160920, 186320, null],
+      x: ['11-05', '11-06', '11-07', '11-08', '11-09', '11-10', '11-11'],
+      cur: [138420, 141960, 162380, 178950, 171240, 144890, 85381], cmp: [131200, 134870, 152640, 171030, 165510, 134500, 46300],
+      ch: [462340, 402170, 158711] },
+    month: { name: '本月', cmpName: '10 月同期', note: '11-01～11-11（10 月同期含国庆）',
+      sales: [356240, 431870, 167950, 265410, 352590, 66101], orders: [8010, 9180, 6580, 5490, 10980, 1812], prev: [389520, 470300, 152880, 280140, 401260, null],
+      x: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'],
+      cur: [168300, 172650, 136780, 139210, 138420, 141960, 162380, 178950, 171240, 144890, 85381], cmp: [212400, 226800, 219300, 198600, 187400, 152300, 138900, 131800, 129400, 128700, 168400],
+      ch: [741580, 642360, 256221] }
+  },
+  // 预警：级别 h/m/l、门店、标题、说明、时间、建议动作
+  alerts: [
+    ['h', '万象城店', '午市营业额比上周同期低 10.7%', '11:00～14:00 实收 ¥22,315，上周二同期 ¥24,980；同商圈另两家店都在涨。外卖单量持平，堂食少了 63 单。', '14:05', '打电话问店长：今天堂食排队 / 座位 / 人手有没有异常'],
+    ['h', '火车东站店', '外卖差评 3 条（近 2 小时）', '3 条都提到「出餐慢」，平均出餐 21 分钟（平时 12 分钟）。午高峰后厨少 1 人（请假）。', '13:48', '先给 3 位顾客发券道歉，晚高峰前从滨江店借调 1 人'],
+    ['m', '大学城店', '「招牌牛肉饭」库存只够约 1.5 小时', '剩 38 份，近 1 小时卖了 26 份；晚市（17:00 起）通常再卖 90 份以上。', '13:30', '让店长 15:00 前从中心仓补货 120 份'],
+    ['m', '滨江店', '午班交班收银差异 ¥126.00', '系统应收 ¥8,412.00，实点 ¥8,286.00，差 ¥126.00；收银员 吴示例。', '12:10', '核对现金券和退款单，今天内在收银系统写明原因'],
+    ['l', '良渚店', '新店第 4 天，客单价 ¥35.60 低于均值', '6 家店平均客单价 ¥39.17；良渚店套餐占比 71%，单点小吃占比低。', '09:00', '观察到 11-15 再看，暂不处理']
+  ]
+};
 
-</style></head><body class="mobile"><main class="workspace"><header class="mast"><div><div class="edition">PROTOTYPE / 示例</div><strong>手机经营数据看板</strong></div><span class="sp"></span><span class="caption">积木盒 · 可点击原型</span></header><nav id="nav" class="nav" aria-label="页面导航"></nav><div id="content"></div></main><script>
+/* ==========================================================================
+   ①-2 AI 提示词（页面右侧可一键复制；{{变量}} 点一下就能填）
+   ========================================================================== */
+const PROMPTS = [
+ { title: '从零生成这个原型', when: '要做「老板 / 区域经理在手机上看经营数据」，想把首屏指标、对比口径、异常提醒先定下来时用',
+   text: `请帮我做一个可点击的手机 App 原型（390×844 手机框，旁边放说明）：连锁餐饮经营看板，区域经理看 6 家门店。
+
+底部 4 个 Tab：看板 / 排行 / 预警（带未处理数）/ 我的。
+1. 看板：顶部门店切换（全部门店 / 单店，底部弹层选）+ 「更新于 14:20」+ 刷新；时间切换 今天 / 昨天 / 近 7 天 / 本月；
+   · 主卡：营业额大数字，和对比期比（今天比上周同一天的同一时段，不是比昨天全天；本月比上月同期）；涨红跌绿；本月目标进度条，同时标出「时间进度」那条线，落后多少个百分点写出来；
+   · 4 个小指标：订单数、客单价（= 营业额 / 订单数）、毛利率、同店增长（剔除开业不满对比期的新店），点任一个进指标详情；
+   · 分时段趋势折线：本期实线、对比期虚线，手指按住拖动看每个点的数值（键盘左右键也能看）；
+   · 渠道构成：堂食 / 外卖 / 自提 一条横向分段条 + 金额与占比；
+   · 预警前 3 条 + 门店排行前 3 名；
+2. 指标详情：大数字 + 口径说明（营业额 = 实收，含平台补贴，不含退款）+ 按门店拆分（金额、对比期变化），新店写「新店，无同期」；
+3. 排行：按营业额 / 增长 / 客单价排序，按区域筛；每行排名、门店、区域、金额、变化、7 日迷你折线；
+4. 预警：高 / 中 / 低三级，点开底部弹层看原因和建议动作，可「标记已处理」「打电话给店长」。
+
+状态（原型面板可切换）：看板 正常 / 店长视角（只能看本店，切换门店时其他门店置灰写原因）/ 空（新店昨天还没开业）/ 加载（骨架）/ 离线（显示缓存数据和缓存时间，不要白屏）/ 无权限；排行、预警、详情都有 正常 / 空 / 加载 / 出错。
+数字要对得上：各店之和 = 合计；客单价、增长率由数据算出来，不要手写。
+硬性要求：单文件 HTML，不引用外部网址，双击离线可开；触控区 ≥44px；颜色写成 :root 变量（涨跌色可对调）；数据集中在脚本顶部 DATA。
+交付：① 完整 HTML；② 指标口径表（指标 | 公式 | 对比期 | 特殊情况）；③ 状态清单。` },
+ { title: '改成我的业务', when: '手上有这个模板，要换成零售、酒店、门诊、工厂等自己的经营指标时用',
+   text: `附件是一个单文件 HTML 的手机经营看板原型。请改成「{{行业和角色，例如：便利店加盟商看 12 家店}}」。
+
+1. 只改脚本顶部 DATA 和文案，不动 KIT 标记之间的共用样式和脚本；保留时间切换、对比期、目标进度 vs 时间进度、趋势按住看数、离线缓存、店长视角；
+2. 主指标换成：{{主指标，例如：销售额}}；4 个小指标：{{例如：来客数、客单价、毛利率、损耗率}}，每个写清公式；
+3. 对比口径：{{例如：今天比上周同一天同时段，本月比去年同月同期}}；新店 / 停业店怎么处理：{{规则}}；
+4. 拆分维度：{{例如：门店 / 品类 / 时段}}；渠道构成换成：{{例如：到店 / 外卖 / 小程序}}；
+5. 预警规则：{{例如：同比跌超 10% 为高、库存不足 2 小时为中}}，每条要写原因和建议动作；
+6. 各维度数字加起来要等于合计；示例数据标「示例」，不出现真实公司名。
+交付：改好的完整 HTML + 指标口径表。` },
+ { title: '在此基础上加页面 / 状态', when: '评审追问「能不能推送」「能不能看单店明细」时用',
+   text: `附件是一个单文件 HTML 的手机经营看板原型。请在它的基础上加：{{要加的页面或状态}}。
+
+常见例子（选一个或照着写）：
+- 「门店详情」：从排行点进单店，看该店分时段、热销商品前 10、员工排班人数，和区域均值对比；
+- 「日报推送」：每晚 22:30 推送当天小结（营业额、对比、最好 / 最差门店、未处理预警），点推送直达对应日期的看板；
+- 「自定义首屏」：「我的」里可以选首屏显示哪 4 个小指标、拖动排序，保存后看板立即生效；
+- 「横屏看图」：趋势图点放大后横屏全屏，可以双指缩放时间轴。
+
+要求：新页面或状态加进「原型面板」；数字和现有看板对得上；触控区 ≥44px；沿用现有 CSS 变量和组件样式，只改必要的地方。
+交付：完整 HTML + 新增部分的「元素 | 交互 | 反馈」说明表。` }
+];
+
+/* ==========================================================================
+   ② 下面是交互逻辑，一般不用改
+   ========================================================================== */
 /*@KIT_JS*/
 /* ==========================================================================
    原型工具包（不用改）：图标、页面/状态切换、弹层、Toast
@@ -610,40 +846,215 @@ body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32p
   P.stateBlock=function(o){return '<div class="state '+(o.error?'is-error':'')+'"><div class="state-ic">'+P.ic(o.icon||(o.error?'alert':'inbox'))+'</div><h3>'+P.esc(o.title)+'</h3>'+(o.body?'<p>'+P.esc(o.body)+'</p>':'')+(o.acts?'<div class="acts">'+o.acts+'</div>':'')+'</div>'};
 })();
 /*@END_KIT_JS*/
-</script><script>
-// 示例业务数据：仅本次会话修改，刷新恢复；在这里替换字段和数据。
-const DATA={"ranges": {"今日": {"sales": 12680, "orders": 124, "previous": 10800, "trend": [12, 18, 15, 24, 33, 26], "labels": ["08时", "10时", "12时", "14时", "16时", "18时"]}, "近7天": {"sales": 86240, "orders": 812, "previous": 79000, "trend": [30, 44, 38, 56, 48, 64, 72], "labels": ["一", "二", "三", "四", "五", "六", "日"]}, "近30天": {"sales": 368000, "orders": 3450, "previous": 350000, "trend": [58, 72, 64, 90], "labels": ["第1周", "第2周", "第3周", "第4周"]}}, "stores": [{"name": "示例河畔店", "weight": 0.45}, {"name": "示例林间店", "weight": 0.32}, {"name": "示例街角店", "weight": 0.23}]};
-const PAGES=[{"id": "overview", "name": "经营概览", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}, {"id": "trend", "name": "趋势分析", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}, {"id": "rank", "name": "门店排行", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}];
-const PROMPTS=[{"title": "从零生成这个原型", "when": "要从需求开始搭建可演示的页面时用", "text": "请用单文件 HTML 创建「手机经营数据看板」可点击原型。用途：适合手机端日常经营复盘，明确指标口径、时间门店筛选、趋势点选和排行下钻。包含页面：经营概览、趋势分析、门店排行。业务交互：切时间与门店后应用，指标、趋势和排行同步变化；点击或键盘激活，显示时段与金额，可打开明细表；打开指定门店，返回该门店经营概览。每个主页面提供正常、空、骨架加载、出错和重试，表单提供校验、提交中、成功、失败。数据集中在 DATA；样式使用 CSS 变量；图标内联 SVG；示例数据标示例。不使用外部依赖，离线双击可开。顶部提供免费下载说明，右下角原型面板支持 URL 直达和 H 隐藏，弹窗支持 Esc 和焦点归还。交付 HTML、README 和交互说明表。"}, {"title": "改成我的业务", "when": "点击高亮变量填写，然后一键复制", "text": "附件是「手机经营数据看板」HTML 原型，请改成我的业务：产品名称为「{{产品名称}}」，目标用户「{{目标用户}}」，字段和示例数据「{{字段与示例数据}}」，业务规则「{{业务规则}}」。保留 经营概览、趋势分析、门店排行 的完整链路与所有空、加载、出错状态。修改 DATA 和模板变量，不改共用 KIT 标记内代码。所有金额、数量、状态随操作联动；不能执行的操作写原因。交付可离线打开的完整 HTML 和更新后的交互表。"}, {"title": "加页面或状态", "when": "需要扩展当前链路时用", "text": "请在「手机经营数据看板」中增加「{{新增页面或状态}}」，入口为「{{入口位置}}」，成功结果为「{{成功反馈}}」，失败恢复方式为「{{失败恢复方式}}」。沿用当前 CSS 变量、DATA 与 Proto 页面面板；保留已有流程。为新增列表补正常、空、加载、出错；为新增表单补校验、提交中、成功、失败。离开页面应取消定时回调。更新 README 的状态表和交互表，保持单文件离线可用。"}];
 
-const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s)), e=Proto.esc;
-const btn=(label,action,primary=false,disabled=false)=>`<button type="button" class="btn ${primary?'btn-primary':''}" data-act="${action}" ${disabled?'disabled':''}>${label}</button>`;
-const field=(label,id,value='',type='text')=>`<label class="field">${label}<input id="${id}" type="${type}" value="${e(String(value))}"></label>`;
-const card=(title,body)=>`<section class="card"><h2>${title}</h2>${body}</section>`;
-const money=n=>Proto.money(n);
-const notice=t=>`<div class="notice" role="status">${t}</div>`;
-function download(name,text,type='text/plain'){const a=document.createElement('a'),u=URL.createObjectURL(new Blob(['\ufeff',text],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function modal(title,body){const m=document.createElement('div');m.className='modal';m.dataset.temp='1';m.setAttribute('aria-label',title);m.innerHTML=`<div class="layer-hd"><h2>${title}</h2></div><div class="layer-bd">${body}</div><div class="layer-ft"><button class="btn" data-close>关闭</button></div>`;Proto.open(m);m.querySelector('[data-close]').onclick=()=>Proto.close(m);return m}
-let timer=null, epoch=0;
-function go(page,state='normal'){Proto.go(page,state)}
-function later(fn,ms=500){clearTimeout(timer);const v=epoch;timer=setTimeout(()=>{if(v===epoch)fn()},ms)}
-function refresh(){render(Proto.state.page,Proto.state.state)}
-function fallback(page,state){if(state==='loading')return '<div class="loading-grid" aria-busy="true" aria-label="加载中"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>';
-if(state==='error')return `<div class="empty-box">${Proto.ic('alert')}<h2>暂时无法加载</h2><p>示例服务响应超时，本次修改仍保留。</p>${btn('重试','retry',true)}</div>`;
-if(state==='empty')return `<div class="empty-box">${Proto.ic('inbox')}<h2>这里还没有内容</h2><p>可以载入示例数据，继续演示完整流程。</p>${btn('载入示例','example',true)}</div>`;return null}
-function render(page,state){epoch++;clearTimeout(timer);$$('.modal.show').forEach(m=>Proto.close(m));$('#nav').innerHTML=PAGES.map(p=>`<button class="btn ${p.id===page?'on':''}" data-page="${p.id}">${p.name}</button>`).join('');$('#content').innerHTML=fallback(page,state)||view(page,state);if(typeof mount==='function')mount(page,state)}
-document.addEventListener('click',ev=>{const p=ev.target.closest('[data-page]');if(p){go(p.dataset.page);return}const b=ev.target.closest('[data-act]');if(!b||b.disabled)return;const a=b.dataset.act;if(a==='retry'){const page=Proto.state.page;go(page,'loading');later(()=>go(page));return}if(a==='example'){go(Proto.state.page);return}action(a,b)});
+const P = Proto, { $, $$, ic, esc, toast } = Proto;
+const V = $('#view'), sh = $('#sh'), scr = $('#screen');
+const SC = { host: scr };
+const fm = n => '¥' + Math.round(n).toLocaleString('zh-CN');
+const fk = n => n >= 10000 ? (n / 10000).toFixed(n >= 100000 ? 1 : 2) + ' 万' : Math.round(n).toLocaleString('zh-CN');
+const pct = (a, b) => b ? (a - b) / b * 100 : null;
+let S, carry = false;
+function fresh() { S = { tab: 'home', range: 'today', store: -1, role: 'area', offline: false, empty: false, detail: 'sales', sort: 'sales', area: '', aFilter: 'open', done: new Set(), tip: null, refreshing: false }; }
 
+/* ---------------- 计算 ---------------- */
+function agg(rk, si) {
+  const R = DATA.ranges[rk], idx = si >= 0 ? [si] : R.sales.map((_, i) => i);
+  const sales = idx.reduce((s, i) => s + R.sales[i], 0), orders = idx.reduce((s, i) => s + R.orders[i], 0);
+  const same = idx.filter(i => R.prev[i] != null);
+  const prev = same.reduce((s, i) => s + R.prev[i], 0), sameSales = same.reduce((s, i) => s + R.sales[i], 0);
+  const gp = idx.reduce((s, i) => s + R.sales[i] * DATA.margin[i] / 100, 0);
+  const prevAll = idx.reduce((s, i) => s + (R.prev[i] || 0), 0);
+  return { sales, orders, aov: orders ? sales / orders : 0, margin: sales ? gp / sales * 100 : 0, growth: pct(sales, prevAll), same: same.length ? pct(sameSales, prev) : null, prevAll, hasNew: idx.some(i => R.prev[i] == null) };
+}
+function chg(v, suffix) { if (v == null || !isFinite(v)) return `<span class="chg na">${suffix || '无对比期'}</span>`; const up = v >= 0; return `<span class="chg ${up ? 'up' : 'dn'}">${ic(up ? 'arrow-up' : 'arrow-dn')}${up ? '+' : ''}${v.toFixed(1)}%</span>`; }
+function series(rk, si) {
+  const R = DATA.ranges[rk]; if (si < 0) return { cur: R.cur, cmp: R.cmp };
+  const sh = R.sales[si] / R.sales.reduce((a, b) => a + b, 0), shp = R.prev[si] != null ? R.prev[si] / R.prev.reduce((a, b) => a + (b || 0), 0) : 0;
+  return { cur: R.cur.map(v => Math.round(v * sh)), cmp: R.prev[si] != null ? R.cmp.map(v => Math.round(v * shp)) : [] };
+}
 
-let range='近7天',store='全部门店',metric='sales';
-function stats(){const a=DATA.ranges[range],weight=store==='全部门店'?1:DATA.stores.find(x=>x.name===store).weight;return {...a,sales:Math.round(a.sales*weight),orders:Math.round(a.orders*weight),previous:Math.round(a.previous*weight)}}
-function chart(){const a=stats(),max=Math.max(...a.trend);return `<div class="chart" aria-label="${range}销售趋势">${a.trend.map((v,i)=>`<button class="bar" style="height:${Math.round(v/max*100)}%" data-act="point:${i}" aria-label="${a.labels[i]}，销售额 ${money(a.sales*v/a.trend.reduce((x,y)=>x+y,0))}">${a.labels[i]}</button>`).join('')}</div><p id="point-detail" role="status" class="caption">点击柱形查看时段金额</p>`}
-function view(p){const a=stats(),change=((a.sales-a.previous)/a.previous*100).toFixed(1),head=`<div class="toolbar"><b>${range} · ${e(store)}</b>${btn('筛选','filter')}</div>`;if(p==='overview')return `<section class="hero"><div class="edition">BUSINESS / 示例</div><h1>经营脉搏</h1><p>数据口径：模拟已支付订单，退款不计入；更新于示例 18:00。</p></section>${head}<div class="grid">${card('销售额',`<div class="stat">¥${money(a.sales)}</div><p>较上期 ${change}%</p>${btn('查看趋势','trend',true)}`)}${card('订单数',`<div class="stat">${a.orders}</div><p>客单价 ¥${money(a.sales/a.orders)}</p>`)}</div>${card('时段趋势',chart())}`;
-if(p==='trend')return `${head}${card('销售趋势',chart()+`<p>同期销售额 ¥${money(a.previous)}，当前 ¥${money(a.sales)}</p>${btn('查看明细表','table')}`)}`;
-const stores=store==='全部门店'?DATA.stores:DATA.stores.filter(x=>x.name===store);return `${head}${card('门店贡献',stores.map((r,i)=>`<div class="row"><b>${i+1}</b><div class="grow"><b>${e(r.name)}</b><p>贡献 ${(r.weight*100).toFixed(0)}%</p></div><b>¥${money(DATA.ranges[range].sales*r.weight)}</b>${btn('详情','store:'+r.name)}</div>`).join(''))}`}
-function mount(){}
-function action(a){const [k,id]=a.split(':');if(a==='trend')go('trend');if(a==='filter'){const m=modal('数据筛选',`<label class="field">时间范围<select id="range">${Object.keys(DATA.ranges).map(x=>`<option ${x===range?'selected':''}>${x}</option>`).join('')}</select></label><label class="field">门店<select id="store">${['全部门店',...DATA.stores.map(x=>x.name)].map(x=>`<option ${x===store?'selected':''}>${x}</option>`).join('')}</select></label>${btn('应用筛选','apply',true)}${btn('重置','reset')}`);m.querySelector('[data-act="apply"]').onclick=()=>{range=$('#range').value;store=$('#store').value;Proto.close(m);refresh()};m.querySelector('[data-act="reset"]').onclick=()=>{$('#range').value='近7天';$('#store').value='全部门店'}}if(k==='point'){const a=stats();$('#point-detail').textContent=a.labels[+id]+'：销售额 ¥'+money(a.sales*a.trend[+id]/a.trend.reduce((x,y)=>x+y,0))}if(a==='table'){const a=stats();modal('时段明细（示例）',a.trend.map((v,i)=>`<div class="row"><span class="grow">${a.labels[i]}</span>¥${money(a.sales*v/a.trend.reduce((x,y)=>x+y,0))}</div>`).join(''))}if(k==='store'){store=id;go('overview')}}
-window.round2Test=async({ok,act,input,click})=>{go('overview');act('filter');input('#range','今日','change');input('#store','示例河畔店','change');click('.modal.show [data-act="apply"]');ok($('#content').textContent.includes('5,706.00'),'筛选更新销售额');go('trend');act('point:0');ok($('#point-detail').textContent.includes('08时'),'图表点选详情');go('rank');ok($('#content').textContent.includes('示例河畔店')&&!$('#content').textContent.includes('示例林间店'),'排行联动门店');act('store:示例河畔店');ok(Proto.state.page==='overview','排行下钻概览')};
+/* ---------------- 组件 ---------------- */
+function tabbar() {
+  const n = DATA.alerts.filter((a, i) => !S.done.has(i) && (S.role === 'area' || a[1] === '滨江店')).length;
+  $('#tabbar').innerHTML = [['home', '看板', 'chart'], ['rank', '排行', 'bars'], ['alerts', '预警', 'alert'], ['me', '我的', 'user']].map(t => `<button type="button" class="${S.tab === t[0] ? 'on' : ''}" data-tab="${t[0]}" ${S.tab === t[0] ? 'aria-current="page"' : ''}>${ic(t[2])}<span>${t[1]}</span>${t[0] === 'alerts' && n ? `<span class="badge badge-danger">${n}</span>` : ''}</button>`).join('');
+}
+function storeName() { return S.store < 0 ? '全部门店' : DATA.stores[S.store][0]; }
+function nav(title, back) {
+  if (back) return `<div class="navbar"><button class="tap" type="button" data-back aria-label="返回">${ic('chev-l')}</button><span class="nb-title">${title}</span><span class="right"><button class="tap" type="button" data-share aria-label="分享截图">${ic('share')}</button></span></div>`;
+  return `<div class="navbar"><button class="storepick" type="button" data-pick aria-haspopup="dialog">${S.role === 'store' ? ic('lock', 'ic-sm') : ''}<span>${storeName()}</span>${ic('chev-d', 'ic-sm')}</button><span class="right"><span class="upd">${S.offline ? '离线' : '更新于'}<br>${S.offline ? '缓存 13:55' : DATA.updated}</span><button class="tap" type="button" data-refresh aria-label="刷新数据">${ic('refresh')}</button></span></div>`;
+}
+function rangeSeg() { return `<div class="rng" role="group" aria-label="时间范围">${Object.keys(DATA.ranges).map(k => `<button type="button" data-range="${k}" aria-pressed="${S.range === k}">${DATA.ranges[k].name}</button>`).join('')}</div>`; }
+function offlineBar() { return S.offline ? `<div class="offline" role="status">${ic('wifi')}<span>网络断开，显示 13:55 的缓存数据，可能不是最新</span><button type="button" data-reconnect>重试</button></div>` : ''; }
+function lineChart(rk, si) {
+  const R = DATA.ranges[rk], s = series(rk, si), W = 330, H = 170, pl = 34, pb = 20, pt = 52;
+  const n = R.x.length, max = Math.max(...s.cur, ...(s.cmp.length ? s.cmp : [0])) * 1.1 || 1;
+  const X = i => pl + (W - pl - 6) * (n === 1 ? 0 : i / (n - 1)), Y = v => pt + (H - pt - pb) * (1 - v / max);
+  const path = arr => arr.map((v, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join('');
+  const grid = [0, .5, 1].map(f => { const v = max / 1.1 * f; return `<line x1="${pl}" x2="${W - 6}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line-soft)"/><text x="${pl - 6}" y="${Y(v) + 3}" text-anchor="end">${fk(v).replace(' 万', 'w')}</text>`; }).join('');
+  const step = n > 12 ? 3 : n > 8 ? 2 : 1;
+  const xl = R.x.map((t, i) => i % step === 0 || i === n - 1 ? `<text x="${X(i)}" y="${H - 4}" text-anchor="middle">${t}${rk === 'today' || rk === 'yday' ? (i === 0 ? '时' : '') : ''}</text>` : '').join('');
+  const ti = S.tip == null ? s.cur.length - 1 : Math.min(S.tip, n - 1);
+  const tv = s.cur[ti], cv = s.cmp[ti];
+  const tipL = X(ti), tipPct = Math.min(Math.max(tipL / W * 100, 18), 82);
+  return `<div class="lg"><span><i style="background:var(--accent)"></i>${R.name}${R.note && rk === 'today' ? '（截至 14:00）' : ''}</span>${s.cmp.length ? `<span><i style="background:var(--cmp)"></i>${R.cmpName}</span>` : '<span>新店无对比期</span>'}</div>
+  <div class="chart" id="chart" tabindex="0" role="img" aria-label="${R.name}趋势图，按住拖动或用左右键查看每个点" data-n="${n}" data-pl="${pl}" data-w="${W}">
+  <div class="tip" style="left:${tipPct}%">${R.x[ti]}${rk === 'today' || rk === 'yday' ? ':00' : ''} · <b>${tv != null ? fm(tv) : '还没到'}</b>${cv != null ? `<br><span>${R.cmpName} ${fm(cv)}</span>` : ''}</div>
+  <svg viewBox="0 0 ${W} ${H}" aria-hidden="true">${grid}${xl}${s.cmp.length ? `<path d="${path(s.cmp)}" fill="none" stroke="var(--cmp)" stroke-width="1.6" stroke-dasharray="4 3"/>` : ''}<path d="${path(s.cur)}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round"/>
+  <line x1="${tipL}" x2="${tipL}" y1="${pt - 4}" y2="${H - pb}" stroke="var(--ink-300)" stroke-dasharray="2 2"/>${tv != null ? `<circle cx="${tipL}" cy="${Y(tv)}" r="4" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>` : ''}</svg></div>
+  <p class="chint">按住图表左右拖动看每个点；${rk === 'today' ? '14 点以后还没发生，只显示对比期' : '虚线是对比期'}</p>`;
+}
+function spark(arr) { const w = 64, h = 18, mx = Math.max(...arr), mn = Math.min(...arr); return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><path d="${arr.map((v, i) => `${i ? 'L' : 'M'}${(i / (arr.length - 1) * w).toFixed(1)},${(h - 2 - (v - mn) / ((mx - mn) || 1) * (h - 4)).toFixed(1)}`).join('')}" fill="none" stroke="var(--accent)" stroke-width="1.5"/></svg>`; }
+const W7 = [[30120, 31010, 33640, 37820, 36510, 31250, 18640], [37210, 38450, 41930, 46870, 44620, 38960, 22315], [14260, 14980, 15760, 16120, 14390, 15480, 9872], [22830, 23410, 25870, 27940, 27140, 24310, 14206], [27010, 27680, 30110, 32880, 31800, 28770, 16930], [0, 0, 0, 17320, 17280, 21550, 9951]];
 
-Proto.init({pages:PAGES,render});Proto.prompts(PROMPTS);
-</script></body></html>
+/* ---------------- 页面 ---------------- */
+function skeleton() { return nav('', false) + `<div class="scroll" aria-busy="true" aria-label="正在加载">${[120, 88, 190, 90].map(h => `<div class="sk-c"><div class="sk" style="height:12px;width:40%"></div><div class="sk" style="height:${h - 40}px;width:100%"></div></div>`).join('')}</div>`; }
+function errBlock(msg) { return P.stateBlock({ error: true, title: '数据没加载出来', body: msg, acts: `<button class="btn btn-primary" type="button" data-retry style="height:44px">${ic('refresh')}重试</button>` }); }
+function pHome(state) {
+  S.tab = 'home'; tabbar();
+  if (state === 'loading') { V.innerHTML = skeleton(); return; }
+  if (state === 'error') { V.innerHTML = nav('', false) + `<div class="scroll">${errBlock('服务器响应超时（错误编号 BI-504，示例）。之前看过的数据会缓存 24 小时，没网时也能看。')}</div>`; return; }
+  if (state === 'noperm') { V.innerHTML = `<div class="navbar"><span class="nb-title">经营看板</span></div><div class="scroll">${P.stateBlock({ icon: 'lock', title: '还没有看板权限', body: '你的账号「运营专员 · 钱示例」没有开通经营数据查看。区域经理及以上默认开通；其他岗位请找区域经理 梁示例 申请。', acts: '<button class="btn btn-primary" type="button" data-apply style="height:44px">申请开通</button>' })}</div>`; return; }
+  const R = DATA.ranges[S.range];
+  if (S.empty) { V.innerHTML = nav('', false) + rangeSeg() + `<div class="scroll">${P.stateBlock({ icon: 'chart', title: `良渚店${R.name}还没有营业数据`, body: '良渚店 11-08 开业。选的时间段里还没有订单；开业后第 1 笔订单起开始统计，新店满 7 天后才和同期比较。', acts: '<button class="btn" type="button" data-range="week" style="height:44px">看近 7 天</button>' })}</div>`; return; }
+  const a = agg(S.range, S.store), isAll = S.store < 0, month = S.range === 'month';
+  const goalPct = month ? a.sales / (isAll ? DATA.monthGoal : DATA.monthGoal / 6) * 100 : 0, timePct = 11 / 30 * 100 - (10 / 24) / 30 * 100;
+  const al = DATA.alerts.map((x, i) => [x, i]).filter(([x, i]) => !S.done.has(i) && (isAll || x[1] === storeName())).slice(0, 3);
+  const rows = DATA.stores.map((s, i) => [s, i, R.sales[i], pct(R.sales[i], R.prev[i])]).sort((x, y) => y[2] - x[2]).slice(0, 3);
+  const chs = R.ch, chT = chs.reduce((x, y) => x + y, 0), share = isAll ? 1 : R.sales[S.store] / R.sales.reduce((x, y) => x + y, 0);
+  V.innerHTML = nav('', false) + `<div class="scroll" id="sc">${S.refreshing ? '<div class="ptr"><span class="spin"></span>正在刷新…</div>' : ''}${offlineBar()}${rangeSeg()}
+  <section class="hero" aria-label="营业额"><small>营业额 · ${R.note}${a.hasNew && isAll ? ' · 含新店' : ''}<button type="button" data-kpi="sales" style="margin-left:auto;min-height:32px;border:0;background:rgba(255,255,255,.16);color:#fff;border-radius:16px;padding:0 10px;font-size:12px;position:relative;z-index:1">各店明细 ›</button></small><span class="big">${fm(a.sales)}</span>
+   <div class="cmp"><span>比${R.cmpName} ${a.growth == null ? '—' : `<b>${a.growth >= 0 ? '+' : ''}${a.growth.toFixed(1)}%</b>`}</span><span>${R.cmpName} ${a.prevAll ? fm(a.prevAll) : '无'}</span></div>
+   ${month ? `<div class="goal"><div class="row"><span>月目标 ${fk(isAll ? DATA.monthGoal : DATA.monthGoal / 6)} · 完成 ${goalPct.toFixed(1)}%</span><span>时间进度 ${timePct.toFixed(1)}%</span></div><div class="bar"><i style="width:${Math.min(goalPct, 100)}%"></i><em style="left:${timePct}%"></em></div><div style="margin-top:6px;opacity:.92">${goalPct >= timePct ? '领先' : '落后'}时间进度 ${Math.abs(goalPct - timePct).toFixed(1)} 个百分点${goalPct < timePct ? `，后 19 天日均要 ${fk(((isAll ? DATA.monthGoal : DATA.monthGoal / 6) - a.sales) / 19.4)}` : ''}</div></div>` : ''}</section>
+  <div class="kgrid">${[['orders', '订单数', a.orders.toLocaleString('zh-CN') + ' 单', pct(a.orders, null)], ['aov', '客单价', '¥' + a.aov.toFixed(2), null], ['margin', '毛利率', a.margin.toFixed(1) + '%', null], ['same', '同店增长', a.same == null ? '—' : (a.same >= 0 ? '+' : '') + a.same.toFixed(1) + '%', a.same]].map(k => `<button class="kc" type="button" data-kpi="${k[0]}"><small>${k[1]}${ic('chev-r', 'ic-sm')}</small><b>${k[2]}</b>${k[0] === 'same' ? (a.same == null ? '<span class="chg na">新店不参与</span>' : `<span class="chg na">剔除新店后比${R.cmpName}</span>`) : k[0] === 'margin' ? '<span class="chg na">按标准成本估算</span>' : k[0] === 'aov' ? `<span class="chg na">营业额 ÷ 订单数</span>` : `<span class="chg na">平均每店 ${Math.round(a.orders / (isAll ? 6 : 1)).toLocaleString('zh-CN')} 单</span>`}</button>`).join('')}</div>
+  <section class="card"><div class="card-hd"><b>${S.range === 'today' || S.range === 'yday' ? '分时段' : '每日'}趋势</b></div>${lineChart(S.range, S.store)}</section>
+  <section class="card"><div class="card-hd"><b>渠道构成</b><span class="muted" style="font-size:12px;margin-left:auto">${isAll ? '' : '按门店占比估算'}</span></div><div class="mix" aria-hidden="true">${chs.map((c, i) => `<i style="width:${c / chT * 100}%;background:${['var(--accent)', '#E07A2E', '#2E9C7A'][i]}"></i>`).join('')}</div><div class="mixl">${['堂食', '外卖', '自提'].map((n, i) => `<div><i style="background:${['var(--accent)', '#E07A2E', '#2E9C7A'][i]}"></i>${n} ${(chs[i] / chT * 100).toFixed(0)}%<b>${fm(chs[i] * share)}</b></div>`).join('')}</div></section>
+  <section class="card"><div class="card-hd"><b>待处理预警</b><button class="more" type="button" data-tab="alerts">全部${ic('chev-r', 'ic-sm')}</button></div>${al.length ? al.map(([x, i]) => `<button class="al" type="button" data-alert="${i}"><span class="lv ${x[0]}"></span><span class="m">${x[1]} · ${x[2]}<small>${x[4]} · ${{ h: '高', m: '中', l: '低' }[x[0]]}</small></span>${ic('chev-r', 'ic-sm')}</button>`).join('') : '<p class="muted" style="font-size:13px;padding:6px 0 4px">没有待处理的预警</p>'}</section>
+  ${isAll ? `<section class="card"><div class="card-hd"><b>门店排行 · 营业额</b><button class="more" type="button" data-tab="rank">全部 6 家${ic('chev-r', 'ic-sm')}</button></div>${rows.map((r, k) => `<button class="rk" type="button" data-store="${r[1]}"><span class="no ${k < 3 ? 't' : ''}">${k + 1}</span><span class="m"><b>${r[0][0]}</b><small>${r[0][1]}</small></span><span class="v"><b>${fm(r[2])}</b>${chg(r[3], '新店')}</span></button>`).join('')}</section>` : ''}
+  <p class="foot-note">${S.role === 'store' ? '店长视角：只能看本店数据' : '数据每 5 分钟更新'} · 营业额为实收，含平台补贴，不含退款<br>示例数据，全部虚构</p></div>`;
+}
+const KPI = { sales: ['营业额', '实收金额：顾客实付 + 平台补贴（美团 / 饿了么承担的部分），不含退款和押金。'], orders: ['订单数', '已支付的订单数；同一桌加单算 1 单；全额退款的订单不计。'], aov: ['客单价', '营业额 ÷ 订单数。外卖订单含包装费，所以外卖占比高的门店客单价偏高。'], margin: ['毛利率', '(营业额 − 商品标准成本) ÷ 营业额；不含房租人工，月底按实际成本重算。'], same: ['同店增长', '只算对比期也在营业的门店：(本期 − 对比期) ÷ 对比期。良渚店 11-08 开业，不参与。'] };
+function pDetail(state) {
+  S.tab = 'home'; tabbar();
+  const k = S.detail, R = DATA.ranges[S.range], meta = KPI[k];
+  if (state === 'loading') { V.innerHTML = nav(meta[0], true) + `<div class="scroll" aria-busy="true">${[90, 220].map(h => `<div class="sk-c"><div class="sk" style="height:${h}px;width:100%"></div></div>`).join('')}</div>`; return; }
+  if (state === 'error') { V.innerHTML = nav(meta[0], true) + `<div class="scroll">${errBlock('按门店拆分的数据没加载出来（错误编号 BI-502，示例）。')}</div>`; return; }
+  const a = agg(S.range, -1);
+  const val = i => k === 'orders' ? R.orders[i] : k === 'aov' ? R.sales[i] / R.orders[i] : k === 'margin' ? DATA.margin[i] : R.sales[i];
+  const fmt = v => k === 'orders' ? v.toLocaleString('zh-CN') + ' 单' : k === 'aov' ? '¥' + v.toFixed(2) : k === 'margin' ? v.toFixed(1) + '%' : fm(v);
+  const total = k === 'orders' ? a.orders : k === 'aov' ? a.aov : k === 'margin' ? a.margin : k === 'same' ? a.same : a.sales;
+  const list = DATA.stores.map((s, i) => [s, i, k === 'same' ? pct(R.sales[i], R.prev[i]) : val(i)]).sort((x, y) => (y[2] == null ? -1e9 : y[2]) - (x[2] == null ? -1e9 : x[2]));
+  V.innerHTML = nav(meta[0], true) + `<div class="scroll">${rangeSeg()}
+  <section class="card" style="padding-top:12px"><span class="muted" style="font-size:13px">${R.name} · 全部门店 · ${R.note}</span><b style="display:block;font-size:30px;font-weight:700;margin:2px 0 4px;font-variant-numeric:tabular-nums">${k === 'same' ? (total >= 0 ? '+' : '') + total.toFixed(1) + '%' : fmt(total)}</b>
+   <p class="def"><b>怎么算：</b>${meta[1]}<br><b>对比期：</b>${R.cmpName}。</p></section>
+  <section class="card"><div class="card-hd"><b>按门店</b><span class="muted" style="font-size:12px;margin-left:auto">${k === 'same' ? '各店比' + R.cmpName : '数值 / 比' + R.cmpName}</span></div>
+   <div class="drow hd"><span>门店</span><span>${k === 'same' ? '本期' : meta[0]}</span><span>变化</span></div>
+   ${list.map(r => { const i = r[1]; const c = k === 'sales' ? pct(R.sales[i], R.prev[i]) : k === 'orders' ? null : null; return `<div class="drow"><span>${r[0][0]}${R.prev[i] == null ? '<span class="newtag">新店</span>' : ''}</span><span>${k === 'same' ? fm(R.sales[i]) : fmt(r[2])}</span><span>${k === 'same' ? chg(r[2], '无同期') : k === 'sales' ? chg(c, '无同期') : '<span class="chg na">—</span>'}</span></div>`; }).join('')}
+   <div class="drow" style="font-weight:600"><span>合计</span><span>${k === 'same' ? fm(a.sales) : fmt(total)}</span><span>${k === 'sales' ? chg(a.growth) : k === 'same' ? chg(a.same) : ''}</span></div></section>
+  <p class="foot-note">${k === 'aov' || k === 'margin' ? '合计是加权平均，不是各店简单平均' : '各店之和 = 合计'}</p></div>`;
+}
+function pRank(state) {
+  S.tab = 'rank'; tabbar();
+  const head = `<div class="navbar"><span class="nb-title">门店排行</span><span class="right"><button class="tap" type="button" data-share aria-label="分享截图">${ic('share')}</button></span></div>`;
+  if (state === 'loading') { V.innerHTML = head + `<div class="scroll" aria-busy="true"><div class="sk-c">${[1, 2, 3, 4, 5, 6].map(() => '<div class="sk" style="height:44px;width:100%"></div>').join('')}</div></div>`; return; }
+  if (state === 'error') { V.innerHTML = head + `<div class="scroll">${errBlock('排行数据没加载出来（错误编号 BI-503，示例）。')}</div>`; return; }
+  const R = DATA.ranges[S.range];
+  let L = DATA.stores.map((s, i) => ({ s, i, sales: R.sales[i], g: pct(R.sales[i], R.prev[i]), aov: R.sales[i] / R.orders[i] })).filter(x => !S.area || x.s[1] === S.area);
+  L.sort((a, b) => S.sort === 'growth' ? (b.g == null ? -1e9 : b.g) - (a.g == null ? -1e9 : a.g) : S.sort === 'aov' ? b.aov - a.aov : b.sales - a.sales);
+  const max = Math.max(...L.map(x => x.sales), 1), areas = ['城东', '城西', '城南', '城北', '城中'];
+  V.innerHTML = head + `<div class="scroll">${rangeSeg()}
+  <div class="chips" role="group" aria-label="排序">${[['sales', '按营业额'], ['growth', '按增长'], ['aov', '按客单价']].map(x => `<button class="chip" type="button" data-sort="${x[0]}" aria-pressed="${S.sort === x[0]}">${x[1]}</button>`).join('')}</div>
+  <div class="chips" role="group" aria-label="区域"><button class="chip" type="button" data-area="" aria-pressed="${!S.area}">全部区域</button>${areas.map(a => `<button class="chip" type="button" data-area="${a}" aria-pressed="${S.area === a}">${a}</button>`).join('')}</div>
+  ${L.length && state !== 'empty' ? `<section class="card">${L.map((x, k) => `<button class="rk" type="button" data-store="${x.i}"><span class="no ${k < 3 ? 't' : ''}">${k + 1}</span><span class="m"><b>${x.s[0]}${R.prev[x.i] == null ? '<span class="newtag">新店</span>' : ''}</b><small>${x.s[1]} · 客单 ¥${x.aov.toFixed(2)}</small><div class="bar"><i style="width:${x.sales / max * 100}%"></i></div></span><span class="v"><b>${fm(x.sales)}</b>${chg(x.g, '无同期')}${spark(W7[x.i].filter(v => v))}</span></button>`).join('')}</section>
+  <p class="foot-note">增长 = 比${R.cmpName}；新店不参与按增长排序（排在最后）</p>` : `<section class="card">${P.stateBlock({ icon: 'pin', title: `${S.area || '这个区域'}还没有门店`, body: '城中区第一家店计划 12 月开业。可以换个区域看看。', acts: '<button class="btn" type="button" data-area="" style="height:44px">看全部区域</button>' })}</section>`}</div>`;
+}
+function pAlerts(state) {
+  S.tab = 'alerts'; tabbar();
+  const head = `<div class="navbar"><span class="nb-title">预警</span></div>`;
+  if (state === 'loading') { V.innerHTML = head + `<div class="scroll" aria-busy="true"><div class="sk-c">${[1, 2, 3, 4].map(() => '<div class="sk" style="height:48px;width:100%"></div>').join('')}</div></div>`; return; }
+  if (state === 'error') { V.innerHTML = head + `<div class="scroll">${errBlock('预警列表没加载出来（错误编号 ALT-500，示例）。高级别预警还会通过短信发给你。')}</div>`; return; }
+  if (state === 'empty') DATA.alerts.forEach((_, i) => S.done.add(i));
+  const L = DATA.alerts.map((x, i) => [x, i]).filter(([x, i]) => (S.aFilter === 'all' || !S.done.has(i)) && (S.role === 'area' || x[1] === '滨江店'));
+  const open = DATA.alerts.filter((x, i) => !S.done.has(i)).length; tabbar();
+  V.innerHTML = head + `<div class="scroll"><div class="chips" role="group" aria-label="筛选"><button class="chip" type="button" data-af="open" aria-pressed="${S.aFilter === 'open'}">未处理 ${open}</button><button class="chip" type="button" data-af="all" aria-pressed="${S.aFilter === 'all'}">全部 ${DATA.alerts.length}</button></div>
+  ${L.length ? ['h', 'm', 'l'].map(lv => { const g = L.filter(([x]) => x[0] === lv); return g.length ? `<section class="card"><div class="card-hd"><span class="lv ${lv}" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span><b>${{ h: '高 · 马上处理', m: '中 · 今天内处理', l: '低 · 关注即可' }[lv]}</b></div>${g.map(([x, i]) => `<button class="al ${S.done.has(i) ? 'done' : ''}" type="button" data-alert="${i}"><span class="m">${x[1]} · ${x[2]}<small>${x[4]}${S.done.has(i) ? ' · 已处理' : ''}</small></span>${ic('chev-r', 'ic-sm')}</button>`).join('')}</section>` : ''; }).join('')
+  : `<section class="card">${P.stateBlock({ icon: 'check-c', title: '预警都处理完了', body: '新的预警会在这里出现，高级别的同时发短信。', acts: S.aFilter === 'open' ? '<button class="btn" type="button" data-af="all" style="height:44px">看已处理的</button>' : '' })}</section>`}
+  <p class="foot-note">规则：同时段跌超 10% 为高；库存不足 2 小时为中</p></div>`;
+}
+function pMe() { S.tab = 'me'; tabbar(); V.innerHTML = `<div class="navbar"><span class="nb-title">我的</span></div><div class="scroll">${P.stateBlock({ icon: 'user', title: S.role === 'area' ? '梁示例 · 城东城西区域经理' : '吴示例 · 滨江店店长', body: '「我的」不在本模板范围内（见 c-profile）。这里可以切换演示角色：', acts: `<button class="btn" type="button" data-role="${S.role === 'area' ? 'store' : 'area'}" style="height:44px">切换为${S.role === 'area' ? '店长视角' : '区域经理视角'}</button>` })}</div>`; }
+
+/* ---------------- 弹层 ---------------- */
+function openPick() {
+  sh.innerHTML = `<div class="grabber"></div><div class="sheet-hd"><b id="sh-t">选择门店</b><button class="tap" type="button" data-shx aria-label="关闭">${ic('x')}</button></div><div class="sheet-bd">${[[-1, '全部门店', '6 家']].concat(DATA.stores.map((s, i) => [i, s[0], s[1] + (s[2] ? ' · ' + s[2] : '')])).map(o => { const dis = S.role === 'store' && o[0] !== 0; return `<button class="sopt" type="button" data-setstore="${o[0]}" ${dis ? 'aria-disabled="true"' : ''}>${S.store === o[0] ? ic('check') : '<span style="width:20px"></span>'}${o[1]}<small>${dis ? '店长只能看本店' : o[2]}</small></button>`; }).join('')}</div>`;
+  P.open(sh, SC);
+}
+function openAlert(i) {
+  const x = DATA.alerts[i], done = S.done.has(i);
+  sh.innerHTML = `<div class="grabber"></div><div class="sheet-hd"><b id="sh-t">${x[1]} · ${{ h: '高', m: '中', l: '低' }[x[0]]}</b><button class="tap" type="button" data-shx aria-label="关闭">${ic('x')}</button></div><div class="sheet-bd adt"><b style="font-size:17px;color:var(--ink-900);display:block;line-height:1.5">${x[2]}</b><dl><dt>发生</dt><dd>今天 ${x[4]}</dd><dt>原因</dt><dd>${x[3]}</dd><dt>建议</dt><dd>${x[5]}</dd>${done ? '<dt>状态</dt><dd style="color:var(--success)">已处理 · 梁示例 刚刚</dd>' : ''}</dl>
+  <div class="sh-acts"><button class="btn" type="button" data-toast="正在呼叫 ${x[1]} 店长（示例）">${ic('phone')}打电话给店长</button>${done ? '<button class="btn" type="button" data-shx>关闭</button>' : `<button class="btn btn-primary" type="button" data-adone="${i}">标记已处理</button>`}</div></div>`;
+  P.open(sh, SC);
+}
+
+/* ---------------- 事件 ---------------- */
+const PAGES = { home: pHome, detail: pDetail, rank: pRank, alerts: pAlerts };
+function draw() { if (S.tab === 'me') return pMe(); PAGES[P.state.page](P.state.state === 'single' || P.state.state === 'offline' ? 'normal' : P.state.state); }
+function go(pg) { carry = true; P.go(pg, 'normal'); const sc = $('.scroll', V); if (sc) sc.scrollTop = 0; }
+scr.addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.toast) toast(b.dataset.toast, '', SC);
+  if (b.dataset.tab) { if (b.dataset.tab === 'me') { pMe(); return; } S.tip = null; go(b.dataset.tab); return; }
+  if (b.dataset.range) { S.range = b.dataset.range; S.tip = null; S.empty = false; draw(); return; }
+  if ('pick' in b.dataset) { openPick(); return; }
+  if (b.dataset.setstore != null) { if (b.getAttribute('aria-disabled') === 'true') { toast('店长只能看本店，看其他门店请找区域经理', 'err', SC); return; } S.store = +b.dataset.setstore; S.tip = null; P.close(sh); draw(); return; }
+  if ('shx' in b.dataset) { P.close(sh); return; }
+  if (b.dataset.kpi) { S.detail = b.dataset.kpi; go('detail'); return; }
+  if ('back' in b.dataset) { go('home'); return; }
+  if (b.dataset.store != null) { S.store = +b.dataset.store; S.tip = null; go('home'); toast(`已切到 ${DATA.stores[S.store][0]}`, '', SC); return; }
+  if (b.dataset.sort) { S.sort = b.dataset.sort; draw(); return; }
+  if (b.dataset.area != null) { S.area = b.dataset.area; carry = true; P.go('rank', 'normal'); return; }
+  if (b.dataset.af) { S.aFilter = b.dataset.af; draw(); return; }
+  if (b.dataset.alert) { openAlert(+b.dataset.alert); return; }
+  if (b.dataset.adone) { S.done.add(+b.dataset.adone); P.close(sh); draw(); toast('已标记处理，记录在预警历史里', 'ok', SC); return; }
+  if ('refresh' in b.dataset) { if (S.offline) { toast('没有网络，稍后再试', 'err', SC); return; } S.refreshing = true; draw(); setTimeout(() => { S.refreshing = false; draw(); toast('已是最新（14:20）', 'ok', SC); }, 700); return; }
+  if ('reconnect' in b.dataset) { S.offline = false; draw(); toast('已恢复网络，数据已更新到 14:20', 'ok', SC); return; }
+  if ('share' in b.dataset) { toast('已生成截图，可发到工作群（示例）', 'ok', SC); return; }
+  if ('retry' in b.dataset) { const pg = P.state.page; carry = true; P.go(pg, 'loading'); setTimeout(() => { carry = true; P.go(pg, 'normal'); }, 700); return; }
+  if ('apply' in b.dataset) { b.disabled = true; b.textContent = '已申请，等待梁示例审批'; toast('已提交申请', 'ok', SC); return; }
+  if (b.dataset.role) { S.role = b.dataset.role; S.store = S.role === 'store' ? 0 : -1; pMe(); toast(S.role === 'store' ? '已切换为店长视角（滨江店）' : '已切换为区域经理视角', 'ok', SC); return; }
+});
+// 图表：按住拖动 / 方向键
+function tipAt(clientX) { const c = $('#chart'); if (!c) return; const r = c.getBoundingClientRect(), n = +c.dataset.n, pl = +c.dataset.pl / +c.dataset.w * r.width, w = r.width - pl - 6 / 330 * r.width; let i = Math.round((clientX - r.left - pl) / w * (n - 1)); i = Math.max(0, Math.min(n - 1, i)); if (i !== S.tip) { S.tip = i; const sc = $('.scroll', V), top = sc ? sc.scrollTop : 0; draw(); const sc2 = $('.scroll', V); if (sc2) sc2.scrollTop = top; } }
+let drag = false;
+scr.addEventListener('pointerdown', e => { if (e.target.closest('#chart')) { drag = true; tipAt(e.clientX); } });
+scr.addEventListener('pointermove', e => { if (drag) tipAt(e.clientX); });
+window.addEventListener('pointerup', () => { drag = false; });
+scr.addEventListener('keydown', e => { if (e.target.id === 'chart' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { e.preventDefault(); const n = +e.target.dataset.n, cur = S.tip == null ? DATA.ranges[S.range].cur.length - 1 : S.tip; S.tip = Math.max(0, Math.min(n - 1, cur + (e.key === 'ArrowRight' ? 1 : -1))); draw(); $('#chart').focus(); } });
+
+fresh();
+Proto.init({
+  title: '手机经营看板',
+  pages: [
+    { id: 'home', name: '① 看板', states: [{ id: 'normal', name: '区域经理 · 全部门店' }, { id: 'single', name: '店长视角（只看本店）' }, { id: 'empty', name: '空（新店无数据）' }, { id: 'offline', name: '离线（缓存数据）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限' }] },
+    { id: 'detail', name: '② 指标详情', states: [{ id: 'normal', name: '营业额' }, { id: 'aov', name: '客单价' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }] },
+    { id: 'rank', name: '③ 门店排行', states: [{ id: 'normal', name: '正常' }, { id: 'empty', name: '空（区域没有门店）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }] },
+    { id: 'alerts', name: '④ 预警', states: [{ id: 'normal', name: '5 条未处理' }, { id: 'empty', name: '空（都处理完了）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }] }
+  ],
+  render(page, state) {
+    if (sh.classList.contains('show')) P.close(sh);
+    if (!carry) {
+      fresh();
+      if (page === 'home' && state === 'single') { S.role = 'store'; S.store = 0; }
+      if (page === 'home' && state === 'offline') S.offline = true;
+      if (page === 'home' && state === 'empty') { S.store = 5; S.range = 'yday'; S.empty = true; }
+      if (page === 'detail' && state === 'aov') S.detail = 'aov';
+      if (page === 'rank' && state === 'empty') S.area = '城中';
+    }
+    carry = false;
+    const st = ['single', 'offline', 'aov'].includes(state) ? 'normal' : state;
+    PAGES[page](page === 'rank' && state === 'empty' ? 'normal' : st);
+    const sc = $('.scroll', V); if (sc) sc.scrollTop = 0;
+  }
+});
+Proto.prompts(PROMPTS);
+</script>
+</body>
+</html>
