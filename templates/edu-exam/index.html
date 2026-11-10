@@ -1,4 +1,16 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>组卷考试与人工阅卷 · 积木盒</title><style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>考试后台 · 原型模板</title>
+<!--
+  原型模板 · 积木盒 | 老岳AI编辑部 · 原型组
+  改风格：改下面 :root 里的变量（--accent 换主色）
+  改数据：改 <script> 顶部 DATA
+  演示：右下角「原型面板」切页面和状态；按 H 隐藏面板；URL 可直达 #page=paper&state=full
+-->
+<style>
 /*@KIT_CSS*/
 /* ==========================================================================
    ① 改风格只改这一块：颜色 / 字体 / 圆角 / 间距 / 阴影
@@ -329,7 +341,7 @@ body.has-tplbar{--bar-h:44px;padding-top:44px}
 .tplbar .tb-btn.primary{background:#fff;color:#16171A;border-color:#fff}
 .tplbar .tb-btn.primary:hover{filter:brightness(.94)}
 .tplbar .tb-btn .ic{width:15px;height:15px}
-.tplbar .tb-hide{width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+.tplbar .tb-hide{flex-shrink:0;width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
 .drawer{top:var(--bar-h,0px)}
 body.pp-hidden .tplbar{display:none}
 body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
@@ -340,11 +352,286 @@ body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
 :root[data-theme="dark"] .brand-mark,:root[data-theme="dark"] .ai-mark{background:#ECECEF;color:#16171A}
 :root[data-theme="dark"] .tab.on{color:#16171A}
 /*@END_KIT_CSS*/
+/* ============================ 本模板样式 ============================ */
+:root{--accent:#1F6B5C;--accent-soft:#E7F2EF}
+/* ---- 后台框架（复用 b-shell：.sh 侧栏 + .tb 顶栏 + .crumb2 面包屑 + .tabsbar 页签） ---- */
+.sh{display:grid;grid-template-columns:var(--sw,224px) minmax(0,1fr);min-height:calc(100vh - var(--bar-h))}
+.sb{position:sticky;top:var(--bar-h);height:calc(100vh - var(--bar-h));display:flex;flex-direction:column;background:var(--surface);border-right:1px solid var(--line);overflow:hidden}
+.sb-brand{display:flex;align-items:center;gap:10px;height:56px;padding:0 16px;font-weight:600;font-size:15px;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
+.sb-brand .brand-mark{flex:none}
+.sb-nav{flex:1;overflow-y:auto;padding:10px 8px;scrollbar-width:thin}
+.sb-sec{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:12px 10px 6px;white-space:nowrap}
+.ni{display:flex;align-items:center;gap:10px;width:100%;height:40px;padding:0 10px;border:0;background:none;border-radius:var(--r-sm);color:var(--ink-700);font-size:14px;text-align:left;cursor:pointer;white-space:nowrap;position:relative}
+.ni:hover{background:var(--line-soft);color:var(--ink-900)}
+.ni .ic{flex:none}
+.ni .t{flex:1;overflow:hidden;text-overflow:ellipsis}
+.ni.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.sb-foot{border-top:1px solid var(--line-soft);padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:13px;white-space:nowrap}
+.sb-foot small{display:block;font-size:12px;color:var(--ink-500)}
+.tb{position:sticky;top:var(--bar-h);z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 24px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tb .sp{flex:1}
+.crumb2{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-500);min-width:0;overflow:hidden}
+.crumb2 button{border:0;background:none;color:var(--ink-500);font-size:13px;padding:2px 4px;border-radius:4px;cursor:pointer;white-space:nowrap;min-height:24px}
+.crumb2 button:hover{color:var(--ink-900);background:var(--line-soft)}
+.crumb2 b{color:var(--ink-900);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb2 .ic{width:14px;height:14px;flex:none}
+.tabsbar{display:flex;gap:4px;padding:8px 24px 0;border-bottom:1px solid var(--line);background:var(--surface);overflow-x:auto;scrollbar-width:none}
+.ptab{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid var(--line);border-bottom:0;border-radius:var(--r-sm) var(--r-sm) 0 0;background:var(--surface-2);font-size:13px;color:var(--ink-700);cursor:pointer;white-space:nowrap}
+.ptab.on{background:var(--surface);color:var(--ink-900);font-weight:500;box-shadow:inset 0 2px 0 var(--accent)}
+.pg{padding:24px;max-width:1400px}
+.pg-hd{display:flex;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.pg-hd h1{font-size:22px;line-height:1.3}
+.pg-hd p{font-size:13px;color:var(--ink-500);margin-top:4px}
+.pg-hd .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.tw{position:relative;overflow-x:auto;border-top:1px solid var(--line-soft)}
+.cb{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:28px;cursor:pointer}
+.err-pg{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;min-height:460px}
+.err-pg .code{font-size:64px;font-weight:700;line-height:1;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.err-pg h2{font-size:20px;margin:14px 0 6px}
+.err-pg p{font-size:14px;color:var(--ink-500);max-width:460px;line-height:1.7}
+.err-pg .acts{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+@media (max-width:1000px){.sh{--sw:64px}.sb .t,.sb-sec,.sb-foot .t,.sb-brand .t,.ni .badge{display:none}.ni{justify-content:center;padding:0}.sb-brand{justify-content:center;padding:0}.sb-foot{justify-content:center;padding:10px 0}}
+@media (max-width:640px){.sh{grid-template-columns:minmax(0,1fr)}.sb{display:none}.tb{padding:0 12px;gap:8px}.tabsbar{padding:8px 12px 0}.pg{padding:16px 12px}.pg-hd h1{font-size:19px}.tb .hide-s{display:none}}
 
-:root{--accent:#245953;--accent-soft:color-mix(in srgb,var(--accent) 10%,white);--paper:#f4f3ee;--editorial:#183d38;--space:24px;--cover-a:#dbe6df;--cover-b:#e8d9bf;--chart-height:150px}
-body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32px 32px 180px}.mast{display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:24px}.mast .sp{flex:1}.mast strong{font-size:20px}.edition{font-family:var(--font-mono);color:var(--accent);font-size:12px;letter-spacing:2px}.hero .edition{color:rgba(255,255,255,.78)}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.nav .on{background:var(--accent);color:var(--accent-ink)}.hero{padding:32px;background:var(--editorial);color:var(--accent-ink);border-radius:var(--r-lg);margin-bottom:24px}.hero h1{font-size:32px;margin:8px 0}.hero p{opacity:.9;max-width:650px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.two{display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:24px}.card{padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);min-width:0}.card h2{font-size:20px;margin:0 0 16px}.card h3{font-size:16px;margin:8px 0}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}.toolbar input{flex:1;min-width:140px}.field{display:grid;gap:8px;margin:16px 0}.field input,.field textarea,.field select,.toolbar input,.toolbar select{padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);max-width:100%}.field textarea{min-height:100px}.stat{font-size:32px;font-family:var(--font-mono);font-weight:600;margin:12px 0}.row{padding:16px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}.row .grow{flex:1;min-width:0}.caption{color:var(--ink-500);font-size:13px}.notice{padding:14px 18px;background:var(--accent-soft);border-left:3px solid var(--accent);margin:16px 0}.error{color:var(--danger);min-height:20px}.empty-box{text-align:center;padding:64px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}.empty-box h2{margin:16px}.loading-grid{display:grid;gap:20px}.loading-grid .sk{height:100px}.scroll-table{overflow:auto}.cover-art{height:160px;border-radius:var(--r-sm);background:var(--cover-a);display:flex;align-items:center;justify-content:center;font-size:36px;font-family:serif;color:var(--editorial);margin-bottom:16px}.card:nth-child(even) .cover-art{background:var(--cover-b)}.chart{display:flex;gap:14px;align-items:end;height:var(--chart-height);margin:24px 0}.bar{flex:1;background:var(--accent);min-width:24px;border:0;border-radius:var(--r-sm) var(--r-sm) 0 0;color:var(--accent-ink);cursor:pointer}.reading{font-family:serif;font-size:var(--reader-size,20px);line-height:2.1;max-width:680px;margin:auto}.reading.night{background:var(--ink-900);color:var(--surface);padding:24px;border-radius:var(--r-md)}.steps{display:flex;gap:16px;padding:16px 0;flex-wrap:wrap}.steps span{padding:8px 14px;background:var(--surface);border-radius:var(--r-full)}.steps .active{background:var(--accent);color:var(--accent-ink)}.meter{width:100%;accent-color:var(--accent)}.mobile .workspace{width:min(100%,430px);background:var(--bg);padding:24px 20px 180px;min-height:844px;border:1px solid var(--line);border-radius:var(--r-lg);margin:24px auto}.mobile .grid,.mobile .two{grid-template-columns:1fr}.mobile .hero{padding:24px}.mobile .hero h1{font-size:26px}.mobile button,.mobile input,.mobile select{min-height:44px}.mobile .chart{overflow:auto}.question{padding:20px;border:1px solid var(--line);border-radius:var(--r-md);margin:16px 0}.question label{display:block;padding:12px}.score{font:600 64px var(--font-mono);color:var(--accent)}button:disabled{cursor:not-allowed}input[type=checkbox],input[type=radio]{accent-color:var(--accent)}@media(max-width:800px){.workspace{padding:20px 16px 180px}.grid,.two{grid-template-columns:1fr}.hero h1{font-size:26px}.mast{flex-wrap:wrap}.table{min-width:560px}}
+.flt{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 16px}
+.flt .input-wrap{width:240px}
+.flt .select{width:140px}
+.flt .sp{flex:1}
+.selbar{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--ink-700);border-top:1px solid var(--line-soft);background:var(--surface-2);flex-wrap:wrap}
+.selbar.on{background:var(--accent-soft)}
+.selbar b{color:var(--accent)}
+.stem{max-width:360px;white-space:normal;line-height:1.5;font-size:14px}
+.stem small{display:block;font-size:12px;color:var(--ink-500);margin-top:2px}
+.diff{display:inline-flex;gap:2px;vertical-align:middle}
+.diff i{width:6px;height:12px;border-radius:2px;background:var(--line)}
+.diff i.on{background:var(--accent)}
+.rate{display:flex;align-items:center;gap:6px;min-width:96px}
+.rate .bar{flex:1;height:6px;border-radius:3px;background:var(--line-soft);overflow:hidden;min-width:40px}
+.rate .bar i{display:block;height:100%;background:var(--accent)}
+.rate .bar i.lo{background:var(--danger)}
+.rate span{font-size:12px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.table tbody tr.row-clk{cursor:pointer}
+.table tbody tr.row-clk:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.qtype{font-size:12px;padding:1px 6px;border-radius:4px;background:var(--line-soft);color:var(--ink-700);white-space:nowrap}
+.sec{padding:18px 20px}
+.sec h2{font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sec h2 .muted{font-weight:400;font-size:13px}
+.sec h2 .r{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:var(--r-md);font-size:13px;line-height:1.7;margin-bottom:16px}
+.banner .ic{margin-top:3px;flex:none}
+.banner.warn{background:var(--warning-soft);color:var(--warning)}
+.banner.ok{background:var(--success-soft);color:var(--success)}
+.banner.danger{background:var(--danger-soft);color:var(--danger)}
+.banner .btn{margin-left:auto;height:30px;flex:none}
+/* 组卷 */
+.pp-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+.pp-grid>*,.gr-grid>*,.sc-grid>*{min-width:0}
+.ph{padding:18px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ph h2{font-size:18px}
+.ph .meta{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:13px;color:var(--ink-500);margin-top:4px}
+.ph .meta b{color:var(--ink-900);font-weight:500}
+.ph .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.part{border-top:1px solid var(--line-soft)}
+.part-hd{display:flex;align-items:center;gap:10px;padding:12px 20px;background:var(--surface-2);font-size:14px;flex-wrap:wrap}
+.part-hd b{font-weight:600}
+.part-hd .st{margin-left:auto;font-size:13px}
+.pq{display:grid;grid-template-columns:36px minmax(0,1fr) 120px 96px;gap:12px;align-items:center;padding:12px 20px;border-top:1px solid var(--line-soft)}
+.pq .no{font-weight:600;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.pq .t{font-size:14px;line-height:1.6}
+.pq .t small{display:block;font-size:12px;color:var(--ink-500)}
+.pq .score{display:flex;align-items:center;gap:6px;font-size:13px}
+.pq .score .input{width:56px;height:32px;text-align:center}
+.pq .ops{display:flex;gap:2px;justify-content:flex-end}
+.pq .ops .btn{width:32px;height:32px}
+.pq.gap{color:var(--ink-500);background:repeating-linear-gradient(135deg,transparent 0 8px,var(--surface-2) 8px 16px)}
+.bp{width:100%;border-collapse:collapse;font-size:13px}
+.bp th,.bp td{padding:8px 6px;border-bottom:1px solid var(--line-soft);text-align:right;font-variant-numeric:tabular-nums}
+.bp th:first-child,.bp td:first-child{text-align:left}
+.bp th{color:var(--ink-500);font-weight:500}
+.bp tr.tot td{font-weight:600;border-bottom:0}
+.ok-c{color:var(--success)}.bad-c{color:var(--danger)}
+.dbar{display:flex;height:10px;border-radius:5px;overflow:hidden;gap:2px;margin:6px 0}
+.dbar i{display:block;height:100%}
+.dleg{display:flex;gap:12px;font-size:12px;color:var(--ink-500);flex-wrap:wrap}
+.dleg i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}
+.kp{display:flex;flex-wrap:wrap;gap:6px}
+.kp span{font-size:12px;padding:3px 8px;border-radius:var(--r-full);background:var(--accent-soft);color:var(--accent)}
+.kp span.miss{background:var(--danger-soft);color:var(--danger)}
+/* 阅卷 */
+.gr-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}
+.gq{padding:16px 20px;border-bottom:1px solid var(--line-soft);font-size:14px;line-height:1.7}
+.gq small{color:var(--ink-500);font-size:12px}
+.ans{padding:20px;min-height:220px}
+.ans .who{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-500);margin-bottom:12px;flex-wrap:wrap}
+.ans .who b{color:var(--ink-900);font-family:var(--font-mono);font-weight:500}
+.ans .txt{font-size:16px;line-height:2;padding:16px 18px;background:#FFFDF6;border:1px solid #EFE7CF;border-radius:var(--r-md);font-family:"Kaiti SC","STKaiti","KaiTi",var(--font-sans)}
+.ans mark{background:#FFF0B8;color:inherit;padding:0 2px;border-radius:2px}
+.prog{height:6px;border-radius:3px;background:var(--line-soft);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent)}
+.rub{display:flex;flex-direction:column;gap:8px}
+.rp{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:var(--r-md);background:var(--surface);text-align:left;cursor:pointer;font-size:13px;line-height:1.5;color:var(--ink-900)}
+.rp[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.rp b{font-variant-numeric:tabular-nums;font-size:14px}
+.rp .half{grid-column:1/-1;display:flex;gap:6px}
+.rp .half button{height:28px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);font-size:12px;cursor:pointer}
+.rp .half button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);font-weight:600}
+.gtot{display:flex;align-items:baseline;gap:8px;margin:14px 0 10px}
+.gtot b{font-size:34px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.gtot .input{width:72px;height:36px;text-align:center;font-size:16px}
+.keys{font-size:12px;color:var(--ink-500);line-height:1.8}
+kbd{font-family:var(--font-mono);font-size:11px;padding:1px 6px;border:1px solid var(--line);border-radius:4px;background:var(--surface-2)}
+.qnav{display:flex;flex-wrap:wrap;gap:6px}
+.qnav button{width:36px;height:32px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);font-size:12px;font-family:var(--font-mono);cursor:pointer}
+.qnav button.done{background:var(--accent-soft);border-color:#B9D9D1;color:var(--accent)}
+.qnav button.cur{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.qnav button.flag{border-color:var(--danger);color:var(--danger)}
+/* 成绩 */
+.sc-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border-bottom:1px solid var(--line-soft)}
+.sc-grid>div{padding:16px 20px;border-right:1px solid var(--line-soft)}
+.sc-grid>div:last-child{border-right:0}
+.sc-grid span{font-size:12px;color:var(--ink-500)}
+.sc-grid b{display:block;font-size:22px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
+.sc-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
+.sc-two>div{padding:16px 20px;min-width:0}
+.sc-two>div+div{border-left:1px solid var(--line-soft)}
+.hist{display:flex;align-items:flex-end;gap:8px;height:120px;padding-top:8px}
+.hist div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;font-size:12px;color:var(--ink-500)}
+.hist i{display:block;width:100%;max-width:44px;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px}
+.hist i.fail{background:#C9715F}
+.hist b{font-size:12px;color:var(--ink-900);font-variant-numeric:tabular-nums}
+.qr{display:grid;grid-template-columns:44px minmax(0,1fr) 120px;gap:10px;align-items:center;font-size:13px;padding:5px 0}
+.qr span:nth-child(2){white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tot-c{font-weight:700;font-variant-numeric:tabular-nums}
+.tot-c.fail{color:var(--danger)}
+.foot{display:flex;align-items:center;gap:12px;padding:12px 16px;font-size:13px;color:var(--ink-500);border-top:1px solid var(--line-soft);flex-wrap:wrap}
+/* 题目编辑抽屉 */
+.fg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px}
+.fg .full{grid-column:1/-1}
+.fg .field{margin-bottom:12px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.op{display:grid;grid-template-columns:32px 28px minmax(0,1fr) 32px;gap:8px;align-items:center}
+.op b{font-family:var(--font-mono);color:var(--ink-500);text-align:center}
+.seg2{display:flex;gap:6px;flex-wrap:wrap}
+.seg2 button{height:34px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);font-size:13px;color:var(--ink-700);cursor:pointer}
+.seg2 button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:500}
+.sw{flex:none;width:40px;height:24px;border-radius:12px;border:0;background:var(--ink-300);position:relative;cursor:pointer;padding:0}
+.sw::after{content:"";position:absolute;left:2px;top:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform var(--dur) var(--ease)}
+.sw[aria-checked="true"]{background:var(--accent)}
+.sw[aria-checked="true"]::after{transform:translateX(16px)}
+.swrow{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-700);min-height:36px;flex-wrap:wrap}
+.drawer.wide{width:min(640px,100vw)}
+.sk-blk{padding:20px}.sk-blk .sk{margin-bottom:12px}
+@media (max-width:1240px){.pp-grid,.gr-grid{grid-template-columns:1fr}.sc-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.sc-grid>div:nth-child(3){border-right:0}.sc-grid>div:nth-child(-n+3){border-bottom:1px solid var(--line-soft)}}
+@media (max-width:900px){.sc-two{grid-template-columns:1fr}.sc-two>div+div{border-left:0;border-top:1px solid var(--line-soft)}.pq{grid-template-columns:28px minmax(0,1fr);row-gap:6px}.pq .score,.pq .ops{grid-column:2}.pq .ops{justify-content:flex-start}}
+@media (max-width:640px){.flt .input-wrap,.flt .select{width:100%}.sc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.sc-grid>div{border-right:0!important;border-bottom:1px solid var(--line-soft)}.fg{grid-template-columns:1fr}.ph .acts{margin-left:0}.ans{padding:14px}.ans .txt{font-size:15px;padding:12px}}
+</style>
+</head>
+<body>
+<div class="sh">
+  <aside class="sb" aria-label="主导航"><div class="sb-brand"><span class="brand-mark">学</span><span class="t">示例学堂 · 教务后台</span></div>
+    <nav class="sb-nav" id="nav"></nav>
+    <div class="sb-foot"><span class="avatar">沈</span><span class="t">沈示例<small>初二物理 · 任课老师</small></span></div>
+  </aside>
+  <main style="min-width:0;display:flex;flex-direction:column">
+    <div class="tb"><nav class="crumb2" id="crumb" aria-label="面包屑"></nav><span class="sp"></span><button class="btn btn-ghost hide-s" type="button" data-toast="帮助：出题 → 组卷 → 发布 → 阅卷 → 发布成绩（示例）">使用帮助</button></div>
+    <div class="tabsbar" id="tabs" role="tablist" aria-label="已打开的页面"></div>
+    <div id="page" style="flex:1;min-width:0"></div>
+  </main>
+</div>
+<div class="drawer wide" id="dw" aria-labelledby="dw-t"></div>
 
-</style></head><body class="desktop"><main class="workspace"><header class="mast"><div><div class="edition">PROTOTYPE / 示例</div><strong>组卷考试与人工阅卷</strong></div><span class="sp"></span><span class="caption">积木盒 · 可点击原型</span></header><nav id="nav" class="nav" aria-label="页面导航"></nav><div id="content"></div></main><script>
+<script>
+/* ==========================================================================
+   ① 改数据只改这里（示例数据，全部虚构）
+   ========================================================================== */
+const DATA = {
+  exam: { name: '初二物理 · 第 3 章「光现象」单元测验', cls: '物理提高班（周六上午）', date: '11-08 周六 09:00', dur: 90, pass: 60, total: 100 },
+  // 题库：id, 题型, 题干, 知识点, 难度 1-5, 建议分值, 使用次数, 正确率（主观题为平均得分率）, 状态, 出题人, 更新时间, 答案
+  bank: [
+    ['q1', '单选', '小孔成像说明了光的什么性质？', '光的直线传播', 2, 4, 12, 86, 'ok', '沈示例', '10-21', 'B'],
+    ['q2', '单选', '人以 0.5m/s 的速度走向平面镜，像相对于人的速度是多少？', '平面镜成像', 3, 4, 9, 61, 'ok', '沈示例', '10-21', 'C'],
+    ['q3', '单选', '下列现象中，属于光的折射的是', '光的折射', 2, 4, 15, 78, 'ok', '罗示例', '10-25', 'D'],
+    ['q4', '单选', '入射光线与镜面夹角为 30°，反射角是多少？', '光的反射', 3, 4, 20, 54, 'ok', '沈示例', '10-28', 'C'],
+    ['q5', '单选', '雨后天空出现彩虹，这是光的', '光的色散', 1, 4, 7, 92, 'ok', '罗示例', '11-02', 'A'],
+    ['q6', '多选', '关于光的反射，下列说法正确的是', '光的反射', 3, 6, 11, 47, 'ok', '沈示例', '10-28', 'AC'],
+    ['q7', '多选', '能用光的直线传播解释的现象有', '光的直线传播', 2, 6, 6, 70, 'ok', '罗示例', '11-02', 'ABD'],
+    ['q8', '判断', '光在真空中的传播速度是 3×10⁸ km/s。', '光速', 1, 4, 18, 66, 'ok', '沈示例', '10-21', '错'],
+    ['q9', '填空', '光在真空中的传播速度约为 ____ m/s。', '光速', 1, 6, 22, 88, 'ok', '沈示例', '10-21', '3×10⁸|3e8'],
+    ['q10', '填空', '人站在平面镜前 2m 处，像到人的距离是 ____ m。', '平面镜成像', 2, 6, 14, 74, 'ok', '罗示例', '10-25', '4'],
+    ['q11', '实验', '探究平面镜成像特点时，为什么用玻璃板代替平面镜？为什么选两支相同的蜡烛？', '平面镜成像', 3, 12, 5, 58, 'ok', '沈示例', '11-03', '便于确定像的位置；便于比较像与物的大小'],
+    ['q12', '简答', '用光的反射知识解释：黑板「反光」时，为什么有的同学看不清黑板上的字？', '光的反射', 4, 20, 8, 62, 'ok', '沈示例', '11-03', '按评分点'],
+    ['q13', '简答', '画出光从空气斜射入水中的光路图，并说明折射角与入射角的大小关系。', '光的折射', 4, 20, 6, 58, 'ok', '罗示例', '11-04', '按评分点'],
+    ['q14', '简答', '用光的折射解释「潭清疑水浅」。', '光的折射', 5, 20, 3, 49, 'review', '罗示例', '11-09', '按评分点'],
+    ['q15', '判断', '光年是时间单位。', '光速', 1, 4, 9, 81, 'off', '罗示例', '09-30', '错']
+  ],
+  // 试卷结构：题型、计划题数、每题分值
+  blueprint: [['单选', 5, 4], ['多选', 2, 6], ['判断', 1, 4], ['填空', 2, 6], ['实验', 1, 12], ['简答', 2, 20]],
+  paper: ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12'],   // 已选题（简答还差 1 题）
+  diffTarget: [40, 30, 30],   // 易(1-2) / 中(3) / 难(4-5) 目标占比 %（按分值）
+  // 阅卷：q12 的评分点
+  rubric: [['指出黑板「反光」是发生了镜面反射', 6], ['说明反射光集中射向某一个方向', 6], ['说明处在该方向的同学眼睛接收到很强的反射光，盖过了字的漫反射光，所以看不清', 8]],
+  // 学生：考号, 姓名, 客观题(满分 60), q12 得分(null=未阅), q13 得分, 用时(分钟), 切屏次数, 状态 ok/absent/auto
+  students: [
+    ['S01', '安示例', 54, 16, 16, 72, 0, 'ok'], ['S02', '白示例', 48, 12, 14, 85, 1, 'ok'], ['S03', '曹示例', 57, 18, 17, 64, 0, 'ok'], ['S04', '丁示例', 39, 8, 10, 90, 2, 'ok'],
+    ['S05', '范示例', 51, 14, 16, 78, 0, 'ok'], ['S06', '高示例', 60, 19, 19, 58, 0, 'ok'], ['S07', '胡示例', 45, 10, 12, 88, 1, 'ok'], ['S08', '江示例', 42, 12, 13, 90, 0, 'ok'],
+    ['S09', '孔示例', 33, 6, 8, 41, 3, 'auto'], ['S10', '柳示例', 56, 17, 16, 70, 0, 'ok'], ['S11', '马示例', 50, null, 15, 82, 0, 'ok'], ['S12', '宁示例', 0, null, null, 0, 0, 'absent'],
+    ['S13', '欧示例', 47, null, 12, 87, 1, 'ok'], ['S14', '潘示例', 52, null, 14, 76, 0, 'ok'], ['S15', '秦示例', 36, null, 9, 90, 2, 'ok'], ['S16', '任示例', 58, null, 18, 66, 0, 'ok']
+  ],
+  // 待阅的 q12 答案（匿名考号阅卷）；sim = 与某考号相似度
+  answers: {
+    S11: { t: '黑板表面太光滑，发生了镜面反射，反射光都朝一个方向射出去，坐在那个方向的同学眼睛里进了很强的光，就看不清黑板上的字了。', hl: ['镜面反射', '朝一个方向', '很强的光'] },
+    S13: { t: '因为光的反射，黑板反光太亮了，所以看不清。', hl: ['光的反射'] },
+    S14: { t: '黑板局部很光滑，发生镜面反射，反射光线几乎平行射出，只进入某些同学的眼睛，光太强把粉笔字的光盖住了；其他位置的同学看到的是粉笔字的漫反射光，能看清。', hl: ['镜面反射', '平行射出', '漫反射'] },
+    S15: { t: '黑板发生镜面反射，光很强，所以有的同学看不清。', hl: ['镜面反射'], sim: ['S07', 91] },
+    S16: { t: '镜面反射使反射光集中射向一个方向。', hl: ['镜面反射', '集中射向一个方向'] }
+  },
+  // 客观题各题正确率（成绩页「最容易错的题」）
+  qRate: [['q4', 54], ['q6', 47], ['q2', 61], ['q8', 66], ['q7', 70]]
+};
+
+/* ==========================================================================
+   ①-2 AI 提示词（页面顶部「AI 提示词」可一键复制；{{变量}} 点一下就能填）
+   ========================================================================== */
+const PROMPTS = [
+ { title: '从零生成这个原型', when: '要做「在线考试 / 测验」的老师后台，想把出题、组卷、阅卷、发成绩这条链路一次定下来时用',
+   text: `请帮我做一个可点击的 PC 教务后台原型（1440 宽，390～500 宽不横滚）：初二物理单元测验，16 名学生。左侧栏 + 顶栏面包屑 + 页签。
+
+4 个页面：
+1. 题库：列 = 题号、题干（带答案）、题型（单选 / 多选 / 判断 / 填空 / 实验 / 简答）、知识点、难度（5 格）、建议分值、使用次数、正确率（进度条，<60% 标红）、状态（已审核 / 待审核 / 已停用）、出题人、更新时间；按题型、知识点、难度、状态筛选；勾选后「加入试卷」，已在试卷里的、停用的不能勾；点一行右侧抽屉编辑题目：题型切换后表单跟着变（选择题有 A～D 选项、单选只能 1 个正确、多选至少 2 个、选项不能重复；判断题对 / 错；填空题多个可接受答案用 | 隔开；主观题写评分点和分值，分值之和 = 题目分值），另有解析、知识点、难度、适用年级、标签、提交审核；
+2. 组卷：按「题型 × 计划题数 × 每题分值」的蓝图组卷，每个大题显示已选 / 计划，缺的位置画成空位；每题可改分值、上下移、移出；右侧实时核对：总分是否 = 100、各题型是否选满、难度分布（易 / 中 / 难 目标 4:3:3 与实际对比）、知识点是否全覆盖；「自动补齐」按难度从题库补；任何一项不满足时「发布考试」置灰并写原因；考试设置抽屉：时长、开始时间、及格线、题目乱序、选项乱序、切屏 N 次自动交卷、迟到 15 分钟不能进、何时显示答案；
+3. 阅卷：主观题按题阅、考号匿名；左边学生答案（关键词高亮），右边评分点逐条点选（可给一半分），总分自动加、也可手改但不能超过满分；数字键快速给分、回车提交并下一份；答案和别人相似度高（≥90%）时标红提醒，可「标记异常」；顶部进度「已阅 10 / 15」，考号格子可跳转；
+4. 成绩：汇总（应考 / 实考 / 平均分 / 及格率 / 最高最低）+ 分数段分布柱状图（不及格段另一种颜色）+ 最容易错的 5 道题；明细列 = 考号、姓名、客观题、主观题、总分、排名、用时、切屏次数、状态（已交卷 / 缺考 / 切屏自动交卷 / 阅卷中）；有题没阅完时「发布成绩」置灰并写还差几份。
+
+状态（原型面板可切换）：每页 正常 / 空 / 加载中 / 出错 / 无权限；组卷加「已满 100 分可发布」，阅卷加「本题阅完」，成绩加「已全部阅完可发布」。
+数字要对得上：总分、平均分、及格率、排名都由学生数据算出来；阅完一份，成绩页那位学生的主观分和排名跟着变。
+硬性要求：单文件 HTML，不引用外部网址，双击离线可开；颜色写成 :root 变量；数据集中在脚本顶部 DATA。
+交付：① 完整 HTML；② 组卷校验规则表；③ 状态清单。` },
+ { title: '改成我的业务', when: '手上有这个模板，要换成别的学科、企业培训考试、资格认证考试时用',
+   text: `附件是一个单文件 HTML 的考试后台原型。请改成「{{考试场景，例如：门店新员工食品安全考核}}」。
+
+1. 只改脚本顶部 DATA 和文案，不动 KIT 标记之间的共用样式和脚本；保留题库筛选、按蓝图组卷与校验、按评分点阅卷、成绩统计与发布条件；
+2. 题型与蓝图：{{例如：单选 20×2 分、判断 10×2 分、案例分析 2×20 分}}，总分 {{总分}}，及格线 {{及格线}}；
+3. 知识点清单：{{知识点}}，题库每题挂一个知识点，组卷时检查是否全覆盖；
+4. 主观题评分点：{{例如：说出 3 个风险点各 4 分、给出整改措施 8 分}}；
+5. 防作弊规则：{{例如：切屏 2 次自动交卷、人脸抽检}}；
+6. 考生 {{人数}} 人，每人分数、用时都不同，示例数据标「示例」。
+交付：改好的完整 HTML + 组卷校验规则表。` },
+ { title: '在此基础上加页面 / 状态', when: '评审追问「学生能申诉吗」「同一题两个老师阅的分不一样怎么办」时用',
+   text: `附件是一个单文件 HTML 的考试后台原型。请在它的基础上加：{{要加的页面或状态}}。
+
+常见例子（选一个或照着写）：
+- 「双评与仲裁」：每份主观题由两位老师独立评，分差超过 4 分进入仲裁列表，第三位老师看两份评分点后给最终分；
+- 「成绩复核申请」：发布成绩后学生 3 天内可申请复核某题，老师在列表里看原答案和原评分点，改分要写原因，学生收到结果；
+- 「考试监控」：考试进行中看实时在线人数、已交卷、切屏次数排行，可给某个学生延时 10 分钟或强制交卷；
+- 「试卷分析报告」：每题难度系数、区分度（高分组与低分组正确率差），自动标出区分度 <0.2 的题建议修改。
+
+要求：新页面或状态加进「原型面板」；分数与成绩页对得上；沿用现有 CSS 变量和组件样式，只改必要的地方。
+交付：完整 HTML + 新增部分的「元素 | 交互 | 反馈」说明表。` }
+];
+
+/* ==========================================================================
+   ② 下面是交互逻辑，一般不用改
+   ========================================================================== */
 /*@KIT_JS*/
 /* ==========================================================================
    原型工具包（不用改）：图标、页面/状态切换、弹层、Toast
@@ -610,45 +897,310 @@ body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32p
   P.stateBlock=function(o){return '<div class="state '+(o.error?'is-error':'')+'"><div class="state-ic">'+P.ic(o.icon||(o.error?'alert':'inbox'))+'</div><h3>'+P.esc(o.title)+'</h3>'+(o.body?'<p>'+P.esc(o.body)+'</p>':'')+(o.acts?'<div class="acts">'+o.acts+'</div>':'')+'</div>'};
 })();
 /*@END_KIT_JS*/
-</script><script>
-// 示例业务数据：仅本次会话修改，刷新恢复；在这里替换字段和数据。
-const DATA={"paper": {"title": "示例产品基础测验", "minutes": 20, "pass": 60}, "bank": [{"id": "Q01", "type": "single", "title": "评审可点击原型的主要目的是什么？", "options": ["确认业务流程与反馈", "替代上线代码", "只展示配色"], "answer": "0", "points": 30}, {"id": "Q02", "type": "single", "title": "列表加载失败后，应提供什么？", "options": ["隐藏整个页面", "明确原因与重试入口", "强制退出账号"], "answer": "1", "points": 30}, {"id": "Q03", "type": "text", "title": "请写出一个空状态应包含的信息。", "points": 40}], "selected": ["Q01", "Q02", "Q03"]};
-const PAGES=[{"id": "builder", "name": "组卷设置", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}, {"id": "saving", "name": "保存中"}, {"id": "saved", "name": "已保存"}, {"id": "failed", "name": "保存失败"}]}, {"id": "exam", "name": "在线考试", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}, {"id": "submitting", "name": "交卷中"}, {"id": "success", "name": "已交卷"}, {"id": "failed", "name": "交卷失败"}]}, {"id": "review", "name": "成绩阅卷", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}, {"id": "graded", "name": "已批阅"}]}];
-const PROMPTS=[{"title": "从零生成这个原型", "when": "要从需求开始搭建可演示的页面时用", "text": "请用单文件 HTML 创建「组卷考试与人工阅卷」可点击原型。用途：适合组卷、限时答题、切屏提示、自动判分与人工阅卷评审。仅本地示例，无监考识别或真实考试服务；离页暂停计时，重新开始清空作答。包含页面：组卷设置、在线考试、成绩阅卷。业务交互：选择题目并设置名称时长，必填和范围校验，总题数分值更新；开始计时并作答，保存本次会话答案，倒计时到零自动交卷；浏览器转到后台，仅记录次数，不自动判作弊；有未答题时提示确认，提交中后自动计客观题分，答案保留；填写简答分数与评语，限制在简答题满分内，总成绩联动。每个主页面提供正常、空、骨架加载、出错和重试，表单提供校验、提交中、成功、失败。数据集中在 DATA；样式使用 CSS 变量；图标内联 SVG；示例数据标示例。不使用外部依赖，离线双击可开。顶部提供免费下载说明，右下角原型面板支持 URL 直达和 H 隐藏，弹窗支持 Esc 和焦点归还。交付 HTML、README 和交互说明表。"}, {"title": "改成我的业务", "when": "点击高亮变量填写，然后一键复制", "text": "附件是「组卷考试与人工阅卷」HTML 原型，请改成我的业务：产品名称为「{{产品名称}}」，目标用户「{{目标用户}}」，字段和示例数据「{{字段与示例数据}}」，业务规则「{{业务规则}}」。保留 组卷设置、在线考试、成绩阅卷 的完整链路与所有空、加载、出错状态。修改 DATA 和模板变量，不改共用 KIT 标记内代码。所有金额、数量、状态随操作联动；不能执行的操作写原因。交付可离线打开的完整 HTML 和更新后的交互表。"}, {"title": "加页面或状态", "when": "需要扩展当前链路时用", "text": "请在「组卷考试与人工阅卷」中增加「{{新增页面或状态}}」，入口为「{{入口位置}}」，成功结果为「{{成功反馈}}」，失败恢复方式为「{{失败恢复方式}}」。沿用当前 CSS 变量、DATA 与 Proto 页面面板；保留已有流程。为新增列表补正常、空、加载、出错；为新增表单补校验、提交中、成功、失败。离开页面应取消定时回调。更新 README 的状态表和交互表，保持单文件离线可用。"}];
 
-const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s)), e=Proto.esc;
-const btn=(label,action,primary=false,disabled=false)=>`<button type="button" class="btn ${primary?'btn-primary':''}" data-act="${action}" ${disabled?'disabled':''}>${label}</button>`;
-const field=(label,id,value='',type='text')=>`<label class="field">${label}<input id="${id}" type="${type}" value="${e(String(value))}"></label>`;
-const card=(title,body)=>`<section class="card"><h2>${title}</h2>${body}</section>`;
-const money=n=>Proto.money(n);
-const notice=t=>`<div class="notice" role="status">${t}</div>`;
-function download(name,text,type='text/plain'){const a=document.createElement('a'),u=URL.createObjectURL(new Blob(['\ufeff',text],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function modal(title,body){const m=document.createElement('div');m.className='modal';m.dataset.temp='1';m.setAttribute('aria-label',title);m.innerHTML=`<div class="layer-hd"><h2>${title}</h2></div><div class="layer-bd">${body}</div><div class="layer-ft"><button class="btn" data-close>关闭</button></div>`;Proto.open(m);m.querySelector('[data-close]').onclick=()=>Proto.close(m);return m}
-let timer=null, epoch=0;
-function go(page,state='normal'){Proto.go(page,state)}
-function later(fn,ms=500){clearTimeout(timer);const v=epoch;timer=setTimeout(()=>{if(v===epoch)fn()},ms)}
-function refresh(){render(Proto.state.page,Proto.state.state)}
-function fallback(page,state){if(state==='loading')return '<div class="loading-grid" aria-busy="true" aria-label="加载中"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>';
-if(state==='error')return `<div class="empty-box">${Proto.ic('alert')}<h2>暂时无法加载</h2><p>示例服务响应超时，本次修改仍保留。</p>${btn('重试','retry',true)}</div>`;
-if(state==='empty')return `<div class="empty-box">${Proto.ic('inbox')}<h2>这里还没有内容</h2><p>可以载入示例数据，继续演示完整流程。</p>${btn('载入示例','example',true)}</div>`;return null}
-function render(page,state){epoch++;clearTimeout(timer);$$('.modal.show').forEach(m=>Proto.close(m));$('#nav').innerHTML=PAGES.map(p=>`<button class="btn ${p.id===page?'on':''}" data-page="${p.id}">${p.name}</button>`).join('');$('#content').innerHTML=fallback(page,state)||view(page,state);if(typeof mount==='function')mount(page,state)}
-document.addEventListener('click',ev=>{const p=ev.target.closest('[data-page]');if(p){go(p.dataset.page);return}const b=ev.target.closest('[data-act]');if(!b||b.disabled)return;const a=b.dataset.act;if(a==='retry'){const page=Proto.state.page;go(page,'loading');later(()=>go(page));return}if(a==='example'){go(Proto.state.page);return}action(a,b)});
+const P = Proto, { $, $$, ic, esc, toast } = Proto;
+const PG = $('#page'), dw = $('#dw');
+const Q = id => B.find(q => q[0] === id);
+const QST = { ok: ['已审核', 'success'], review: ['待审核', 'warning'], off: ['已停用', 'neutral'] };
+let B, PA, ST, BK, GR, PS, carry = false;
+const clone = o => JSON.parse(JSON.stringify(o));
+function fresh() {
+  B = clone(DATA.bank); PA = { ids: DATA.paper.slice(), score: {}, published: false, set: { dur: 90, start: '2026-11-15 09:00', pass: 60, shuffleQ: true, shuffleO: true, cut: 3, late: 15, show: '成绩发布后' } };
+  ST = clone(DATA.students); BK = { type: '', kp: '', diff: '', st: '', q: '', sel: new Set() };
+  GR = { order: ['S11', 'S13', 'S14', 'S15', 'S16'], cur: 'S11', pick: {}, manual: null, flags: new Set() };
+  PS = { published: false, sort: 'rank', cls: '' };
+}
+const scoreOf = id => PA.score[id] != null ? PA.score[id] : (DATA.blueprint.find(b => b[0] === Q(id)[1]) || [0, 0, Q(id)[5]])[2];
 
+function chrome(title, tab) {
+  const pend = ST.filter(s => s[7] !== 'absent' && s[3] == null).length;
+  $('#nav').innerHTML = `<div class="sb-sec">教学</div><button class="ni" type="button" data-toast="课程表（示例）">${ic('calendar')}<span class="t">课程表</span></button><button class="ni" type="button" data-toast="作业（示例）">${ic('book')}<span class="t">作业</span></button>
+  <div class="sb-sec">考试</div>${[['bank', '题库', 'layers'], ['paper', '组卷与发布', 'file'], ['grade', '阅卷', 'edit', pend], ['score', '成绩', 'chart']].map(n => `<button class="ni ${tab === n[0] ? 'on' : ''}" type="button" data-go="${n[0]}">${ic(n[2])}<span class="t">${n[1]}</span>${n[3] ? `<span class="badge badge-danger">${n[3]}</span>` : ''}</button>`).join('')}`;
+  $('#crumb').innerHTML = `<button type="button" data-toast="考试列表（示例）">考试</button>${ic('chev-r')}<button type="button" data-go="paper">第 3 章单元测验</button>${ic('chev-r')}<b>${title}</b>`;
+  $('#tabs').innerHTML = [['bank', '题库'], ['paper', '组卷'], ['grade', '阅卷'], ['score', '成绩']].map(t => `<span class="ptab ${t[0] === tab ? 'on' : ''}" role="tab" tabindex="0" aria-selected="${t[0] === tab}" data-go="${t[0]}">${t[1]}</span>`).join('');
+}
+function head(t, sub, acts) { return `<div class="pg-hd"><div><h1>${t}</h1>${sub ? `<p>${sub}</p>` : ''}</div>${acts ? `<div class="acts">${acts}</div>` : ''}</div>`; }
+function skel(n) { return `<section class="card sk-blk" aria-busy="true" aria-label="正在加载"><div class="sk" style="height:18px;width:220px"></div><div class="sk" style="height:12px;width:420px"></div><table class="table" style="margin-top:12px"><tbody>${P.skRows(n, 8)}</tbody></table></section>`; }
+function errCard(t, b, pg) { return `<section class="card">${P.stateBlock({ error: true, title: t, body: b, acts: `<button class="btn btn-primary" type="button" data-retry="${pg}">${ic('refresh')}重试</button>` })}</section>`; }
+function noPerm(t, b) { return `<section class="card"><div class="err-pg"><div class="code">403</div><h2>${t}</h2><p>${b}</p><div class="acts"><button class="btn" type="button" data-go="bank">去题库</button><button class="btn btn-primary" type="button" data-apply>申请权限</button></div></div></section>`; }
+const diffBar = d => `<span class="diff" aria-label="难度 ${d}/5">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= d ? 'on' : ''}"></i>`).join('')}</span>`;
+const lvl = d => d <= 2 ? 0 : d === 3 ? 1 : 2;
 
-let answers={},remaining=DATA.paper.minutes*60,active=false,switches=0,submitted=false,manual=null,feedback='',result=null;
-const questions=()=>DATA.bank.filter(q=>DATA.selected.includes(q.id));
-const autoScore=()=>questions().filter(q=>q.type==='single').reduce((n,q)=>n+(answers[q.id]===q.answer?q.points:0),0);
-function examClock(){return Math.floor(remaining/60)+':'+String(remaining%60).padStart(2,'0')}
-function view(p,s){if(p==='builder'){if(s==='saving')return card('保存中','<div class="sk" style="height:30px"></div><p>正在保存本次示例试卷。</p>');if(s==='saved')return card('试卷已保存',notice('本次会话内已保存，刷新恢复初始示例。')+btn('开始考试','start',true));if(s==='failed')return card('保存失败',notice('示例服务不可用，组卷草稿保留。')+btn('返回修改','builder',true));return `<section class="hero"><div class="edition">ASSESSMENT / 示例</div><h1>从组卷到反馈，走完一次测验</h1><p>客观题自动计分，简答题人工阅卷。切屏仅提示与记录，不自动判作弊。</p></section><div class="two">${card('试卷设置',field('试卷名称','paper-title',DATA.paper.title)+field('时长（分钟，1–120）','paper-minutes',DATA.paper.minutes,'number')+`<p class="error" id="paper-error" role="alert"></p>${btn('保存试卷','save',true)}${btn('开始考试','start')}`)}${card('示例题库',DATA.bank.map(q=>`<label class="row"><input type="checkbox" data-question="${q.id}" ${DATA.selected.includes(q.id)?'checked':''}><span>${e(q.title)}<br><span class="caption">${q.type==='single'?'单选':'简答'} · ${q.points} 分</span></span></label>`).join('')+`<p id="paper-summary">已选 ${questions().length} 题，共 ${questions().reduce((n,q)=>n+q.points,0)} 分</p>`)}</div>`}
-if(p==='exam'){if(s==='success'||submitted)return card('已交卷',notice('答案已保存到本次会话；主观题等待人工阅卷。')+btn('查看成绩与阅卷','review',true));if(s==='submitting')return card('正在交卷','<div class="sk" style="height:30px"></div><p>答案正在提交，暂时不可编辑。</p>');if(s==='failed')return card('交卷失败',notice('示例服务超时，答案保留，可重新交卷。')+btn('重新交卷','retry-submit',true));return `<div class="toolbar"><h2>${e(DATA.paper.title)}</h2><b id="remaining" role="timer">剩余 ${examClock()}</b>${btn('开始计时','timer',true,!questions().length||active)}</div><div class="notice" id="switch-notice" role="status">已记录切屏 ${switches} 次。仅作提示，不自动判定作弊。${active?'':'点击开始计时后进入正式答题。'}</div>${questions().map(q=>`<section class="question"><h3>${e(q.title)}（${q.points} 分）</h3>${q.type==='single'?q.options.map((o,i)=>`<label><input type="radio" name="${q.id}" value="${i}" ${answers[q.id]===String(i)?'checked':''} ${active?'':'disabled'}> ${e(o)}</label>`).join(''):`<label class="field">你的回答<textarea data-answer="${q.id}" ${active?'':'disabled'}>${e(answers[q.id]||'')}</textarea></label>`}</section>`).join('')}<p>已答 <span id="answered">${Object.values(answers).filter(x=>x.trim()).length}</span> / ${questions().length}</p>${btn('交卷','submit',true,!active)}`}
-const score=result?result.auto:autoScore(),max=questions().reduce((n,q)=>n+q.points,0),textMax=questions().filter(q=>q.type==='text').reduce((n,q)=>n+q.points,0),graded=s==='graded'||manual!=null;return `<div class="two">${card('成绩概览',`<div class="score">${score+(graded?(manual||0):0)}<small> / ${max}</small></div><p>${submitted?'已交卷':'面板成绩预览：尚未实际交卷'}</p><p>${graded?'已完成阅卷':'客观题已计分，简答题待评阅'}</p><p>切屏提示记录 ${switches} 次</p>${graded?notice(e(feedback||'示例评语：请继续保持。')):''}`)}${card('人工阅卷',questions().filter(q=>q.type==='text').map(q=>`<h3>${e(q.title)}</h3><p>${e(answers[q.id]||'（未作答）')}</p>`).join('')+field('简答总得分（0–'+textMax+'）','manual-score',manual==null?'':manual,'number')+`<label class="field">评语<textarea id="grade-feedback">${e(feedback)}</textarea></label><p class="error" id="grade-error" role="alert"></p>${btn('保存评阅','grade',true,!submitted)}`)}</div>${card('客观题回看',questions().filter(q=>q.type==='single').map(q=>`<div class="row"><div><b>${e(q.title)}</b><p>你的答案：${e(q.options[answers[q.id]]||'未作答')}；正确答案：${e(q.options[q.answer])}</p><p>${answers[q.id]===q.answer?'答对':'答错'} · ${answers[q.id]===q.answer?q.points:0} 分</p></div></div>`).join(''))}`}
-function countdown(){if(!active||Proto.state.page!=='exam'||submitted)return;remaining=Math.max(0,remaining-1);if($('#remaining'))$('#remaining').textContent='剩余 '+examClock();if(remaining===0){submitNow();return}later(countdown,1000)}
-function mount(p,s){if(p!=='exam'||s!=='normal'){active=false}else if(active)later(countdown,1000);$$('[data-question]').forEach(el=>el.onchange=()=>{DATA.selected=Array.from(document.querySelectorAll('[data-question]:checked')).map(x=>x.dataset.question);$('#paper-summary').textContent='已选 '+questions().length+' 题，共 '+questions().reduce((n,q)=>n+q.points,0)+' 分'});$$('input[type=radio]').forEach(el=>el.onchange=()=>{answers[el.name]=el.value;$('#answered').textContent=Object.values(answers).filter(x=>x.trim()).length});$$('[data-answer]').forEach(el=>el.oninput=()=>{answers[el.dataset.answer]=el.value;$('#answered').textContent=Object.values(answers).filter(x=>x.trim()).length})}
-function readSettings(){const title=$('#paper-title')?$('#paper-title').value.trim():DATA.paper.title,minutes=$('#paper-minutes')?+$('#paper-minutes').value:DATA.paper.minutes;if(!title||!Number.isInteger(minutes)||minutes<1||minutes>120||!questions().length){if($('#paper-error'))$('#paper-error').textContent='名称必填，时长为 1–120 整数，至少选择一道题';return false}DATA.paper.title=title;DATA.paper.minutes=minutes;return true}
-function submitNow(){if(submitted)return;active=false;go('exam','submitting');later(()=>{submitted=true;result={auto:autoScore(),answers:{...answers}};go('exam','success')},650)}
-async function action(a){if(a==='save'){if(!readSettings())return;go('builder','saving');later(()=>go('builder','saved'))}if(a==='builder')go('builder');if(a==='start'){if(!readSettings())return;if(submitted&&!(await Proto.confirm({title:'重新开始示例考试',body:'将清空上次答案和评阅记录，继续吗？'})))return;answers={};remaining=DATA.paper.minutes*60;submitted=false;result=null;manual=null;feedback='';switches=0;active=false;go('exam')}if(a==='timer'){active=true;refresh()}if(a==='submit'){const missing=questions().filter(q=>!String(answers[q.id]||'').trim()).length;if(await Proto.confirm({title:'确认交卷',body:missing?'还有 '+missing+' 题未答，仍要提交吗？':'已完成所有题目，确认提交？',ok:'确认交卷'}))submitNow()}if(a==='retry-submit')submitNow();if(a==='review')go('review');if(a==='grade'){const max=questions().filter(q=>q.type==='text').reduce((n,q)=>n+q.points,0),value=$('#manual-score').value.trim(),n=Number(value);if(!submitted||value===''||!Number.isInteger(n)||n<0||n>max){$('#grade-error').textContent='请输入 0–'+max+' 的整数分数';return}manual=n;feedback=$('#grade-feedback').value.trim();go('review','graded')}}
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&active&&Proto.state.page==='exam'){switches++;if($('#switch-notice'))$('#switch-notice').textContent='已记录切屏 '+switches+' 次，仅作提示，不自动判作弊。'}});
-window.round2Test=async({ok,act,input,click,wait})=>{go('builder');input('#paper-title','');act('save');ok($('#paper-error').textContent.includes('必填'),'组卷必填');input('#paper-title','示例测试卷');act('start');act('timer');click('input[name="Q01"][value="0"]');$('input[name="Q01"][value="0"]').dispatchEvent(new Event('change',{bubbles:true}));click('input[name="Q02"][value="1"]');$('input[name="Q02"][value="1"]').dispatchEvent(new Event('change',{bubbles:true}));input('[data-answer="Q03"]','应说明原因并提供下一步入口');act('submit');await wait(1);click('.modal.show [data-k="1"]');await wait(700);ok(submitted&&result.auto===60,'自动判分与交卷');act('review');input('#manual-score','41');act('grade');ok($('#grade-error').textContent.includes('0–40'),'阅卷上限校验');input('#manual-score','35');input('#grade-feedback','示例评语：回答完整');act('grade');ok($('#content').textContent.includes('95')&&manual===35,'主观题与总分联动')};
+/* ---------------- ① 题库 ---------------- */
+function bankRows() { return B.filter(q => (!BK.type || q[1] === BK.type) && (!BK.kp || q[3] === BK.kp) && (!BK.diff || String(lvl(q[4])) === BK.diff) && (!BK.st || q[8] === BK.st) && (!BK.q || (q[2] + q[3] + q[0]).includes(BK.q))); }
+function pBank(state) {
+  chrome('题库', 'bank');
+  const hd = head('题库', `共 ${B.length} 题 · 本章 6 个知识点 · 正确率来自过去 3 次使用`, `<button class="btn" type="button" data-toast="已下载题库导入模板（示例）">${ic('upload')}批量导入</button><button class="btn btn-primary" type="button" data-newq>${ic('plus')}新建题目</button>`);
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(8)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${errCard('题库没加载出来', '题库服务响应超时（错误编号 QB-504，示例）。已组好的试卷不受影响。', 'bank')}</div>`; return; }
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('没有本学科题库的权限', '你是「初二物理」任课老师，这个题库属于「初三化学」教研组。可以向教研组长 罗示例 申请共享。')}</div>`; return; }
+  if (state === 'empty') { PG.innerHTML = `<div class="pg">${hd}<section class="card">${P.stateBlock({ icon: 'layers', title: '这一章还没有题', body: '可以一题一题新建，也可以按模板批量导入（Excel，每行一题）。导入的题默认「待审核」，教研组长审核后才能组卷。', acts: `<button class="btn" type="button" data-toast="已下载导入模板（示例）">下载导入模板</button><button class="btn btn-primary" type="button" data-newq>新建第一题</button>` })}</section></div>`; return; }
+  const rows = bankRows(), kps = [...new Set(B.map(q => q[3]))], inP = id => PA.ids.includes(id);
+  const sel = [...BK.sel].filter(id => rows.some(q => q[0] === id));
+  PG.innerHTML = `<div class="pg">${hd}<section class="card"><div class="flt"><div class="input-wrap">${ic('search')}<input class="input" id="bq" placeholder="题干 / 知识点 / 题号" aria-label="搜索题目" value="${esc(BK.q)}"></div>
+  <select class="select" id="btype" aria-label="题型"><option value="">全部题型</option>${['单选', '多选', '判断', '填空', '实验', '简答'].map(x => `<option ${BK.type === x ? 'selected' : ''}>${x}</option>`).join('')}</select>
+  <select class="select" id="bkp" aria-label="知识点"><option value="">全部知识点</option>${kps.map(x => `<option ${BK.kp === x ? 'selected' : ''}>${x}</option>`).join('')}</select>
+  <select class="select" id="bdiff" aria-label="难度"><option value="">全部难度</option>${['易（1-2）', '中（3）', '难（4-5）'].map((x, i) => `<option value="${i}" ${BK.diff === String(i) ? 'selected' : ''}>${x}</option>`).join('')}</select>
+  <select class="select" id="bst" aria-label="状态"><option value="">全部状态</option>${Object.keys(QST).map(k => `<option value="${k}" ${BK.st === k ? 'selected' : ''}>${QST[k][0]}</option>`).join('')}</select><span class="sp"></span><span class="muted" style="font-size:13px">${rows.length} 题</span></div>
+  <div class="selbar ${sel.length ? 'on' : ''}">${sel.length ? `已选 <b>${sel.length}</b> 题，共 ${sel.reduce((s, id) => s + Q(id)[5], 0)} 分（按建议分值）` : '勾选题目后可加入试卷；已在试卷里、已停用、待审核的题不能勾'}<span style="flex:1"></span><button class="btn btn-primary" type="button" data-addpaper ${sel.length ? '' : 'disabled'}>加入试卷</button></div>
+  ${rows.length ? `<div class="tw"><table class="table"><thead><tr><th style="width:44px"></th><th>题号</th><th>题干 / 答案</th><th>题型</th><th>知识点</th><th>难度</th><th class="r">建议分值</th><th class="r">使用</th><th>正确率</th><th>状态</th><th>出题人</th><th>更新</th></tr></thead><tbody>
+  ${rows.map(q => { const dis = inP(q[0]) || q[8] !== 'ok'; return `<tr class="row-clk ${BK.sel.has(q[0]) ? 'is-selected' : ''}" tabindex="0" data-q="${q[0]}"><td><label class="cb" data-stop><span class="check"><input type="checkbox" data-bsel="${q[0]}" aria-label="选择 ${q[0]}" ${BK.sel.has(q[0]) ? 'checked' : ''} ${dis ? 'disabled' : ''}></span></label></td><td class="mono" style="font-size:13px">${q[0].toUpperCase()}</td><td><div class="stem">${esc(q[2])}<small>${inP(q[0]) ? '已在试卷 · ' : ''}答案：${esc(q[11])}</small></div></td><td><span class="qtype">${q[1]}</span></td><td>${q[3]}</td><td>${diffBar(q[4])}</td><td class="r num">${q[5]}</td><td class="r num">${q[6]} 次</td><td><div class="rate"><div class="bar"><i class="${q[7] < 60 ? 'lo' : ''}" style="width:${q[7]}%"></i></div><span>${q[7]}%${['简答', '实验'].includes(q[1]) ? '·得分率' : ''}</span></div></td><td><span class="tag tag-${QST[q[8]][1]}">${QST[q[8]][0]}</span></td><td>${q[9]}</td><td class="muted num">${q[10]}</td></tr>`; }).join('')}</tbody></table></div><div class="foot">正确率 &lt; 60% 标红；主观题显示平均得分率</div>`
+  : P.stateBlock({ icon: 'search', title: '没有符合条件的题', body: '换个知识点或难度试试。', acts: '<button class="btn" type="button" data-breset>清空筛选</button>' })}</section></div>`;
+}
+function openQ(id) {
+  const q = id ? Q(id) : ['', '单选', '', '光的反射', 3, 4, 0, 0, 'review', '沈示例', '刚刚', 'A'];
+  const E = { id, type: q[1], stem: q[2], kp: q[3], diff: q[4], score: q[5], ans: q[11], opts: q[1] === '单选' || q[1] === '多选' ? (id === 'q4' ? ['30°', '45°', '60°', '120°'] : id === 'q6' ? ['反射光线、入射光线和法线在同一平面内', '入射角增大 10°，反射角增大 20°', '镜面反射和漫反射都遵循反射定律', '漫反射不遵循反射定律'] : ['', '', '', '']) : [], grade: '初二', tags: '期中高频', note: id === 'q4' ? '入射角 = 90° − 30° = 60°，反射角 = 入射角 = 60°。常见错误：直接填 30°。' : '', submit: q[8] !== 'ok' };
+  dw._E = E; drawQ(); P.open(dw);
+}
+function drawQ(err) {
+  const E = dw._E, choice = E.type === '单选' || E.type === '多选', subj = E.type === '简答' || E.type === '实验';
+  const L = 'ABCD';
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">${E.id ? '编辑 ' + E.id.toUpperCase() : '新建题目'}</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div><div class="layer-bd">
+  ${err ? `<div class="banner danger" role="alert">${ic('alert')}<span>${err}</span></div>` : ''}
+  <div class="fg"><div class="field full"><span class="label">题型<span style="color:var(--danger)"> *</span></span><div class="seg2" role="group" aria-label="题型">${['单选', '多选', '判断', '填空', '实验', '简答'].map(t => `<button type="button" data-qt="${t}" aria-pressed="${E.type === t}">${t}</button>`).join('')}</div></div>
+  <div class="field full"><label class="label" for="qstem">题干<span style="color:var(--danger)"> *</span></label><textarea class="textarea" id="qstem" data-e="stem" rows="3">${esc(E.stem)}</textarea></div>
+  ${choice ? `<div class="field full"><span class="label">选项与答案<span style="color:var(--danger)"> *</span> <span class="muted" style="font-weight:400">${E.type === '单选' ? '勾 1 个正确' : '至少勾 2 个正确'}</span></span><div class="opts">${E.opts.map((o, i) => `<div class="op"><b>${L[i]}</b><label class="cb"><span class="check"><input type="${E.type === '单选' ? 'radio' : 'checkbox'}" name="qa" data-qa="${L[i]}" aria-label="${L[i]} 是正确答案" ${E.ans.includes(L[i]) ? 'checked' : ''}></span></label><input class="input" data-qo="${i}" value="${esc(o)}" aria-label="选项 ${L[i]}" placeholder="选项内容"><span></span></div>`).join('')}</div></div>`
+  : E.type === '判断' ? `<div class="field"><span class="label">答案<span style="color:var(--danger)"> *</span></span><div class="seg2" role="group" aria-label="答案">${['对', '错'].map(x => `<button type="button" data-tf="${x}" aria-pressed="${E.ans === x}">${x}</button>`).join('')}</div></div>`
+  : E.type === '填空' ? `<div class="field full"><label class="label" for="qans">可接受的答案<span style="color:var(--danger)"> *</span></label><input class="input" id="qans" data-e="ans" value="${esc(E.ans)}" placeholder="多个写法用 | 隔开，如 3×10⁸|3e8"><span class="field-hint">判分时去掉首尾空格，全角半角视为相同</span></div>`
+  : `<div class="field full"><span class="label">评分点<span style="color:var(--danger)"> *</span> <span class="muted" style="font-weight:400">分值之和要等于题目分值</span></span>${(E.id === 'q12' ? DATA.rubric : [['', 0]]).map((r, i) => `<div style="display:grid;grid-template-columns:minmax(0,1fr) 72px;gap:8px;margin-bottom:6px"><input class="input" value="${esc(r[0])}" aria-label="评分点 ${i + 1}" placeholder="评分点"><input class="input num" value="${r[1] || ''}" aria-label="评分点 ${i + 1} 分值"></div>`).join('')}</div>`}
+  <div class="field"><label class="label" for="qkp">知识点<span style="color:var(--danger)"> *</span></label><select class="select" id="qkp" data-e="kp">${[...new Set(DATA.bank.map(q => q[3]))].map(k => `<option ${E.kp === k ? 'selected' : ''}>${k}</option>`).join('')}</select></div>
+  <div class="field"><label class="label" for="qdiff">难度</label><select class="select" id="qdiff" data-e="diff">${[1, 2, 3, 4, 5].map(d => `<option value="${d}" ${E.diff == d ? 'selected' : ''}>${d} · ${['很易', '易', '中', '难', '很难'][d - 1]}</option>`).join('')}</select></div>
+  <div class="field"><label class="label" for="qscore">建议分值</label><input class="input num" id="qscore" data-e="score" value="${E.score}" inputmode="numeric"></div>
+  <div class="field"><label class="label" for="qgrade">适用年级</label><select class="select" id="qgrade" data-e="grade">${['初二', '初三'].map(x => `<option ${E.grade === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
+  <div class="field full"><label class="label" for="qnote">解析</label><textarea class="textarea" id="qnote" data-e="note" rows="2" placeholder="写清思路和常见错误，学生交卷后可见">${esc(E.note)}</textarea></div>
+  <div class="field"><label class="label" for="qtags">标签</label><input class="input" id="qtags" data-e="tags" value="${esc(E.tags)}"></div>
+  <div class="field"><span class="label">出题人</span><div style="height:36px;display:flex;align-items:center;font-size:14px">沈示例</div></div>
+  <div class="field full"><div class="swrow"><button class="sw" type="button" role="switch" id="qsub" aria-checked="${E.submit}" aria-label="提交教研组长审核"></button>保存后提交教研组长 罗示例 审核（审核通过前不能组卷）</div></div></div></div>
+  <div class="layer-ft"><button class="btn" type="button" data-x>取消</button><button class="btn btn-primary" type="button" data-saveq>保存</button></div>`;
+}
+function saveQ() {
+  const E = dw._E; $$('[data-qo]', dw).forEach(i => E.opts[+i.dataset.qo] = i.value.trim());
+  const ch = $$('[data-qa]', dw).filter(i => i.checked).map(i => i.dataset.qa).join('');
+  if (E.type === '单选' || E.type === '多选') E.ans = ch;
+  let err = '';
+  if (!E.stem.trim()) err = '请填写题干';
+  else if ((E.type === '单选' || E.type === '多选') && E.opts.some(o => !o)) err = '4 个选项都要填';
+  else if ((E.type === '单选' || E.type === '多选') && new Set(E.opts).size < E.opts.length) err = '有两个选项内容一样';
+  else if (E.type === '单选' && E.ans.length !== 1) err = '单选题要且只能勾 1 个正确答案';
+  else if (E.type === '多选' && E.ans.length < 2) err = '多选题至少勾 2 个正确答案';
+  else if ((E.type === '判断' || E.type === '填空') && !E.ans) err = '请填写答案';
+  else if (!(+E.score > 0)) err = '分值要大于 0';
+  if (err) { drawQ(err); return; }
+  if (E.id) { const q = Q(E.id); q[1] = E.type; q[2] = E.stem; q[3] = E.kp; q[4] = +E.diff; q[5] = +E.score; q[11] = E.ans; q[10] = '刚刚'; if (E.submit && q[8] === 'ok') q[8] = 'review'; }
+  else B.unshift(['q' + (B.length + 1), E.type, E.stem, E.kp, +E.diff, +E.score, 0, 0, 'review', '沈示例', '刚刚', E.ans]);
+  P.close(dw); pBank('normal'); toast(E.submit ? '已保存并提交审核，审核通过前不能组卷' : '已保存', 'ok');
+}
 
-Proto.init({pages:PAGES,render});Proto.prompts(PROMPTS);
-</script></body></html>
+/* ---------------- ② 组卷 ---------------- */
+function check() {
+  const parts = DATA.blueprint.map(b => { const ids = PA.ids.filter(id => Q(id)[1] === b[0]); return { t: b[0], plan: b[1], per: b[2], ids, pts: ids.reduce((s, id) => s + scoreOf(id), 0) }; });
+  const total = parts.reduce((s, p) => s + p.pts, 0);
+  const d = [0, 0, 0]; PA.ids.forEach(id => d[lvl(Q(id)[4])] += scoreOf(id));
+  const kps = [...new Set(DATA.bank.filter(q => q[8] !== 'off').map(q => q[3]))], got = new Set(PA.ids.map(id => Q(id)[3]));
+  const miss = kps.filter(k => !got.has(k));
+  const short = parts.filter(p => p.ids.length < p.plan), over = parts.filter(p => p.ids.length > p.plan);
+  const why = [];
+  if (total !== DATA.exam.total) why.push(`总分 ${total}，要等于 ${DATA.exam.total}`);
+  short.forEach(p => why.push(`${p.t}还差 ${p.plan - p.ids.length} 题`));
+  over.forEach(p => why.push(`${p.t}多了 ${p.ids.length - p.plan} 题`));
+  if (miss.length) why.push(`没覆盖知识点：${miss.join('、')}`);
+  return { parts, total, d, miss, kps, why };
+}
+function pPaper(state) {
+  chrome('组卷与发布', 'paper');
+  const ex = DATA.exam, k = check(), ok = !k.why.length;
+  const hd = head('组卷与发布', `${ex.cls} · 16 人`, `<button class="btn" type="button" data-settings>${ic('settings')}考试设置</button><button class="btn" type="button" data-toast="已生成打印版 PDF（示例）">打印版</button>`);
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(10)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${errCard('试卷没加载出来', '试卷服务响应超时（错误编号 PAP-502，示例）。已选的题保存在服务器上，不会丢。', 'paper')}</div>`; return; }
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('不能修改这份试卷', '试卷已由教研组长 罗示例 锁定（统一命题），任课老师只能查看。需要调整请联系 罗示例。')}</div>`; return; }
+  if (state === 'empty') { PG.innerHTML = `<div class="pg">${hd}<section class="card">${P.stateBlock({ icon: 'file', title: '试卷里还没有题', body: `按蓝图需要 ${DATA.blueprint.reduce((s, b) => s + b[1], 0)} 题、共 ${ex.total} 分。可以去题库勾选，或一键自动组卷（按难度 4:3:3 从已审核的题里选）。`, acts: `<button class="btn" type="button" data-go="bank">去题库选题</button><button class="btn btn-primary" type="button" data-auto>自动组卷</button>` })}</section></div>`; return; }
+  let no = 0;
+  const dT = k.d.reduce((a, b) => a + b, 0) || 1, cn = ['一', '二', '三', '四', '五', '六'];
+  PG.innerHTML = `<div class="pg">${hd}
+  ${PA.published ? `<div class="banner ok" role="status">${ic('check-c')}<span>已发布：${PA.set.start} 开考，学生端已可见考试入口。开考前还可以撤回修改。</span><button class="btn" type="button" data-unpub>撤回发布</button></div>` : ''}
+  <div class="pp-grid"><section class="card"><div class="ph"><div><h2>${ex.name}</h2><div class="meta"><span>时长 <b>${PA.set.dur} 分钟</b></span><span>开考 <b>${PA.set.start}</b></span><span>及格 <b>${PA.set.pass} 分</b></span><span>切屏 <b>${PA.set.cut} 次自动交卷</b></span></div></div></div>
+  ${k.parts.map((p, pi) => `<div class="part"><div class="part-hd"><b>${cn[pi]}、${p.t}题</b><span class="muted" style="font-size:13px">每题 ${p.per} 分 · 计划 ${p.plan} 题</span><span class="st ${p.ids.length === p.plan ? 'ok-c' : 'bad-c'}">${p.ids.length}/${p.plan} 题 · ${p.pts} 分</span></div>
+   ${p.ids.map((id, i) => { const q = Q(id); no++; return `<div class="pq"><span class="no">${no}</span><div class="t">${esc(q[2])}<small>${q[3]} · 难度 ${q[4]} · 正确率 ${q[7]}%</small></div><label class="score"><input class="input num" data-sc="${id}" value="${scoreOf(id)}" inputmode="numeric" aria-label="第 ${no} 题分值">分</label><div class="ops"><button class="btn btn-ghost btn-icon" type="button" data-mv="${id}:-1" aria-label="上移" ${i === 0 ? 'disabled' : ''}>${ic('chev-u', 'ic-sm')}</button><button class="btn btn-ghost btn-icon" type="button" data-mv="${id}:1" aria-label="下移" ${i === p.ids.length - 1 ? 'disabled' : ''}>${ic('chev-d', 'ic-sm')}</button><button class="btn btn-ghost btn-icon" type="button" data-rm="${id}" aria-label="移出试卷" ${PA.published ? 'disabled' : ''}>${ic('x', 'ic-sm')}</button></div></div>`; }).join('')}
+   ${Array.from({ length: Math.max(0, p.plan - p.ids.length) }, (_, j) => `<div class="pq gap"><span class="no">—</span><div class="t">空位：还差 1 道${p.t}题（${p.per} 分）</div><span></span><div class="ops"><button class="btn" type="button" data-fill="${p.t}" style="height:32px">从题库选</button></div></div>`).join('')}</div>`).join('')}</section>
+  <aside><section class="card sec"><h2>发布前核对</h2><table class="bp"><thead><tr><th>题型</th><th>已选/计划</th><th>分值</th></tr></thead><tbody>${k.parts.map(p => `<tr><td>${p.t}</td><td class="${p.ids.length === p.plan ? 'ok-c' : 'bad-c'}">${p.ids.length}/${p.plan}</td><td>${p.pts}</td></tr>`).join('')}<tr class="tot"><td>合计</td><td></td><td class="${k.total === ex.total ? 'ok-c' : 'bad-c'}">${k.total}/${ex.total}</td></tr></tbody></table>
+   <h3 style="font-size:13px;margin:16px 0 4px">难度分布（按分值）<span class="muted" style="font-weight:400">目标 4:3:3</span></h3><div class="dbar" aria-hidden="true">${k.d.map((v, i) => `<i style="width:${v / dT * 100}%;background:${['#7DB8A8', '#1F6B5C', '#C9715F'][i]}"></i>`).join('')}</div><div class="dleg">${['易', '中', '难'].map((n, i) => `<span><i style="background:${['#7DB8A8', '#1F6B5C', '#C9715F'][i]}"></i>${n} ${Math.round(k.d[i] / dT * 100)}%（目标 ${DATA.diffTarget[i]}%）</span>`).join('')}</div>
+   ${Math.abs(k.d[2] / dT * 100 - DATA.diffTarget[2]) > 15 ? `<p style="font-size:12px;color:var(--warning);margin-top:6px">难题占比偏离目标超过 15 个百分点，建议换一道简答题（不拦截发布）</p>` : ''}
+   <h3 style="font-size:13px;margin:16px 0 8px">知识点覆盖 ${k.kps.length - k.miss.length}/${k.kps.length}</h3><div class="kp">${k.kps.map(x => `<span class="${k.miss.includes(x) ? 'miss' : ''}">${k.miss.includes(x) ? '缺 · ' : ''}${x}</span>`).join('')}</div>
+   <div style="margin-top:18px;display:flex;flex-direction:column;gap:8px">${ok ? '' : `<p style="font-size:13px;color:var(--danger);line-height:1.7">还不能发布：${k.why.join('；')}</p><button class="btn" type="button" data-auto>${ic('spark')}自动补齐</button>`}<button class="btn btn-primary" type="button" data-pub ${ok && !PA.published ? '' : 'disabled'}>${PA.published ? '已发布' : '发布考试'}</button></div></section></aside></div></div>`;
+}
+function openSettings() {
+  const s = PA.set;
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">考试设置</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div><div class="layer-bd"><div class="fg">
+  <div class="field full"><label class="label" for="sname">试卷名称</label><input class="input" id="sname" value="${esc(DATA.exam.name)}"></div>
+  <div class="field"><label class="label" for="scls">参加班级</label><select class="select" id="scls"><option>物理提高班（周六上午）· 16 人</option><option>物理提高班（周日下午）· 14 人</option></select></div>
+  <div class="field"><label class="label" for="sdur">考试时长（分钟）</label><input class="input num" id="sdur" data-ss="dur" value="${s.dur}" inputmode="numeric"></div>
+  <div class="field"><label class="label" for="sstart">开始时间</label><input class="input" id="sstart" data-ss="start" value="${s.start}"></div>
+  <div class="field"><span class="label">结束时间</span><div style="height:36px;display:flex;align-items:center;font-size:14px" id="send">${s.start.slice(0, 11)}${(() => { const [h, m] = s.start.slice(11).split(':').map(Number); const t = h * 60 + m + (+s.dur || 0); return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); })()}（自动算）</div></div>
+  <div class="field"><label class="label" for="spass">及格线</label><input class="input num" id="spass" data-ss="pass" value="${s.pass}" inputmode="numeric"></div>
+  <div class="field"><label class="label" for="slate">开考多少分钟后不能进入</label><input class="input num" id="slate" data-ss="late" value="${s.late}" inputmode="numeric"></div>
+  <div class="field"><label class="label" for="scut">切屏几次自动交卷</label><select class="select" id="scut" data-ss="cut">${[2, 3, 5].map(x => `<option ${s.cut == x ? 'selected' : ''}>${x}</option>`).join('')}<option value="0" ${s.cut == 0 ? 'selected' : ''}>不限制</option></select></div>
+  <div class="field"><label class="label" for="sshow">何时给学生看答案</label><select class="select" id="sshow" data-ss="show">${['交卷后立即', '考试结束后', '成绩发布后', '不显示'].map(x => `<option ${s.show === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
+  <div class="field full"><div class="swrow"><button class="sw" type="button" role="switch" data-sw="shuffleQ" aria-checked="${s.shuffleQ}" aria-label="题目乱序"></button>同一大题内题目乱序</div><div class="swrow"><button class="sw" type="button" role="switch" data-sw="shuffleO" aria-checked="${s.shuffleO}" aria-label="选项乱序"></button>选择题选项乱序（判卷按原选项）</div></div></div></div>
+  <div class="layer-ft"><button class="btn" type="button" data-x>取消</button><button class="btn btn-primary" type="button" data-saveset>保存设置</button></div>`;
+  P.open(dw);
+}
+
+/* ---------------- ③ 阅卷 ---------------- */
+function gSum() { return DATA.rubric.reduce((s, r, i) => s + (GR.pick[i] === 'full' ? r[1] : GR.pick[i] === 'half' ? r[1] / 2 : 0), 0); }
+function pGrade(state) {
+  chrome('阅卷', 'grade');
+  const q = Q('q12'), total = ST.filter(s => s[7] !== 'absent').length, done = ST.filter(s => s[7] !== 'absent' && s[3] != null).length;
+  const hd = head('阅卷 · 简答第 1 题（第 12 题）', `${DATA.exam.name} · 匿名阅卷，只显示考号`, `<select class="select" id="gq" aria-label="选择题目" style="width:220px"><option>简答 第 12 题（20 分）· 待阅 ${total - done}</option><option disabled>简答 第 13 题（20 分）· 已阅完</option><option disabled>实验 第 11 题（12 分）· 已阅完</option></select>`);
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(5)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${errCard('答卷没加载出来', '答卷图片服务超时（错误编号 ANS-504，示例）。已给的分都已保存。', 'grade')}</div>`; return; }
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('这道题不归你阅', '第 12 题分给了 罗示例 阅卷。你可以阅第 13 题，或请 罗示例 在阅卷设置里把你加进来。')}</div>`; return; }
+  const left = GR.order.filter(id => ST.find(s => s[0] === id)[3] == null);
+  if (state === 'empty' || !left.length) { PG.innerHTML = `<div class="pg">${hd}<section class="card">${P.stateBlock({ icon: 'check-c', title: '这道题阅完了', body: `第 12 题 ${total} 份全部阅完，平均 ${(ST.filter(s => s[3] != null).reduce((a, s) => a + s[3], 0) / Math.max(1, ST.filter(s => s[3] != null).length)).toFixed(1)} 分。${GR.flags.size ? `有 ${GR.flags.size} 份标了异常，等教研组长复核。` : ''}可以去成绩页发布成绩。`, acts: `<button class="btn btn-primary" type="button" data-go="score">去看成绩</button>` })}</section></div>`; return; }
+  if (!left.includes(GR.cur)) GR.cur = left[0];
+  const a = DATA.answers[GR.cur], sum = GR.manual != null ? GR.manual : gSum();
+  let txt = esc(a.t); a.hl.forEach(h => { txt = txt.split(esc(h)).join(`<mark>${esc(h)}</mark>`); });
+  PG.innerHTML = `<div class="pg">${hd}
+  <section class="card" style="padding:14px 20px;margin-bottom:16px"><div style="display:flex;gap:12px;align-items:center;font-size:13px;flex-wrap:wrap"><b style="font-size:14px">已阅 ${done} / ${total}</b><div class="prog" style="flex:1;min-width:120px"><i style="width:${done / total * 100}%"></i></div><span class="muted">平均 ${(ST.filter(s => s[3] != null).reduce((x, s) => x + s[3], 0) / Math.max(1, done)).toFixed(1)} 分</span></div>
+   <div class="qnav" style="margin-top:12px" role="group" aria-label="按考号跳转">${ST.filter(s => s[7] !== 'absent').map(s => `<button type="button" class="${s[3] != null ? 'done' : ''} ${s[0] === GR.cur ? 'cur' : ''} ${GR.flags.has(s[0]) ? 'flag' : ''}" ${s[3] != null ? `title="已阅 ${s[3]} 分" data-toast="${s[0]} 已阅 ${s[3]} 分（示例：不在本轮重阅）"` : `data-jump="${s[0]}"`} aria-label="${s[0]}${s[3] != null ? ' 已阅' : ' 待阅'}">${s[0].slice(1)}</button>`).join('')}</div></section>
+  <div class="gr-grid"><section class="card"><div class="gq"><b>第 12 题（20 分）</b> ${esc(q[2])}<br><small>知识点：${q[3]} · 本题已阅平均得分率 ${q[7]}%</small></div>
+   <div class="ans"><div class="who">考号 <b>${GR.cur}</b><span>·</span><span>本题作答用时 4 分 12 秒</span>${a.sim ? `<span class="tag tag-danger">与 ${a.sim[0]} 相似度 ${a.sim[1]}%</span>` : ''}${GR.flags.has(GR.cur) ? '<span class="tag tag-warning">已标记异常</span>' : ''}</div><div class="txt">${txt}</div>
+   ${a.sim ? `<p class="muted" style="font-size:12px;margin-top:10px">相似度 ≥90% 自动提示：两份答案用词和句式高度一致，可「标记异常」交教研组长复核；不影响先给分。</p>` : ''}</div></section>
+  <aside><section class="card sec"><h2>评分点 <span class="muted">点选给分，可给一半</span></h2><div class="rub">${DATA.rubric.map((r, i) => `<div class="rp" role="group" aria-label="评分点 ${i + 1}" ${GR.pick[i] ? 'aria-pressed="true"' : ''}><span>${i + 1}. ${r[0]}</span><b>${GR.pick[i] === 'full' ? r[1] : GR.pick[i] === 'half' ? r[1] / 2 : 0}/${r[1]}</b><div class="half"><button type="button" data-rp="${i}:full" aria-pressed="${GR.pick[i] === 'full'}">得 ${r[1]} 分</button><button type="button" data-rp="${i}:half" aria-pressed="${GR.pick[i] === 'half'}">一半 ${r[1] / 2}</button><button type="button" data-rp="${i}:none" aria-pressed="${!GR.pick[i]}">不得分</button></div></div>`).join('')}</div>
+   <div class="gtot"><b id="gsum">${sum}</b><span class="muted">/ 20 分</span><span style="flex:1"></span><label class="sr-only" for="gman">手动改总分</label><input class="input num" id="gman" inputmode="decimal" placeholder="改分" value="${GR.manual != null ? GR.manual : ''}"></div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" type="button" data-flag>${GR.flags.has(GR.cur) ? '取消异常' : '标记异常'}</button><button class="btn btn-primary" type="button" data-gsubmit style="flex:1">提交 ${sum} 分，下一份</button></div>
+   <p class="keys" style="margin-top:12px">快捷键：<kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 切换对应评分点（得分 → 一半 → 不得分）<br><kbd>Enter</kbd> 提交并下一份 · 还剩 ${left.length} 份</p></section></aside></div></div>`;
+}
+function submitGrade() {
+  const v = GR.manual != null ? GR.manual : gSum();
+  if (!(v >= 0 && v <= 20)) { toast('分数要在 0～20 之间', 'err'); $('#gman').focus(); return; }
+  const s = ST.find(x => x[0] === GR.cur); s[3] = v;
+  const left = GR.order.filter(id => ST.find(x => x[0] === id)[3] == null);
+  toast(`${GR.cur} 第 12 题 ${v} 分，已保存${left.length ? `；还剩 ${left.length} 份` : '；本题阅完'}`, 'ok');
+  GR.pick = {}; GR.manual = null; if (left.length) GR.cur = left[0];
+  pGrade('normal');
+}
+
+/* ---------------- ④ 成绩 ---------------- */
+function scores() {
+  const L = ST.map(s => { const subj = s[3] != null && s[4] != null ? s[3] + s[4] : null; return { s, id: s[0], name: s[1], obj: s[2], subj, total: s[7] === 'absent' ? null : subj == null ? null : s[2] + subj, part: s[2] + (s[4] || 0) + (s[3] || 0), st: s[7] === 'absent' ? 'absent' : s[3] == null ? 'grading' : s[7] === 'auto' ? 'auto' : 'ok' }; });
+  const done = L.filter(x => x.total != null).sort((a, b) => b.total - a.total);
+  done.forEach((x, i) => { x.rank = i > 0 && done[i - 1].total === x.total ? done[i - 1].rank : i + 1; });
+  const avg = done.length ? done.reduce((s, x) => s + x.total, 0) / done.length : 0, pass = done.filter(x => x.total >= PA.set.pass).length;
+  return { L, done, avg, pass, pend: L.filter(x => x.st === 'grading').length, sat: L.filter(x => x.st !== 'absent').length };
+}
+function pScore(state) {
+  chrome('成绩', 'score');
+  const hd = head('成绩', `${DATA.exam.name} · ${DATA.exam.date} · 满分 100，及格 ${PA.set.pass}`, `<button class="btn" type="button" data-toast="已导出成绩单 Excel（示例）">${ic('download')}导出</button>`);
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(10)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${errCard('成绩没加载出来', '统计服务响应超时（错误编号 SCO-503，示例）。阅卷结果已保存。', 'score')}</div>`; return; }
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('成绩还没对你开放', '你是助教，成绩发布前只有任课老师 沈示例 和教研组长能看。发布后你可以看到。')}</div>`; return; }
+  if (state === 'empty') { PG.innerHTML = `<div class="pg">${hd}<section class="card">${P.stateBlock({ icon: 'clock', title: '考试还没开始', body: `本次测验 ${PA.set.start} 开考，交卷后客观题自动判分，主观题阅完后这里出成绩。`, acts: `<button class="btn" type="button" data-go="paper">看试卷</button>` })}</section></div>`; return; }
+  const k = scores(), max = k.done.length ? k.done[0].total : 0, min = k.done.length ? k.done[k.done.length - 1].total : 0;
+  const bins = [[0, 59], [60, 69], [70, 79], [80, 89], [90, 100]].map(b => [b, k.done.filter(x => x.total >= b[0] && x.total <= b[1]).length]);
+  const bmax = Math.max(1, ...bins.map(b => b[1]));
+  const rows = k.L.slice().sort((a, b) => PS.sort === 'id' ? a.id.localeCompare(b.id) : (b.total == null ? -1 : b.total) - (a.total == null ? -1 : a.total) || a.id.localeCompare(b.id));
+  const can = !k.pend && !PS.published;
+  PG.innerHTML = `<div class="pg">${hd}
+  ${PS.published ? `<div class="banner ok" role="status">${ic('check-c')}<span>成绩已发布：学生和家长已收到通知，3 天内（11-14 前）可申请复核。</span></div>` : k.pend ? `<div class="banner warn" role="note">${ic('clock')}<span>还有 ${k.pend} 份主观题没阅完（第 12 题），这 ${k.pend} 位学生暂时没有总分，统计只含已出总分的 ${k.done.length} 人。阅完才能发布成绩。</span><button class="btn" type="button" data-go="grade">去阅卷</button></div>` : ''}
+  <section class="card"><div class="sc-grid"><div><span>应考 / 实考</span><b>${ST.length} / ${k.sat}</b></div><div><span>平均分</span><b>${k.avg.toFixed(1)}</b></div><div><span>及格率</span><b>${k.done.length ? Math.round(k.pass / k.done.length * 100) : 0}%</b><span>${k.pass}/${k.done.length} 人</span></div><div><span>最高 / 最低</span><b>${max} / ${min}</b></div><div><span>阅卷进度</span><b>${k.sat - k.pend}/${k.sat}</b></div></div>
+  <div class="sc-two"><div><h3 style="font-size:14px;margin-bottom:6px">分数段分布</h3><div class="hist">${bins.map(b => `<div><b>${b[1]}</b><i class="${b[0][0] === 0 ? 'fail' : ''}" style="height:${b[1] / bmax * 80}%"></i><span>${b[0][0] === 0 ? '<60' : b[0][0] + '–' + (b[0][1] === 100 ? 100 : b[0][1])}</span></div>`).join('')}</div></div>
+  <div><h3 style="font-size:14px;margin-bottom:6px">最容易错的 5 道客观题</h3>${DATA.qRate.map(r => { const q = Q(r[0]); return `<div class="qr"><span class="mono">${r[0].toUpperCase()}</span><span title="${esc(q[2])}">${esc(q[2])}</span><div class="rate"><div class="bar"><i class="${r[1] < 60 ? 'lo' : ''}" style="width:${r[1]}%"></i></div><span>${r[1]}%</span></div></div>`; }).join('')}</div></div></section>
+  <section class="card" style="margin-top:16px"><div class="flt"><b style="font-size:15px">成绩明细</b><span class="sp"></span><div class="seg" role="group" aria-label="排序"><button type="button" data-ssort="rank" aria-pressed="${PS.sort === 'rank'}">按总分</button><button type="button" data-ssort="id" aria-pressed="${PS.sort === 'id'}">按考号</button></div><button class="btn btn-primary" type="button" data-spub ${can ? '' : 'disabled'} title="${can ? '' : PS.published ? '已发布' : `还有 ${k.pend} 份没阅完`}">${PS.published ? '已发布' : '发布成绩'}</button></div>
+  <div class="tw"><table class="table"><thead><tr><th>考号</th><th>姓名</th><th class="r">客观题 /60</th><th class="r">主观题 /40</th><th class="r">总分</th><th class="r">排名</th><th class="r">用时</th><th class="r">切屏</th><th>状态</th></tr></thead><tbody>
+  ${rows.map(x => `<tr><td class="mono" style="font-size:13px">${x.id}</td><td>${x.name}</td><td class="r num">${x.st === 'absent' ? '—' : x.obj}</td><td class="r num">${x.st === 'absent' ? '—' : x.subj == null ? `<span class="muted">阅卷中（已得 ${x.s[4]}）</span>` : x.subj}</td><td class="r"><span class="tot-c ${x.total != null && x.total < PA.set.pass ? 'fail' : ''}">${x.total == null ? '—' : x.total}</span></td><td class="r num">${x.rank || '—'}</td><td class="r num">${x.st === 'absent' ? '—' : x.s[5] + ' 分'}</td><td class="r num" style="${x.s[6] >= 2 ? 'color:var(--warning);font-weight:600' : ''}">${x.st === 'absent' ? '—' : x.s[6]}</td><td>${{ ok: '<span class="tag tag-success">已交卷</span>', absent: '<span class="tag tag-neutral">缺考</span>', grading: '<span class="tag tag-info">阅卷中</span>', auto: '<span class="tag tag-warning">切屏 3 次自动交卷</span>' }[x.st]}</td></tr>`).join('')}</tbody></table></div>
+  <div class="foot">排名同分并列；缺考不计入平均分和及格率；切屏 ≥2 次标黄</div></section></div>`;
+}
+
+/* ---------------- 事件 ---------------- */
+const PAGES = { bank: pBank, paper: pPaper, grade: pGrade, score: pScore };
+function draw() { PAGES[P.state.page](['full', 'done'].includes(P.state.state) ? 'normal' : P.state.state); }
+function go(pg) { if (dw.classList.contains('show')) P.close(dw); carry = true; P.go(pg, 'normal'); window.scrollTo(0, 0); }
+function autoFill() {
+  let n = 0; DATA.blueprint.forEach(b => { let have = PA.ids.filter(id => Q(id)[1] === b[0]).length; B.filter(q => q[1] === b[0] && q[8] === 'ok' && !PA.ids.includes(q[0])).sort((x, y) => x[4] - y[4]).forEach(q => { if (have < b[1]) { PA.ids.push(q[0]); have++; n++; } }); });
+  return n;
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button,[data-q],[data-go]');
+  if (!b || b.closest('.pp,.pq-drawer,.tplbar,.modal')) return;
+  if (e.target.closest('[data-stop]')) return;
+  if (b.dataset.toast) toast(b.dataset.toast);
+  if (b.dataset.go) { go(b.dataset.go); return; }
+  if ('x' in b.dataset) { P.close(dw); return; }
+  // 题库
+  if (b.dataset.q && b.tagName === 'TR') { openQ(b.dataset.q); return; }
+  if ('newq' in b.dataset) { openQ(null); return; }
+  if ('breset' in b.dataset) { BK.type = BK.kp = BK.diff = BK.st = BK.q = ''; pBank('normal'); return; }
+  if ('addpaper' in b.dataset) { const ids = [...BK.sel]; ids.forEach(id => PA.ids.push(id)); BK.sel.clear(); const k = check(); pBank('normal'); toast(`已加入 ${ids.length} 题，试卷现在 ${k.total} 分${k.why.length ? '；' + k.why[0] : '，可以发布了'}`, 'ok'); return; }
+  if (b.dataset.qt) { dw._E.type = b.dataset.qt; dw._E.ans = b.dataset.qt === '判断' ? '对' : ''; if ((b.dataset.qt === '单选' || b.dataset.qt === '多选') && !dw._E.opts.length) dw._E.opts = ['', '', '', '']; drawQ(); return; }
+  if (b.dataset.tf) { dw._E.ans = b.dataset.tf; drawQ(); return; }
+  if (b.id === 'qsub') { dw._E.submit = !dw._E.submit; b.setAttribute('aria-checked', dw._E.submit); return; }
+  if ('saveq' in b.dataset) { saveQ(); return; }
+  // 组卷
+  if (b.dataset.mv) { const [id, d] = b.dataset.mv.split(':'); const i = PA.ids.indexOf(id), t = Q(id)[1]; const same = PA.ids.map((x, j) => [x, j]).filter(([x]) => Q(x)[1] === t); const k = same.findIndex(([x]) => x === id) + +d; if (same[k]) { const j = same[k][1]; [PA.ids[i], PA.ids[j]] = [PA.ids[j], PA.ids[i]]; } pPaper('normal'); return; }
+  if (b.dataset.rm) { const id = b.dataset.rm, i = PA.ids.indexOf(id); PA.ids.splice(i, 1); pPaper('normal'); toast(`已移出 ${id.toUpperCase()}`, '', { undo: () => { PA.ids.splice(i, 0, id); pPaper('normal'); }, ms: 4000 }); return; }
+  if (b.dataset.fill) { BK.type = b.dataset.fill; BK.st = 'ok'; go('bank'); toast(`已筛出可用的${b.dataset.fill}题，勾选后「加入试卷」`); return; }
+  if ('auto' in b.dataset) { const n = autoFill(); carry = true; P.go('paper', 'normal'); toast(n ? `已自动补齐 ${n} 题` : '题库里没有可补的已审核题', n ? 'ok' : 'err'); return; }
+  if ('pub' in b.dataset) { const ok = await P.confirm({ title: '发布考试？', body: `${PA.set.start} 开考，时长 ${PA.set.dur} 分钟，16 名学生会收到通知。开考前可以撤回修改。`, ok: '发布' }); if (ok) { PA.published = true; pPaper('normal'); toast('已发布，学生端可见', 'ok'); } return; }
+  if ('unpub' in b.dataset) { PA.published = false; pPaper('normal'); toast('已撤回，学生端暂时看不到这场考试'); return; }
+  if ('settings' in b.dataset) { openSettings(); return; }
+  if (b.dataset.sw) { PA.set[b.dataset.sw] = !PA.set[b.dataset.sw]; b.setAttribute('aria-checked', PA.set[b.dataset.sw]); return; }
+  if ('saveset' in b.dataset) { $$('[data-ss]', dw).forEach(i => PA.set[i.dataset.ss] = i.tagName === 'SELECT' || i.dataset.ss === 'start' || i.dataset.ss === 'show' ? i.value : +i.value); if (!(PA.set.dur >= 10 && PA.set.dur <= 180)) { toast('考试时长要在 10～180 分钟', 'err'); return; } if (!(PA.set.pass > 0 && PA.set.pass < 100)) { toast('及格线要在 1～99', 'err'); return; } P.close(dw); pPaper('normal'); toast('考试设置已保存', 'ok'); return; }
+  // 阅卷
+  if (b.dataset.rp) { const [i, v] = b.dataset.rp.split(':'); if (v === 'none') delete GR.pick[i]; else GR.pick[i] = v; GR.manual = null; pGrade('normal'); return; }
+  if ('gsubmit' in b.dataset) { submitGrade(); return; }
+  if (b.dataset.jump) { GR.cur = b.dataset.jump; GR.pick = {}; GR.manual = null; pGrade('normal'); return; }
+  if ('flag' in b.dataset) { GR.flags.has(GR.cur) ? GR.flags.delete(GR.cur) : GR.flags.add(GR.cur); pGrade('normal'); toast(GR.flags.has(GR.cur) ? `已标记 ${GR.cur} 异常，交教研组长复核` : '已取消异常标记'); return; }
+  // 成绩
+  if (b.dataset.ssort) { PS.sort = b.dataset.ssort; pScore('normal'); return; }
+  if ('spub' in b.dataset) { const k = scores(); const ok = await P.confirm({ title: '发布成绩？', body: `${k.done.length} 名学生和家长会收到成绩通知（平均 ${k.avg.toFixed(1)} 分）。发布后 3 天内可申请复核，改分会留记录。`, ok: '发布' }); if (ok) { PS.published = true; pScore('normal'); toast('成绩已发布', 'ok'); } return; }
+  if (b.dataset.retry) { const pg = b.dataset.retry; carry = true; P.go(pg, 'loading'); setTimeout(() => { carry = true; P.go(pg, 'normal'); }, 700); return; }
+  if ('apply' in b.dataset) { b.disabled = true; b.textContent = '已申请，等待审批'; toast('已提交申请', 'ok'); return; }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.bsel) { t.checked ? BK.sel.add(t.dataset.bsel) : BK.sel.delete(t.dataset.bsel); pBank('normal'); }
+  if (['btype', 'bkp', 'bdiff', 'bst'].includes(t.id)) { BK[{ btype: 'type', bkp: 'kp', bdiff: 'diff', bst: 'st' }[t.id]] = t.value; pBank('normal'); }
+  if (t.dataset.e && t.tagName === 'SELECT') dw._E[t.dataset.e] = t.value;
+  if (t.dataset.sc) { const v = parseInt(t.value, 10); if (!(v > 0 && v <= 30)) { toast('每题分值 1～30', 'err'); pPaper('normal'); return; } PA.score[t.dataset.sc] = v; pPaper('normal'); }
+  if (t.id === 'gman') { const v = t.value.trim() === '' ? null : Number(t.value); if (v != null && !(v >= 0 && v <= 20)) { toast('分数要在 0～20 之间', 'err'); t.value = ''; GR.manual = null; } else GR.manual = v; pGrade('normal'); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'bq') { BK.q = t.value.trim(); clearTimeout(t._d); t._d = setTimeout(() => { pBank('normal'); const q = $('#bq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }, 250); }
+  if (t.dataset.e && t.tagName !== 'SELECT') dw._E[t.dataset.e] = t.value;
+});
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  if (t.dataset && t.dataset.q && t.tagName === 'TR' && e.key === 'Enter') openQ(t.dataset.q);
+  if (t.classList && t.classList.contains('ptab') && e.key === 'Enter') t.click();
+  if (P.state.page === 'grade' && !dw.classList.contains('show') && !/INPUT|TEXTAREA|SELECT/.test(t.tagName) && !e.target.closest('.pp,.pq-drawer')) {
+    if (['1', '2', '3'].includes(e.key) && $('#gsum')) { const i = +e.key - 1, cur = GR.pick[i]; if (!cur) GR.pick[i] = 'full'; else if (cur === 'full') GR.pick[i] = 'half'; else delete GR.pick[i]; GR.manual = null; pGrade('normal'); }
+    if (e.key === 'Enter' && $('#gsum') && !t.closest('button')) { e.preventDefault(); submitGrade(); }
+  }
+});
+
+fresh();
+Proto.init({
+  title: '考试后台',
+  pages: [
+    { id: 'bank', name: '① 题库（出题）', states: [{ id: 'normal', name: '正常（15 题）' }, { id: 'empty', name: '空' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限' }] },
+    { id: 'paper', name: '② 组卷与发布', states: [{ id: 'normal', name: '差 1 题（80 分）' }, { id: 'full', name: '已满 100 分可发布' }, { id: 'empty', name: '空试卷' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '已锁定无权修改' }] },
+    { id: 'grade', name: '③ 阅卷', states: [{ id: 'normal', name: '待阅 5 份' }, { id: 'empty', name: '本题阅完' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限' }] },
+    { id: 'score', name: '④ 成绩', states: [{ id: 'normal', name: '阅卷中（不可发布）' }, { id: 'done', name: '已全部阅完可发布' }, { id: 'empty', name: '空（未开考）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限' }] }
+  ],
+  render(page, state) {
+    if (dw.classList.contains('show')) P.close(dw);
+    if (!carry) {
+      fresh();
+      if (page === 'paper' && state === 'full') PA.ids.push('q13');
+      if (page === 'paper' && state === 'empty') PA.ids = [];
+      if ((page === 'score' && state === 'done') || (page === 'grade' && state === 'empty')) { const v = { S11: 18, S13: 6, S14: 20, S15: 9, S16: 12 }; ST.forEach(s => { if (v[s[0]] != null) s[3] = v[s[0]]; }); }
+    }
+    carry = false;
+    PAGES[page](['full', 'done'].includes(state) ? 'normal' : state);
+  }
+});
+Proto.prompts(PROMPTS);
+</script>
+</body>
+</html>
