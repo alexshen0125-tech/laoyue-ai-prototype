@@ -1,0 +1,943 @@
+[
+  {
+    "id": "acceptance-criteria-br-ac",
+    "name": "acceptance-criteria-br-ac",
+    "zip": "acceptance-criteria-br-ac.zip",
+    "bytes": 7844,
+    "sha256": "f8678348ba9fb51b6f96e177d9435901ddf647286a0ed40158afd27d050ebbae",
+    "files": [
+      "acceptance-criteria-br-ac/README.md",
+      "acceptance-criteria-br-ac/SKILL.md",
+      "acceptance-criteria-br-ac/examples/示例_大额订单审批.md",
+      "acceptance-criteria-br-ac/templates/BR与AC表.md",
+      "acceptance-criteria-br-ac/templates/模糊词对照.md"
+    ]
+  },
+  {
+    "id": "ai-fallback-design",
+    "name": "ai-fallback-design",
+    "zip": "ai-fallback-design.zip",
+    "bytes": 7954,
+    "sha256": "f0abfc6656c1aa8ff8ee93c51b05d674a4f60e5c877db491e736da6baaeb163a",
+    "files": [
+      "ai-fallback-design/README.md",
+      "ai-fallback-design/SKILL.md",
+      "ai-fallback-design/examples/示例_客服助手.md",
+      "ai-fallback-design/templates/兜底设计表.md",
+      "ai-fallback-design/templates/评测集.md"
+    ]
+  },
+  {
+    "id": "competitor-task-steps",
+    "name": "competitor-task-steps",
+    "zip": "competitor-task-steps.zip",
+    "bytes": 11747,
+    "sha256": "a0325faf0e7ecd740e43af00c814303b3504bec32e0688905f974e5df8cca709",
+    "files": [
+      "competitor-task-steps/README.md",
+      "competitor-task-steps/SKILL.md",
+      "competitor-task-steps/examples/示例_补货任务.md",
+      "competitor-task-steps/templates/任务路径表.md",
+      "competitor-task-steps/templates/报告.html",
+      "competitor-task-steps/templates/材料清单.md"
+    ]
+  },
+  {
+    "id": "data-question-decision-first",
+    "name": "data-question-decision-first",
+    "zip": "data-question-decision-first.zip",
+    "bytes": 7793,
+    "sha256": "e6dd1484a45105c62388af67c5a42b5e7a8d51a317a296cf2b0f4da719550a41",
+    "files": [
+      "data-question-decision-first/README.md",
+      "data-question-decision-first/SKILL.md",
+      "data-question-decision-first/examples/示例_活动复购.md",
+      "data-question-decision-first/templates/分析前三问.md",
+      "data-question-decision-first/templates/分析结论.md"
+    ]
+  },
+  {
+    "id": "gh-ab-test-analysis",
+    "name": "ab-test-analysis",
+    "zip": "gh-ab-test-analysis.zip",
+    "bytes": 6088,
+    "sha256": "d2b0f2c60825af0fdc3bcae21a8fe42658894fdbabe0f742412261be33222520",
+    "files": [
+      "ab-test-analysis/LICENSE",
+      "ab-test-analysis/README.md",
+      "ab-test-analysis/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-agent-trace-diagnoser",
+    "name": "agent-trace-diagnoser",
+    "zip": "gh-agent-trace-diagnoser.zip",
+    "bytes": 16434,
+    "sha256": "fb497bedf5fff59a4019c1a948297a242e94da9e166fd730224563b8b35e899b",
+    "files": [
+      "agent-trace-diagnoser/LICENSE",
+      "agent-trace-diagnoser/README.md",
+      "agent-trace-diagnoser/SKILL.md",
+      "agent-trace-diagnoser/agents/openai.yaml",
+      "agent-trace-diagnoser/evals/evals.json",
+      "agent-trace-diagnoser/references/investigation-checklist.md",
+      "agent-trace-diagnoser/references/output-template.md",
+      "agent-trace-diagnoser/references/visualization-guide.md"
+    ]
+  },
+  {
+    "id": "gh-analytical-pm",
+    "name": "analytical-pm",
+    "zip": "gh-analytical-pm.zip",
+    "bytes": 7989,
+    "sha256": "11203fe99b048d97db562e77a4c5b76d2dd1033b1e74784de6ef88b99002ab87",
+    "files": [
+      "analytical-pm/LICENSE",
+      "analytical-pm/README.md",
+      "analytical-pm/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-analyze-feature-requests",
+    "name": "analyze-feature-requests",
+    "zip": "gh-analyze-feature-requests.zip",
+    "bytes": 5612,
+    "sha256": "9577de676fc4f19d09ae9721431bc3fd6af7b8a67aaf122863bb1965a38512cd",
+    "files": [
+      "analyze-feature-requests/LICENSE",
+      "analyze-feature-requests/README.md",
+      "analyze-feature-requests/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-assess-enterprise-ai-project",
+    "name": "assess-enterprise-ai-project",
+    "zip": "gh-assess-enterprise-ai-project.zip",
+    "bytes": 69955,
+    "sha256": "4e769cf91d8ffb0753f0b749ae01c90e8df988af910f3f0071b1f0c7050bc60b",
+    "files": [
+      "assess-enterprise-ai-project/LICENSE",
+      "assess-enterprise-ai-project/README.md",
+      "assess-enterprise-ai-project/SKILL.md",
+      "assess-enterprise-ai-project/agents/openai.yaml",
+      "assess-enterprise-ai-project/references/case-library.md",
+      "assess-enterprise-ai-project/references/decision-rules.md",
+      "assess-enterprise-ai-project/references/evidence-fallback.md",
+      "assess-enterprise-ai-project/references/five-gates.md",
+      "assess-enterprise-ai-project/references/output-template.md"
+    ]
+  },
+  {
+    "id": "gh-brainstorm-okrs",
+    "name": "brainstorm-okrs",
+    "zip": "gh-brainstorm-okrs.zip",
+    "bytes": 6356,
+    "sha256": "34760c1fc25f9e71971321b7d4c5eec65d6d6d5420c1e8cc354413d321ec4560",
+    "files": [
+      "brainstorm-okrs/LICENSE",
+      "brainstorm-okrs/README.md",
+      "brainstorm-okrs/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-career-changer-translator",
+    "name": "career-changer-translator",
+    "zip": "gh-career-changer-translator.zip",
+    "bytes": 8618,
+    "sha256": "dcca678a94333e617c3a7b11c9411f9d03f55a79948b4c0a3f932cfe33ea8ba0",
+    "files": [
+      "career-changer-translator/LICENSE",
+      "career-changer-translator/README.md",
+      "career-changer-translator/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-cohort-analysis",
+    "name": "cohort-analysis",
+    "zip": "gh-cohort-analysis.zip",
+    "bytes": 6503,
+    "sha256": "b64adfe4a5eeea7efc2ce006f53f23fa5952cfd843b508244ceb9832ee7b3a8e",
+    "files": [
+      "cohort-analysis/LICENSE",
+      "cohort-analysis/README.md",
+      "cohort-analysis/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-eda-report",
+    "name": "eda-report",
+    "zip": "gh-eda-report.zip",
+    "bytes": 7105,
+    "sha256": "dd847d48dceb9bb3241270a8586e8c4de72554c905001eaa011a17f5aa315795",
+    "files": [
+      "eda-report/LICENSE",
+      "eda-report/README.md",
+      "eda-report/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-escalation-design",
+    "name": "escalation-design",
+    "zip": "gh-escalation-design.zip",
+    "bytes": 5587,
+    "sha256": "f288742122ad79ff62dce7efc9c8dcdf8203c9de53535aa70b1d793c6760e916",
+    "files": [
+      "escalation-design/LICENSE",
+      "escalation-design/README.md",
+      "escalation-design/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-eval-llm-judge",
+    "name": "eval-llm-judge",
+    "zip": "gh-eval-llm-judge.zip",
+    "bytes": 15875,
+    "sha256": "132699ec07d89982d3e6e7178f8f0954d132a00c25b183ba0235a1722f7c6d21",
+    "files": [
+      "eval-llm-judge/LICENSE-CONTENT",
+      "eval-llm-judge/README.md",
+      "eval-llm-judge/SKILL.md",
+      "eval-llm-judge/agents/openai.yaml"
+    ]
+  },
+  {
+    "id": "gh-eval-rubric",
+    "name": "eval-rubric",
+    "zip": "gh-eval-rubric.zip",
+    "bytes": 20808,
+    "sha256": "f4c49dfc23600a01fe45e4cf4d49d38ce40183b536b28c09257b2ca524053137",
+    "files": [
+      "eval-rubric/LICENSE-CONTENT",
+      "eval-rubric/README.md",
+      "eval-rubric/SKILL.md",
+      "eval-rubric/agents/openai.yaml",
+      "eval-rubric/references/prd-sections.md",
+      "eval-rubric/references/rubric-template.html",
+      "eval-rubric/references/worked-examples.md"
+    ]
+  },
+  {
+    "id": "gh-experiment-design",
+    "name": "experiment-design",
+    "zip": "gh-experiment-design.zip",
+    "bytes": 6447,
+    "sha256": "774ef21caba2fa9b429f7e17f012f626504f4abe2c4c362011341451c9c30f45",
+    "files": [
+      "experiment-design/LICENSE",
+      "experiment-design/README.md",
+      "experiment-design/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-internal-comms",
+    "name": "internal-comms",
+    "zip": "gh-internal-comms.zip",
+    "bytes": 13624,
+    "sha256": "7c91d7fb1bebb4f8babfee3d86d1a598a481b5c891aa1170621757a542bb58bf",
+    "files": [
+      "internal-comms/LICENSE.txt",
+      "internal-comms/README.md",
+      "internal-comms/SKILL.md",
+      "internal-comms/examples/3p-updates.md",
+      "internal-comms/examples/company-newsletter.md",
+      "internal-comms/examples/faq-answers.md",
+      "internal-comms/examples/general-comms.md"
+    ]
+  },
+  {
+    "id": "gh-interview-prep-generator",
+    "name": "interview-prep-generator",
+    "zip": "gh-interview-prep-generator.zip",
+    "bytes": 9248,
+    "sha256": "1e70ed76eaf52b9fdc3b191b8dc21b81bcf9fdf4ccc760230a5757ee1e785a88",
+    "files": [
+      "interview-prep-generator/LICENSE",
+      "interview-prep-generator/README.md",
+      "interview-prep-generator/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-interview-script",
+    "name": "interview-script",
+    "zip": "gh-interview-script.zip",
+    "bytes": 6712,
+    "sha256": "045d84a4451e94878ca22111822f76dfb3bc92979e81f7cd1e6bcd2bc7574b8f",
+    "files": [
+      "interview-script/LICENSE",
+      "interview-script/README.md",
+      "interview-script/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-journey-mapping",
+    "name": "journey-mapping",
+    "zip": "gh-journey-mapping.zip",
+    "bytes": 56999,
+    "sha256": "8dd4a0d7c3adf282a7d5f4b69b45fbde2137469d8f16a44ffa5ba5c0ab7f5601",
+    "files": [
+      "journey-mapping/LICENSE",
+      "journey-mapping/README.md",
+      "journey-mapping/SKILL.md",
+      "journey-mapping/examples/cjm-walkthrough.md",
+      "journey-mapping/examples/diagram-selection-scenarios.md",
+      "journey-mapping/references/alignment-workshops.md",
+      "journey-mapping/references/customer-journey-maps.md",
+      "journey-mapping/references/experience-maps-and-models.md",
+      "journey-mapping/references/flow-diagramming-visual-vocabulary.md",
+      "journey-mapping/references/service-blueprints.md",
+      "journey-mapping/templates/customer-journey-map-template.md",
+      "journey-mapping/templates/empathy-map-template.md",
+      "journey-mapping/templates/service-blueprint-template.md"
+    ]
+  },
+  {
+    "id": "gh-launch-checklist",
+    "name": "launch-checklist",
+    "zip": "gh-launch-checklist.zip",
+    "bytes": 6226,
+    "sha256": "fd376edab63ce57fda7a8e990e37a26e321fa2623701ca48db62340f05bbb178",
+    "files": [
+      "launch-checklist/LICENSE",
+      "launch-checklist/README.md",
+      "launch-checklist/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-make-requirements-great",
+    "name": "make-requirements-great",
+    "zip": "gh-make-requirements-great.zip",
+    "bytes": 15684,
+    "sha256": "1ac59aebea0ec4555722a16e6f79ea0a1b3353152c7d27ac385598df3b52be9b",
+    "files": [
+      "make-requirements-great/LICENSE",
+      "make-requirements-great/README.md",
+      "make-requirements-great/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-marketing-psychology",
+    "name": "marketing-psychology",
+    "zip": "gh-marketing-psychology.zip",
+    "bytes": 15242,
+    "sha256": "f957b438281f8c767abda153b8f5a36b590ddfee22db5ea182995566d78488af",
+    "files": [
+      "marketing-psychology/LICENSE",
+      "marketing-psychology/README.md",
+      "marketing-psychology/SKILL.md",
+      "marketing-psychology/evals/evals.json"
+    ]
+  },
+  {
+    "id": "gh-meetings",
+    "name": "meetings",
+    "zip": "gh-meetings.zip",
+    "bytes": 30194,
+    "sha256": "f40e986621c091473ab5381e557b6949e489bf498d57f58f076252ae93104a50",
+    "files": [
+      "meetings/LICENSE",
+      "meetings/README.md",
+      "meetings/SKILL.md",
+      "meetings/assets/example_agenda.md",
+      "meetings/assets/meeting_gate_worksheet.md",
+      "meetings/references/action_item_discipline.md",
+      "meetings/references/agenda_discipline.md",
+      "meetings/references/meeting_cost_canon.md",
+      "meetings/scripts/action_item_extractor.py",
+      "meetings/scripts/agenda_builder.py",
+      "meetings/scripts/meeting_cost_calculator.py"
+    ]
+  },
+  {
+    "id": "gh-metrics-dashboard",
+    "name": "metrics-dashboard",
+    "zip": "gh-metrics-dashboard.zip",
+    "bytes": 6655,
+    "sha256": "220efb5992df434b5d465c7b91e7f0c88973afb06719e03f8d760a73d5c2f1a1",
+    "files": [
+      "metrics-dashboard/LICENSE",
+      "metrics-dashboard/README.md",
+      "metrics-dashboard/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-metrics-framework",
+    "name": "metrics-framework",
+    "zip": "gh-metrics-framework.zip",
+    "bytes": 5802,
+    "sha256": "4c50a4b181bb768bb6ee28c018f78ff3c703f4bf09a1752d022918a345be879f",
+    "files": [
+      "metrics-framework/LICENSE",
+      "metrics-framework/README.md",
+      "metrics-framework/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-metrics-review",
+    "name": "metrics-review",
+    "zip": "gh-metrics-review.zip",
+    "bytes": 16388,
+    "sha256": "94019555dbd4a55925e32b6efbde29131588ea066ce792cee8494bb102701068",
+    "files": [
+      "metrics-review/CONNECTORS.md",
+      "metrics-review/LICENSE",
+      "metrics-review/README.md",
+      "metrics-review/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-mock-interviewer",
+    "name": "mock-interviewer",
+    "zip": "gh-mock-interviewer.zip",
+    "bytes": 6592,
+    "sha256": "d3045cbea8ac3a0fc3f386ef24a19b8b3fef38f2a22b247c75cd3afe86d44c80",
+    "files": [
+      "mock-interviewer/LICENSE",
+      "mock-interviewer/README.md",
+      "mock-interviewer/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-north-star-metric",
+    "name": "north-star-metric",
+    "zip": "gh-north-star-metric.zip",
+    "bytes": 6241,
+    "sha256": "5450a5f5bee25338f981d4ae7484acf1e7fa05f58413f593cedb51c32b0b59dc",
+    "files": [
+      "north-star-metric/LICENSE",
+      "north-star-metric/README.md",
+      "north-star-metric/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-opportunity-solution-tree",
+    "name": "opportunity-solution-tree",
+    "zip": "gh-opportunity-solution-tree.zip",
+    "bytes": 6458,
+    "sha256": "7a1f2cb04ee59991f06081eee79dd362944c37f76d85d6b29ca2435ce36789a2",
+    "files": [
+      "opportunity-solution-tree/LICENSE",
+      "opportunity-solution-tree/README.md",
+      "opportunity-solution-tree/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-outcome-roadmap",
+    "name": "outcome-roadmap",
+    "zip": "gh-outcome-roadmap.zip",
+    "bytes": 5995,
+    "sha256": "de8c1f764108f323e5822c8b68b1005aa3345cd8d6cf00248af1bdf4387e3cae",
+    "files": [
+      "outcome-roadmap/LICENSE",
+      "outcome-roadmap/README.md",
+      "outcome-roadmap/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-prd-review",
+    "name": "prd-review",
+    "zip": "gh-prd-review.zip",
+    "bytes": 63705,
+    "sha256": "db5815b95acb9d54f62f93bf9f67855638545a1caaaf520616e8394f377464f9",
+    "files": [
+      "prd-review/LICENSE",
+      "prd-review/README.md",
+      "prd-review/SKILL.md",
+      "prd-review/agents/openai.yaml",
+      "prd-review/assets/prd-template.md",
+      "prd-review/assets/report-template.html",
+      "prd-review/assets/risk-register-template.md",
+      "prd-review/assets/user-story-template.md",
+      "prd-review/references/ai-ml-products.md",
+      "prd-review/references/delivery-and-process.md",
+      "prd-review/references/discovery-and-requirements.md",
+      "prd-review/references/edge-cases-and-exceptions.md",
+      "prd-review/references/metrics.md",
+      "prd-review/references/prioritization-and-estimation.md",
+      "prd-review/references/review-rubric.md",
+      "prd-review/references/technical-artifacts.md",
+      "prd-review/references/worked-example.md",
+      "prd-review/references/worked-review-example.md"
+    ]
+  },
+  {
+    "id": "gh-prd-writer",
+    "name": "prd-writer",
+    "zip": "gh-prd-writer.zip",
+    "bytes": 9828,
+    "sha256": "8978db0356bd3870b545e272ef5820d6546e50c792bba1c154a52b6cfbf5cd22",
+    "files": [
+      "prd-writer/LICENSE",
+      "prd-writer/README.md",
+      "prd-writer/SKILL.md",
+      "prd-writer/references/prd-template.md"
+    ]
+  },
+  {
+    "id": "gh-pre-mortem",
+    "name": "pre-mortem",
+    "zip": "gh-pre-mortem.zip",
+    "bytes": 6703,
+    "sha256": "dd834151ecb81cecbbdc7e97729fbc3e44a89820d4c06e9b1768b215b5522f81",
+    "files": [
+      "pre-mortem/LICENSE",
+      "pre-mortem/README.md",
+      "pre-mortem/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-prioritization-frameworks",
+    "name": "prioritization-frameworks",
+    "zip": "gh-prioritization-frameworks.zip",
+    "bytes": 6427,
+    "sha256": "3fcccc3f0c2607e928e0f788b3c5dfdc2dab4ea310fd3751791bfb0aa8bf9582",
+    "files": [
+      "prioritization-frameworks/LICENSE",
+      "prioritization-frameworks/README.md",
+      "prioritization-frameworks/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-problem-validation",
+    "name": "problem-validation",
+    "zip": "gh-problem-validation.zip",
+    "bytes": 6270,
+    "sha256": "0e1cce080be4f0c7b61f1ecafd4354ccc391b3c91a0bf06a1c7ef6f08f592469",
+    "files": [
+      "problem-validation/LICENSE",
+      "problem-validation/README.md",
+      "problem-validation/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-process-mapper",
+    "name": "process-mapper",
+    "zip": "gh-process-mapper.zip",
+    "bytes": 8737,
+    "sha256": "63cb98a2318aa499607c80e9e28c9acfdd46aebdce5586d7cb2a26cdc962f2cc",
+    "files": [
+      "process-mapper/LICENSE",
+      "process-mapper/README.md",
+      "process-mapper/SKILL.md",
+      "process-mapper/references/bpmn-notation.md"
+    ]
+  },
+  {
+    "id": "gh-product-analytics",
+    "name": "product-analytics",
+    "zip": "gh-product-analytics.zip",
+    "bytes": 11539,
+    "sha256": "bbb8bbff76a6974c34142f6e722dd075a7da96a255eb1c4cfde48b0eb7d3e61a",
+    "files": [
+      "product-analytics/LICENSE",
+      "product-analytics/README.md",
+      "product-analytics/SKILL.md",
+      "product-analytics/references/dashboard-templates.md",
+      "product-analytics/references/metrics-frameworks.md",
+      "product-analytics/scripts/metrics_calculator.py"
+    ]
+  },
+  {
+    "id": "gh-product-designer",
+    "name": "product-designer",
+    "zip": "gh-product-designer.zip",
+    "bytes": 11878,
+    "sha256": "7fabafb187a4db575235d06e216fa8fa3751cbc9bc39a244e1f0ca1f57be5ff7",
+    "files": [
+      "product-designer/LICENSE",
+      "product-designer/README.md",
+      "product-designer/SKILL.md",
+      "product-designer/references/ai-ux-review.md",
+      "product-designer/references/screen-checklists.md"
+    ]
+  },
+  {
+    "id": "gh-prompt-engineer",
+    "name": "prompt-engineer",
+    "zip": "gh-prompt-engineer.zip",
+    "bytes": 13288,
+    "sha256": "7b3c69b8c50d916f2cddba909c0e8cea990dc8513d010cb4a23965546e2e72b0",
+    "files": [
+      "prompt-engineer/LICENSE",
+      "prompt-engineer/README.md",
+      "prompt-engineer/SKILL.md",
+      "prompt-engineer/references/techniques.md",
+      "prompt-engineer/templates/SKILL-TEMPLATE.md"
+    ]
+  },
+  {
+    "id": "gh-release-notes",
+    "name": "release-notes",
+    "zip": "gh-release-notes.zip",
+    "bytes": 5607,
+    "sha256": "d16c71194233c0c30ae27e3c6036f86431604edc972b150766291146c81b3703",
+    "files": [
+      "release-notes/LICENSE",
+      "release-notes/README.md",
+      "release-notes/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-resume-bullet-writer",
+    "name": "resume-bullet-writer",
+    "zip": "gh-resume-bullet-writer.zip",
+    "bytes": 10118,
+    "sha256": "6e6d75c5db0624d0483b8e19be99009bfa0e93d7b2dcadee57f2d4ef9839c05f",
+    "files": [
+      "resume-bullet-writer/LICENSE",
+      "resume-bullet-writer/README.md",
+      "resume-bullet-writer/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-retro",
+    "name": "retro",
+    "zip": "gh-retro.zip",
+    "bytes": 5802,
+    "sha256": "86bc4a2294ceec7b7c89ae69c58033cc0afc806be9de4dae8b518c97e4c3516e",
+    "files": [
+      "retro/LICENSE",
+      "retro/README.md",
+      "retro/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-root-cause-analysis",
+    "name": "root-cause-analysis",
+    "zip": "gh-root-cause-analysis.zip",
+    "bytes": 9203,
+    "sha256": "8a5d02676fe18d1f8c0e35c949954b005367dbe5a4f7cb86d0161ac7e7ebe4e3",
+    "files": [
+      "root-cause-analysis/LICENSE",
+      "root-cause-analysis/README.md",
+      "root-cause-analysis/SKILL.md",
+      "root-cause-analysis/references/fishbone-categories.md"
+    ]
+  },
+  {
+    "id": "gh-scope-cutting",
+    "name": "scope-cutting",
+    "zip": "gh-scope-cutting.zip",
+    "bytes": 5892,
+    "sha256": "58f4365714c688f936c33597c338b866e1afa2cb31b83408e805e66533c87677",
+    "files": [
+      "scope-cutting/LICENSE",
+      "scope-cutting/README.md",
+      "scope-cutting/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-situation-retrospective",
+    "name": "situation-retrospective",
+    "zip": "gh-situation-retrospective.zip",
+    "bytes": 11099,
+    "sha256": "41275e1968d46de2c76cf4d7d2891bd915a509be1ed9e4b6ccc5200febcb91b9",
+    "files": [
+      "situation-retrospective/LICENSE",
+      "situation-retrospective/README.md",
+      "situation-retrospective/SKILL.md",
+      "situation-retrospective/references/pm-excellence-behaviors.md"
+    ]
+  },
+  {
+    "id": "gh-sql-queries",
+    "name": "sql-queries",
+    "zip": "gh-sql-queries.zip",
+    "bytes": 11899,
+    "sha256": "059b3fe19dd345ebcb1f6c3793e370f2dfe8a4fa7e04b3fb27bbaa7111b89169",
+    "files": [
+      "sql-queries/LICENSE",
+      "sql-queries/README.md",
+      "sql-queries/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-stakeholder-map",
+    "name": "stakeholder-map",
+    "zip": "gh-stakeholder-map.zip",
+    "bytes": 5710,
+    "sha256": "3adca2f7b224ae522a8c0fc8f75656388abd06c03ef2ad83ec07bdef305c0e18",
+    "files": [
+      "stakeholder-map/LICENSE",
+      "stakeholder-map/README.md",
+      "stakeholder-map/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-status-update-writer",
+    "name": "status-update-writer",
+    "zip": "gh-status-update-writer.zip",
+    "bytes": 10597,
+    "sha256": "b49b24fa3720ad07267d947d0536d6f8a906b47659602150bb02efc439094f7a",
+    "files": [
+      "status-update-writer/LICENSE",
+      "status-update-writer/README.md",
+      "status-update-writer/SKILL.md",
+      "status-update-writer/references/cadences.md"
+    ]
+  },
+  {
+    "id": "gh-strategy-red-team",
+    "name": "strategy-red-team",
+    "zip": "gh-strategy-red-team.zip",
+    "bytes": 6769,
+    "sha256": "de8f58707f0849238fbfc7068b828a07896b873acd0e1f3bc7443b853d5bb226",
+    "files": [
+      "strategy-red-team/LICENSE",
+      "strategy-red-team/README.md",
+      "strategy-red-team/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-summarize-interview",
+    "name": "summarize-interview",
+    "zip": "gh-summarize-interview.zip",
+    "bytes": 5393,
+    "sha256": "5910a9538492e2395420766029c592828a1c58dd7d36053266f8df38a043f489",
+    "files": [
+      "summarize-interview/LICENSE",
+      "summarize-interview/README.md",
+      "summarize-interview/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-synthesize-research",
+    "name": "synthesize-research",
+    "zip": "gh-synthesize-research.zip",
+    "bytes": 15506,
+    "sha256": "1eada7424c38f8c267d3c8f8ee3e408e6d45a7a9bac094694728af845506f33f",
+    "files": [
+      "synthesize-research/CONNECTORS.md",
+      "synthesize-research/LICENSE",
+      "synthesize-research/README.md",
+      "synthesize-research/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-technical-pm",
+    "name": "technical-pm",
+    "zip": "gh-technical-pm.zip",
+    "bytes": 8159,
+    "sha256": "0593a47e7d1940992f046cf11bee41a6a05b2b2767ebf2bf644690a1b7ccb8b2",
+    "files": [
+      "technical-pm/LICENSE",
+      "technical-pm/README.md",
+      "technical-pm/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-test-scenarios",
+    "name": "test-scenarios",
+    "zip": "gh-test-scenarios.zip",
+    "bytes": 5652,
+    "sha256": "ee140c764144a89051e53f0da98f0aa2c5bdbb252ebcef99c08996e7c17bd740",
+    "files": [
+      "test-scenarios/LICENSE",
+      "test-scenarios/README.md",
+      "test-scenarios/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-trace-codes",
+    "name": "trace-codes",
+    "zip": "gh-trace-codes.zip",
+    "bytes": 13649,
+    "sha256": "d05e2482fa69d991b37f058a21be3aab73e17ce9f1f14ea4a8fa7219d1ec7951",
+    "files": [
+      "trace-codes/LICENSE-CONTENT",
+      "trace-codes/README.md",
+      "trace-codes/SKILL.md",
+      "trace-codes/agents/openai.yaml"
+    ]
+  },
+  {
+    "id": "gh-trust-calibration",
+    "name": "trust-calibration",
+    "zip": "gh-trust-calibration.zip",
+    "bytes": 7825,
+    "sha256": "a6828ae096549f3894b68156322d9b6bf9d09a821d1776324e46353b289fb3b7",
+    "files": [
+      "trust-calibration/LICENSE",
+      "trust-calibration/README.md",
+      "trust-calibration/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-uat-plan",
+    "name": "uat-plan",
+    "zip": "gh-uat-plan.zip",
+    "bytes": 7257,
+    "sha256": "4906d7a1a92373ca6615e12687446b1071ab2ddf2a0ff27a93c0458bcabf17e0",
+    "files": [
+      "uat-plan/LICENSE",
+      "uat-plan/README.md",
+      "uat-plan/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-use-case-writer",
+    "name": "use-case-writer",
+    "zip": "gh-use-case-writer.zip",
+    "bytes": 9270,
+    "sha256": "b116384cc4fd7644fbd17c422c880df57ed850bec1a7f34e3aafbd957be0647f",
+    "files": [
+      "use-case-writer/LICENSE",
+      "use-case-writer/README.md",
+      "use-case-writer/SKILL.md",
+      "use-case-writer/references/use-case-template.md"
+    ]
+  },
+  {
+    "id": "gh-user-stories",
+    "name": "user-stories",
+    "zip": "gh-user-stories.zip",
+    "bytes": 5684,
+    "sha256": "3a9cf8e654910962fa3b5d20ac7af77356b521460e81d797804d9336f24a9c53",
+    "files": [
+      "user-stories/LICENSE",
+      "user-stories/README.md",
+      "user-stories/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-ux-writing",
+    "name": "ux-writing",
+    "zip": "gh-ux-writing.zip",
+    "bytes": 40146,
+    "sha256": "068e43102519217bbb148bd82a243a89f1b559b4a9b19de474021f239fd79f46",
+    "files": [
+      "ux-writing/LICENSE",
+      "ux-writing/README.md",
+      "ux-writing/SKILL.md",
+      "ux-writing/docs/figma-integration.md",
+      "ux-writing/examples/real-world-improvements.md",
+      "ux-writing/references/accessibility-guidelines.md",
+      "ux-writing/references/content-usability-checklist.md",
+      "ux-writing/references/patterns-detailed.md",
+      "ux-writing/references/voice-chart-template.md",
+      "ux-writing/templates/empty-state-template.md",
+      "ux-writing/templates/error-message-template.md",
+      "ux-writing/templates/onboarding-flow-template.md"
+    ]
+  },
+  {
+    "id": "gh-validate-data",
+    "name": "validate-data",
+    "zip": "gh-validate-data.zip",
+    "bytes": 14885,
+    "sha256": "8f32f413fc57b59f7867eb3a6170e113722113265ddb8d13171fd5ad53fdbf7a",
+    "files": [
+      "validate-data/CONNECTORS.md",
+      "validate-data/LICENSE",
+      "validate-data/README.md",
+      "validate-data/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-vibe-coding-prd",
+    "name": "vibe-coding-prd",
+    "zip": "gh-vibe-coding-prd.zip",
+    "bytes": 7930,
+    "sha256": "6099d1db5b1a22e287248e02f30fd653324ed56294bbeff162928b805a7ba396",
+    "files": [
+      "vibe-coding-prd/LICENSE",
+      "vibe-coding-prd/README.md",
+      "vibe-coding-prd/SKILL.md"
+    ]
+  },
+  {
+    "id": "gh-write-spec",
+    "name": "write-spec",
+    "zip": "gh-write-spec.zip",
+    "bytes": 14280,
+    "sha256": "5ee18d02f72a236e583a0c6e7671cd06d5a9ec2138edc42bde32ef4a0de1530d",
+    "files": [
+      "write-spec/CONNECTORS.md",
+      "write-spec/LICENSE",
+      "write-spec/README.md",
+      "write-spec/SKILL.md"
+    ]
+  },
+  {
+    "id": "meeting-minutes-4blocks",
+    "name": "meeting-minutes-4blocks",
+    "zip": "meeting-minutes-4blocks.zip",
+    "bytes": 9802,
+    "sha256": "1c663d4068687af35600fafe9f712b23b87ff79d8331b0f3c1ecc68e2048250c",
+    "files": [
+      "meeting-minutes-4blocks/README.md",
+      "meeting-minutes-4blocks/SKILL.md",
+      "meeting-minutes-4blocks/examples/需求评审纪要.md",
+      "meeting-minutes-4blocks/reference/会议类型.md",
+      "meeting-minutes-4blocks/templates/纪要.md"
+    ]
+  },
+  {
+    "id": "one-line-html-prototype",
+    "name": "one-line-html-prototype",
+    "zip": "one-line-html-prototype.zip",
+    "bytes": 9639,
+    "sha256": "4a25a624775f63ba7bdbda62be07e1d600ee4a760a647a010453905ed52d2f20",
+    "files": [
+      "one-line-html-prototype/README.md",
+      "one-line-html-prototype/SKILL.md",
+      "one-line-html-prototype/reference/页面规矩.md",
+      "one-line-html-prototype/templates/skeleton.html"
+    ]
+  },
+  {
+    "id": "prd-four-role-review",
+    "name": "prd-four-role-review",
+    "zip": "prd-four-role-review.zip",
+    "bytes": 10179,
+    "sha256": "d47fda0f677508c581fa4c6aaf146d987dff86f75572c8c011455bf4d72045e4",
+    "files": [
+      "prd-four-role-review/README.md",
+      "prd-four-role-review/SKILL.md",
+      "prd-four-role-review/examples/评审输出示例.md",
+      "prd-four-role-review/reference/四角色清单.md",
+      "prd-four-role-review/templates/问题表.md"
+    ]
+  },
+  {
+    "id": "prd-step-by-step",
+    "name": "prd-step-by-step",
+    "zip": "prd-step-by-step.zip",
+    "bytes": 11211,
+    "sha256": "5a9873655c7a3da530c454730d26bea99016c79d939dca8be48d2db61b42c76d",
+    "files": [
+      "prd-step-by-step/README.md",
+      "prd-step-by-step/SKILL.md",
+      "prd-step-by-step/examples/再来一单_PRD.md",
+      "prd-step-by-step/examples/再来一单_输入.md",
+      "prd-step-by-step/reference/边界类别.md",
+      "prd-step-by-step/templates/一页PRD.md"
+    ]
+  },
+  {
+    "id": "resume-match-jd",
+    "name": "resume-match-jd",
+    "zip": "resume-match-jd.zip",
+    "bytes": 7158,
+    "sha256": "c4995ba6782b6dcd21c38c949b9ce97fbacd392298f89b888509006ce4ab2959",
+    "files": [
+      "resume-match-jd/README.md",
+      "resume-match-jd/SKILL.md",
+      "resume-match-jd/examples/示例_B端产品经理.md",
+      "resume-match-jd/templates/匹配表.md"
+    ]
+  },
+  {
+    "id": "review-deck-5-lines",
+    "name": "review-deck-5-lines",
+    "zip": "review-deck-5-lines.zip",
+    "bytes": 8520,
+    "sha256": "3c60da6f9727c91d732c3a3d80712d8ea175a9041b412b88b40bcd9f82c1e8e0",
+    "files": [
+      "review-deck-5-lines/README.md",
+      "review-deck-5-lines/SKILL.md",
+      "review-deck-5-lines/examples/示例_商家后台述职.md",
+      "review-deck-5-lines/templates/事实表.md",
+      "review-deck-5-lines/templates/逐页大纲.md"
+    ]
+  }
+]
