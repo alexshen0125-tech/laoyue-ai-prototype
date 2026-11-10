@@ -1,4 +1,16 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>直播运营与秩序管理 · 积木盒</title><style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>直播运营后台 · 原型模板</title>
+<!--
+  原型模板 · 积木盒 | 老岳AI编辑部 · 原型组
+  改风格：改下面 :root 里的变量（--accent 换主色）
+  改数据：改 <script> 顶部 DATA
+  演示：右下角「原型面板」切页面和状态；按 H 隐藏面板；URL 可直达 #page=goods&state=invalid
+-->
+<style>
 /*@KIT_CSS*/
 /* ==========================================================================
    ① 改风格只改这一块：颜色 / 字体 / 圆角 / 间距 / 阴影
@@ -329,7 +341,7 @@ body.has-tplbar{--bar-h:44px;padding-top:44px}
 .tplbar .tb-btn.primary{background:#fff;color:#16171A;border-color:#fff}
 .tplbar .tb-btn.primary:hover{filter:brightness(.94)}
 .tplbar .tb-btn .ic{width:15px;height:15px}
-.tplbar .tb-hide{width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+.tplbar .tb-hide{flex-shrink:0;width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
 .drawer{top:var(--bar-h,0px)}
 body.pp-hidden .tplbar{display:none}
 body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
@@ -340,11 +352,305 @@ body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
 :root[data-theme="dark"] .brand-mark,:root[data-theme="dark"] .ai-mark{background:#ECECEF;color:#16171A}
 :root[data-theme="dark"] .tab.on{color:#16171A}
 /*@END_KIT_CSS*/
+/* ============================ 本模板样式 ============================ */
+:root{--accent:#B4441C;--accent-soft:#FBEDE6;--live:#D12B3A}
+/* ---- 后台框架（复用 b-shell：.sh 侧栏 + .tb 顶栏 + .crumb2 面包屑 + .tabsbar 页签） ---- */
+.sh{display:grid;grid-template-columns:var(--sw,224px) minmax(0,1fr);min-height:calc(100vh - var(--bar-h))}
+.sb{position:sticky;top:var(--bar-h);height:calc(100vh - var(--bar-h));display:flex;flex-direction:column;background:var(--surface);border-right:1px solid var(--line);overflow:hidden}
+.sb-brand{display:flex;align-items:center;gap:10px;height:56px;padding:0 16px;font-weight:600;font-size:15px;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
+.sb-brand .brand-mark{flex:none}
+.sb-nav{flex:1;overflow-y:auto;padding:10px 8px;scrollbar-width:thin}
+.sb-sec{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:12px 10px 6px;white-space:nowrap}
+.ni{display:flex;align-items:center;gap:10px;width:100%;height:40px;padding:0 10px;border:0;background:none;border-radius:var(--r-sm);color:var(--ink-700);font-size:14px;text-align:left;cursor:pointer;white-space:nowrap;position:relative}
+.ni:hover{background:var(--line-soft);color:var(--ink-900)}
+.ni .ic{flex:none}
+.ni .t{flex:1;overflow:hidden;text-overflow:ellipsis}
+.ni.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.sb-foot{border-top:1px solid var(--line-soft);padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:13px;white-space:nowrap}
+.sb-foot small{display:block;font-size:12px;color:var(--ink-500)}
+.tb{position:sticky;top:var(--bar-h);z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 24px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tb .sp{flex:1}
+.crumb2{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-500);min-width:0;overflow:hidden}
+.crumb2 button{border:0;background:none;color:var(--ink-500);font-size:13px;padding:2px 4px;border-radius:4px;cursor:pointer;white-space:nowrap;min-height:24px}
+.crumb2 button:hover{color:var(--ink-900);background:var(--line-soft)}
+.crumb2 b{color:var(--ink-900);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb2 .ic{width:14px;height:14px;flex:none}
+.tabsbar{display:flex;gap:4px;padding:8px 24px 0;border-bottom:1px solid var(--line);background:var(--surface);overflow-x:auto;scrollbar-width:none}
+.ptab{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid var(--line);border-bottom:0;border-radius:var(--r-sm) var(--r-sm) 0 0;background:var(--surface-2);font-size:13px;color:var(--ink-700);cursor:pointer;white-space:nowrap}
+.ptab.on{background:var(--surface);color:var(--ink-900);font-weight:500;box-shadow:inset 0 2px 0 var(--accent)}
+.pg{padding:24px;max-width:1400px}
+.pg-hd{display:flex;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.pg-hd h1{font-size:22px;line-height:1.3}
+.pg-hd p{font-size:13px;color:var(--ink-500);margin-top:4px}
+.pg-hd .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.tw{position:relative;overflow-x:auto;border-top:1px solid var(--line-soft)}
+.cb{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:28px;cursor:pointer}
+.err-pg{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;min-height:460px}
+.err-pg .code{font-size:64px;font-weight:700;line-height:1;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.err-pg h2{font-size:20px;margin:14px 0 6px}
+.err-pg p{font-size:14px;color:var(--ink-500);max-width:460px;line-height:1.7}
+.err-pg .acts{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+@media (max-width:1000px){.sh{--sw:64px}.sb .t,.sb-sec,.sb-foot .t,.sb-brand .t,.ni .badge{display:none}.ni{justify-content:center;padding:0}.sb-brand{justify-content:center;padding:0}.sb-foot{justify-content:center;padding:10px 0}}
+@media (max-width:640px){.sh{grid-template-columns:minmax(0,1fr)}.sb{display:none}.tb{padding:0 12px;gap:8px}.tabsbar{padding:8px 12px 0}.pg{padding:16px 12px}.pg-hd h1{font-size:19px}.tb .hide-s{display:none}}
 
-:root{--accent:#245953;--accent-soft:color-mix(in srgb,var(--accent) 10%,white);--paper:#f4f3ee;--editorial:#183d38;--space:24px;--cover-a:#dbe6df;--cover-b:#e8d9bf;--chart-height:150px}
-body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32px 32px 180px}.mast{display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:24px}.mast .sp{flex:1}.mast strong{font-size:20px}.edition{font-family:var(--font-mono);color:var(--accent);font-size:12px;letter-spacing:2px}.hero .edition{color:rgba(255,255,255,.78)}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.nav .on{background:var(--accent);color:var(--accent-ink)}.hero{padding:32px;background:var(--editorial);color:var(--accent-ink);border-radius:var(--r-lg);margin-bottom:24px}.hero h1{font-size:32px;margin:8px 0}.hero p{opacity:.9;max-width:650px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.two{display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:24px}.card{padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);min-width:0}.card h2{font-size:20px;margin:0 0 16px}.card h3{font-size:16px;margin:8px 0}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}.toolbar input{flex:1;min-width:140px}.field{display:grid;gap:8px;margin:16px 0}.field input,.field textarea,.field select,.toolbar input,.toolbar select{padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);max-width:100%}.field textarea{min-height:100px}.stat{font-size:32px;font-family:var(--font-mono);font-weight:600;margin:12px 0}.row{padding:16px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}.row .grow{flex:1;min-width:0}.caption{color:var(--ink-500);font-size:13px}.notice{padding:14px 18px;background:var(--accent-soft);border-left:3px solid var(--accent);margin:16px 0}.error{color:var(--danger);min-height:20px}.empty-box{text-align:center;padding:64px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}.empty-box h2{margin:16px}.loading-grid{display:grid;gap:20px}.loading-grid .sk{height:100px}.scroll-table{overflow:auto}.cover-art{height:160px;border-radius:var(--r-sm);background:var(--cover-a);display:flex;align-items:center;justify-content:center;font-size:36px;font-family:serif;color:var(--editorial);margin-bottom:16px}.card:nth-child(even) .cover-art{background:var(--cover-b)}.chart{display:flex;gap:14px;align-items:end;height:var(--chart-height);margin:24px 0}.bar{flex:1;background:var(--accent);min-width:24px;border:0;border-radius:var(--r-sm) var(--r-sm) 0 0;color:var(--accent-ink);cursor:pointer}.reading{font-family:serif;font-size:var(--reader-size,20px);line-height:2.1;max-width:680px;margin:auto}.reading.night{background:var(--ink-900);color:var(--surface);padding:24px;border-radius:var(--r-md)}.steps{display:flex;gap:16px;padding:16px 0;flex-wrap:wrap}.steps span{padding:8px 14px;background:var(--surface);border-radius:var(--r-full)}.steps .active{background:var(--accent);color:var(--accent-ink)}.meter{width:100%;accent-color:var(--accent)}.mobile .workspace{width:min(100%,430px);background:var(--bg);padding:24px 20px 180px;min-height:844px;border:1px solid var(--line);border-radius:var(--r-lg);margin:24px auto}.mobile .grid,.mobile .two{grid-template-columns:1fr}.mobile .hero{padding:24px}.mobile .hero h1{font-size:26px}.mobile button,.mobile input,.mobile select{min-height:44px}.mobile .chart{overflow:auto}.question{padding:20px;border:1px solid var(--line);border-radius:var(--r-md);margin:16px 0}.question label{display:block;padding:12px}.score{font:600 64px var(--font-mono);color:var(--accent)}button:disabled{cursor:not-allowed}input[type=checkbox],input[type=radio]{accent-color:var(--accent)}@media(max-width:800px){.workspace{padding:20px 16px 180px}.grid,.two{grid-template-columns:1fr}.hero h1{font-size:26px}.mast{flex-wrap:wrap}.table{min-width:560px}}
+.sec{padding:16px 18px}
+.sec h2{font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sec h2 small{font-weight:400;font-size:13px;color:var(--ink-500)}
+.sec h2 .r{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.flt{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 16px}
+.flt .input-wrap{width:220px}.flt .select{width:140px}.flt .sp{flex:1}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:var(--r-md);font-size:13px;line-height:1.7;margin-bottom:16px}
+.banner .ic{margin-top:3px;flex:none}
+.banner.warn{background:var(--warning-soft);color:var(--warning)}
+.banner.danger{background:var(--danger-soft);color:var(--danger)}
+.banner.info{background:var(--info-soft);color:var(--info)}
+.banner .btn{margin-left:auto;height:30px;flex:none}
+.foot{display:flex;align-items:center;gap:12px;padding:12px 16px;font-size:13px;color:var(--ink-500);border-top:1px solid var(--line-soft);flex-wrap:wrap}
+.sk-blk{padding:20px}.sk-blk .sk{margin-bottom:12px}
+.num{font-variant-numeric:tabular-nums}
+.livep{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:var(--r-full);background:var(--live);color:#fff;font-size:12px;font-weight:600}
+.livep i{width:6px;height:6px;border-radius:50%;background:#fff;animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.3}}
+/* 排期日历 */
+.cal-wrap{overflow-x:auto;border-top:1px solid var(--line-soft)}
+.cal{display:grid;grid-template-columns:52px repeat(7,minmax(118px,1fr));min-width:880px;position:relative}
+.cal .dh{position:sticky;top:0;z-index:2;height:48px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:12px;color:var(--ink-500);background:var(--surface-2);border-bottom:1px solid var(--line);border-left:1px solid var(--line-soft)}
+.cal .dh b{font-size:14px;color:var(--ink-900);font-weight:600}
+.cal .dh.today{background:var(--accent-soft)}.cal .dh.today b{color:var(--accent)}
+.cal .tc{font-size:11px;color:var(--ink-500);text-align:right;padding-right:8px;transform:translateY(-7px)}
+.cal .col{position:relative;border-left:1px solid var(--line-soft);background:repeating-linear-gradient(to bottom,transparent 0,transparent 63px,var(--line-soft) 63px,var(--line-soft) 64px)}
+.cal .col.today{background-color:#FFFBF8}
+.cal .now{position:absolute;left:0;right:0;height:2px;background:var(--live);z-index:3}
+.cal .now::before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--live)}
+.ev{position:absolute;left:4px;right:4px;border-radius:var(--r-sm);padding:4px 6px;font-size:12px;line-height:1.35;border:0;text-align:left;overflow:hidden;cursor:pointer;border-left:3px solid currentColor}
+.ev b{display:block;font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev.wait{background:#EEF2FD;color:#2343A8}
+.ev.live{background:#FDE8EA;color:#A51E2B}
+.ev.done{background:#F0F1F3;color:#4E5058}
+.ev.cancel{background:#F6F6F7;color:#6B6D75;text-decoration:line-through}
+.ev.warn{box-shadow:inset 0 0 0 1px #E7B65C}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-700)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;border-left:3px solid}
+.table td.wrap{white-space:normal;min-width:180px}
+.mnt .table td,.mnt .table th,.lvgrid .table td,.lvgrid .table th{padding:0 8px}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:13px}
+.st::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.st.wait{color:#2343A8}.st.live{color:var(--live);font-weight:600}.st.done{color:var(--ink-700)}.st.cancel{color:var(--ink-500)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fgrid .full{grid-column:1/-1}
+.cfl{margin-top:4px;padding:10px 12px;border-radius:var(--r-md);background:var(--danger-soft);color:var(--danger);font-size:13px;line-height:1.7}
+.cfl b{font-weight:600}
+.cfl .acts{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.cfl .btn{height:30px;font-size:12px}
+.dsum{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px 12px;font-size:14px;margin:0 0 16px}
+.dsum dt{color:var(--ink-500)}.dsum dd{margin:0;overflow-wrap:anywhere}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chk-row{display:flex;align-items:center;gap:8px;min-height:36px;font-size:14px}
+.chk-row .ic{flex:none}
+.chk-row.ok .ic{color:var(--success)}.chk-row.no .ic{color:var(--warning)}
+/* 商品挂载 */
+.mnt{display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:16px;align-items:start}
+.mnt>*{min-width:0}
+.gi{display:flex;align-items:center;gap:10px;min-width:0}
+.gimg{width:40px;height:40px;border-radius:var(--r-sm);flex:none;overflow:hidden}
+.gimg svg{display:block;width:100%;height:100%}
+.gi b{display:block;font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+.gi small{display:block;font-size:12px;color:var(--ink-500)}
+.ord{display:inline-flex;align-items:center;gap:2px}
+.ord b{width:22px;text-align:center;font-size:13px}
+.ord button{width:28px;height:28px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);display:grid;place-items:center;padding:0;color:var(--ink-700)}
+.ord button[disabled]{opacity:.4}
+.ord .ic{width:14px;height:14px}
+.pin{width:76px}
+.pin .input{height:32px;font-size:13px;padding:0 8px;text-align:right}
+.cell-e{display:block;font-size:11px;color:var(--danger);white-space:normal;line-height:1.35;margin-top:2px;max-width:150px}
+.cell-w{display:block;font-size:11px;color:var(--warning);white-space:normal;line-height:1.35;margin-top:2px;max-width:150px}
+.table td .select{height:32px;width:80px;font-size:13px;padding-right:26px}
+.table tr.cur td{background:var(--accent-soft)}
+.table tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.table tr.dirty td{background:#FFFBF0}
+.lib{position:sticky;top:calc(var(--bar-h) + 112px)}
+.lib .hd{padding:14px 16px 0}
+.lib .hd h2{font-size:15px}
+.lib .hd p{font-size:12px;color:var(--ink-500);margin-top:2px}
+.lib .flt{padding:10px 16px}
+.lib .flt .input-wrap{width:100%}
+.li .gi b{max-width:130px}
+.lib .list{max-height:560px;overflow-y:auto;border-top:1px solid var(--line-soft)}
+.li{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line-soft)}
+.li .gi{flex:1}
+.li .gi b{max-width:150px}
+.li .btn{height:32px;font-size:12px;flex:none}
+.savebar{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;margin-top:16px;border-radius:var(--r-lg);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-2)}
+.savebar .why{font-size:13px;color:var(--ink-700)}
+.savebar .why b{color:var(--danger)}
+.savebar .sp{flex:1}
+/* 实时数据 */
+.lvhd{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px}
+.lvhd h2{font-size:17px}
+.lvhd .m{font-size:13px;color:var(--ink-500)}
+.lvhd .r{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--line-soft)}
+.kpi{padding:14px 16px;border-left:1px solid var(--line-soft);min-width:0}
+.kpi:first-child{border-left:0}
+.kpi small{display:block;font-size:12px;color:var(--ink-500);white-space:nowrap}
+.kpi b{display:block;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;margin:2px 0;white-space:nowrap}
+.kpi span{font-size:12px;color:var(--ink-700);white-space:nowrap}
+.kpi span.up{color:var(--success)}
+.lvgrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;margin-top:16px;align-items:start}
+.lvgrid>*{min-width:0}
+.chart{padding:4px 16px 12px}
+.chart svg{display:block;width:100%;height:auto}
+.chart text{font-size:10px;fill:var(--ink-500)}
+.lg{display:flex;gap:14px;font-size:12px;color:var(--ink-700);flex-wrap:wrap}
+.lg i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.alerts .al{display:flex;gap:10px;padding:12px 16px;border-top:1px solid var(--line-soft);font-size:13px;line-height:1.6}
+.alerts .al .ic{flex:none;margin-top:3px}
+.alerts .al.h .ic{color:var(--danger)}.alerts .al.m .ic{color:var(--warning)}.alerts .al.l .ic{color:var(--info)}
+.alerts .al b{display:block;font-weight:600}
+.alerts .al .btn{height:30px;font-size:12px;margin-top:6px}
+.stk-low{color:var(--danger);font-weight:600}
+.cmts .c{padding:8px 16px;border-top:1px solid var(--line-soft);font-size:13px;line-height:1.55}
+.cmts .c b{font-weight:500;color:var(--ink-700);margin-right:6px}
+.cmts .c .kw{background:var(--warning-soft);color:var(--warning);border-radius:3px;padding:0 3px}
+/* 回放 */
+.prog{display:flex;align-items:center;gap:8px;font-size:13px}
+.prog .bar{width:80px;height:6px;border-radius:3px;background:var(--line-soft);overflow:hidden}
+.prog .bar i{display:block;height:100%;background:var(--info)}
+.seg-l .sg{display:grid;grid-template-columns:112px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line-soft);font-size:13px}
+.seg-l .sg .t{font-variant-numeric:tabular-nums;color:var(--ink-700)}
+.seg-l .sg .btn{height:30px;font-size:12px}
+.seg-l .sg.bad{background:var(--danger-soft);margin:0 -12px;padding:10px 12px;border-radius:var(--r-sm)}
+.sw{display:inline-flex;align-items:center;gap:10px;font-size:14px;min-height:36px;cursor:pointer}
+.sw input{appearance:none;width:40px;height:24px;border-radius:12px;background:var(--ink-300);position:relative;cursor:pointer;margin:0;flex:none;transition:background .2s}
+.sw input::after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw input:checked{background:var(--accent)}.sw input:checked::after{transform:translateX(16px)}
+.sw input:disabled{opacity:.5}
+@media (max-width:1200px){.mnt,.lvgrid{grid-template-columns:1fr}.lib{position:static}.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.kpi:nth-child(5){border-left:0}.kpi{border-bottom:1px solid var(--line-soft)}}
+@media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi:nth-child(odd){border-left:0}.kpi:nth-child(5){border-left:0}.fgrid{grid-template-columns:1fr}.flt .input-wrap,.flt .select{width:100%}.savebar .btn{flex:1}.lvhd .r{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="sh">
+  <aside class="sb" aria-label="主导航"><div class="sb-brand"><span class="brand-mark">茶</span><span class="t">山野茶事 · 直播中台</span></div>
+    <nav class="sb-nav" id="sbnav"></nav>
+    <div class="sb-foot"><span class="avatar">许</span><span class="t">许示例<small>直播运营 · 杭州</small></span></div>
+  </aside>
+  <main style="min-width:0;display:flex;flex-direction:column">
+    <div class="tb"><nav class="crumb2" id="crumb" aria-label="面包屑"></nav><span class="sp"></span><span class="muted hide-s" style="font-size:12px">11-11 周三 20:16 · 示例数据</span></div>
+    <div class="tabsbar" id="tabs" role="tablist" aria-label="已打开的页面"></div>
+    <div id="page" style="flex:1;min-width:0"></div>
+  </main>
+</div>
+<div class="drawer" id="dw" aria-labelledby="dw-t"></div>
 
-</style></head><body class="desktop"><main class="workspace"><header class="mast"><div><div class="edition">PROTOTYPE / 示例</div><strong>直播运营与秩序管理</strong></div><span class="sp"></span><span class="caption">积木盒 · 可点击原型</span></header><nav id="nav" class="nav" aria-label="页面导航"></nav><div id="content"></div></main><script>
+<script>
+/* ==========================================================================
+   ① 改数据只改这里（示例数据，全部虚构）
+   ========================================================================== */
+const DATA = {
+  shop: '山野茶事', today: 2, now: '20:16', nowMin: 20 * 60 + 16,     // today = 本周第几天（0 = 周一 11-09）
+  days: ['11-09 周一', '11-10 周二', '11-11 周三', '11-12 周四', '11-13 周五', '11-14 周六', '11-15 周日'],
+  hosts: { h1: '苏示例 · 主讲', h2: '唐示例 · 副播', h3: '韩示例 · 新人', h4: '顾示例 · 茶艺师' },
+  rooms: { r1: '一号直播间（杭州仓）', r2: '二号直播间（门店）' },
+  channels: ['官方直播间', '小程序直播', '门店号'],
+  // 场次：id、标题、第几天、开始、结束（分钟）、主播、直播间、渠道、状态 wait/live/done/cancel、预约人数、成交额、备注
+  sessions: [
+    ['s1', '周一上新 · 白茶饼开箱', 0, 1170, 1290, ['h1'], 'r1', '官方直播间', 'done', 1860, 48260, ''],
+    ['s2', '午间茶歇 · 冷泡茶怎么泡', 1, 720, 780, ['h3'], 'r2', '小程序直播', 'done', 420, 6840, ''],
+    ['s3', '双11 预热 · 囤茶攻略', 1, 1200, 1320, ['h1', 'h2'], 'r1', '官方直播间', 'done', 5230, 132580, ''],
+    ['s4', '双11 早场 · 绿茶清仓', 2, 600, 720, ['h2'], 'r1', '官方直播间', 'done', 2140, 58930, ''],
+    ['s5', '双11 返场 · 秋冬红茶专场', 2, 1170, 1350, ['h1', 'h4'], 'r1', '官方直播间', 'live', 8460, 0, ''],
+    ['s6', '老茶客答疑 · 普洱怎么存', 3, 1200, 1290, ['h4'], 'r2', '门店号', 'wait', 960, 0, ''],
+    ['s7', '周五茶器专场', 4, 1140, 1260, ['h2'], 'r1', '官方直播间', 'wait', 310, 0, '还没挂商品'],
+    ['s8', '门店茶会 · 岩茶品鉴', 5, 840, 960, ['h3', 'h4'], 'r2', '门店号', 'wait', 540, 0, ''],
+    ['s9', '周日福袋场', 6, 1170, 1260, ['h1'], 'r1', '官方直播间', 'cancel', 1280, 0, '主播请假，已通知预约用户']
+  ],
+  // 商品库：id、名称、规格、日常价、成本价、可用库存、分类、插画、底色
+  goods: [
+    ['g1', '正山小种 一级', '罐装 100g', 98, 42, 1260, '红茶', 'tin', '#F6E7DC'],
+    ['g2', '金骏眉 特级', '礼盒 2×50g', 368, 175, 214, '红茶', 'box', '#F8E3D6'],
+    ['g3', '滇红 古树', '饼 357g', 228, 96, 85, '红茶', 'cake', '#F3E2CF'],
+    ['g4', '祁门红茶 香螺', '袋装 250g', 156, 70, 640, '红茶', 'bag', '#F5E8DD'],
+    ['g5', '白毫银针 2023', '饼 300g', 458, 220, 42, '白茶', 'cake', '#EEF0E6'],
+    ['g6', '老白茶 寿眉 2018', '饼 350g', 198, 88, 310, '白茶', 'cake', '#ECEDE2'],
+    ['g7', '熟普 宫廷级', '砖 250g', 128, 52, 980, '普洱', 'brick', '#EDE3DA'],
+    ['g8', '生普 易武古树', '饼 357g', 588, 290, 26, '普洱', 'cake', '#E9EDDF'],
+    ['g9', '大红袍 肉桂', '罐装 125g', 268, 118, 400, '乌龙', 'tin', '#F1E4D6'],
+    ['g10', '西湖龙井 明前', '罐装 100g', 498, 260, 0, '绿茶', 'tin', '#E7F0E2'],
+    ['g11', '玻璃公道杯', '300ml', 49, 18, 2200, '茶器', 'cup', '#EAF1F4'],
+    ['g12', '汝窑盖碗', '150ml', 168, 66, 150, '茶器', 'bowl', '#E8EEF0'],
+    ['g13', '便携旅行茶具', '1 壶 3 杯', 129, 55, 720, '茶器', 'pot', '#EDEEF2'],
+    ['g14', '桂花糕茶点礼盒', '12 枚 · 临期 12-05', 59, 28, 1800, '茶点', 'box', '#FBF1DC']
+  ],
+  // 每场挂载：商品 id、直播价、直播库存、每人限购（0 = 不限）、上架方式 open 开播即上架 / talk 讲解时上架
+  mounts: {
+    s5: [['g2', 328, 120, 2, 'open'], ['g1', 79, 500, 0, 'open'], ['g3', 198, 60, 2, 'talk'], ['g4', 129, 300, 0, 'open'], ['g9', 238, 150, 2, 'talk'], ['g13', 109, 200, 0, 'open'], ['g11', 39, 400, 0, 'open'], ['g14', 45, 600, 3, 'open']],
+    s6: [['g7', 99, 300, 2, 'open'], ['g8', 528, 20, 1, 'talk'], ['g6', 168, 200, 2, 'open'], ['g3', 198, 60, 2, 'talk'], ['g12', 139, 80, 0, 'open'], ['g11', 39, 500, 0, 'open']],
+    s7: [], s8: [['g9', 238, 120, 2, 'open'], ['g12', 149, 60, 0, 'open']]
+  },
+  minMargin: 15,          // 毛利率底线 %
+  // 正在直播（s5）的实时数据：每个挂载商品 点击、加购、成交件数、剩余直播库存
+  live: { start: 1170, peak: [5106, '20:02'], online: 3482, viewers: 28640, buyers: 1036, fans: 1284, cur: 'g3',
+    stats: { g2: [4820, 612, 38, 82], g1: [6210, 1840, 412, 88], g3: [3960, 980, 54, 6], g4: [2870, 640, 186, 114], g9: [1540, 210, 22, 128], g13: [1320, 260, 61, 139], g11: [2240, 690, 238, 162], g14: [1980, 702, 117, 483] },
+    x: ['19:30', '19:35', '19:40', '19:45', '19:50', '19:55', '20:00', '20:05', '20:10', '20:15'],
+    on: [820, 1640, 2380, 2950, 3410, 4280, 5040, 4720, 3910, 3482], gmv: [0, 4260, 11820, 13540, 18960, 26310, 34820, 29440, 25170, 22100],
+    comments: [['茶友_5821', '金骏眉礼盒能开发票吗'], ['小林爱喝茶', '滇红还有吗，刚才没抢到'], ['示例用户 A', '上次买的<span class="kw">发货慢</span>，这次几天到'], ['老茶客', '普洱明天那场几点'], ['橙子', '杯子能单买吗'], ['示例用户 B', '<span class="kw">发货慢</span>的话我先不下了'], ['茶友_0312', '主播讲讲怎么醒茶']] },
+  // 回放：id（对应场次或更早）、标题、日期、时段、主播、时长、峰值在线、观看、成交额、状态 ok/gen/bad、进度、公开
+  replays: [
+    ['s4', '双11 早场 · 绿茶清仓', '11-11', '10:00-12:00', 'h2', '1:58:40', 2860, 14320, 58930, 'gen', 63, false],
+    ['s3', '双11 预热 · 囤茶攻略', '11-10', '20:00-22:00', 'h1', '2:04:12', 6120, 39860, 132580, 'bad', 100, false],
+    ['s2', '午间茶歇 · 冷泡茶怎么泡', '11-10', '12:00-13:00', 'h3', '0:57:05', 640, 3270, 6840, 'ok', 100, true],
+    ['s1', '周一上新 · 白茶饼开箱', '11-09', '19:30-21:30', 'h1', '2:01:33', 3480, 21640, 48260, 'ok', 100, true],
+    ['p1', '周末茶器开箱', '11-08', '14:00-15:30', 'h2', '1:31:20', 1290, 7120, 18450, 'ok', 100, true],
+    ['p2', '岩茶的火功', '11-07', '20:00-21:30', 'h4', '1:28:51', 2050, 11480, 36720, 'ok', 100, false]
+  ],
+  // 回放片段：开始-结束、内容、讲解期间成交
+  segs: { s3: [['00:00:00-00:06:20', '开场 · 双11 规则说明', 0], ['00:06:20-00:24:10', '正山小种 一级', 21640], ['00:24:10-00:41:30', '金骏眉 特级', 38220], ['00:41:30-01:12:30', '老白茶 寿眉 2018', 29870], ['01:12:30-01:13:10', '背景音乐未授权（审核不通过）', 0, true], ['01:13:10-01:39:00', '熟普 宫廷级', 24310], ['01:39:00-02:04:12', '福袋 · 答疑', 18540]] }
+};
+
+/* ==========================================================================
+   ①-2 AI 提示词（页面右侧可一键复制；{{变量}} 点一下就能填）
+   ========================================================================== */
+const PROMPTS = [
+ { title: '从零生成这个原型', when: '要做直播电商后台，想把排期撞档、商品挂载算价、直播中盯数据、回放审核一次在原型里对齐时用',
+   text: `请帮我做一个可点击的 PC 后台原型（1440 宽，500 宽不横向滚动）：茶叶品牌的直播运营后台，左侧导航 + 顶部面包屑 + 页签。
+
+1. 直播排期：周日历（周一～周日 × 10:00～23:00，每 30 分钟一格），场次块按状态上色（待开播 / 直播中 / 已结束 / 已取消），当前时间画红线；可切换列表视图；新建场次抽屉：标题（≤30 字）、日期、开始结束、主播（可多选）、直播间、渠道；校验：结束要晚于开始、单场不超过 4 小时、不能排在过去、主播或直播间撞档要写出撞的是哪一场，并给「换到空闲的直播间」「改到 21:30 以后」一键修正；点场次看详情（预约人数、挂载商品数、取消要写原因并通知预约用户）。
+2. 商品挂载：选场次；左边已挂载表（讲解顺序上移下移、直播价、折扣与毛利率自动算、直播库存、每人限购、上架方式）；右边商品库搜索 / 分类，已挂载和售罄的不能再加；校验：直播价高于日常价、低于成本价、直播库存超过可用库存为错误，毛利率低于 15% 为提醒；「批量按日常价 8 折填价」；底部保存条写「有 N 处问题」，有错不能保存。
+3. 实时数据（直播中）：在线、累计观看、成交额、成交人数、转化率（成交人数 ÷ 累计观看）、客单价（成交额 ÷ 成交人数）、新增关注；5 分钟一点的在线人数与成交额双折线；商品表（点击、加购、成交、剩余库存，低于 10% 标红，讲解中高亮），可「讲解这个」、上下架、补库存（不能超过可用库存）；右侧告警（库存快没了、评论里出现「发货慢」）与评论流；发券要二次确认写清推给多少在线观众；结束直播要确认。
+4. 回放：已结束场次表（时长、峰值、观看、成交、回放状态 生成中 63% / 可观看 / 审核不通过）；抽屉里按讲解片段列出时间段和成交，审核不通过的片段标红并能「去掉这段重新生成」；公开回放开关；剪成短视频。
+状态（原型面板可切换）：排期 日历 / 列表 / 撞档 / 空 / 无权限；挂载 校验不过 / 未挂载；实时 库存告警 / 未开播（开播检查清单）；回放 空；每页都有 加载 / 出错。
+数字必须由数据算出来；各商品成交额之和 = 总成交额。
+硬性要求：单文件 HTML，离线可开；颜色写成 :root 变量；数据集中在脚本顶部 DATA。
+交付：① 完整 HTML；② 校验规则表（字段 | 规则 | 错误还是提醒 | 提示文案）；③ 状态清单。` },
+ { title: '改成我的业务', when: '手上有这个模板，要换成服饰、美妆、农产品、教育课程等自己的直播业务时用',
+   text: `附件是一个单文件 HTML 的直播运营后台原型。请改成「{{品牌和品类，例如：童装品牌直播}}」。
+
+1. 只改脚本顶部 DATA 和文案，不动 KIT 标记之间的共用样式和脚本；保留撞档校验、挂载算价校验、实时数据公式、库存告警、回放片段审核；
+2. 主播和直播间换成：{{例如：3 位主播、2 个直播间、1 个户外场}}；渠道：{{渠道}}；
+3. 商品库换成 14 个 {{商品类型}}，每个日常价、成本价、可用库存都不同，含 1 个售罄；
+4. 规则改成：毛利率底线 {{例如：20%}}；单场时长上限 {{例如：6 小时}}；限购规则：{{规则}}；
+5. 实时数据里关心的指标：{{例如：加购率、退款率}}，写清公式；评论告警关键词：{{例如：尺码、色差}}。
+交付：改好的完整 HTML + 校验规则表 + 指标公式表。` },
+ { title: '在此基础上加页面 / 状态', when: '评审追问「主播业绩怎么算」「福袋怎么配」「多平台怎么同时推流」时用',
+   text: `附件是一个单文件 HTML 的直播运营后台原型。请在它的基础上加：{{要加的页面或状态}}。
+
+常见例子（选一个或照着写）：
+- 「主播业绩」：按主播汇总本月场次、时长、成交额、每小时成交、提成（成交额 × 提成比例，退款扣回），可导出；
+- 「福袋与抽奖」：直播中配置福袋（奖品、份数、参与条件 关注 / 评论口令、开奖时间），开奖后公示中奖名单，奖品库存不足时拦截；
+- 「多平台同时开播」：一个场次选多个渠道，各渠道推流状态（正常 / 断流 / 码率低）分开显示，断流可一键重推；
+- 「直播复盘」：结束后自动生成复盘页（流量来源、商品讲解时长 vs 成交、流失时间点），可写结论并 @ 主播。
+
+要求：新页面或状态加进「原型面板」和左侧导航；数字和现有场次、商品、实时数据对得上；沿用现有 CSS 变量和组件样式。
+交付：完整 HTML + 新增部分的「元素 | 交互 | 反馈」说明表。` }
+];
+
+/* ==========================================================================
+   ② 下面是交互逻辑，一般不用改
+   ========================================================================== */
 /*@KIT_JS*/
 /* ==========================================================================
    原型工具包（不用改）：图标、页面/状态切换、弹层、Toast
@@ -610,42 +916,332 @@ body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32p
   P.stateBlock=function(o){return '<div class="state '+(o.error?'is-error':'')+'"><div class="state-ic">'+P.ic(o.icon||(o.error?'alert':'inbox'))+'</div><h3>'+P.esc(o.title)+'</h3>'+(o.body?'<p>'+P.esc(o.body)+'</p>':'')+(o.acts?'<div class="acts">'+o.acts+'</div>':'')+'</div>'};
 })();
 /*@END_KIT_JS*/
-</script><script>
-// 示例业务数据：仅本次会话修改，刷新恢复；在这里替换字段和数据。
-const DATA={"rooms": [{"id": "L01", "name": "示例手作分享", "host": "示例小岚", "viewers": 128, "likes": 860, "status": "直播中"}, {"id": "L02", "name": "示例读书夜话", "host": "示例青禾", "viewers": 52, "likes": 218, "status": "直播中"}, {"id": "L03", "name": "示例植物课堂", "host": "示例木木", "viewers": 0, "likes": 0, "status": "未开播"}], "messages": [{"id": "U01", "name": "示例观众甲", "text": "请问下一场什么时候开始？"}, {"id": "U02", "name": "示例观众乙", "text": "示例重复广告内容"}], "penalties": [], "logs": []};
-const PAGES=[{"id": "rooms", "name": "直播间列表", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}, {"id": "monitor", "name": "实时监控", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}, {"id": "ended", "name": "直播结束"}]}, {"id": "moderation", "name": "禁言与封禁", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}];
-const PROMPTS=[{"title": "从零生成这个原型", "when": "要从需求开始搭建可演示的页面时用", "text": "请用单文件 HTML 创建「直播运营与秩序管理」可点击原型。用途：适合直播运营评审，覆盖直播间检索、模拟实时指标、聊天禁言封禁、解除与审计；无真实直播或外部处置。包含页面：直播间列表、实时监控、禁言与封禁。业务交互：搜索名称和状态，过滤结果，未开播禁用监控入口；开关模拟刷新，在线与点赞每秒变化，离页停止；选择观众并填写原因，原因必填，处置名单和审计同步；二次确认解除，状态更新，保留历史；确认结束，列表状态联动，监控操作禁用。每个主页面提供正常、空、骨架加载、出错和重试，表单提供校验、提交中、成功、失败。数据集中在 DATA；样式使用 CSS 变量；图标内联 SVG；示例数据标示例。不使用外部依赖，离线双击可开。顶部提供免费下载说明，右下角原型面板支持 URL 直达和 H 隐藏，弹窗支持 Esc 和焦点归还。交付 HTML、README 和交互说明表。"}, {"title": "改成我的业务", "when": "点击高亮变量填写，然后一键复制", "text": "附件是「直播运营与秩序管理」HTML 原型，请改成我的业务：产品名称为「{{产品名称}}」，目标用户「{{目标用户}}」，字段和示例数据「{{字段与示例数据}}」，业务规则「{{业务规则}}」。保留 直播间列表、实时监控、禁言与封禁 的完整链路与所有空、加载、出错状态。修改 DATA 和模板变量，不改共用 KIT 标记内代码。所有金额、数量、状态随操作联动；不能执行的操作写原因。交付可离线打开的完整 HTML 和更新后的交互表。"}, {"title": "加页面或状态", "when": "需要扩展当前链路时用", "text": "请在「直播运营与秩序管理」中增加「{{新增页面或状态}}」，入口为「{{入口位置}}」，成功结果为「{{成功反馈}}」，失败恢复方式为「{{失败恢复方式}}」。沿用当前 CSS 变量、DATA 与 Proto 页面面板；保留已有流程。为新增列表补正常、空、加载、出错；为新增表单补校验、提交中、成功、失败。离开页面应取消定时回调。更新 README 的状态表和交互表，保持单文件离线可用。"}];
 
-const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s)), e=Proto.esc;
-const btn=(label,action,primary=false,disabled=false)=>`<button type="button" class="btn ${primary?'btn-primary':''}" data-act="${action}" ${disabled?'disabled':''}>${label}</button>`;
-const field=(label,id,value='',type='text')=>`<label class="field">${label}<input id="${id}" type="${type}" value="${e(String(value))}"></label>`;
-const card=(title,body)=>`<section class="card"><h2>${title}</h2>${body}</section>`;
-const money=n=>Proto.money(n);
-const notice=t=>`<div class="notice" role="status">${t}</div>`;
-function download(name,text,type='text/plain'){const a=document.createElement('a'),u=URL.createObjectURL(new Blob(['\ufeff',text],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function modal(title,body){const m=document.createElement('div');m.className='modal';m.dataset.temp='1';m.setAttribute('aria-label',title);m.innerHTML=`<div class="layer-hd"><h2>${title}</h2></div><div class="layer-bd">${body}</div><div class="layer-ft"><button class="btn" data-close>关闭</button></div>`;Proto.open(m);m.querySelector('[data-close]').onclick=()=>Proto.close(m);return m}
-let timer=null, epoch=0;
-function go(page,state='normal'){Proto.go(page,state)}
-function later(fn,ms=500){clearTimeout(timer);const v=epoch;timer=setTimeout(()=>{if(v===epoch)fn()},ms)}
-function refresh(){render(Proto.state.page,Proto.state.state)}
-function fallback(page,state){if(state==='loading')return '<div class="loading-grid" aria-busy="true" aria-label="加载中"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>';
-if(state==='error')return `<div class="empty-box">${Proto.ic('alert')}<h2>暂时无法加载</h2><p>示例服务响应超时，本次修改仍保留。</p>${btn('重试','retry',true)}</div>`;
-if(state==='empty')return `<div class="empty-box">${Proto.ic('inbox')}<h2>这里还没有内容</h2><p>可以载入示例数据，继续演示完整流程。</p>${btn('载入示例','example',true)}</div>`;return null}
-function render(page,state){epoch++;clearTimeout(timer);$$('.modal.show').forEach(m=>Proto.close(m));$('#nav').innerHTML=PAGES.map(p=>`<button class="btn ${p.id===page?'on':''}" data-page="${p.id}">${p.name}</button>`).join('');$('#content').innerHTML=fallback(page,state)||view(page,state);if(typeof mount==='function')mount(page,state)}
-document.addEventListener('click',ev=>{const p=ev.target.closest('[data-page]');if(p){go(p.dataset.page);return}const b=ev.target.closest('[data-act]');if(!b||b.disabled)return;const a=b.dataset.act;if(a==='retry'){const page=Proto.state.page;go(page,'loading');later(()=>go(page));return}if(a==='example'){go(Proto.state.page);return}action(a,b)});
+const P = Proto, { $, $$, ic, esc, toast } = Proto;
+const PG = $('#page'), dw = $('#dw');
+const clone = o => JSON.parse(JSON.stringify(o));
+const fm = n => '¥' + Math.round(n).toLocaleString('zh-CN');
+const f2 = n => '¥' + (+n).toFixed(2);
+const hm = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+const G = id => DATA.goods.find(g => g[0] === id);
+let SS, MT, LV, RP, Q, carry = false, dirty = false;
+function fresh() {
+  SS = clone(DATA.sessions); MT = clone(DATA.mounts); LV = clone(DATA.live); RP = clone(DATA.replays);
+  Q = { view: 'cal', sess: 's6', lq: '', lcat: '', rq: '', rhost: '', rst: '', form: null, stockOut: false, notlive: false, ended: false, refresh: 0 };
+  dirty = false;
+}
+const SN = id => SS.find(s => s[0] === id);
+const hostNames = hs => hs.map(h => DATA.hosts[h].split(' · ')[0]).join('、');
 
+/* ---------------- 框架（复用 b-shell） ---------------- */
+const NAV = [['schedule', '直播排期', 'calendar'], ['goods', '商品挂载', 'bag'], ['live', '实时数据', 'chart'], ['replay', '直播回放', 'play']];
+function chrome(cur) {
+  const live = SS.find(s => s[8] === 'live');
+  $('#sbnav').innerHTML = `<div class="sb-sec">直播</div>${NAV.map(n => `<button class="ni${n[0] === cur ? ' on' : ''}" type="button" data-go="${n[0]}" ${n[0] === cur ? 'aria-current="page"' : ''}>${ic(n[2])}<span class="t">${n[1]}</span>${n[0] === 'live' && live ? '<span class="badge badge-danger">直播中</span>' : ''}</button>`).join('')}<div class="sb-sec">店铺</div><button class="ni" type="button" data-toast="商品管理（示例，见 b-mall-admin）">${ic('grid')}<span class="t">商品管理</span></button><button class="ni" type="button" data-toast="订单（示例，见 b-list-drawer）">${ic('file')}<span class="t">订单</span></button><button class="ni" type="button" data-toast="营销工具（示例）">${ic('gift')}<span class="t">优惠券</span></button>`;
+  const t = NAV.find(n => n[0] === cur);
+  $('#crumb').innerHTML = `<button type="button" data-toast="工作台（示例）">${DATA.shop}</button>${ic('chev-r')}<button type="button" data-go="schedule">直播</button>${ic('chev-r')}<b>${t[1]}</b>`;
+  $('#tabs').innerHTML = NAV.map(n => `<span class="ptab ${n[0] === cur ? 'on' : ''}" role="tab" tabindex="0" aria-selected="${n[0] === cur}" data-go="${n[0]}">${n[1]}</span>`).join('');
+}
+function head(t, sub, acts) { return `<div class="pg-hd"><div><h1>${t}</h1>${sub ? `<p>${sub}</p>` : ''}</div>${acts ? `<div class="acts">${acts}</div>` : ''}</div>`; }
+function skel(n) { return `<section class="card sk-blk" aria-busy="true" aria-label="正在加载"><div class="sk" style="height:18px;width:220px"></div><div class="sk" style="height:12px;width:420px;max-width:100%"></div><table class="table" style="margin-top:12px"><tbody>${P.skRows(n, 6)}</tbody></table></section>`; }
+function errCard(t, b) { return `<section class="card">${P.stateBlock({ error: true, title: t, body: b, acts: `<button class="btn btn-primary" type="button" data-retry>${ic('refresh')}重试</button>` })}</section>`; }
+function art(kind, bg) {
+  const K = { tin: '<rect x="12" y="10" width="16" height="22" rx="2" fill="#8A4B2A"/><rect x="12" y="8" width="16" height="4" rx="1" fill="#5A2E18"/><rect x="14" y="17" width="12" height="7" fill="#F4D9B8"/>', box: '<rect x="7" y="13" width="26" height="18" rx="2" fill="#B4441C"/><path d="M7 19h26M20 13v18" stroke="#F4C77B" stroke-width="2"/>', cake: '<ellipse cx="20" cy="22" rx="13" ry="10" fill="#7A4A26"/><ellipse cx="20" cy="21" rx="11" ry="8" fill="#9B6334"/><circle cx="20" cy="21" r="2" fill="#5A3418"/>', bag: '<path d="M11 12h18l2 20H9z" fill="#C79A5A"/><path d="M15 12c0-4 10-4 10 0" stroke="#8A6A3A" stroke-width="2" fill="none"/>', brick: '<rect x="8" y="12" width="24" height="16" rx="2" fill="#5E3A22"/><path d="M12 16h16M12 20h16M12 24h16" stroke="#7E5434" stroke-width="1.4"/>', cup: '<path d="M12 12h16l-2 18H14z" fill="#CFE3EA" stroke="#7FA8B6"/><path d="M14 20h12l-1 9H15z" fill="#C97A3E" opacity=".75"/>', bowl: '<path d="M8 18h24c0 8-5 12-12 12S8 26 8 18z" fill="#A7C4C9"/><ellipse cx="20" cy="18" rx="12" ry="3" fill="#C8DCDF"/><path d="M14 14h12" stroke="#7FA0A6" stroke-width="2"/>', pot: '<ellipse cx="19" cy="22" rx="10" ry="8" fill="#6B5A4A"/><path d="M29 19l5-3" stroke="#6B5A4A" stroke-width="3"/><rect x="16" y="11" width="6" height="4" rx="1" fill="#4A3C30"/>' };
+  return `<span class="gimg"><svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" fill="${bg}"/>${K[kind] || ''}</svg></span>`;
+}
+const gi = (g, extra) => `<div class="gi">${art(g[7], g[8])}<span style="min-width:0"><b title="${esc(g[1])}">${esc(g[1])}</b><small>${esc(g[2])}${extra || ''}</small></span></div>`;
 
-let roomId='L01',query='',status='全部',auto=false;
-const room=()=>DATA.rooms.find(x=>x.id===roomId);
-function view(p,s){if(p==='rooms'){const list=DATA.rooms.filter(r=>r.name.includes(query)&&(status==='全部'||r.status===status));return `<section class="hero"><div class="edition">LIVE OPERATIONS / 示例</div><h1>看见现场，及时处理</h1><p>列表定位直播间，监控查看模拟指标，秩序管理保留原因与操作记录。</p></section>${card('直播间',`<div class="toolbar"><input id="room-query" placeholder="搜索直播间" aria-label="搜索直播间" value="${e(query)}"><select id="room-status" aria-label="直播状态">${['全部','直播中','未开播','已结束'].map(x=>`<option ${status===x?'selected':''}>${x}</option>`).join('')}</select>${btn('查询','search',true)}${btn('重置','reset')}</div>${list.map(r=>`<div class="row"><div class="grow"><b>${e(r.name)}</b><p>${e(r.host)} · ${r.status}</p></div><b>${r.viewers} 在线</b>${btn('进入监控','room:'+r.id,false,r.status==='未开播')}</div>`).join('')||notice('无匹配直播间，尝试重置筛选。')}`)}`}
-if(p==='moderation')return `<div class="two">${card('处置名单',DATA.penalties.length?DATA.penalties.map((x,i)=>`<div class="row"><div class="grow"><b>${e(x.name)} · ${x.kind}</b><p>${e(x.reason)}</p><span class="caption">${e(x.room)} · ${x.active?'生效中':'已解除'}</span></div>${btn('解除','release:'+i,false,!x.active)}</div>`).join(''):notice('暂无处置记录；可在监控页对示例聊天进行处置。'))}${card('审计记录',DATA.logs.map(x=>`<p>${e(x)}</p>`).join('')||'<p>尚无操作。</p>')}</div>`;
-const r=room(),ended=s==='ended'||r.status==='已结束';return `<div class="toolbar"><h2>${e(r.name)}</h2><span>${ended?'已结束':r.status}</span>${btn('返回列表','rooms')}</div><div class="grid">${card('在线人数',`<div class="stat" id="viewer-count">${ended?0:r.viewers}</div><p>仅本地模拟</p>`)}${card('累计点赞',`<div class="stat" id="like-count">${r.likes}</div><p>示例指标</p>`)}${card('监控控制',`${btn(auto?'暂停模拟刷新':'开始模拟刷新','auto',true,ended)}${btn('结束直播','end',false,ended)}<p class="caption">每秒模拟增加 1 人、3 个赞，不连接真实直播流。</p>`)}</div><div class="two" style="margin-top:24px">${card('预览区域',`<div class="cover-art" style="height:240px">${ended?'直播已结束':'直播画面占位'}</div><p>此处为视频接入位置，不含真实视频。</p>`)}${card('实时聊天（示例）',DATA.messages.map(u=>{const pen=DATA.penalties.find(x=>x.user===u.id&&x.roomId===roomId&&x.active);return `<div class="row"><div class="grow"><b>${e(u.name)}</b><p>${e(u.text)}</p><span>${pen?pen.kind:'正常'}</span><div class="toolbar">${btn('禁言','mute:'+u.id,false,ended||!!pen)}${btn('封禁','ban:'+u.id,false,ended||!!pen)}</div></div></div>`}).join(''))}</div>`}
-function update(){if(!auto||Proto.state.page!=='monitor')return;const r=room();if(r.status!=='直播中')return;r.viewers++;r.likes+=3;$('#viewer-count').textContent=r.viewers;$('#like-count').textContent=r.likes;later(update,1000)}
-function mount(p,s){if(p==='monitor'&&s==='normal'&&auto)later(update,1000);else if(p!=='monitor'||s!=='normal')auto=false}
-async function action(a){const [k,id]=a.split(':');if(k==='room'){roomId=id;go('monitor')}if(a==='rooms')go('rooms');if(a==='search'){query=$('#room-query').value.trim();status=$('#room-status').value;refresh()}if(a==='reset'){query='';status='全部';refresh()}if(a==='auto'){auto=!auto;refresh()}if(a==='end'){if(await Proto.confirm({title:'结束示例直播',body:'结束后不能继续刷新或处置聊天，是否继续？',danger:true,ok:'结束直播'})){room().status='已结束';room().viewers=0;auto=false;DATA.logs.unshift(room().name+'：结束直播（示例操作员）');go('monitor','ended')}}if(k==='mute'||k==='ban'){const u=DATA.messages.find(x=>x.id===id),kind=k==='mute'?'禁言10分钟':'封禁本场',m=modal(kind,`<p>对象：${e(u.name)} · ${e(room().name)}</p><label class="field">原因（必填）<textarea id="penalty-reason"></textarea></label><p id="penalty-error" class="error" role="alert"></p>${btn('确认处置','confirm-penalty',true)}`);m.querySelector('[data-act]').onclick=()=>{const reason=$('#penalty-reason').value.trim();if(!reason){$('#penalty-error').textContent='请填写处置原因';return}if(DATA.penalties.some(x=>x.user===id&&x.roomId===roomId&&x.active))return;const item={user:id,name:u.name,roomId,room:room().name,kind,reason,active:true,until:k==='mute'?Date.now()+600000:null};DATA.penalties.push(item);DATA.logs.unshift(u.name+'：'+kind+'；原因：'+reason);Proto.close(m);refresh();Proto.toast('示例处置已生效','ok')}}if(k==='release'){const x=DATA.penalties[+id];if(!x.active)return;if(await Proto.confirm({title:'解除处置',body:x.name+'：'+x.kind,ok:'确认解除'})){x.active=false;DATA.logs.unshift(x.name+'：手动解除'+x.kind);refresh()}}}
-// 禁言到期在每次渲染时核对，避免后台计时漂移。
-const rawRender=render;render=function(p,s){DATA.penalties.forEach(x=>{if(x.active&&x.until&&Date.now()>=x.until){x.active=false;DATA.logs.unshift(x.name+'：禁言到期自动解除')}});rawRender(p,s)};
-window.round2Test=async({ok,act,input,click,wait})=>{go('rooms');act('room:L01');act('auto');await wait(1050);ok(room().viewers===129&&room().likes===863,'指标定时联动');act('auto');act('mute:U02');click('.modal.show [data-act="confirm-penalty"]');ok($('#penalty-error').textContent.includes('原因'),'原因必填');input('#penalty-reason','示例重复广告');click('.modal.show [data-act="confirm-penalty"]');ok(DATA.penalties.length===1&&$('[data-act="mute:U02"]').disabled,'处置生效并禁止重复');go('moderation');act('release:0');await wait(1);click('.modal.show [data-k="1"]');await wait(1);ok(!DATA.penalties[0].active,'解除处置');go('monitor');act('end');await wait(1);click('.modal.show [data-k="1"]');await wait(1);ok(room().status==='已结束'&&$('[data-act="auto"]').disabled,'结束禁用监控操作')};
+/* ---------------- ① 直播排期 ---------------- */
+const ST = { wait: '待开播', live: '直播中', done: '已结束', cancel: '已取消' };
+function conflicts(f, skip) {
+  const out = [];
+  SS.forEach(s => { if (s[0] === skip || s[8] === 'cancel' || s[2] !== f.day) return; if (f.start < s[4] && f.end > s[3]) { const hs = s[5].filter(h => f.hosts.includes(h)); if (hs.length) out.push(['host', s, hs]); if (s[6] === f.room) out.push(['room', s]); } });
+  return out;
+}
+function formErr(f) {
+  const e = {};
+  if (!f.title.trim()) e.title = '请填写场次标题'; else if (f.title.trim().length > 30) e.title = `最多 30 字，现在 ${f.title.trim().length} 字`;
+  if (f.end <= f.start) e.time = '结束时间要晚于开始时间'; else if (f.end - f.start > 240) e.time = `单场最长 4 小时，现在 ${((f.end - f.start) / 60).toFixed(1)} 小时`;
+  else if (f.day < DATA.today || (f.day === DATA.today && f.start < DATA.nowMin)) e.time = '不能排在已经过去的时间';
+  if (!f.hosts.length) e.hosts = '至少选 1 位主播';
+  return e;
+}
+function pSchedule(state) {
+  chrome('schedule');
+  const cnt = s => SS.filter(x => x[8] === s).length;
+  const hd = head('直播排期', `本周 11-09～11-15 · ${SS.filter(s => s[8] !== 'cancel').length} 场 · 待开播 ${cnt('wait')} · 直播中 ${cnt('live')}`, state === 'noperm' ? '' : `<div class="seg" role="group" aria-label="视图"><button type="button" data-view="cal" aria-pressed="${Q.view === 'cal'}">日历</button><button type="button" data-view="list" aria-pressed="${Q.view === 'list'}">列表</button></div><button class="btn" type="button" data-toast="已切到下一周（示例只有本周数据）">下一周${ic('chev-r', 'ic-sm')}</button><button class="btn btn-primary" type="button" data-new>${ic('plus')}新建场次</button>`);
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(8)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${errCard('排期没加载出来', '排期服务响应超时（错误编号 LIVE-504，示例）。正在进行的直播不受影响。')}</div>`; return; }
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}<section class="card"><div class="err-pg"><div class="code">403</div><h2>只有直播运营和店长能排期</h2><p>你当前是「主播」账号（韩示例），只能看到自己的场次和开播提醒。需要调整时间请联系直播运营 许示例。</p><div class="acts"><button class="btn btn-primary" type="button" data-apply>申请排期权限</button></div></div></section></div>`; return; }
+  const vis = state === 'empty' ? [] : SS;
+  if (!vis.length) { PG.innerHTML = `<div class="pg">${hd}<section class="card">${P.stateBlock({ icon: 'calendar', title: '本周还没有排期', body: '新建第一场直播：选时间、主播和直播间，系统会自动检查撞档。', acts: '<button class="btn btn-primary" type="button" data-new>新建场次</button><button class="btn" type="button" data-toast="已复制上周 6 场排期（示例）">复制上周排期</button>' })}</section></div>`; return; }
+  const H0 = 10, H1 = 23, px = 64 / 60;  // 每小时 64px
+  const warn = SS.filter(s => s[8] === 'wait' && !(MT[s[0]] || []).length);
+  const cal = `<div class="cal-wrap"><div class="cal" style="grid-template-rows:48px ${(H1 - H0) * 64}px"><div class="dh" style="border-left:0"></div>${DATA.days.map((d, i) => `<div class="dh${i === DATA.today ? ' today' : ''}"><b>${d.split(' ')[1]}</b>${d.split(' ')[0]}</div>`).join('')}
+    <div style="position:relative">${Array.from({ length: H1 - H0 }, (_, i) => `<div class="tc" style="position:absolute;top:${i * 64}px;right:0${i ? '' : ';transform:none'}">${H0 + i}:00</div>`).join('')}</div>
+    ${DATA.days.map((d, i) => `<div class="col${i === DATA.today ? ' today' : ''}">${i === DATA.today ? `<div class="now" style="top:${(DATA.nowMin - H0 * 60) * px}px" title="现在 ${DATA.now}"></div>` : ''}${vis.filter(s => s[2] === i).map(s => { const n = (MT[s[0]] || []).length; return `<button class="ev ${s[8]}${s[8] === 'wait' && !n ? ' warn' : ''}" type="button" data-sess="${s[0]}" style="top:${(s[3] - H0 * 60) * px + 1}px;height:${(s[4] - s[3]) * px - 2}px" aria-label="${esc(s[1])} ${hm(s[3])}-${hm(s[4])} ${ST[s[8]]}"><b>${esc(s[1])}</b><span>${hm(s[3])}-${hm(s[4])} · ${ST[s[8]]}</span><span>${hostNames(s[5])} · ${s[6] === 'r1' ? '一号间' : '二号间'}</span>${s[8] === 'wait' ? `<span>${n ? `挂 ${n} 款 · 预约 ${s[9]}` : '⚠ 还没挂商品'}</span>` : ''}</button>`; }).join('')}</div>`).join('')}</div></div>`;
+  const list = `<div class="tw"><table class="table"><thead><tr><th>日期</th><th>时段</th><th>场次</th><th>主播</th><th>直播间</th><th>渠道</th><th class="r">挂载商品</th><th class="r">预约 / 成交</th><th>状态</th><th>操作</th></tr></thead><tbody>${vis.slice().sort((a, b) => a[2] - b[2] || a[3] - b[3]).map(s => { const n = (MT[s[0]] || []).length; return `<tr><td>${DATA.days[s[2]]}</td><td class="num">${hm(s[3])}-${hm(s[4])}</td><td class="wrap"><b style="font-weight:500">${esc(s[1])}</b>${s[11] ? `<br><span class="muted" style="font-size:12px">${esc(s[11])}</span>` : ''}</td><td>${hostNames(s[5])}</td><td>${s[6] === 'r1' ? '一号间' : '二号间'}</td><td>${s[7]}</td><td class="r num">${s[8] === 'done' || s[8] === 'cancel' ? '—' : n ? n + ' 款' : '<span style="color:var(--warning)">0 款</span>'}</td><td class="r num">${s[8] === 'done' ? fm(s[10]) : s[9].toLocaleString() + ' 人'}</td><td><span class="st ${s[8]}">${ST[s[8]]}</span></td><td><button class="btn-link" type="button" data-sess="${s[0]}">详情</button></td></tr>`; }).join('')}</tbody></table></div>`;
+  PG.innerHTML = `<div class="pg">${hd}
+   ${warn.length ? `<div class="banner warn">${ic('alert')}<span>${warn.map(s => `「${esc(s[1])}」${DATA.days[s[2]]} ${hm(s[3])}`).join('、')} 还没挂商品，开播前至少挂 1 款。</span><button class="btn" type="button" data-mount="${warn[0][0]}">去挂载</button></div>` : ''}
+   <section class="card"><div class="sec" style="padding-bottom:12px"><h2>11 月第 2 周<span class="r legend"><span><i style="background:#EEF2FD;border-color:#2343A8"></i>待开播</span><span><i style="background:#FDE8EA;border-color:#A51E2B"></i>直播中</span><span><i style="background:#F0F1F3;border-color:#4E5058"></i>已结束</span><span><i style="background:#F6F6F7;border-color:#9A9CA3"></i>已取消</span></span></h2></div>${Q.view === 'cal' ? cal : list}
+   <div class="foot">同一主播、同一直播间时间不能重叠；单场最长 4 小时；红线为现在 ${DATA.now}</div></section></div>`;
+}
+function openForm(f) {
+  Q.form = f || { id: null, title: '', day: 3, start: 1140, end: 1260, hosts: ['h2'], room: 'r1', channel: '官方直播间', note: '', tried: false };
+  drawForm(); P.open(dw);
+}
+function drawForm() {
+  const f = Q.form, e = f.tried ? formErr(f) : {}, cf = conflicts(f, f.id);
+  const times = []; for (let m = 600; m <= 1410; m += 30) times.push(m);
+  const freeRoom = Object.keys(DATA.rooms).find(r => !conflicts({ ...f, room: r, hosts: [] }, f.id).length);
+  const latest = cf.length ? Math.max(...cf.map(c => c[1][4])) : 0;
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">${f.id ? '编辑场次' : '新建场次'}</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div>
+  <div class="layer-bd"><div class="fgrid">
+   <div class="field full"><label class="label" for="f-title">场次标题<span class="req">*</span></label><input class="input${e.title ? ' is-error' : ''}" id="f-title" value="${esc(f.title)}" placeholder="例：周四晚 · 普洱入门"><span class="${e.title ? 'field-err' : 'field-hint'}">${e.title || `${f.title.trim().length}/30 · 观众在预告里看到的名字`}</span></div>
+   <div class="field"><label class="label" for="f-day">日期</label><select class="select" id="f-day">${DATA.days.map((d, i) => `<option value="${i}" ${f.day === i ? 'selected' : ''}>${d}${i < DATA.today ? '（已过）' : i === DATA.today ? '（今天）' : ''}</option>`).join('')}</select></div>
+   <div class="field"><label class="label" for="f-ch">渠道</label><select class="select" id="f-ch">${DATA.channels.map(c => `<option ${f.channel === c ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+   <div class="field"><label class="label" for="f-start">开始</label><select class="select${e.time ? ' is-error' : ''}" id="f-start">${times.map(m => `<option value="${m}" ${f.start === m ? 'selected' : ''}>${hm(m)}</option>`).join('')}</select></div>
+   <div class="field"><label class="label" for="f-end">结束</label><select class="select${e.time ? ' is-error' : ''}" id="f-end">${times.map(m => `<option value="${m}" ${f.end === m ? 'selected' : ''}>${hm(m)}</option>`).join('')}</select></div>
+   <div class="field full"><span class="${e.time ? 'field-err' : 'field-hint'}">${e.time || `时长 ${((f.end - f.start) / 60).toFixed(1)} 小时`}</span></div>
+   <div class="field full"><span class="label">主播<span class="req">*</span><span class="opt">可多选，第一位为主讲</span></span><div class="chips">${Object.keys(DATA.hosts).map(h => `<label class="check" style="min-height:32px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-full)"><input type="checkbox" data-host="${h}" ${f.hosts.includes(h) ? 'checked' : ''}>${DATA.hosts[h]}</label>`).join('')}</div>${e.hosts ? `<span class="field-err">${e.hosts}</span>` : ''}</div>
+   <div class="field full"><label class="label" for="f-room">直播间</label><select class="select" id="f-room">${Object.keys(DATA.rooms).map(r => `<option value="${r}" ${f.room === r ? 'selected' : ''}>${DATA.rooms[r]}</option>`).join('')}</select></div>
+   ${cf.length ? `<div class="full cfl" role="alert"><b>撞档 ${cf.length} 处：</b><br>${cf.map(c => c[0] === 'host' ? `主播 ${hostNames(c[2])} 在 ${hm(c[1][3])}-${hm(c[1][4])} 有「${esc(c[1][1])}」` : `${DATA.rooms[c[1][6]]} 在 ${hm(c[1][3])}-${hm(c[1][4])} 被「${esc(c[1][1])}」占用`).join('<br>')}
+     <div class="acts">${cf.some(c => c[0] === 'room') && freeRoom ? `<button class="btn" type="button" data-fixroom="${freeRoom}">换到${DATA.rooms[freeRoom].slice(0, 4)}（空闲）</button>` : ''}<button class="btn" type="button" data-fixtime="${latest}">改到 ${hm(latest)} 开始</button></div></div>` : ''}
+   <div class="field full"><label class="label" for="f-note">预告文案<span class="opt">选填</span></label><textarea class="textarea" id="f-note" maxlength="80" placeholder="例：今晚讲普洱怎么存，前 100 名送试饮装">${esc(f.note)}</textarea></div>
+  </div></div>
+  <div class="layer-ft"><span class="muted" style="font-size:12px;margin-right:auto">${cf.length ? '撞档未解决不能保存' : '保存后在排期里显示，开播前 1 小时提醒主播'}</span><button class="btn" type="button" data-x>取消</button><button class="btn btn-primary" type="button" data-fsave>${f.id ? '保存修改' : '创建场次'}</button></div>`;
+}
+function openSess(id) {
+  const s = SN(id), n = (MT[id] || []).length;
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">${esc(s[1])}</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div>
+  <div class="layer-bd"><dl class="dsum"><dt>状态</dt><dd>${s[8] === 'live' ? '<span class="livep"><i></i>直播中</span>' : `<span class="st ${s[8]}">${ST[s[8]]}</span>`}${s[11] ? ` <span class="muted" style="font-size:13px">· ${esc(s[11])}</span>` : ''}</dd><dt>时间</dt><dd>${DATA.days[s[2]]} ${hm(s[3])}-${hm(s[4])}（${((s[4] - s[3]) / 60).toFixed(1)} 小时）</dd><dt>主播</dt><dd>${s[5].map(h => DATA.hosts[h]).join('、')}</dd><dt>直播间</dt><dd>${DATA.rooms[s[6]]} · ${s[7]}</dd><dt>预约</dt><dd class="num">${s[9].toLocaleString()} 人</dd>${s[8] === 'done' ? `<dt>成交额</dt><dd class="num">${fm(s[10])}</dd>` : `<dt>挂载商品</dt><dd>${n} 款${n ? '' : ' <span style="color:var(--warning)">· 开播前至少挂 1 款</span>'}</dd>`}</dl>
+   ${s[8] === 'cancel' ? '' : s[8] === 'done' ? `<button class="btn btn-primary" type="button" data-go="replay">看回放与数据</button>` : s[8] === 'live' ? `<button class="btn btn-primary" type="button" data-go="live">进入实时数据</button>` : `<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" type="button" data-mount="${id}">挂载商品</button><button class="btn" type="button" data-editsess="${id}">编辑</button><button class="btn btn-danger" type="button" data-cancel="${id}">取消场次</button></div>`}</div>`;
+  P.open(dw);
+}
 
-Proto.init({pages:PAGES,render});Proto.prompts(PROMPTS);
-</script></body></html>
+/* ---------------- ② 商品挂载 ---------------- */
+function rowCheck(m) {
+  const g = G(m[0]), e = [], w = [];
+  if (!(m[1] > 0)) e.push('请填直播价'); else { if (m[1] > g[3]) e.push(`高于日常价 ${fm(g[3])}`); if (m[1] < g[4]) e.push(`低于成本价 ${fm(g[4])}`); }
+  if (!(m[2] > 0)) e.push('请填直播库存'); else if (m[2] > g[5]) e.push(`超过可用库存 ${g[5]}`);
+  const mg = m[1] > 0 ? (m[1] - g[4]) / m[1] * 100 : 0;
+  if (!e.length && mg < DATA.minMargin) w.push(`毛利 ${mg.toFixed(1)}%，低于 ${DATA.minMargin}%`);
+  return { e, w, mg };
+}
+function pGoods(state) {
+  chrome('goods');
+  const sOpts = SS.filter(s => s[8] === 'wait' || s[8] === 'live');
+  const s = SN(Q.sess);
+  const hd = head('商品挂载', `给场次选商品、定直播价和直播库存；直播中修改实时生效`, `<label class="sr-only" for="gsess">场次</label><select class="select" id="gsess" style="width:300px">${sOpts.map(x => `<option value="${x[0]}" ${x[0] === Q.sess ? 'selected' : ''}>${DATA.days[x[2]].split(' ')[0]} ${hm(x[3])} · ${esc(x[1])}${x[8] === 'live' ? '（直播中）' : ''}</option>`).join('')}</select>`);
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(7)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${errCard('挂载商品没加载出来', '商品中心响应超时（错误编号 GOODS-502，示例）。已保存的挂载不受影响。')}</div>`; return; }
+  const L = MT[Q.sess] = MT[Q.sess] || [];
+  const chk = L.map(rowCheck), errN = chk.reduce((a, c) => a + c.e.length, 0), warnN = chk.reduce((a, c) => a + c.w.length, 0);
+  const lib = DATA.goods.filter(g => (!Q.lq || (g[1] + g[2]).includes(Q.lq)) && (!Q.lcat || g[6] === Q.lcat));
+  const cats = [...new Set(DATA.goods.map(g => g[6]))];
+  const libHtml = `<section class="card lib"><div class="hd"><h2>商品库</h2><p>${DATA.goods.length} 款 · 售罄和已挂载的不能再加 · 每场最多 30 款</p></div>
+   <div class="flt"><div class="input-wrap">${ic('search')}<input class="input" id="lq" placeholder="搜索商品名 / 规格" aria-label="搜索商品库" value="${esc(Q.lq)}"></div><div class="seg" role="group" aria-label="分类" style="flex-wrap:wrap"><button type="button" data-lcat="" aria-pressed="${!Q.lcat}">全部</button>${cats.map(c => `<button type="button" data-lcat="${c}" aria-pressed="${Q.lcat === c}">${c}</button>`).join('')}</div></div>
+   <div class="list">${lib.map(g => { const on = L.some(m => m[0] === g[0]), so = g[5] === 0; return `<div class="li">${gi(g, ` · 库存 ${g[5]}`)}<button class="btn${on || so ? '' : ''}" type="button" data-add="${g[0]}" ${on || so ? 'disabled' : ''}>${so ? '售罄' : on ? '已挂载' : '挂载'}</button></div>`; }).join('') || '<p class="muted" style="padding:16px;font-size:13px">没有符合的商品</p>'}</div></section>`;
+  const tbl = L.length ? `<div class="tw"><table class="table"><thead><tr><th>顺序</th><th>商品</th><th class="r">日常价</th><th>直播价</th><th class="r">折扣</th><th class="r">毛利率</th><th>直播库存</th><th>每人限购</th><th>上架方式</th><th></th></tr></thead><tbody>
+   ${L.map((m, i) => { const g = G(m[0]), c = chk[i]; return `<tr class="${c.e.length ? '' : ''}"><td><span class="ord"><button type="button" data-up="${i}" ${i ? '' : 'disabled'} aria-label="上移 ${esc(g[1])}">${ic('chev-u')}</button><b class="num">${i + 1}</b><button type="button" data-dn="${i}" ${i < L.length - 1 ? '' : 'disabled'} aria-label="下移 ${esc(g[1])}">${ic('chev-d')}</button></span></td><td>${gi(g)}</td><td class="r num">${fm(g[3])}</td>
+    <td><div class="pin"><label class="sr-only" for="lp-${i}">${esc(g[1])} 直播价</label><input class="input num${c.e.some(x => /价/.test(x)) ? ' is-error' : ''}" id="lp-${i}" data-lp="${i}" inputmode="decimal" value="${m[1]}"></div>${c.e.filter(x => /价/.test(x)).map(x => `<span class="cell-e">${x}</span>`).join('')}</td>
+    <td class="r num">${m[1] > 0 ? (m[1] / g[3] * 10).toFixed(1) + ' 折' : '—'}</td><td class="r num">${m[1] > 0 ? c.mg.toFixed(1) + '%' : '—'}${c.w.length ? `<span class="cell-w">低于 ${DATA.minMargin}%</span>` : ''}</td>
+    <td><div class="pin"><label class="sr-only" for="ls-${i}">${esc(g[1])} 直播库存</label><input class="input num${c.e.some(x => /库存/.test(x)) ? ' is-error' : ''}" id="ls-${i}" data-ls="${i}" inputmode="numeric" value="${m[2]}"></div>${c.e.filter(x => /库存/.test(x)).map(x => `<span class="cell-e">${x}</span>`).join('') || `<span class="cell-w" style="color:var(--ink-500)">可用 ${g[5]}</span>`}</td>
+    <td><label class="sr-only" for="ll-${i}">每人限购</label><select class="select" id="ll-${i}" data-ll="${i}">${[0, 1, 2, 3, 5].map(v => `<option value="${v}" ${m[3] === v ? 'selected' : ''}>${v ? v + ' 件' : '不限'}</option>`).join('')}</select></td>
+    <td><label class="sr-only" for="lo-${i}">上架方式</label><select class="select" id="lo-${i}" data-lo="${i}" style="width:112px"><option value="open" ${m[4] === 'open' ? 'selected' : ''}>开播即上架</option><option value="talk" ${m[4] === 'talk' ? 'selected' : ''}>讲解时上架</option></select></td>
+    <td><button class="btn-link" type="button" data-unmount="${i}" style="color:var(--danger)">移除</button></td></tr>`; }).join('')}</tbody></table></div>` : P.stateBlock({ icon: 'bag', title: '这场还没挂商品', body: '从右边商品库点「挂载」，或一键挂上同类场次常卖的商品。开播前至少挂 1 款。', acts: `<button class="btn btn-primary" type="button" data-quick>挂上茶器常卖 3 款</button>` });
+  const stock = L.reduce((a, m) => a + (+m[2] || 0) * (+m[1] || 0), 0);
+  PG.innerHTML = `<div class="pg">${hd}
+   ${s[8] === 'live' ? `<div class="banner danger">${ic('alert')}<span>这场正在直播，保存后观众立即看到新价格和库存。改价请先在直播间口播说明。</span></div>` : ''}
+   <div class="mnt"><div><section class="card"><div class="sec" style="padding-bottom:12px"><h2>${esc(s[1])} <small>${DATA.days[s[2]]} ${hm(s[3])}-${hm(s[4])} · ${hostNames(s[5])}</small>
+     <span class="r">${L.length ? `<label class="sr-only" for="bulk">批量填价</label><select class="select" id="bulk" style="width:170px"><option value="">批量填直播价…</option><option value="0.9">日常价 × 9 折</option><option value="0.85">日常价 × 8.5 折</option><option value="0.8">日常价 × 8 折</option></select>` : ''}</span></h2></div>${tbl}
+     ${L.length ? `<div class="foot">已挂 ${L.length} / 30 款 · 直播库存货值 ${fm(stock)} · 直播价不能高于日常价、不能低于成本价；毛利率 = (直播价 − 成本价) ÷ 直播价</div>` : ''}</section>
+     ${L.length ? `<div class="savebar" role="status"><span class="why">${errN ? `有 <b>${errN} 处错误</b>${warnN ? `、${warnN} 处提醒` : ''}，改好才能保存` : warnN ? `${warnN} 处提醒（毛利偏低），可以保存` : dirty ? '有未保存的修改' : '已保存，与线上一致'}</span><span class="sp"></span><button class="btn" type="button" data-reset ${dirty ? '' : 'disabled'}>撤销修改</button><button class="btn btn-primary" type="button" data-gsave ${errN || !dirty ? 'disabled' : ''}>保存挂载</button></div>` : ''}</div>
+   ${libHtml}</div></div>`;
+}
+
+/* ---------------- ③ 实时数据 ---------------- */
+function liveAgg() {
+  const L = MT.s5, st = LV.stats;
+  const rows = L.map(m => { const g = G(m[0]), x = st[m[0]]; return { m, g, click: x[0], cart: x[1], sold: x[2], left: x[3], gmv: x[2] * m[1] }; });
+  const gmv = rows.reduce((a, r) => a + r.gmv, 0), orders = rows.reduce((a, r) => a + r.sold, 0);
+  return { rows, gmv, orders, conv: LV.buyers / LV.viewers * 100, aov: LV.buyers ? gmv / LV.buyers : 0 };
+}
+function lineChart(total) {
+  const wsum = LV.gmv.reduce((a, b) => a + b, 0), GM = LV.gmv.map(v => Math.round(v / wsum * total));
+  const W = 680, H = 210, pl = 44, pr = 44, pt = 16, pb = 26, n = LV.x.length;
+  const mo = Math.max(...LV.on) * 1.15, mg = Math.max(...GM) * 1.15;
+  const X = i => pl + (W - pl - pr) * i / (n - 1), Y1 = v => pt + (H - pt - pb) * (1 - v / mo), Y2 = v => pt + (H - pt - pb) * (1 - v / mg);
+  const pth = (a, Y) => a.map((v, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join('');
+  const grid = [0, .5, 1].map(f => `<line x1="${pl}" x2="${W - pr}" y1="${Y1(mo / 1.15 * f)}" y2="${Y1(mo / 1.15 * f)}" stroke="var(--line-soft)"/><text x="${pl - 6}" y="${Y1(mo / 1.15 * f) + 3}" text-anchor="end">${Math.round(mo / 1.15 * f).toLocaleString()}</text><text x="${W - pr + 6}" y="${Y2(mg / 1.15 * f) + 3}">${(mg / 1.15 * f / 10000).toFixed(1)}万</text>`).join('');
+  const pk = LV.on.indexOf(Math.max(...LV.on));
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="在线人数与每 5 分钟成交额走势，峰值 ${LV.peak[0]} 人在 ${LV.peak[1]}">${grid}${LV.x.map((t, i) => `<text x="${X(i)}" y="${H - 8}" text-anchor="middle">${t}</text>`).join('')}
+   ${GM.map((v, i) => `<rect x="${X(i) - 9}" y="${Y2(v)}" width="18" height="${H - pb - Y2(v)}" rx="2" fill="var(--accent)" opacity=".22"/>`).join('')}
+   <path d="${pth(LV.on, Y1)}" fill="none" stroke="var(--accent)" stroke-width="2.2"/><circle cx="${X(pk)}" cy="${Y1(LV.on[pk])}" r="4" fill="var(--accent)"/><text x="${X(pk)}" y="${Y1(LV.on[pk]) - 8}" text-anchor="middle" style="fill:var(--ink-900);font-weight:600">峰值 ${LV.peak[0].toLocaleString()}</text></svg>`;
+}
+function pLive(state) {
+  chrome('live');
+  const s = SN('s5');
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${head('实时数据', '')}${skel(6)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${head('实时数据', '')}${errCard('实时数据断开了', '数据通道中断（错误编号 STREAM-499，示例）。直播本身仍在进行，观众端不受影响。')}</div>`; return; }
+  if (Q.notlive) { const s6 = SN('s6'), n = MT.s6.length; PG.innerHTML = `<div class="pg">${head('实时数据', `${esc(s6[1])} · ${DATA.days[s6[2]]} ${hm(s6[3])} 开播`)}
+    <section class="card sec"><h2>开播前检查 <small>全部完成后主播端才会出现「开始直播」</small></h2><div style="margin-top:8px">${[[n > 0, `商品已挂载 ${n} 款`, 'goods'], [true, '主播 顾示例 已确认场次', ''], [false, '推流测试：还没做（开播前 30 分钟内完成）', 'push'], [true, `预告已发布 · 已预约 ${s6[9]} 人`, ''], [false, '直播间封面：未上传', 'cover']].map(c => `<div class="chk-row ${c[0] ? 'ok' : 'no'}">${ic(c[0] ? 'check-c' : 'alert')}<span>${c[1]}</span>${!c[0] ? `<button class="btn-link" type="button" data-toast="${c[2] === 'push' ? '已向主播端发送推流测试邀请（示例）' : '上传封面（示例）'}">去处理</button>` : ''}</div>`).join('')}</div></section>
+    <section class="card" style="margin-top:16px">${P.stateBlock({ icon: 'chart', title: '还没开播，暂无实时数据', body: '开播后这里每 30 秒刷新一次：在线人数、成交、商品点击和告警。正在直播的场次是「双11 返场 · 秋冬红茶专场」。', acts: '<button class="btn" type="button" data-livenow>看正在直播的场次</button>' })}</section></div>`; return; }
+  const A = liveAgg(), played = DATA.nowMin - s[3];
+  const kp = [['在线人数', LV.online.toLocaleString(), `峰值 ${LV.peak[0].toLocaleString()}（${LV.peak[1]}）`], ['累计观看', LV.viewers.toLocaleString(), '人'], ['成交额', fm(A.gmv), `成交 ${A.orders.toLocaleString()} 件`, 'gmv'], ['成交人数', LV.buyers.toLocaleString(), '去重下单人数'], ['转化率', A.conv.toFixed(2) + '%', '成交人数 ÷ 累计观看'], ['客单价', f2(A.aov), '成交额 ÷ 成交人数'], ['新增关注', LV.fans.toLocaleString(), `占观看 ${(LV.fans / LV.viewers * 100).toFixed(1)}%`]];
+  const lows = A.rows.filter(r => r.left / r.m[2] <= .1);
+  const alerts = [...lows.map(r => ['h', r.left === 0 ? `${r.g[1]} 已售罄，已自动下架` : `${r.g[1]} 只剩 ${r.left} 件`, `直播库存 ${r.m[2]}，已卖 ${r.sold}；可用库存还有 ${r.g[5] - r.m[2]} 件可补`, `<button class="btn" type="button" data-restock="${r.m[0]}">补库存</button>`]),
+    ['m', '评论里 2 次出现「发货慢」', '近 5 分钟；建议主播口播「今晚 24:00 前下单，11-12 发货」', '<button class="btn" type="button" data-toast="已把口播提示发到主播提词器（示例）">发提词</button>'],
+    ['l', '金骏眉 特级 点击高、成交低', `点击 ${LV.stats.g2[0].toLocaleString()}，成交 ${LV.stats.g2[2]} 件（${(LV.stats.g2[2] / LV.stats.g2[0] * 100).toFixed(1)}%），低于本场平均`, '']];
+  PG.innerHTML = `<div class="pg">${head('实时数据', '每 30 秒刷新 · 数据有约 30 秒延迟', `<button class="btn" type="button" data-lrefresh>${ic('refresh')}刷新</button><button class="btn" type="button" data-coupon>${ic('ticket')}发优惠券</button><button class="btn btn-danger" type="button" data-endlive>结束直播</button>`)}
+   <section class="card"><div class="lvhd"><span class="livep"><i></i>直播中</span><h2>${esc(s[1])}</h2><span class="m">${hm(s[3])} 开播 · 已播 ${played >= 60 ? Math.floor(played / 60) + ' 小时 ' : ''}${played % 60} 分钟 · 计划 ${hm(s[4])} 结束 · ${hostNames(s[5])} · ${s[7]}</span><span class="r muted" style="font-size:12px">更新于 ${DATA.now}:${String(Q.refresh * 30 % 60).padStart(2, '0')}</span></div>
+    <div class="kpis">${kp.map(k => `<div class="kpi"><small>${k[0]}</small><b${k[3] ? ' style="color:var(--accent)"' : ''}>${k[1]}</b><span>${k[2]}</span></div>`).join('')}</div></section>
+   <div class="lvgrid"><div>
+    <section class="card"><div class="sec" style="padding-bottom:4px"><h2>在线人数 · 每 5 分钟成交额<span class="r lg"><span><i style="background:var(--accent)"></i>在线人数（左轴）</span><span><i style="background:var(--accent);opacity:.3;height:8px"></i>成交额（右轴）</span></span></h2></div><div class="chart">${lineChart(A.gmv)}</div></section>
+    <section class="card" style="margin-top:16px"><div class="sec" style="padding-bottom:12px"><h2>商品表现 <small>按讲解顺序 · 讲解中高亮</small></h2></div><div class="tw"><table class="table"><thead><tr><th>#</th><th>商品</th><th class="r">直播价</th><th class="r">点击</th><th class="r">加购</th><th class="r">成交件数</th><th class="r">成交额</th><th class="r">点击成交率</th><th class="r">剩余库存</th><th>操作</th></tr></thead><tbody>
+     ${A.rows.map((r, i) => { const cur = LV.cur === r.m[0], low = r.left / r.m[2] <= .1, off = r.left === 0 || r.m[5] === 'off'; return `<tr class="${cur ? 'cur' : ''}"><td class="num">${i + 1}</td><td>${gi(r.g, cur ? ' · <b style="display:inline;color:var(--accent);font-weight:600">讲解中</b>' : off ? ' · 已下架' : '')}</td><td class="r num">${fm(r.m[1])}</td><td class="r num">${r.click.toLocaleString()}</td><td class="r num">${r.cart.toLocaleString()}</td><td class="r num">${r.sold.toLocaleString()}</td><td class="r num">${fm(r.gmv)}</td><td class="r num">${(r.sold / r.click * 100).toFixed(1)}%</td><td class="r num ${low ? 'stk-low' : ''}">${r.left} / ${r.m[2]}</td>
+      <td style="white-space:nowrap">${cur ? '<span class="muted" style="font-size:13px">讲解中</span>' : `<button class="btn-link" type="button" data-talk="${r.m[0]}" ${r.left === 0 ? 'disabled' : ''}>讲解</button>`} · ${low ? `<button class="btn-link" type="button" data-restock="${r.m[0]}">补库存</button>` : `<button class="btn-link" type="button" data-shelf="${r.m[0]}">${r.m[5] === 'off' ? '上架' : '下架'}</button>`}</td></tr>`; }).join('')}
+     </tbody><tfoot><tr><td></td><td><b>合计</b></td><td></td><td class="r num">${A.rows.reduce((a, r) => a + r.click, 0).toLocaleString()}</td><td class="r num">${A.rows.reduce((a, r) => a + r.cart, 0).toLocaleString()}</td><td class="r num"><b>${A.orders.toLocaleString()}</b></td><td class="r num"><b>${fm(A.gmv)}</b></td><td></td><td></td><td></td></tr></tfoot></table></div></section></div>
+    <div><section class="card alerts"><div class="sec" style="padding-bottom:8px"><h2>告警 <span class="badge badge-danger">${alerts.length}</span></h2></div>${alerts.map(a => `<div class="al ${a[0]}">${ic(a[0] === 'h' ? 'alert' : a[0] === 'm' ? 'msg' : 'info')}<div><b>${esc(a[1])}</b>${a[2]}${a[3] ? `<div>${a[3]}</div>` : ''}</div></div>`).join('')}</section>
+     <section class="card cmts" style="margin-top:16px"><div class="sec" style="padding-bottom:8px"><h2>评论 <small>最近 7 条 · 关键词标黄</small></h2></div>${LV.comments.map(c => `<div class="c"><b>${esc(c[0])}</b>${c[1]}</div>`).join('')}</section></div></div></div>`;
+}
+
+/* ---------------- ④ 回放 ---------------- */
+const RS = { ok: '可观看', gen: '生成中', bad: '审核不通过' };
+function pReplay(state) {
+  chrome('replay');
+  const hd = head('直播回放', '结束后自动生成回放，审核通过后才能公开到店铺主页', `<button class="btn" type="button" data-toast="已导出本月回放数据 CSV（示例）">${ic('download')}导出数据</button>`);
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(6)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${errCard('回放列表没加载出来', '视频服务繁忙（错误编号 VOD-503，示例）。已公开的回放观众仍可观看。')}</div>`; return; }
+  const all = state === 'empty' ? [] : RP;
+  if (!all.length) { PG.innerHTML = `<div class="pg">${hd}<section class="card">${P.stateBlock({ icon: 'play', title: '还没有直播回放', body: '场次结束后约 10 分钟生成回放；本店第一场直播在 11-12 20:00。', acts: '<button class="btn" type="button" data-go="schedule">看直播排期</button>' })}</section></div>`; return; }
+  const rows = all.filter(r => (!Q.rq || r[1].includes(Q.rq)) && (!Q.rhost || r[4] === Q.rhost) && (!Q.rst || r[9] === Q.rst));
+  const sum = rows.reduce((a, r) => a + r[8], 0);
+  PG.innerHTML = `<div class="pg">${hd}
+   ${all.some(r => r[9] === 'bad') ? `<div class="banner danger">${ic('alert')}<span>「${esc(all.find(r => r[9] === 'bad')[1])}」回放审核不通过：有 40 秒背景音乐未授权，去掉这段即可重新生成。</span><button class="btn" type="button" data-rp="${all.find(r => r[9] === 'bad')[0]}">去处理</button></div>` : ''}
+   <section class="card"><div class="flt"><div class="input-wrap">${ic('search')}<input class="input" id="rq" placeholder="搜索场次标题" aria-label="搜索回放" value="${esc(Q.rq)}"></div><select class="select" id="rhost" aria-label="主播"><option value="">全部主播</option>${Object.keys(DATA.hosts).map(h => `<option value="${h}" ${Q.rhost === h ? 'selected' : ''}>${DATA.hosts[h].split(' · ')[0]}</option>`).join('')}</select><select class="select" id="rst" aria-label="回放状态"><option value="">全部状态</option>${Object.keys(RS).map(k => `<option value="${k}" ${Q.rst === k ? 'selected' : ''}>${RS[k]}</option>`).join('')}</select><span class="sp"></span><span class="muted" style="font-size:13px">${rows.length} 场 · 成交合计 ${fm(sum)}</span></div>
+   ${rows.length ? `<div class="tw"><table class="table"><thead><tr><th>场次</th><th>日期 · 时段</th><th>主播</th><th class="r">时长</th><th class="r">峰值在线</th><th class="r">观看</th><th class="r">成交额</th><th>回放</th><th>公开</th><th>操作</th></tr></thead><tbody>${rows.map(r => `<tr><td class="wrap"><b style="font-weight:500">${esc(r[1])}</b></td><td class="num">${r[2]} ${r[3]}</td><td>${DATA.hosts[r[4]].split(' · ')[0]}</td><td class="r num">${r[5]}</td><td class="r num">${r[6].toLocaleString()}</td><td class="r num">${r[7].toLocaleString()}</td><td class="r num">${fm(r[8])}</td>
+    <td>${r[9] === 'gen' ? `<span class="prog"><span class="bar"><i style="width:${r[10]}%"></i></span>生成中 ${r[10]}%</span>` : r[9] === 'bad' ? '<span class="tag tag-danger">审核不通过</span>' : '<span class="tag tag-success">可观看</span>'}</td>
+    <td><label class="sw"><input type="checkbox" role="switch" data-pub="${r[0]}" ${r[11] ? 'checked' : ''} ${r[9] !== 'ok' ? 'disabled' : ''} aria-label="公开 ${esc(r[1])} 的回放"><span class="sr-only">公开</span></label></td>
+    <td><button class="btn-link" type="button" data-rp="${r[0]}">${r[9] === 'bad' ? '处理' : '查看'}</button></td></tr>`).join('')}</tbody></table></div>` : P.stateBlock({ icon: 'search', title: '没有符合条件的回放', body: '换个关键字或清空筛选。', acts: '<button class="btn" type="button" data-rreset>清空筛选</button>' })}
+   <div class="foot">回放保存 180 天；公开后观众可在店铺主页观看并下单（价格按当前日常价）</div></section></div>`;
+}
+function openReplay(id) {
+  const r = RP.find(x => x[0] === id), segs = DATA.segs[id] || [['00:00:00-' + r[5], '整场（片段在生成完成后自动切分）', r[8]]];
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">${esc(r[1])}</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div>
+  <div class="layer-bd"><dl class="dsum"><dt>时间</dt><dd>${r[2]} ${r[3]} · 时长 ${r[5]}</dd><dt>主播</dt><dd>${DATA.hosts[r[4]]}</dd><dt>数据</dt><dd class="num">峰值 ${r[6].toLocaleString()} · 观看 ${r[7].toLocaleString()} · 成交 ${fm(r[8])}</dd><dt>回放</dt><dd>${r[9] === 'gen' ? `生成中 ${r[10]}%，约 6 分钟后完成` : r[9] === 'bad' ? '<b style="color:var(--danger)">审核不通过</b> · 01:12:30–01:13:10 背景音乐未授权' : '可观看'}</dd></dl>
+   <h3 style="font-size:14px;margin-bottom:4px">讲解片段</h3><div class="seg-l">${segs.map((g, i) => `<div class="sg${g[3] ? ' bad' : ''}"><span class="t">${g[0]}</span><span>${esc(g[1])}${g[2] ? `<br><span class="muted num" style="font-size:12px">讲解期间成交 ${fm(g[2])}</span>` : ''}</span>${g[3] ? `<button class="btn btn-danger" type="button" data-cut="${id}">去掉这段</button>` : g[2] ? `<button class="btn" type="button" data-clip="${i}">剪短视频</button>` : '<span></span>'}</div>`).join('')}</div>
+   ${segs.length > 1 ? `<p class="muted num" style="font-size:12px;margin-top:8px">各片段成交合计 ${fm(segs.reduce((a, g) => a + g[2], 0))} = 整场成交额</p>` : ''}</div>
+  <div class="layer-ft"><label class="sw" style="margin-right:auto"><input type="checkbox" role="switch" data-pub="${id}" ${r[11] ? 'checked' : ''} ${r[9] !== 'ok' ? 'disabled' : ''}>公开到店铺主页${r[9] !== 'ok' ? '（审核通过后可开）' : ''}</label><button class="btn" type="button" data-toast="已开始下载回放视频（示例）" ${r[9] === 'gen' ? 'disabled' : ''}>${ic('download')}下载</button></div>`;
+  if (!dw.classList.contains('show')) P.open(dw);
+}
+
+/* ---------------- 流转 ---------------- */
+const PAGES = { schedule: pSchedule, goods: pGoods, live: pLive, replay: pReplay };
+function draw() { PAGES[P.state.page](['list', 'conflict', 'invalid', 'lowstock', 'notlive'].includes(P.state.state) ? 'normal' : P.state.state); }
+async function go(pg) {
+  if (dirty && P.state.page === 'goods' && pg !== 'goods') { const ok = await P.confirm({ title: '挂载还没保存，确定离开？', body: '离开后这次改的直播价、库存和顺序都会丢掉。', ok: '不保存，离开' }); if (!ok) return; MT = clone(DATA.mounts); dirty = false; }
+  if (dw.classList.contains('show')) P.close(dw);
+  carry = true; P.go(pg, 'normal'); window.scrollTo(0, 0);
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button,[data-go]'); if (!b || b.closest('.pp,.tplbar,.pq-drawer')) return;
+  const d = b.dataset;
+  if (d.toast) { toast(d.toast); return; }
+  if ('x' in d) { P.close(dw); return; }
+  if (d.go) { go(d.go); return; }
+  if ('retry' in d) { const pg = P.state.page; carry = true; P.go(pg, 'loading'); setTimeout(() => { carry = true; P.go(pg, 'normal'); }, 600); return; }
+  if ('apply' in d) { b.disabled = true; b.textContent = '已申请，等待店长审批'; toast('已提交申请', 'ok'); return; }
+  // 排期
+  if (d.view) { Q.view = d.view; draw(); return; }
+  if ('new' in d) { openForm(); return; }
+  if (d.sess) { openSess(d.sess); return; }
+  if (d.editsess) { const s = SN(d.editsess); Q.form = { id: s[0], title: s[1], day: s[2], start: s[3], end: s[4], hosts: s[5].slice(), room: s[6], channel: s[7], note: '', tried: false }; drawForm(); return; }
+  if (d.fixroom) { Q.form.room = d.fixroom; drawForm(); toast('已换到空闲的直播间', 'ok'); return; }
+  if (d.fixtime) { const f = Q.form, len = f.end - f.start; f.start = +d.fixtime; f.end = Math.min(f.start + len, 1440); drawForm(); toast(`已改到 ${hm(f.start)}-${hm(f.end)}`, 'ok'); return; }
+  if ('fsave' in d) { const f = Q.form; f.tried = true; const er = formErr(f), cf = conflicts(f, f.id); drawForm(); if (Object.keys(er).length || cf.length) { toast(cf.length ? '还有撞档，先解决再保存' : '有字段没填对', 'err'); return; }
+    if (f.id) { const s = SN(f.id); s[1] = f.title.trim(); s[2] = f.day; s[3] = f.start; s[4] = f.end; s[5] = f.hosts.slice(); s[6] = f.room; s[7] = f.channel; }
+    else { const id = 's' + (SS.length + 10); SS.push([id, f.title.trim(), f.day, f.start, f.end, f.hosts.slice(), f.room, f.channel, 'wait', 0, 0, '还没挂商品']); MT[id] = []; }
+    P.close(dw); draw(); toast(f.id ? '已保存修改，已通知主播' : `已创建「${f.title.trim()}」，${DATA.days[f.day]} ${hm(f.start)}`, 'ok'); return; }
+  if (d.cancel) { const s = SN(d.cancel); const ok = await P.confirm({ title: `取消「${s[1]}」？`, body: `已预约的 ${s[9]} 位用户会收到「直播取消」通知，挂载的商品会解绑。`, ok: '取消场次', danger: true }); if (!ok) return; s[8] = 'cancel'; s[11] = '运营取消，已通知预约用户'; P.close(dw); draw(); toast(`已取消，已通知 ${s[9]} 位预约用户`, 'ok'); return; }
+  if (d.mount) { Q.sess = d.mount; if (dw.classList.contains('show')) P.close(dw); carry = true; P.go('goods', 'normal'); return; }
+  // 挂载
+  if (d.lcat !== undefined && P.state.page === 'goods') { Q.lcat = d.lcat; draw(); return; }
+  if (d.add) { const L = MT[Q.sess]; if (L.length >= 30) { toast('每场最多挂 30 款', 'err'); return; } const g = G(d.add); L.push([g[0], Math.round(g[3] * .9), Math.min(100, g[5]), 0, 'open']); dirty = true; draw(); toast(`已挂载 ${g[1]}，直播价先按 9 折填好`, 'ok'); return; }
+  if ('quick' in d) { ['g11', 'g12', 'g13'].forEach(id => { const g = G(id); MT[Q.sess].push([id, Math.round(g[3] * .85), Math.min(100, g[5]), 0, 'open']); }); dirty = true; draw(); toast('已挂上 3 款茶器，直播价按 8.5 折', 'ok'); return; }
+  if (d.up) { const L = MT[Q.sess], i = +d.up; [L[i - 1], L[i]] = [L[i], L[i - 1]]; dirty = true; draw(); return; }
+  if (d.dn) { const L = MT[Q.sess], i = +d.dn; [L[i + 1], L[i]] = [L[i], L[i + 1]]; dirty = true; draw(); return; }
+  if (d.unmount) { const L = MT[Q.sess], i = +d.unmount, it = L.splice(i, 1)[0]; dirty = true; draw(); toast(`已移除 ${G(it[0])[1]}`, '', { undo: () => { L.splice(i, 0, it); draw(); } }); return; }
+  if ('reset' in d) { MT[Q.sess] = clone(DATA.mounts[Q.sess] || []); dirty = false; draw(); toast('已撤销本次修改'); return; }
+  if ('gsave' in d) { const s = SN(Q.sess); if (s[8] === 'live') { const ok = await P.confirm({ title: '直播中，保存后立即生效', body: '观众会马上看到新的价格和库存。', ok: '立即生效' }); if (!ok) return; } DATA.mounts[Q.sess] = clone(MT[Q.sess]); dirty = false; draw(); toast(`已保存 ${MT[Q.sess].length} 款商品的挂载`, 'ok'); return; }
+  // 实时
+  if ('livenow' in d) { Q.notlive = false; draw(); return; }
+  if ('lrefresh' in d) { Q.refresh++; LV.online += 37; LV.viewers += 412; LV.buyers += 9; LV.stats.g1[2] += 5; LV.stats.g1[3] -= 5; LV.stats.g11[2] += 4; LV.stats.g11[3] -= 4; draw(); toast('已刷新：+9 笔成交', 'ok'); return; }
+  if (d.talk) { LV.cur = d.talk; draw(); toast(`已切换讲解：${G(d.talk)[1]}，「讲解时上架」的商品已自动上架`, 'ok'); return; }
+  if (d.shelf) { const m = MT.s5.find(x => x[0] === d.shelf); m[5] = m[5] === 'off' ? '' : 'off'; draw(); toast(m[5] === 'off' ? `已下架 ${G(d.shelf)[1]}，观众购物袋里看不到` : `已上架 ${G(d.shelf)[1]}`, 'ok'); return; }
+  if (d.restock) { const m = MT.s5.find(x => x[0] === d.restock), g = G(d.restock), can = g[5] - m[2];
+    dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">补库存 · ${esc(g[1])}</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div><div class="layer-bd"><dl class="dsum"><dt>直播库存</dt><dd class="num">${m[2]}（剩 ${LV.stats[g[0]][3]}）</dd><dt>可用库存</dt><dd class="num">${g[5]}，最多再补 ${can} 件</dd></dl><div class="field"><label class="label" for="rsn">补多少件</label><input class="input num" id="rsn" inputmode="numeric" value="${Math.min(20, can)}"><span class="field-hint" id="rsh">补完直播库存 ${m[2] + Math.min(20, can)}</span></div></div><div class="layer-ft"><button class="btn" type="button" data-x>取消</button><button class="btn btn-primary" type="button" data-rsok="${g[0]}">确认补货</button></div>`; P.open(dw); return; }
+  if (d.rsok) { const m = MT.s5.find(x => x[0] === d.rsok), g = G(d.rsok), can = g[5] - m[2], v = parseInt($('#rsn').value, 10); if (!(v > 0) || v > can) { $('#rsn').classList.add('is-error'); $('#rsh').className = 'field-err'; $('#rsh').textContent = v > can ? `最多再补 ${can} 件（可用库存不够）` : '请填大于 0 的整数'; return; } m[2] += v; LV.stats[g[0]][3] += v; if (m[5] === 'off') m[5] = ''; P.close(dw); draw(); toast(`已补 ${v} 件，${g[1]} 剩 ${LV.stats[g[0]][3]} 件`, 'ok'); return; }
+  if ('coupon' in d) { dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">直播间发券</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div><div class="layer-bd"><div class="field"><label class="label" for="cpt">券</label><select class="select" id="cpt"><option value="满199减30">满199减30（红茶专场）</option><option value="满99减10">满99减10（全店）</option><option value="茶器9折">茶器 9 折</option></select></div><div class="field" style="margin-top:14px"><label class="label" for="cpn">发多少张</label><input class="input num" id="cpn" value="500" inputmode="numeric"><span class="field-hint" id="cph">每人限领 1 张 · 领完即止 · 当前在线 ${LV.online.toLocaleString()} 人</span></div></div><div class="layer-ft"><button class="btn" type="button" data-x>取消</button><button class="btn btn-primary" type="button" data-cpok>发券</button></div>`; P.open(dw); return; }
+  if ('cpok' in d) { const n = parseInt($('#cpn').value, 10); if (!(n >= 1 && n <= 5000)) { $('#cpn').classList.add('is-error'); $('#cph').className = 'field-err'; $('#cph').textContent = '1～5000 张'; return; } const ok = await P.confirm({ title: `发 ${n} 张「${$('#cpt').value}」？`, body: `将弹窗推给当前 ${LV.online.toLocaleString()} 位在线观众，发出后不能撤回。`, ok: '确认发券' }); if (!ok) return; P.close(dw); toast(`已发券 ${n} 张，主播端已提示口播`, 'ok'); return; }
+  if ('endlive' in d) { const s = SN('s5'), left = s[4] - DATA.nowMin; const ok = await P.confirm({ title: '现在结束直播？', body: `比计划提前 ${Math.floor(left / 60)} 小时 ${left % 60} 分结束；结束后观众不能再下单直播价，回放约 10 分钟后生成。`, ok: '结束直播', danger: true }); if (!ok) return; s[8] = 'done'; s[10] = liveAgg().gmv; RP.unshift(['s5', s[1], '11-11', '19:30-20:16', 'h1', '0:46:00', LV.peak[0], LV.viewers, s[10], 'gen', 5, false]); carry = true; P.go('replay', 'normal'); toast('直播已结束，回放生成中', 'ok'); return; }
+  // 回放
+  if (d.rp) { openReplay(d.rp); return; }
+  if (d.cut) { const r = RP.find(x => x[0] === d.cut); r[9] = 'gen'; r[10] = 8; P.close(dw); draw(); toast('已去掉 01:12:30–01:13:10，重新生成中', 'ok'); return; }
+  if (d.clip) { toast('已加入剪辑队列，约 3 分钟后在「短视频」里（示例）', 'ok'); return; }
+  if ('rreset' in d) { Q.rq = ''; Q.rhost = ''; Q.rst = ''; draw(); return; }
+});
+document.addEventListener('change', e => {
+  const t = e.target, f = Q.form;
+  if (f && dw.contains(t) && (t.id.startsWith('f-') || t.dataset.host)) {
+    if (t.id === 'f-day') f.day = +t.value; if (t.id === 'f-start') f.start = +t.value; if (t.id === 'f-end') f.end = +t.value; if (t.id === 'f-room') f.room = t.value; if (t.id === 'f-ch') f.channel = t.value;
+    if (t.dataset.host) { f.hosts = t.checked ? f.hosts.concat(t.dataset.host) : f.hosts.filter(h => h !== t.dataset.host); }
+    if (t.id !== 'f-ch') drawForm();
+  }
+  if (t.id === 'gsess') { if (dirty) { t.value = Q.sess; toast('先保存或撤销当前场次的修改', 'err'); return; } Q.sess = t.value; draw(); }
+  if (t.dataset.ll) { MT[Q.sess][+t.dataset.ll][3] = +t.value; dirty = true; draw(); }
+  if (t.dataset.lo) { MT[Q.sess][+t.dataset.lo][4] = t.value; dirty = true; draw(); }
+  if (t.id === 'bulk' && t.value) { const r = +t.value; MT[Q.sess].forEach(m => { m[1] = Math.round(G(m[0])[3] * r); }); dirty = true; draw(); toast(`已按日常价 × ${r * 10} 折填好直播价（取整）`, 'ok'); }
+  if (t.dataset.lp != null || t.dataset.ls != null) { const i = +(t.dataset.lp ?? t.dataset.ls), m = MT[Q.sess][i], v = parseFloat(t.value); if (t.dataset.lp != null) m[1] = isNaN(v) ? 0 : Math.round(v * 100) / 100; else m[2] = isNaN(v) ? 0 : Math.round(v); dirty = true; draw(); }
+  if (t.dataset.pub) { const r = RP.find(x => x[0] === t.dataset.pub); r[11] = t.checked; if (P.state.page === 'replay') { pReplay('normal'); if (dw.classList.contains('show')) openReplay(r[0]); } toast(t.checked ? `已公开「${r[1]}」回放到店铺主页` : '已取消公开', 'ok'); }
+  if (t.id === 'rhost') { Q.rhost = t.value; draw(); }
+  if (t.id === 'rst') { Q.rst = t.value; draw(); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'f-title') { Q.form.title = t.value; const h = t.parentNode.querySelector('.field-hint,.field-err'); if (h && !Q.form.tried) h.textContent = `${t.value.trim().length}/30 · 观众在预告里看到的名字`; }
+  if (t.id === 'f-note') Q.form.note = t.value;
+  if (t.id === 'lq') { Q.lq = t.value.trim(); clearTimeout(t._d); t._d = setTimeout(() => { draw(); const x = $('#lq'); x.focus(); x.setSelectionRange(x.value.length, x.value.length); }, 250); }
+  if (t.id === 'rq') { Q.rq = t.value.trim(); clearTimeout(t._d); t._d = setTimeout(() => { draw(); const x = $('#rq'); x.focus(); x.setSelectionRange(x.value.length, x.value.length); }, 250); }
+  if (t.id === 'rsn') { const m = MT.s5.find(x => G(x[0])[1] === $('#dw-t').textContent.replace('补库存 · ', '')), v = parseInt(t.value, 10) || 0; if (m) { $('#rsh').className = 'field-hint'; t.classList.remove('is-error'); $('#rsh').textContent = `补完直播库存 ${m[2] + v}`; } }
+});
+document.addEventListener('keydown', e => { const t = e.target; if (t.classList && t.classList.contains('ptab') && e.key === 'Enter') t.click(); });
+
+fresh();
+Proto.init({
+  title: '直播运营后台',
+  pages: [
+    { id: 'schedule', name: '① 直播排期', states: [{ id: 'normal', name: '周日历（9 场）' }, { id: 'list', name: '列表视图' }, { id: 'conflict', name: '新建时撞档' }, { id: 'empty', name: '本周无排期' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限（主播账号）' }] },
+    { id: 'goods', name: '② 商品挂载', states: [{ id: 'normal', name: '正常（6 款）' }, { id: 'invalid', name: '价格库存校验不过' }, { id: 'empty', name: '还没挂商品' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }] },
+    { id: 'live', name: '③ 实时数据', states: [{ id: 'normal', name: '直播中' }, { id: 'lowstock', name: '库存告警 · 已售罄' }, { id: 'notlive', name: '未开播（开播检查）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '数据断开' }] },
+    { id: 'replay', name: '④ 直播回放', states: [{ id: 'normal', name: '正常（6 场）' }, { id: 'empty', name: '还没有回放' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }] }
+  ],
+  render(page, state) {
+    if (dw.classList.contains('show')) P.close(dw);
+    if (!carry) {
+      fresh();
+      if (page === 'schedule' && state === 'list') Q.view = 'list';
+      if (page === 'goods' && state === 'invalid') { const L = MT.s6; L[3][1] = 89; L[1][2] = 40; L[4][1] = 178; L[0][1] = 60; dirty = true; }
+      if (page === 'goods' && state === 'empty') Q.sess = 's7';
+      if (page === 'live' && state === 'lowstock') { LV.stats.g3[2] += 6; LV.stats.g3[3] = 0; LV.stats.g2[3] = 9; }
+      if (page === 'live' && state === 'notlive') Q.notlive = true;
+    }
+    carry = false;
+    draw();
+    if (page === 'schedule' && state === 'conflict') openForm({ id: null, title: '宠粉夜 · 茶点搭配', day: 3, start: 1170, end: 1260, hosts: ['h4'], room: 'r2', channel: '门店号', note: '', tried: true });
+  }
+});
+Proto.prompts(PROMPTS);
+</script>
+</body>
+</html>
