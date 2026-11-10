@@ -84,4 +84,4 @@ bash _kit/check.sh kit-admin ""
 bash _kit/shot.sh kit-admin "" cover.png 1440 900
 ```
 
-期望 gtest 输出 `SECTIONS 15 STATES 39 PROMPTS 3 OK`。此处是期望值，当前没有拿到浏览器通过记录。所有演示仅在本地修改示例状态，不会发送消息、转接真人或修改真实业务数据。
+期望 gtest 输出 `SECTIONS 15 STATES 39 PROMPTS 3 OK`。2026-11-10 原型组在 Chrome 无头模式实跑，输出与期望一致。所有演示仅在本地修改示例状态，不会发送消息、转接真人或修改真实业务数据。
