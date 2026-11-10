@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SaaS 定价页 · 原型模板</title>
+<!--
+  原型模板 · 积木盒 | 老岳AI编辑部 · 原型组
+  改风格：改下面 :root 里的变量（--accent 换主色）
+  改数据：改 <script> 顶部 DATA（套餐、价格、配额、对比项、FAQ）
+  演示：右下角「原型面板」切页面和状态；按 H 隐藏面板；URL 可直达 #page=calc&state=enterprise
+-->
+<style>
+/*@KIT_CSS*/
+/* ==========================================================================
+   ① 改风格只改这一块：颜色 / 字体 / 圆角 / 间距 / 阴影
+   改 --accent 一处即可换主色；墨色 5 级控制全部文字和线条
+   ========================================================================== */
+:root{
+  /* 主色（按钮、选中、链接）。换品牌色只改这两行 */
+  --accent:#2F54D4;
+  --accent-soft:#EEF2FD;
+  --accent-ink:#FFFFFF;          /* 主色按钮上的文字色 */
+
+  /* 墨色：文字与线条 */
+  --ink-900:#16171A;             /* 标题、正文 */
+  --ink-700:#44464D;             /* 次要正文 */
+  --ink-500:#6B6D75;             /* 说明、元信息（白底对比度 ≥4.5） */
+  --ink-300:#C7C9CF;             /* 占位、禁用 */
+  --line:#E6E7EA;                /* 分隔线 */
+  --line-soft:#F0F1F3;
+
+  /* 背景 */
+  --bg:#F6F6F7;                  /* 页面底色 */
+  --surface:#FFFFFF;             /* 卡片 / 表格 */
+  --surface-2:#FAFAFB;           /* 表头、悬停 */
+
+  /* 语义色（只用于状态） */
+  --success:#0E7A4F;  --success-soft:#E8F5EE;
+  --warning:#9A5B00;  --warning-soft:#FFF4E0;
+  --danger:#C42B24;   --danger-soft:#FDECEB;
+  --info:#2F54D4;     --info-soft:#EEF2FD;
+
+  /* 字体 */
+  --font-sans:"PingFang SC","HarmonyOS Sans SC","Source Han Sans SC","Noto Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --fs-12:12px; --fs-13:13px; --fs-14:14px; --fs-16:16px; --fs-20:20px; --fs-24:24px; --fs-32:32px;
+
+  /* 圆角 4 档 */
+  --r-sm:6px; --r-md:10px; --r-lg:16px; --r-full:999px;
+
+  /* 间距 */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px; --sp-10:40px;
+
+  /* 阴影：只用很淡的扩散阴影 */
+  --shadow-1:0 1px 2px rgba(22,23,26,.04),0 1px 1px rgba(22,23,26,.03);
+  --shadow-2:0 8px 24px -6px rgba(22,23,26,.10),0 2px 6px rgba(22,23,26,.04);
+  --shadow-3:0 24px 60px -12px rgba(22,23,26,.22),0 4px 12px rgba(22,23,26,.06);
+
+  /* 动效 */
+  --ease:cubic-bezier(.22,.8,.24,1);
+  --dur:220ms;
+
+  /* 尺寸 */
+  --ctl-h:36px;                  /* PC 输入框/按钮高 */
+  --ctl-h-lg:44px;               /* 移动端触控 ≥44 */
+  --bar-h:0px;                   /* 顶部「免费下载」条高度，由脚本控制 */
+}
+/* ============================ ② 基础 ============================ */
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:var(--fs-14);line-height:1.6;color:var(--ink-900);background:var(--bg);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,p{margin:0}
+h1,h2,h3{text-wrap:balance;font-weight:600;letter-spacing:-.01em}
+p{text-wrap:pretty}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent);text-decoration:none}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-size:.92em;letter-spacing:0}
+.muted{color:var(--ink-500)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
+.ic{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ic-sm{width:16px;height:16px}
+.ic-lg{width:24px;height:24px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;transition-duration:1ms!important}}
+
+/* ============================ ③ 按钮 ============================ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:var(--ctl-h);padding:0 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface);color:var(--ink-900);font-size:var(--fs-14);font-weight:500;white-space:nowrap;transition:background var(--dur) var(--ease),border-color var(--dur) var(--ease),transform 80ms var(--ease),box-shadow var(--dur) var(--ease)}
+.btn:hover{border-color:var(--ink-300);background:var(--surface-2)}
+.btn:active{transform:scale(.98)}
+.btn[disabled],.btn.is-disabled{opacity:.45;pointer-events:none}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 1px 2px rgba(22,23,26,.12)}
+.btn-primary:hover{background:var(--accent);border-color:var(--accent);filter:brightness(1.07)}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--ink-700)}
+.btn-ghost:hover{background:var(--line-soft);border-color:transparent}
+.btn-danger{color:var(--danger)}
+.btn-danger:hover{border-color:var(--danger);background:var(--danger-soft)}
+.btn-danger-solid{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn-danger-solid:hover{background:var(--danger);filter:brightness(1.07)}
+.btn-link{border:0;background:none;padding:0 4px;height:auto;color:var(--accent);font-weight:500}
+.btn-link:hover{background:none;text-decoration:underline;text-underline-offset:3px}
+.btn-icon{width:var(--ctl-h);padding:0}
+.btn-lg{height:48px;padding:0 22px;font-size:var(--fs-16);border-radius:var(--r-md)}
+.btn-block{width:100%}
+.btn .spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============================ ④ 表单控件 ============================ */
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>label,.label{font-size:var(--fs-13);color:var(--ink-700);font-weight:500}
+.label .req{color:var(--danger);margin-left:2px}
+.label .opt{color:var(--ink-500);font-weight:400;margin-left:4px}
+.input,.select,.textarea{height:var(--ctl-h);width:100%;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);outline:none;font-size:var(--fs-14)}
+.textarea{height:auto;min-height:88px;padding:10px 12px;resize:vertical;line-height:1.6}
+.input::placeholder,.textarea::placeholder{color:var(--ink-300)}
+.input:hover,.select:hover,.textarea:hover{border-color:var(--ink-300)}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.input.is-error,.textarea.is-error,.select.is-error{border-color:var(--danger);box-shadow:0 0 0 3px var(--danger-soft)}
+.field-hint{font-size:var(--fs-12);color:var(--ink-500)}
+.field-err{font-size:var(--fs-12);color:var(--danger)}
+.select{appearance:none;padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6D75' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.input-wrap{position:relative;display:flex;align-items:center}
+.input-wrap>.ic{position:absolute;left:10px;color:var(--ink-500);pointer-events:none}
+.input-wrap>.input{padding-left:34px}
+.input-wrap>.clear{position:absolute;right:4px;width:28px;height:28px;border:0;background:none;border-radius:var(--r-sm);color:var(--ink-500);display:grid;place-items:center}
+.input-wrap>.clear:hover{background:var(--line-soft)}
+.check{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.check input{appearance:none;width:16px;height:16px;margin:0;border:1.5px solid var(--ink-300);border-radius:4px;background:var(--surface);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none}
+.check input:checked,.check input:indeterminate{background:var(--accent);border-color:var(--accent)}
+.check input:checked::after{content:"";width:8px;height:4px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.check input:indeterminate::after{content:"";width:8px;height:2px;background:#fff;border-radius:1px}
+.seg{display:inline-flex;padding:3px;background:var(--line-soft);border-radius:var(--r-md);gap:2px}
+.seg button{height:30px;padding:0 12px;border:0;background:transparent;border-radius:calc(var(--r-md) - 3px);color:var(--ink-700);font-size:var(--fs-13);font-weight:500;transition:all var(--dur) var(--ease)}
+.seg button[aria-pressed="true"],.seg button.on{background:var(--surface);color:var(--ink-900);box-shadow:var(--shadow-1)}
+
+/* ============================ ⑤ 标签 / 徽标 ============================ */
+.tag{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border-radius:var(--r-full);font-size:var(--fs-12);font-weight:500;white-space:nowrap;background:var(--line-soft);color:var(--ink-700)}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.9}
+.tag.plain::before{display:none}
+.tag-success{background:var(--success-soft);color:var(--success)}
+.tag-warning{background:var(--warning-soft);color:var(--warning)}
+.tag-danger{background:var(--danger-soft);color:var(--danger)}
+.tag-info{background:var(--info-soft);color:var(--info)}
+.tag-neutral{background:var(--line-soft);color:var(--ink-500)}
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+.badge-accent{background:var(--accent);color:var(--accent-ink)}
+.badge-danger{background:var(--danger);color:#fff}
+.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+
+/* ============================ ⑥ 卡片 / 表格 ============================ */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
+.table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-14)}
+.table th{position:sticky;top:0;z-index:1;background:var(--surface-2);text-align:left;font-weight:500;font-size:var(--fs-13);color:var(--ink-500);height:40px;padding:0 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.table td{height:52px;padding:0 12px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.table tbody tr{transition:background 120ms var(--ease)}
+.table tbody tr:hover{background:var(--surface-2)}
+.table td .check,.table th .check{vertical-align:middle;display:inline-flex}
+.table tbody tr.is-selected{background:var(--accent-soft)}
+.table tbody tr.is-current td{background:var(--accent-soft)}
+.table tbody tr.is-current td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.table .r{text-align:right}
+.th-sort{display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:0;color:inherit;font-weight:inherit;font-size:inherit}
+.th-sort .ic{width:14px;height:14px;opacity:.5}
+.th-sort[aria-sort] .ic{opacity:1;color:var(--ink-900)}
+
+/* ============================ ⑦ 骨架 / 空态 / 出错 ============================ */
+.sk{position:relative;overflow:hidden;background:var(--line-soft);border-radius:var(--r-sm)}
+.sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:shimmer 1.4s var(--ease) infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:64px 24px;color:var(--ink-500)}
+.state .state-ic{width:56px;height:56px;border-radius:var(--r-lg);display:grid;place-items:center;background:var(--line-soft);color:var(--ink-500);margin-bottom:6px}
+.state .state-ic .ic{width:26px;height:26px}
+.state.is-error .state-ic{background:var(--danger-soft);color:var(--danger)}
+.state h3{font-size:var(--fs-16);color:var(--ink-900);font-weight:600}
+.state p{max-width:360px;font-size:var(--fs-13)}
+.state .acts{display:flex;gap:8px;margin-top:8px}
+
+/* ============================ ⑧ 弹层：遮罩 / 抽屉 / 弹窗 / 底部弹层 ============================ */
+.mask{position:fixed;inset:0;background:rgba(22,23,26,.36);opacity:0;transition:opacity var(--dur) var(--ease);z-index:40}
+.mask.show{opacity:1}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100vw);background:var(--surface);box-shadow:var(--shadow-3);z-index:41;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 320ms var(--ease)}
+.drawer:not(.show),.sheet:not(.show){visibility:hidden;box-shadow:none;transition:transform 320ms var(--ease),visibility 0s linear 320ms,box-shadow 0s linear 320ms}
+.drawer.show{transform:none}
+.drawer:focus,.modal:focus,.sheet:focus{outline:none}
+.layer-hd{display:flex;align-items:center;gap:12px;padding:18px 24px;border-bottom:1px solid var(--line)}
+.layer-hd h2{font-size:var(--fs-16);flex:1;min-width:0}
+.layer-bd{flex:1;overflow:auto;padding:20px 24px}
+.layer-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--line);background:var(--surface)}
+.modal{position:fixed;left:50%;top:50%;width:min(440px,calc(100vw - 32px));background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow-3);z-index:41;transform:translate(-50%,-48%) scale(.97);opacity:0;transition:transform var(--dur) var(--ease),opacity var(--dur) var(--ease);display:flex;flex-direction:column;max-height:calc(100vh - 64px)}
+.modal.show{transform:translate(-50%,-50%);opacity:1}
+.modal .layer-hd{border-bottom:0;padding-bottom:4px}
+.modal .layer-bd{padding-top:8px}
+.modal .layer-ft{border-top:0;padding-top:4px;padding-bottom:20px}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:var(--r-lg) var(--r-lg) 0 0;box-shadow:var(--shadow-3);z-index:41;transform:translateY(100%);transition:transform 320ms var(--ease);max-height:86%;display:flex;flex-direction:column}
+.sheet.show{transform:none}
+.sheet .grabber{width:36px;height:4px;border-radius:2px;background:var(--line);margin:8px auto 0}
+
+/* ============================ ⑨ Toast ============================ */
+.toast-host{position:fixed;left:50%;top:calc(var(--bar-h) + 12px);transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--r-md);background:var(--ink-900);color:#fff;font-size:var(--fs-14);box-shadow:var(--shadow-2);animation:toastIn 260ms var(--ease);pointer-events:auto}
+.toast .ic{width:16px;height:16px}
+.toast.ok .ic{color:#5BD39A}.toast.err .ic{color:#FF8A80}
+.toast .undo{border:0;background:none;color:#fff;font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:0 0 0 8px}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}}
+
+/* ============================ ⑩ 原型面板（演示用，按 H 隐藏） ============================ */
+.pp{position:fixed;right:20px;bottom:20px;z-index:90;font-size:12px;color:#E9E9EC;font-family:var(--font-sans)}
+.pp-toggle{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 12px;border-radius:var(--r-full);border:1px solid rgba(255,255,255,.08);background:rgba(22,23,26,.92);color:#fff;font-size:12px;font-weight:500;box-shadow:var(--shadow-2);backdrop-filter:blur(12px)}
+.pp-toggle .dot{width:6px;height:6px;border-radius:50%;background:#5BD39A}
+.pp-body{position:absolute;right:0;bottom:46px;width:280px;padding:14px;border-radius:14px;background:rgba(22,23,26,.95);border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow-3);backdrop-filter:blur(16px);display:none}
+.pp.open .pp-body{display:block;animation:toastIn 200ms var(--ease)}
+.pp h4{margin:0 0 8px;font-size:11px;font-weight:500;color:#9A9BA2;letter-spacing:.06em}
+.pp-group{margin-bottom:12px}
+.pp-list{display:flex;flex-wrap:wrap;gap:6px}
+.pp-list button{height:28px;padding:0 10px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.12);background:transparent;color:#D6D7DB;font-size:12px}
+.pp-list button:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.pp-list button.on{background:#fff;color:#16171A;border-color:#fff}
+.pp-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);color:#9A9BA2}
+.pp-foot kbd{font-family:var(--font-mono);font-size:11px;padding:1px 6px;border:1px solid rgba(255,255,255,.2);border-radius:4px;color:#D6D7DB}
+body.pp-hidden .pp,body.shot .pp{display:none}
+
+/* ============================ ⑪ 手机框（移动端模板用） ============================ */
+.stage{min-height:calc(100vh - var(--bar-h));display:flex;align-items:center;justify-content:center;gap:56px;padding:40px 24px;background:radial-gradient(1200px 600px at 70% 20%,#EDEEF2 0%,var(--bg) 60%)}
+.stage-note{max-width:300px;color:var(--ink-700)}
+.stage-note .eyebrow{display:inline-flex;height:24px;align-items:center;padding:0 10px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);font-size:11px;letter-spacing:.08em;color:var(--ink-500);margin-bottom:16px}
+.stage-note h1{font-size:var(--fs-24);color:var(--ink-900);margin-bottom:10px;line-height:1.3}
+.stage-note p{font-size:var(--fs-13);color:var(--ink-500);margin-bottom:16px}
+.stage-note ol{margin:0;padding-left:18px;font-size:var(--fs-13);color:var(--ink-700);line-height:2}
+.phone{position:relative;width:390px;height:844px;flex:none;border-radius:54px;padding:12px;background:#0E0F11;box-shadow:0 0 0 1px #2A2B2F inset,0 40px 80px -20px rgba(22,23,26,.35),0 12px 24px -8px rgba(22,23,26,.2)}
+.screen{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column;isolation:isolate}
+.statusbar{height:47px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;font-size:15px;font-weight:600;position:relative;z-index:5}
+.statusbar .island{position:absolute;left:50%;top:11px;width:120px;height:34px;border-radius:20px;background:#0E0F11;transform:translateX(-50%)}
+.statusbar .sys{display:flex;gap:6px;align-items:center}
+.statusbar .bat{width:25px;height:12px;border:1.5px solid currentColor;border-radius:4px;position:relative;opacity:.9}
+.statusbar .bat::after{content:"";position:absolute;inset:1.5px;right:5px;background:currentColor;border-radius:1.5px}
+.homebar{position:absolute;left:50%;bottom:8px;width:134px;height:5px;border-radius:3px;background:var(--ink-900);transform:translateX(-50%);z-index:50;opacity:.85}
+.navbar{height:48px;flex:none;display:flex;align-items:center;gap:4px;padding:0 8px;position:relative}
+.navbar h1{position:absolute;left:56px;right:56px;text-align:center;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.tap{min-width:44px;min-height:44px;display:inline-grid;place-items:center;border:0;background:none;border-radius:var(--r-md);color:var(--ink-900)}
+.tap:active{background:var(--line-soft)}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.bottombar{flex:none;padding:10px 16px 30px;border-top:1px solid var(--line);background:var(--surface);display:flex;align-items:center;gap:12px}
+.screen .toast-host{position:absolute;top:60px}
+.screen .mask{position:absolute}
+.screen .modal{position:absolute}
+
+@media (max-width:900px){.stage{flex-direction:column;gap:24px}.stage-note{max-width:390px}}
+@media (max-width:430px){.stage{padding:0}.phone{width:100vw;height:100dvh;border-radius:0;padding:0;box-shadow:none}.screen{border-radius:0}.stage-note{display:none}}
+
+/* ============================ ⑫ PC 后台框架（侧栏 + 顶栏） ============================ */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:calc(100vh - var(--bar-h))}
+.side{position:sticky;top:var(--bar-h);height:calc(100vh - var(--bar-h));display:flex;flex-direction:column;gap:2px;padding:16px 12px;border-right:1px solid var(--line);background:var(--surface)}
+.brand{display:flex;align-items:center;gap:10px;height:40px;padding:0 8px;margin-bottom:14px;font-weight:600;font-size:15px}
+.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--ink-900);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;letter-spacing:-.02em}
+.side-label{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:14px 10px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;height:38px;padding:0 10px;border-radius:var(--r-sm);color:var(--ink-700);font-size:var(--fs-14);border:0;background:none;width:100%;text-align:left;transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+.nav-item:hover{background:var(--line-soft);color:var(--ink-900)}
+.nav-item.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.nav-item .badge{margin-left:auto}
+.side-foot{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid var(--line)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--line-soft);color:var(--ink-700);display:grid;place-items:center;font-size:13px;font-weight:600;flex:none}
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:var(--bar-h);z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 32px;background:rgba(246,246,247,.86);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.crumb{display:flex;align-items:center;gap:6px;font-size:var(--fs-13);color:var(--ink-500)}
+.crumb .ic{width:14px;height:14px}
+.crumb b{color:var(--ink-900);font-weight:500}
+.topbar .sp{flex:1}
+.content{padding:24px 32px 64px;max-width:1360px;width:100%}
+.page-hd{display:flex;align-items:flex-end;gap:16px;margin-bottom:20px}
+.page-hd h1{font-size:var(--fs-24);line-height:1.25}
+.page-hd .sub{font-size:var(--fs-13);color:var(--ink-500);margin-top:4px}
+.page-hd .acts{margin-left:auto;display:flex;gap:8px}
+@media (max-width:1100px){.app{grid-template-columns:64px minmax(0,1fr)}.side .t,.side-label,.side .badge,.side-foot .t,.brand .t{display:none}.nav-item{justify-content:center;padding:0}.content{padding:20px}.topbar{padding:0 20px}}
+
+/* ============================ ⑬ 通用小件：数量加减 / 圆形勾选 ============================ */
+.stepper{display:inline-flex;align-items:center;height:32px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);overflow:hidden}
+.stepper button{width:32px;height:100%;border:0;background:none;display:grid;place-items:center;color:var(--ink-700)}
+.stepper button:hover{background:var(--line-soft)}
+.stepper button:disabled{color:var(--ink-300);pointer-events:none}
+.stepper input{width:44px;height:100%;border:0;border-left:1px solid var(--line);border-right:1px solid var(--line);text-align:center;outline:none;font-variant-numeric:tabular-nums;background:none}
+.stepper.lg{height:40px}.stepper.lg button{width:40px}
+.rck{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.rck input{appearance:none;width:20px;height:20px;margin:0;border-radius:50%;border:1.5px solid var(--ink-300);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none;background:var(--surface)}
+.rck input:checked{background:var(--accent);border-color:var(--accent)}
+.rck input:checked::after{content:"";width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.rck input:disabled{background:var(--line-soft);border-color:var(--line)}
+
+/* ============================ ⑭ AI 提示词面板（每个模板必有） ============================ */
+.pq-fab{position:fixed;right:20px;bottom:64px;z-index:89;display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 12px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);color:var(--ink-900);font-size:12px;font-weight:600;box-shadow:var(--shadow-2);font-family:var(--font-sans)}
+.pq-fab .ic{width:16px;height:16px;color:var(--accent)}
+.pq-fab:hover{border-color:var(--ink-300)}
+body.pp-hidden .pq-fab{display:none}
+.pq-drawer{width:min(520px,100vw)}
+.pq-drawer .layer-bd{background:var(--bg);padding:16px}
+.pq-intro{font-size:var(--fs-13);color:var(--ink-500);margin-bottom:12px}
+.pq-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;margin-bottom:12px}
+.pq-card h3{font-size:var(--fs-14);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.pq-card h3 .no{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--ink-900);color:#fff;font-size:11px;font-variant-numeric:tabular-nums}
+.pq-when{font-size:var(--fs-12);color:var(--ink-500);margin-bottom:10px}
+.pq-body{font-size:13px;line-height:1.75;color:var(--ink-700);white-space:pre-wrap;word-break:break-word;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-md);padding:12px 14px;max-height:220px;overflow:auto;font-family:var(--font-sans)}
+.pq-card.open .pq-body{max-height:none}
+.pv{display:inline;padding:1px 6px;margin:0 1px;border-radius:5px;background:var(--accent-soft);color:var(--accent);font-weight:600;cursor:pointer;border:1px dashed transparent;white-space:nowrap}
+.pv:hover,.pv:focus-visible{border-color:var(--accent);outline:none}
+.pv.filled{background:var(--success-soft);color:var(--success)}
+.pv-in{font:inherit;font-size:13px;border:1px solid var(--accent);border-radius:5px;padding:1px 6px;outline:none;box-shadow:0 0 0 3px var(--accent-soft);min-width:80px;max-width:100%;background:var(--surface);color:var(--ink-900)}
+.pq-acts{display:flex;align-items:center;gap:8px;margin-top:10px}
+.pq-acts .sp{flex:1}
+.pq-acts .hint{font-size:12px;color:var(--ink-500)}
+.pq-acts .btn.done{background:var(--success);border-color:var(--success);color:#fff}
+.pq-col{width:340px;flex:none;max-height:844px;display:flex;flex-direction:column;gap:10px}
+.pq-col .pq-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-900)}
+.pq-col .pq-head .ic{color:var(--accent);width:16px;height:16px}
+.pq-col .pq-scroll{overflow:auto;padding-right:4px}
+.pq-col .pq-card{padding:14px;margin-bottom:10px}
+.pq-col .pq-body{max-height:120px}
+@media (max-width:1200px){.pq-col{width:100%;max-width:390px;max-height:none}}
+
+/* ============================ ⑮ 暗色主题（组件库画廊切换用） ============================ */
+:root[data-theme="dark"]{
+  --ink-900:#ECECEF;--ink-700:#C4C5CB;--ink-500:#9A9CA4;--ink-300:#5A5C64;
+  --line:#2E3036;--line-soft:#24262B;--bg:#121316;--surface:#1A1B1F;--surface-2:#202226;
+  --accent-soft:rgba(110,140,255,.16);--info-soft:rgba(110,140,255,.16);
+  --success:#4CC38A;--success-soft:rgba(76,195,138,.14);--warning:#F0B44C;--warning-soft:rgba(240,180,76,.14);--danger:#FF7A72;--danger-soft:rgba(255,122,114,.14);
+  --shadow-1:0 1px 2px rgba(0,0,0,.3);--shadow-2:0 8px 24px -6px rgba(0,0,0,.5);--shadow-3:0 24px 60px -12px rgba(0,0,0,.6);
+}
+
+/* ============================ ⑯ 顶部条：免费下载 · 双击就能打开 · 复制提示词直接给 AI 用 ============================ */
+body.has-tplbar{--bar-h:44px;padding-top:44px}
+.tplbar{position:fixed;left:0;right:0;top:0;height:44px;z-index:88;display:flex;align-items:center;gap:12px;padding:0 16px 0 20px;background:#16171A;color:#E9E9EC;font-size:13px;font-family:var(--font-sans)}
+.tplbar .tb-name{font-weight:600;color:#fff;white-space:nowrap}
+.tplbar .tb-sep{width:1px;height:14px;background:rgba(255,255,255,.18)}
+.tplbar .tb-line{color:#B9BAC0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tplbar .tb-line b{color:#fff;font-weight:500}
+.tplbar .sp{flex:1}
+.tplbar .tb-btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.18);background:transparent;color:#fff;font-size:12px;font-weight:600;white-space:nowrap;text-decoration:none}
+.tplbar .tb-btn:hover{border-color:rgba(255,255,255,.4)}
+.tplbar .tb-btn.primary{background:#fff;color:#16171A;border-color:#fff}
+.tplbar .tb-btn.primary:hover{filter:brightness(.94)}
+.tplbar .tb-btn .ic{width:15px;height:15px}
+.tplbar .tb-hide{flex-shrink:0;width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+.drawer{top:var(--bar-h,0px)}
+body.pp-hidden .tplbar{display:none}
+body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
+@media (max-width:820px){.tplbar .tb-line{display:none}}
+:root[data-theme="dark"]{color-scheme:dark}
+:root[data-theme="dark"] .badge-danger{background:#C9372F;color:#fff}
+:root[data-theme="dark"] .toast{background:#2A2C31;color:#F2F2F4;box-shadow:0 0 0 1px #3A3C42,var(--shadow-2)}
+:root[data-theme="dark"] .brand-mark,:root[data-theme="dark"] .ai-mark{background:#ECECEF;color:#16171A}
+:root[data-theme="dark"] .tab.on{color:#16171A}
+/*@END_KIT_CSS*/
+/* ============================ 本模板样式 ============================ */
+:root{--accent:#1E5BD8;--accent-soft:#EBF1FD;--ink-hero:#0E1A33}
+body{background:var(--surface)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.site{position:sticky;top:var(--bar-h);z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.site .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;border:0;background:none;color:var(--ink-900);padding:0;min-height:40px}
+.logo .mk{width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:14px}
+.snav{display:flex;gap:2px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.snav::-webkit-scrollbar{display:none}
+.snav button{height:36px;padding:0 12px;border:0;background:none;border-radius:var(--r-sm);font-size:14px;color:var(--ink-700);white-space:nowrap}
+.snav button[aria-current="true"]{color:var(--accent);font-weight:600;background:var(--accent-soft)}
+.site .acts{display:flex;gap:8px;flex:none}
+.hero{background:linear-gradient(180deg,#F3F6FC 0%,#FFFFFF 100%);padding:56px 0 24px;text-align:center}
+.hero h1{font-size:38px;line-height:1.25;letter-spacing:-.01em;color:var(--ink-hero)}
+.hero p{font-size:16px;color:var(--ink-700);margin-top:10px}
+.bill{display:inline-flex;align-items:center;gap:12px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+.bill .seg button{height:36px;padding:0 18px;font-size:14px}
+.save{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:var(--r-full);background:var(--success-soft);color:var(--success);font-size:12px;font-weight:600}
+.curbar{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:8px 14px;border-radius:var(--r-full);background:var(--surface);border:1px solid var(--line);font-size:13px;color:var(--ink-700)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding:28px 0 8px;align-items:stretch}
+.pc{position:relative;display:flex;flex-direction:column;padding:22px 20px 20px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface)}
+.pc.hot{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--shadow-2)}
+.pc.cur{border-color:var(--success)}
+.pc .rib{position:absolute;top:-12px;left:20px;height:24px;padding:0 10px;border-radius:var(--r-full);background:var(--accent);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center}
+.pc.cur .rib{background:var(--success)}
+.pc h3{font-size:18px}
+.pc .for{font-size:13px;color:var(--ink-500);margin-top:2px;min-height:21px}
+.pc .price{margin:18px 0 2px;display:flex;align-items:baseline;gap:4px;min-height:48px;flex-wrap:wrap}
+.pc .price b{font-size:36px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--ink-hero);line-height:1.1}
+.pc .price b small{font-size:18px;font-weight:600}
+.pc .price span{font-size:13px;color:var(--ink-500)}
+.pc .price s{font-size:14px;color:var(--ink-500)}
+.pc .bill-n{font-size:12px;color:var(--ink-700);min-height:38px;line-height:1.6}
+.pc .cta{margin:14px 0 16px}
+.pc .cta .btn{width:100%;height:42px;font-size:15px}
+.pc ul{list-style:none;margin:0;padding:14px 0 0;border-top:1px solid var(--line-soft);display:grid;gap:8px;font-size:13px;color:var(--ink-700)}
+.pc li{display:flex;gap:8px;align-items:flex-start;line-height:1.55}
+.pc li .ic{flex:none;width:16px;height:16px;margin-top:2px;color:var(--success)}
+.pc li.inh{color:var(--ink-500)}
+.trust{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;padding:20px 0 8px;font-size:13px;color:var(--ink-500)}
+.trust span{display:inline-flex;align-items:center;gap:6px}
+section.blk{padding:56px 0 8px;scroll-margin-top:calc(var(--bar-h) + 70px)}
+.blk-hd{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.blk-hd h2{font-size:26px;color:var(--ink-hero)}
+.blk-hd p{font-size:14px;color:var(--ink-500);margin-top:4px}
+.blk-hd .r{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* 计算器 */
+.calc{display:grid;grid-template-columns:400px minmax(0,1fr);gap:20px;align-items:start}
+.calc>*{min-width:0}
+.cin{padding:20px}
+.cin .row{margin-bottom:20px}
+.cin .row .lab{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;font-weight:500;margin-bottom:8px}
+.cin .row .lab .stepper input{width:64px}
+.cin input[type=range]{width:100%;height:28px;accent-color:var(--accent);margin:0}
+.cin .tk{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-500)}
+.cin .needs{display:grid;gap:4px}
+.cin .needs label{display:flex;align-items:center;gap:10px;min-height:40px;font-size:14px;padding:0 10px;border:1px solid var(--line);border-radius:var(--r-md);cursor:pointer}
+.cin .needs label small{margin-left:auto;font-size:12px;color:var(--ink-500)}
+.cin .needs input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.cout{padding:0;overflow:hidden}
+.rec{padding:18px 20px;background:var(--accent-soft);border-bottom:1px solid var(--line)}
+.rec small{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.04em}
+.rec h3{font-size:20px;margin-top:2px;color:var(--ink-hero)}
+.rec h3 b{font-variant-numeric:tabular-nums}
+.rec p{font-size:13px;color:var(--ink-700);margin-top:4px;line-height:1.7}
+.rec.ent{background:#FFF6E6}.rec.ent small{color:var(--warning)}
+.cmp-t{width:100%;border-collapse:collapse;font-size:14px}
+.cmp-t th,.cmp-t td{padding:10px 14px;border-bottom:1px solid var(--line-soft);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cmp-t th:first-child,.cmp-t td:first-child{text-align:left;color:var(--ink-700)}
+.cmp-t thead th{font-size:13px;font-weight:600;color:var(--ink-900);background:var(--surface-2)}
+.cmp-t thead th small{display:block;font-weight:400;color:var(--ink-500);font-size:11px}
+.cmp-t td.best{background:#F2F7FF;color:var(--accent);font-weight:700}
+.cmp-t td.na{color:var(--ink-500);font-size:12px;white-space:normal;min-width:96px}
+.cmp-t tr.tot td{font-weight:700;font-size:15px;color:var(--ink-900)}
+.cmp-t tr.tot td.best{color:var(--accent)}
+.cout .ft{padding:12px 20px;font-size:12px;color:var(--ink-500);line-height:1.7}
+/* 对比表 */
+.ctw{position:relative;overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-lg)}
+.ct{width:100%;min-width:820px;border-collapse:separate;border-spacing:0;font-size:14px}
+.ct th,.ct td{padding:12px 16px;border-bottom:1px solid var(--line-soft);text-align:center}
+.ct th:first-child,.ct td:first-child{text-align:left;position:sticky;left:0;background:var(--surface);z-index:1;width:240px}
+.ct thead th{background:var(--surface);z-index:2;border-bottom:1px solid var(--line);vertical-align:bottom}
+.ct thead th b{display:block;font-size:15px}
+.ct thead th span{display:block;font-size:12px;color:var(--ink-500);font-weight:400}
+.ct thead th.hot{box-shadow:inset 0 3px 0 var(--accent)}
+.ct thead th:first-child{z-index:3}
+.ct tr.grp td{background:var(--surface-2);font-weight:600;font-size:13px;color:var(--ink-700);text-align:left;padding:8px 16px}
+.ct tr.grp td:first-child{background:var(--surface-2)}
+.ct td .ic{width:18px;height:18px;color:var(--success);vertical-align:middle}
+.ct td.no{color:var(--ink-500)}
+.ct td.hot{background:#FAFCFF}
+.ct .tip{display:inline-grid;place-items:center;width:24px;height:24px;border:0;background:none;color:var(--ink-500);vertical-align:middle;border-radius:50%;padding:0;margin-left:2px;cursor:help}
+.ct .tip .ic{width:15px;height:15px;color:inherit}
+.ct .tipx{display:block;font-size:12px;color:var(--ink-500);font-weight:400;margin-top:4px;line-height:1.6;white-space:normal}
+/* FAQ */
+.faq{display:grid;grid-template-columns:280px minmax(0,1fr);gap:32px;align-items:start}
+.faq>*{min-width:0}
+.faq .fside p{font-size:14px;color:var(--ink-700);line-height:1.7;margin-top:10px}
+.faq .fside .input-wrap{margin-top:14px}
+.qa{border-bottom:1px solid var(--line)}
+.qa button.q{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:12px 0;border:0;background:none;text-align:left;font-size:15px;font-weight:500;color:var(--ink-900)}
+.qa button.q .ic{margin-left:auto;flex:none;color:var(--ink-500);transition:transform .2s}
+.qa button.q[aria-expanded="true"] .ic{transform:rotate(180deg)}
+.qa .a{padding:0 32px 16px 0;font-size:14px;color:var(--ink-700);line-height:1.8}
+.qa .a b{color:var(--ink-900)}
+.qa mark{background:#FFF1C2;color:inherit;border-radius:2px}
+/* 询价 */
+.contact{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:24px;align-items:start;padding-bottom:64px}
+.contact>*{min-width:0}
+.ent-pts{display:grid;gap:14px;margin-top:6px}
+.ent-pts div{display:flex;gap:12px;font-size:14px;color:var(--ink-700);line-height:1.6}
+.ent-pts .ic{flex:none;width:36px;height:36px;padding:8px;border-radius:10px;background:var(--accent-soft);color:var(--accent)}
+.ent-pts b{display:block;color:var(--ink-900)}
+.cf{padding:22px}
+.cf h3{font-size:17px;margin-bottom:4px}
+.cf>p{font-size:13px;color:var(--ink-500);margin-bottom:16px}
+.cf .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cf .field{margin-bottom:14px}
+.cf .needs{display:flex;flex-wrap:wrap;gap:8px}
+.cf .needs label{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-full);font-size:13px;cursor:pointer}
+.cf .needs input{width:16px;height:16px;accent-color:var(--accent);margin:0}
+.cf .btn-primary{width:100%;height:44px;font-size:15px}
+.cf .legal{font-size:12px;color:var(--ink-500);margin-top:10px;text-align:center}
+.done{text-align:center;padding:36px 22px}
+.done .ok{width:56px;height:56px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;background:var(--success-soft);color:var(--success)}
+.done h3{font-size:18px}
+.done p{font-size:14px;color:var(--ink-700);margin-top:6px;line-height:1.7}
+.foot2{border-top:1px solid var(--line);padding:24px 0 40px;font-size:12px;color:var(--ink-500)}
+.foot2 .wrap{display:flex;gap:16px;flex-wrap:wrap}
+.sk-c{padding:22px;border:1px solid var(--line);border-radius:var(--r-lg)}
+.sk-c .sk{margin-bottom:12px}
+.dsum{display:grid;grid-template-columns:110px minmax(0,1fr);gap:8px 12px;font-size:14px;margin:4px 0 0}
+.dsum dt{color:var(--ink-500)}.dsum dd{margin:0;font-variant-numeric:tabular-nums}
+.dsum dd.big{font-size:18px;font-weight:700;color:var(--accent)}
+@media (max-width:1100px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.calc,.contact{grid-template-columns:1fr}.faq{grid-template-columns:1fr;gap:16px}}
+@media (max-width:640px){.wrap{padding:0 16px}.cards{grid-template-columns:1fr}.hero{padding:36px 0 16px}.hero h1{font-size:28px}.site .acts .btn-ghost{display:none}.snav{display:none}.cf .g2{grid-template-columns:1fr}.blk-hd h2{font-size:22px}.cmp-t th,.cmp-t td{padding:10px 8px}.cin{padding:16px}}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap"><button class="logo" type="button" data-go="plans" aria-label="回到顶部"><span class="mk">签</span>云签 · 电子合同</button>
+  <nav class="snav" id="snav" aria-label="页面导航"></nav>
+  <span class="acts" id="hacts"></span></div></header>
+<main id="page"></main>
+<footer class="foot2"><div class="wrap"><span>云签（示例产品）· 价格均为示例</span><span>所有价格含 6% 增值税，可开专票</span><span>工作日 9:00-18:00 · 400-000-0000（示例）</span></div></footer>
+<div class="modal" id="md" aria-labelledby="md-t"></div>
+
+<script>
+/* ==========================================================================
+   ① 改数据只改这里（示例数据，全部虚构）
+   ========================================================================== */
+const DATA = {
+  yearOff: 0.8,                      // 年付 = 月价 × 12 × 0.8（省 20%）
+  cycle: { start: '11-01', end: '11-30', days: 30, left: 20 },   // 已登录用户本期账单周期（升级按天补差价）
+  current: { plan: 'team', seats: 5, bill: 'month' },
+  // 套餐：id、名称、适合谁、每席月价（null = 询价）、最少席位、最多席位、每席每月合同份数（free 为总数）、超出单价、亮点
+  plans: [
+    { id: 'free', name: '免费版', for: '个人偶尔签几份合同', price: 0, min: 1, max: 1, quota: 5, over: null, feats: ['每月 5 份合同', '个人实名认证', '3 个合同模板', '手机和电脑都能签'] },
+    { id: 'team', name: '团队版', for: '10 人左右的小团队', price: 49, min: 3, max: 50, quota: 20, over: 1.5, feats: ['每席每月 20 份，超出 ¥1.50/份', '企业实名 + 电子公章', '50 个模板 · 批量发起', '3 个角色 · 审计日志 90 天'] },
+    { id: 'pro', name: '专业版', for: '要审批、要对接系统的公司', price: 99, min: 5, max: 100, quota: 50, over: 1.0, hot: true, feats: ['每席每月 50 份，超出 ¥1.00/份', '用印审批流 · 自定义角色', '开放 API 每月 10 万次', 'OA 集成 · 专属服务群 4 小时响应'] },
+    { id: 'ent', name: '企业版', for: '集团、多子公司、私有化', price: null, min: 50, max: 99999, quota: null, over: null, feats: ['合同份数不限', '单点登录 SSO · 永久审计', '私有化或专属云部署', '专属顾问 7×24 · SLA 99.95%'] }
+  ],
+  // 功能对比：分组、功能、免费 / 团队 / 专业 / 企业（true = 有，'' = 没有，文字 = 具体值）、说明
+  compare: [
+    ['合同', '每月合同份数', '5 份', '每席 20 份', '每席 50 份', '不限', '团队版 8 席即每月共 160 份，全团队共用'],
+    ['合同', '超出后单价', '—', '¥1.50 / 份', '¥1.00 / 份', '协议价', '超出部分按月结算，不打年付折扣'],
+    ['合同', '合同模板', '3 个', '50 个', '不限', '不限', ''],
+    ['合同', '批量发起', '', true, true, true, '一次给最多 500 个签署方发同一份合同'],
+    ['合同', '骑缝章与指定签署位置', true, true, true, true, ''],
+    ['合同', '合同归档与全文检索', true, true, true, true, ''],
+    ['协作', '席位', '1', '3～50', '5～100', '50 起', '席位 = 能登录后台发起合同的人，签署方不占席位'],
+    ['协作', '用印审批流', '', '', true, true, '盖公章前按金额、合同类型自动找审批人'],
+    ['协作', '部门与角色', '', '3 个固定角色', '自定义', '自定义 + 多子公司', ''],
+    ['安全', '实名认证', '个人', '个人 + 企业', '个人 + 企业', '个人 + 企业', ''],
+    ['安全', '操作审计日志', '', '90 天', '1 年', '永久', ''],
+    ['安全', '单点登录 SSO', '', '', '', true, '用公司统一账号登录'],
+    ['安全', '私有化 / 专属云', '', '', '', true, ''],
+    ['集成', '开放 API', '', '', '每月 10 万次', '不限', ''],
+    ['集成', 'OA / 即时通讯集成', '', '', true, true, '审批、签署提醒推到公司 OA 和聊天工具'],
+    ['服务', '客服', '帮助中心', '工单 · 1 个工作日', '专属群 · 4 小时', '专属顾问 · 7×24', ''],
+    ['服务', '服务可用性承诺（SLA）', '', '', '99.9%', '99.95%', '低于承诺按比例赔服务时长']
+  ],
+  faq: [
+    ['席位怎么算？签署方要买吗？', '席位 = 能登录后台<b>发起和管理合同</b>的同事。客户、供应商等签署方不需要账号，也不占席位。'],
+    ['合同超出配额怎么收费？', '团队版超出部分 <b>¥1.50 / 份</b>，专业版 <b>¥1.00 / 份</b>，月底按实际用量结算，不打年付折扣。可以在后台设上限，到了就提醒或停止发起。'],
+    ['中途升级怎么算钱？', '<b>按剩余天数补差价</b>，当天生效。例：团队版 5 席，本期还剩 20 / 30 天，升到专业版补 (99 − 49) × 5 × 20 ÷ 30 = ¥166.67。'],
+    ['能降级吗？', '可以，降级在<b>本期结束后</b>生效，不退差价。降到免费版前要先把席位减到 1 个，超出配额的合同不受影响，仍可查看下载。'],
+    ['年付可以中途加席位吗？', '可以，新加席位按年付单价、剩余月数折算，和原订单同一天到期。'],
+    ['可以退款吗？', '首次购买 <b>7 天内</b>不满意可全额退款；超过 7 天，年付按剩余整月退 80%，月付不退。'],
+    ['发票怎么开？', '支付后在「费用中心」申请，支持增值税普通发票和专用发票，3 个工作日内开出电子发票。'],
+    ['电子合同有法律效力吗？', '符合《电子签名法》要求的可靠电子签名与手写签名具有同等效力；每份合同带时间戳和存证编号，可在线出具证据报告。'],
+    ['不续费了数据怎么办？', '到期后 <b>90 天内</b>可以随时导出全部合同和审计日志；90 天后账号转为免费版，超过 5 份的合同只读。']
+  ],
+  freeMail: ['qq.com', '163.com', '126.com', 'gmail.com', 'outlook.com', 'foxmail.com'],
+  sizes: ['50-99 人', '100-499 人', '500-999 人', '1000 人以上']
+};
+
+/* ==========================================================================
+   ①-2 AI 提示词（页面顶部可一键复制；{{变量}} 点一下就能填）
+   ========================================================================== */
+const PROMPTS = [
+ { title: '从零生成这个原型', when: '要做 SaaS 产品的定价页，想把套餐差异、年月付、按用量计费和企业询价一次讲清楚时用',
+   text: `请帮我做一个可点击的 PC 定价页原型（1440 宽，500 宽不横向滚动）：电子合同 SaaS「云签」的定价页，顶部吸顶导航（套餐 / 计算器 / 功能对比 / 常见问题 / 企业询价）。
+
+1. 套餐卡 4 张：免费版（1 席、每月 5 份）/ 团队版（¥49 每席每月，3 席起，每席 20 份，超出 ¥1.50/份）/ 专业版（¥99，5 席起，每席 50 份，超出 ¥1.00/份，标「最受欢迎」）/ 企业版（询价）；月付 / 年付切换（年付 8 折，卡片显示「¥39.20 / 席 / 月，按年付 ¥470.40 / 席」并划掉原价）；已登录状态下标出当前套餐，升级按钮弹出「按剩余天数补差价」的计算（本期剩 20 / 30 天）。
+2. 用量计算器：席位（滑块 + 步进，1～200）、每月合同份数（0～5000）、需要的能力（审批流 / 开放 API / 单点登录）；逐个套餐算 月费 = 席位（不足最少席位按最少算）× 单价，含量 = 席位 × 每席份数，超出费 = 超出份数 × 超出单价，合计；不满足需求或超出席位上限的写原因（如「不含审批流」）；推荐最便宜的可用套餐，并算出「同样 8 席，每月合同达到 481 份起专业版更省」这样的分界点（逐份试算，不要套公式）；规模超过 100 席或要 SSO 时推荐询价。
+3. 功能对比表：按 合同 / 协作 / 安全 / 集成 / 服务 分组，表头吸顶、首列吸附，「只看差异」开关，带说明的项点问号展开。
+4. 常见问题：9 条，可搜索（高亮关键词），手风琴展开。
+5. 企业询价表单：公司名称、联系人、手机（11 位）、工作邮箱（个人邮箱要提示）、规模、需求（多选）、备注；校验就地报错，提交中防重复，成功后写清多久联系、失败可重试。
+状态（原型面板可切换）：套餐 月付 / 年付 / 已登录团队版；计算器 默认 / 建议询价 / 免费版就够；对比 全部 / 只看差异；FAQ 搜不到；询价 校验出错 / 已提交 / 提交失败；加载 / 出错。
+所有价格由数据算出来，不要手写；精确到分。
+硬性要求：单文件 HTML，离线可开；颜色写成 :root 变量；数据集中在脚本顶部 DATA。
+交付：① 完整 HTML；② 计费规则表（套餐 | 单价 | 最少席位 | 含量 | 超出单价 | 年付）；③ 状态清单。` },
+ { title: '改成我的业务', when: '手上有这个模板，要换成自己的 SaaS（按席位、按用量、按项目数计费）时用',
+   text: `附件是一个单文件 HTML 的 SaaS 定价页原型。请改成「{{产品，例如：在线问卷工具}}」的定价页。
+
+1. 只改脚本顶部 DATA 和文案，不动 KIT 标记之间的共用样式和脚本；保留年月付切换、计算器、分界点推荐、对比表只看差异、FAQ 搜索、询价校验；
+2. 计费单位换成：{{例如：按回收份数 / 按项目数 / 按 API 调用}}；套餐和价格：{{套餐清单与价格}}；年付折扣：{{例如：8.5 折}}；
+3. 每个套餐的含量与超出单价：{{规则}}；最少 / 最多席位：{{规则}}；
+4. 功能对比按 {{分组，例如：收集 / 分析 / 协作 / 安全}} 列 15 项左右，写清哪些是差异项；
+5. FAQ 换成你的退款、发票、升级降级规则，并用一个具体例子写出升级补差价怎么算。
+交付：改好的完整 HTML + 计费规则表。` },
+ { title: '在此基础上加页面 / 状态', when: '评审追问「有没有优惠码」「能不能按团队规模给阶梯价」「海外用户怎么付」时用',
+   text: `附件是一个单文件 HTML 的 SaaS 定价页原型。请在它的基础上加：{{要加的页面或状态}}。
+
+常见例子（选一个或照着写）：
+- 「优惠码」：结算前可输入优惠码，校验有效期、适用套餐、是否可与年付叠加，计算器和套餐卡同步显示折后价；
+- 「阶梯席位价」：1～20 席 ¥99、21～50 席 ¥89、51 席以上 ¥79，计算器分段算并列出每段金额；
+- 「多币种」：右上角切换 人民币 / 美元，价格按 1 美元 = 7.1 元换算并按当地习惯取整，税费说明跟着变；
+- 「下单确认页」：选好套餐和席位后进入确认页，显示账单周期、首期金额、发票信息、支付方式，支付失败可重试。
+
+要求：新页面或状态加进「原型面板」和顶部导航；所有价格与计算器一致；沿用现有 CSS 变量和组件样式。
+交付：完整 HTML + 新增部分的「元素 | 交互 | 反馈」说明表。` }
+];
+
+/* ==========================================================================
+   ② 下面是交互逻辑，一般不用改
+   ========================================================================== */
+/*@KIT_JS*/
+/* ==========================================================================
+   原型工具包（不用改）：图标、页面/状态切换、弹层、Toast
+   用法：页面里写 <svg class="ic"><use href="#i-search"/></svg>
+   ========================================================================== */
+(function(){
+  /* ---- 线性图标（24 网格，1.6 描边）。要加图标：照格式加一行 ---- */
+  var ICONS={
+    search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    filter:'<path d="M4 5h16l-6 8v5l-4 2v-7z"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    minus:'<path d="M5 12h14"/>',
+    x:'<path d="M6 6l12 12M18 6 6 18"/>',
+    check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    'chev-d':'<path d="m6 9 6 6 6-6"/>',
+    'chev-u':'<path d="m6 15 6-6 6 6"/>',
+    'chev-r':'<path d="m9 6 6 6-6 6"/>',
+    'chev-l':'<path d="m15 6-6 6 6 6"/>',
+    sort:'<path d="m8 9 4-4 4 4M8 15l4 4 4-4"/>',
+    more:'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>',
+    download:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14"/>',
+    upload:'<path d="M12 19V8m0 0-4 4m4-4 4 4M5 5h14"/>',
+    refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/>',
+    alert:'<path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.5M12 17.2v.1"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.1"/>',
+    'check-c':'<circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.7 2.7L16 9.6"/>',
+    'x-c':'<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',
+    inbox:'<path d="M3 13h5l1.5 3h5L16 13h5"/><path d="M5.5 5h13L21 13v6H3v-6z"/>',
+    file:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
+    home:'<path d="M4 10.5 12 4l8 6.5V20h-5.5v-6h-5v6H4z"/>',
+    grid:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+    chart:'<path d="M4 20V4M4 20h16"/><path d="m8 15 3.5-4 3 2.5L20 7"/>',
+    bars:'<path d="M5 20v-7M10 20V6M15 20v-9M20 20V9"/>',
+    pie:'<path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
+    bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5h4"/>',
+    user:'<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+    users:'<circle cx="9" cy="9" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M15.5 6.2a3 3 0 0 1 0 5.6M17 14.2A5.5 5.5 0 0 1 20.5 19"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>',
+    calendar:'<rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+    cart:'<path d="M3 4h2.5l2 11h11l2-8H7"/><circle cx="9.5" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/>',
+    bag:'<path d="M5 8h14l-1 12H6z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/>',
+    heart:'<path d="M12 19.5s-7.5-4.4-7.5-9.7A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6c0 5.3-7.5 9.7-7.5 9.7z"/>',
+    trash:'<path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/>',
+    edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+    send:'<path d="M12 19V5m0 0-6 6m6-6 6 6"/>',
+    spark:'<path d="M12 3.5 13.8 10.2 20.5 12 13.8 13.8 12 20.5 10.2 13.8 3.5 12 10.2 10.2z"/>',
+    copy:'<rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/>',
+    'thumb-u':'<path d="M7.5 10.5V20H4.5v-9.5zM7.5 10.5 11 4a2 2 0 0 1 2.6 1.9V9h4.7a2 2 0 0 1 2 2.4l-1.4 6.8a2 2 0 0 1-2 1.8H7.5"/>',
+    'thumb-d':'<path d="M7.5 13.5V4H4.5v9.5zM7.5 13.5 11 20a2 2 0 0 0 2.6-1.9V15h4.7a2 2 0 0 0 2-2.4l-1.4-6.8A2 2 0 0 0 16.9 4H7.5"/>',
+    stop:'<rect x="7" y="7" width="10" height="10" rx="2"/>',
+    lock:'<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+    phone:'<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/>',
+    eye:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+    'eye-off':'<path d="M4 4l16 16M10.5 6a9.7 9.7 0 0 1 1.5-.1C18 5.9 21.5 12 21.5 12a16 16 0 0 1-2.6 3.3M6.6 7.2C4 9 2.5 12 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+    pin:'<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+    ticket:'<path d="M4 7.5h16v3a1.8 1.8 0 0 0 0 3.5v3H4v-3a1.8 1.8 0 0 0 0-3.5z"/><path d="M14.5 7.5v10" stroke-dasharray="2 2"/>',
+    wallet:'<rect x="3.5" y="6" width="17" height="13" rx="2"/><path d="M3.5 9.5h17M15.5 14h2"/>',
+    logout:'<path d="M14 4.5H6.5v15H14M10.5 12H20m0 0-3.5-3.5M20 12l-3.5 3.5"/>',
+    layers:'<path d="m12 4 8.5 4.5L12 13 3.5 8.5z"/><path d="m3.5 12.5 8.5 4.5 8.5-4.5"/>',
+    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    msg:'<path d="M4.5 5.5h15v10h-8l-4.5 3.5v-3.5H4.5z"/>',
+    link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    paperclip:'<path d="m19 11.5-7.2 7.2a4.5 4.5 0 0 1-6.4-6.4l7.6-7.6a3 3 0 0 1 4.2 4.2L9.6 16.5a1.5 1.5 0 0 1-2.1-2.1l6.7-6.7"/>',
+    flow:'<circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M6 8.2v3.3A2.5 2.5 0 0 0 8.5 14h7A2.5 2.5 0 0 1 18 16.5v-.1"/>',
+    approve:'<path d="M9 4.5h6l1 2.5h3v13H5V7h3z"/><path d="m9 14 2 2 4-4.5"/>',
+    arrow:'<path d="M5 12h14m0 0-5-5m5 5-5 5"/>',
+    'arrow-up':'<path d="M7 14 12 9l5 5"/>',
+    'arrow-dn':'<path d="M7 10l5 5 5-5"/>',
+    star:'<path d="m12 4 2.4 5 5.4.6-4 3.7 1.1 5.4L12 16l-4.9 2.7 1.1-5.4-4-3.7 5.4-.6z"/>',
+    headset:'<path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13.5" width="4" height="6" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6" rx="1.5"/><path d="M18.5 19.5c0 1-1.5 1.5-4 1.5"/>',
+    book:'<path d="M5 4.5h10.5A2.5 2.5 0 0 1 18 7v12.5H7.5A2.5 2.5 0 0 1 5 17z"/><path d="M5 17a2.5 2.5 0 0 1 2.5-2.5H18"/>',
+    history:'<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5M12 8v4l3 1.8"/>',
+    globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/>',
+    shield:'<path d="M12 3.5 19 6v6c0 4.2-3 7.4-7 8.5-4-1.1-7-4.3-7-8.5V6z"/><path d="m9 12 2 2 4-4.2"/>',
+    play:'<path d="M8 5.5v13l10.5-6.5z"/>',
+    pause:'<path d="M8.5 5.5v13M15.5 5.5v13"/>',
+    share:'<path d="M14 5l6.5 6.5L14 18v-3.8c-4.6 0-7.6 1.4-10 4.8.8-4.9 3.5-9.4 10-10.3z"/>',
+    music:'<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
+    wifi:'<path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.2" r="1"/>',
+    flag:'<path d="M5.5 21V4.5M5.5 4.5h11l-2 4 2 4h-11"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+    moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    code:'<path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5"/>',
+    keyboard:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7.5 14h9"/>',
+    gift:'<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M3.5 9h17M12 9v11M12 9S10.5 4.5 8 5s-1 4 4 4zM12 9s1.5-4.5 4-4 1 4-4 4z"/>'
+  };
+  var sp='<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">';
+  for(var k in ICONS) sp+='<symbol id="i-'+k+'" viewBox="0 0 24 24">'+ICONS[k]+'</symbol>';
+  sp+='</svg>';
+  document.addEventListener('DOMContentLoaded',function(){document.body.insertAdjacentHTML('afterbegin',sp)});
+
+  var P=window.Proto={};
+  P.ic=function(n,cls){return '<svg class="ic '+(cls||'')+'" aria-hidden="true"><use href="#i-'+n+'"/></svg>'};
+  P.esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  P.money=function(n,d){d=d==null?2:d;return Number(n).toLocaleString('zh-CN',{minimumFractionDigits:d,maximumFractionDigits:d})};
+  P.$=function(s,r){return (r||document).querySelector(s)};
+  P.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  /* ---- Toast：Proto.toast('已保存','ok') ---- */
+  P.toast=function(msg,type,opt){
+    opt=opt||{};
+    var host=(opt.host||document.querySelector('.screen')||document.body).querySelector(':scope > .toast-host');
+    var root=opt.host||document.querySelector('.screen')||document.body;
+    if(!host){host=document.createElement('div');host.className='toast-host';host.setAttribute('role','status');host.setAttribute('aria-live','polite');root.appendChild(host)}
+    var t=document.createElement('div');t.className='toast '+(type||'');
+    var icn=type==='ok'?'check-c':type==='err'?'x-c':'info';
+    t.innerHTML=P.ic(icn)+'<span>'+P.esc(msg)+'</span>'+(opt.undo?'<button class="undo" type="button">撤销</button>':'');
+    if(opt.undo) t.querySelector('.undo').onclick=function(){opt.undo();t.remove()};
+    host.appendChild(t);
+    setTimeout(function(){t.style.transition='opacity .3s';t.style.opacity='0';setTimeout(function(){t.remove()},300)},opt.ms||2400);
+  };
+
+  /* ---- 弹层：Esc / 点遮罩关闭、焦点锁定、关闭后焦点回到触发处 ---- */
+  var stack=[];
+  P.open=function(el,opt){
+    opt=opt||{};
+    var host=opt.host||document.body;
+    var mask=document.createElement('div');mask.className='mask';host.appendChild(mask);
+    el.setAttribute('role',el.getAttribute('role')||'dialog');el.setAttribute('aria-modal','true');
+    if(el.parentNode!==host) host.appendChild(el);
+    var item={el:el,mask:mask,back:document.activeElement,onClose:opt.onClose};
+    stack.push(item);
+    void el.offsetWidth;void mask.offsetWidth;(function(){mask.classList.add('show');el.classList.add('show');
+      var f=el.querySelector('[autofocus]');if(f)f.focus({preventScroll:true});else{if(!el.hasAttribute('tabindex'))el.setAttribute('tabindex','-1');el.focus({preventScroll:true})}})();
+    mask.onclick=function(){if(!opt.locked)P.close(el)};
+    return el;
+  };
+  P.close=function(el){
+    var i=-1;for(var j=stack.length-1;j>=0;j--){if(!el||stack[j].el===el){i=j;break}}
+    if(i<0)return;var it=stack.splice(i,1)[0];
+    it.el.classList.remove('show');it.mask.classList.remove('show');
+    setTimeout(function(){it.mask.remove();if(it.el.dataset.temp)it.el.remove()},320);
+    if(it.back&&it.back.focus)it.back.focus({preventScroll:true});
+    if(it.onClose)it.onClose();
+  };
+  document.addEventListener('keydown',function(e){
+    var top=stack[stack.length-1];
+    if(e.key==='Escape'&&top){e.preventDefault();P.close(top.el);return}
+    if(e.key==='Tab'&&top){
+      var f=P.$$('a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])',top.el).filter(function(n){return n.offsetParent!==null});
+      if(!f.length)return;var a=f[0],b=f[f.length-1];
+      if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus()}
+      else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus()}
+      else if(!top.el.contains(document.activeElement)){e.preventDefault();a.focus()}
+    }
+  });
+
+  /* ---- 确认弹窗：Proto.confirm({title,body,ok,danger}).then(...) ---- */
+  P.confirm=function(o){
+    return new Promise(function(res){
+      var m=document.createElement('div');m.className='modal';m.dataset.temp=1;
+      m.setAttribute('aria-labelledby','cf-t');
+      m.innerHTML='<div class="layer-hd"><h2 id="cf-t">'+P.esc(o.title)+'</h2></div><div class="layer-bd"><p class="muted" style="font-size:14px">'+(o.html||P.esc(o.body||''))+'</p></div><div class="layer-ft"><button class="btn" data-k="0" type="button">'+(o.cancel||'取消')+'</button><button class="btn '+(o.danger?'btn-danger-solid':'btn-primary')+'" data-k="1" type="button">'+P.esc(o.ok||'确定')+'</button></div>';
+      var done=false;
+      m.addEventListener('click',function(e){var b=e.target.closest('[data-k]');if(!b)return;done=true;P.close(m);res(b.dataset.k==='1')});
+      P.open(m,{host:o.host,onClose:function(){if(!done)res(false)}});
+      setTimeout(function(){m.querySelector('[data-k="1"]').focus()},30);
+    });
+  };
+
+  /* ---- 页面 / 状态切换 + 原型面板 ----
+     Proto.init({pages:[{id,name}], states:[{id,name}], render:function(page,state){}})
+     URL 直达：#page=list&state=empty ；按 H 隐藏面板 */
+  P.state={};
+  function parse(){var o={};location.hash.replace(/^#/,'').split('&').forEach(function(kv){var p=kv.split('=');if(p[0])o[p[0]]=decodeURIComponent(p[1]||'')});return o}
+  P.go=function(page,state,silent){
+    var c=P.cfg;page=page||P.state.page;
+    if(state==null) state=(page!==P.state.page)?'normal':P.state.state;
+    P.state={page:page,state:state||'normal'};
+    var h='#page='+page+(P.state.state!=='normal'?'&state='+P.state.state:'');
+    if(location.hash!==h) history.replaceState(null,'',h);
+    c.render(P.state.page,P.state.state);
+    syncPanel();
+  };
+  function syncPanel(){
+    P.$$('.pp [data-pg]').forEach(function(b){b.classList.toggle('on',b.dataset.pg===P.state.page)});
+    var sts=stateList();
+    var box=P.$('.pp [data-states]');if(!box)return;
+    box.innerHTML=sts.map(function(s){return '<button type="button" data-st="'+s.id+'" class="'+(s.id===P.state.state?'on':'')+'">'+s.name+'</button>'}).join('');
+  }
+  function stateList(){var c=P.cfg,pg=c.pages.filter(function(p){return p.id===P.state.page})[0]||{};return pg.states||c.states||[{id:'normal',name:'正常'}]}
+  P.init=function(cfg){
+    P.cfg=cfg;
+    var h=parse();
+    var first=(cfg.pages.filter(function(p){return p.id===h.page})[0]||cfg.pages[0]).id;
+    var pp=document.createElement('div');pp.className='pp';
+    pp.innerHTML='<div class="pp-body" role="region" aria-label="原型面板"><div class="pp-group"><h4>页面</h4><div class="pp-list">'+cfg.pages.map(function(p){return '<button type="button" data-pg="'+p.id+'">'+p.name+'</button>'}).join('')+'</div></div><div class="pp-group"><h4>状态</h4><div class="pp-list" data-states></div></div><div class="pp-foot"><span>'+P.esc(cfg.title||'原型模板')+'</span><span><kbd>H</kbd> 隐藏</span></div></div><button class="pp-toggle" type="button" aria-expanded="false"><span class="dot"></span>原型面板</button>';
+    document.body.appendChild(pp);
+    pp.querySelector('.pp-toggle').onclick=function(){var o=pp.classList.toggle('open');this.setAttribute('aria-expanded',o)};
+    pp.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.pg)P.go(b.dataset.pg,'normal');if(b.dataset.st)P.go(null,b.dataset.st)});
+    document.addEventListener('keydown',function(e){if((e.key==='h'||e.key==='H')&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&!e.metaKey&&!e.ctrlKey)document.body.classList.toggle('pp-hidden')});
+    if(/(^|[?&])shot\b/.test(location.search))document.body.classList.add('shot');
+    P.go(first,h.state||'normal');
+  };
+
+
+  /* ---- AI 提示词面板（每个模板、组件库必有；build.py 会检查） ----
+     Proto.prompts([{title, when, text}])   text 里用 {{变量名}} 标变量，点击就地填写
+     PC：右下角「AI 提示词」按钮 → 右侧抽屉；页面有 .stage（手机框）时直接摆在手机框右侧 */
+  var PV={};
+  try{PV=JSON.parse(localStorage.getItem('tpl-pv:'+location.pathname)||'{}')}catch(e){}
+  function savePV(){try{localStorage.setItem('tpl-pv:'+location.pathname,JSON.stringify(PV))}catch(e){}}
+  P.fillPrompt=function(text){return text.replace(/\{\{([^}]+)\}\}/g,function(m,k){k=k.trim();return PV[k]?PV[k]:m})};
+  function bodyHTML(text){
+    return P.esc(text).replace(/\{\{([^}]+)\}\}/g,function(m,k){k=k.trim();var v=PV[k];return '<span class="pv'+(v?' filled':'')+'" role="button" tabindex="0" data-pv="'+P.esc(k)+'" title="点击填写">'+P.esc(v||k)+'</span>'});
+  }
+  P.promptCard=function(p,i){
+    var hasVar=/\{\{/.test(p.text);
+    return '<div class="pq-card" data-pq="'+i+'"><h3><span class="no">'+(i+1)+'</span>'+P.esc(p.title)+'</h3>'+(p.when?'<p class="pq-when">'+P.esc(p.when)+'</p>':'')+
+      '<div class="pq-body">'+bodyHTML(p.text)+'</div><div class="pq-acts"><span class="hint">'+(hasVar?'点高亮处填写，复制时自动替换':'复制后粘到任意 AI 对话里')+'</span><span class="sp"></span>'+
+      '<button class="btn btn-ghost" type="button" data-pq-more>展开</button><button class="btn btn-primary" type="button" data-pq-copy>'+P.ic('copy','ic-sm')+'复制</button></div></div>';
+  };
+  P.copyText=function(text,btn,msg){
+    var done=function(){if(btn){var h=btn.innerHTML;btn.classList.add('done');btn.innerHTML=P.ic('check','ic-sm')+'已复制';setTimeout(function(){btn.classList.remove('done');btn.innerHTML=h},2400)}P.toast(msg||'已复制，粘到 AI 对话里就能用','ok',{host:document.body})};
+    var fin=false,ok=function(){if(!fin){fin=true;done()}};
+    try{navigator.clipboard.writeText(text).then(ok,function(){if(!fin){fin=true;fallback()}});setTimeout(function(){if(!fin){fin=true;fallback()}},800)}catch(e){fin=true;fallback()}
+    function fallback(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();done()}
+  };
+  function wirePrompts(root,list){
+    root.addEventListener('click',function(e){
+      var c=e.target.closest('[data-pq]');if(!c)return;var p=list[+c.dataset.pq];
+      if(e.target.closest('[data-pq-copy]'))P.copyText(P.fillPrompt(p.text),e.target.closest('[data-pq-copy]'));
+      if(e.target.closest('[data-pq-more]')){var o=c.classList.toggle('open');e.target.closest('[data-pq-more]').textContent=o?'收起':'展开'}
+      var v=e.target.closest('[data-pv]');if(v)editVar(v,root,list);
+    });
+    root.addEventListener('keydown',function(e){var v=e.target.closest&&e.target.closest('[data-pv]');if(v&&(e.key==='Enter'||e.key===' ')){e.preventDefault();editVar(v,root,list)}});
+  }
+  function editVar(span,root,list){
+    var k=span.dataset.pv,inp=document.createElement('input');inp.className='pv-in';inp.value=PV[k]||'';inp.placeholder=k;inp.setAttribute('aria-label','填写 '+k);
+    inp.style.width=Math.max(80,Math.min(260,(inp.value||k).length*14+20))+'px';
+    span.replaceWith(inp);inp.focus();
+    var commit=function(){PV[k]=inp.value.trim();if(!PV[k])delete PV[k];savePV();P.$$('[data-pq]',root).forEach(function(c){c.querySelector('.pq-body').innerHTML=bodyHTML(list[+c.dataset.pq].text)})};
+    inp.addEventListener('blur',commit);
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur()}if(e.key==='Escape'){e.stopPropagation();inp.value=PV[k]||'';inp.blur()}});
+  }
+  P.prompts=function(list){
+    P._prompts=list;
+    if(!list||list.length<3)console.error('[提示词面板] 至少 3 条：从零生成 / 改成我的业务 / 加页面或状态');
+    var id=(location.pathname.split('/').filter(Boolean).slice(-2,-1)[0])||'template';
+    var bar=document.createElement('div');bar.className='tplbar';bar.setAttribute('role','region');bar.setAttribute('aria-label','模板说明');
+    bar.innerHTML='<span class="tb-name">'+P.esc(document.title.split(' · ')[0])+'</span><span class="tb-sep"></span><span class="tb-line"><b>免费下载</b> · 双击就能打开 · 复制提示词直接给 AI 用</span><span class="sp"></span><span data-tb-slot></span><a class="tb-btn primary" href="./'+P.esc(decodeURIComponent(id))+'.zip" download>'+P.ic('download')+'免费下载</a><button class="tb-btn tb-hide" type="button" aria-label="隐藏顶部条和原型面板（H）" title="隐藏（H）">'+P.ic('x')+'</button>';
+    document.body.prepend(bar);document.body.classList.add('has-tplbar');P._bar=bar;
+    bar.querySelector('.tb-hide').onclick=function(){document.body.classList.add('pp-hidden')};
+    var intro='<p class="pq-intro">复制下面的提示词，粘到任意 AI 对话里，就能生成或改造这个原型。要求它输出单文件 HTML。</p>';
+    var stage=document.querySelector('.stage');
+    if(stage){
+      var col=document.createElement('aside');col.className='pq-col';col.setAttribute('aria-label','AI 提示词');
+      col.innerHTML='<div class="pq-head">'+P.ic('spark')+'AI 提示词 · 复制就能用</div><div class="pq-scroll">'+list.map(P.promptCard).join('')+'</div>';
+      stage.appendChild(col);wirePrompts(col,list);
+      var jb=document.createElement('button');jb.type='button';jb.className='tb-btn';jb.innerHTML=P.ic('spark')+'AI 提示词 · 一键复制';jb.onclick=function(){col.scrollIntoView({behavior:'smooth',block:'center'});var c=col.querySelector('.pq-card');if(c){c.style.boxShadow='0 0 0 3px var(--accent-soft)';setTimeout(function(){c.style.boxShadow=''},1400)}};bar.querySelector('[data-tb-slot]').appendChild(jb);return;
+    }
+    var fab=document.createElement('button');fab.type='button';fab.className='tb-btn';fab.innerHTML=P.ic('spark')+'AI 提示词 · 一键复制';
+    var dw=document.createElement('aside');dw.className='drawer pq-drawer';dw.setAttribute('aria-label','AI 提示词');
+    dw.innerHTML='<div class="layer-hd"><h2>AI 提示词</h2><button class="btn btn-ghost btn-icon" type="button" data-pq-x aria-label="关闭">'+P.ic('x')+'</button></div><div class="layer-bd">'+intro+list.map(P.promptCard).join('')+'</div>';
+    P._bar.querySelector('[data-tb-slot]').appendChild(fab);document.body.appendChild(dw);wirePrompts(dw,list);
+    fab.onclick=function(){P.open(dw)};
+    dw.querySelector('[data-pq-x]').onclick=function(){P.close(dw)};
+  };
+  /* ---- 骨架行 ---- */
+  P.skRows=function(n,cols){var s='';for(var i=0;i<n;i++){s+='<tr>';for(var j=0;j<cols;j++)s+='<td><div class="sk" style="height:12px;width:'+(40+((i*7+j*13)%50))+'%"></div></td>';s+='</tr>'}return s};
+  /* ---- 状态块 ---- */
+  P.stateBlock=function(o){return '<div class="state '+(o.error?'is-error':'')+'"><div class="state-ic">'+P.ic(o.icon||(o.error?'alert':'inbox'))+'</div><h3>'+P.esc(o.title)+'</h3>'+(o.body?'<p>'+P.esc(o.body)+'</p>':'')+(o.acts?'<div class="acts">'+o.acts+'</div>':'')+'</div>'};
+})();
+/*@END_KIT_JS*/
+
+const P = Proto, { $, $$, ic, esc, toast } = Proto;
+const PG = $('#page'), md = $('#md');
+const yuan = n => '¥' + (Math.round(n * 100) / 100).toLocaleString('zh-CN', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+const y2 = n => '¥' + (Math.round(n * 100) / 100).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const PL = id => DATA.plans.find(p => p.id === id);
+let S, carry = false;
+function fresh() { S = { bill: 'month', login: false, seats: 8, docs: 300, need: { flow: false, api: false, sso: false }, diff: false, open: new Set([0]), fq: '', tips: new Set(), form: { co: '', name: '', phone: '', mail: '', size: '', needs: [], note: '' }, tried: false, sent: false, sending: false, failNext: false, page: 'plans' }; }
+
+/* ---------------- 计费 ---------------- */
+const unit = p => p.price == null ? null : S.bill === 'year' ? p.price * DATA.yearOff : p.price;
+function quote(p, seats, docs, need) {
+  if (p.id === 'ent') return { p, ok: false, ent: true, why: '按规模和部署方式报价' };
+  const why = [];
+  if (seats > p.max) why.push(`最多 ${p.max} 席`);
+  if (p.id === 'free' && docs > p.quota) why.push(`每月只有 ${p.quota} 份`);
+  if (need.flow && !['pro'].includes(p.id)) why.push('不含审批流');
+  if (need.api && p.id !== 'pro') why.push('不含开放 API');
+  if (need.sso) why.push('不含单点登录');
+  const s = Math.max(seats, p.min), base = s * unit(p), inc = p.id === 'free' ? p.quota : s * p.quota, extra = Math.max(0, docs - inc), ov = p.over ? extra * p.over : 0;
+  return { p, ok: !why.length, why: why.join('、'), s, base, inc, extra, ov, total: base + ov };
+}
+function calcAll() {
+  const Qs = DATA.plans.map(p => quote(p, S.seats, S.docs, S.need));
+  const okQ = Qs.filter(q => q.ok).sort((a, b) => a.total - b.total);
+  const entNeed = S.seats > 100 || S.need.sso;
+  return { Qs, best: entNeed ? null : okQ[0] || null, entNeed };
+}
+function breakEven() {  // 席位不变时，每月合同超过多少份专业版比团队版便宜（逐份试算）
+  const t = PL('team'), p = PL('pro'), nf = { flow: false, api: false, sso: false };
+  if (S.seats > t.max) return null;
+  for (let c = 0; c <= 20000; c++) { if (quote(p, S.seats, c, nf).total < quote(t, S.seats, c, nf).total) return c; }
+  return null;
+}
+
+/* ---------------- 顶部导航 ---------------- */
+const SECS = [['plans', '套餐'], ['calc', '用量计算器'], ['compare', '功能对比'], ['faq', '常见问题'], ['contact', '企业询价']];
+function chrome(cur) {
+  $('#snav').innerHTML = SECS.map(s => `<button type="button" data-go="${s[0]}" aria-current="${s[0] === cur}">${s[1]}</button>`).join('');
+  $('#hacts').innerHTML = S.login ? `<span class="muted hide-s" style="font-size:13px;align-self:center">杭州示例科技 · 林示例</span><button class="btn" type="button" data-toast="费用中心（示例）">费用中心</button>` : `<button class="btn btn-ghost" type="button" data-login>登录</button><button class="btn btn-primary" type="button" data-trial="pro">免费试用 14 天</button>`;
+}
+
+/* ---------------- 各区块 ---------------- */
+function planCard(p) {
+  const u = unit(p), cur = S.login && DATA.current.plan === p.id, curP = PL(DATA.current.plan);
+  let price, note, cta;
+  if (p.price == null) { price = '<b style="font-size:28px">按需报价</b>'; note = '50 席起 · 可私有化部署<br>年付合同，支持对公转账'; }
+  else if (p.price === 0) { price = '<b><small>¥</small>0</b><span>永久免费</span>'; note = '1 个席位<br>不需要绑卡'; }
+  else { price = `<b><small>¥</small>${(Math.round(u * 100) / 100).toFixed(u % 1 ? 2 : 0)}</b><span>/ 席 / 月</span>${S.bill === 'year' ? `<s>¥${p.price}</s>` : ''}`; note = S.bill === 'year' ? `按年付 ${y2(p.price * 12 * DATA.yearOff)} / 席，省 ${y2(p.price * 12 * (1 - DATA.yearOff))}<br>${p.min} 席起，${p.min} 席每年 ${y2(p.price * 12 * DATA.yearOff * p.min)}` : `按月付，随时可停<br>${p.min} 席起，${p.min} 席每月 ${yuan(p.price * p.min)}`; }
+  if (S.login) {
+    if (cur) cta = `<button class="btn" type="button" disabled>当前套餐 · ${DATA.current.seats} 席</button>`;
+    else if (p.id === 'ent') cta = `<button class="btn" type="button" data-go="contact">联系销售</button>`;
+    else if ((p.price || 0) > (curP.price || 0)) cta = `<button class="btn btn-primary" type="button" data-upgrade="${p.id}">升级到${p.name}</button>`;
+    else cta = `<button class="btn" type="button" data-down="${p.id}">降级到${p.name}</button>`;
+  } else cta = p.id === 'ent' ? `<button class="btn" type="button" data-go="contact">联系销售</button>` : p.id === 'free' ? `<button class="btn" type="button" data-signup>免费注册</button>` : `<button class="btn ${p.hot ? 'btn-primary' : ''}" type="button" data-trial="${p.id}">免费试用 14 天</button>`;
+  return `<article class="pc${p.hot ? ' hot' : ''}${cur ? ' cur' : ''}" aria-label="${p.name}">${cur ? '<span class="rib">当前套餐</span>' : p.hot ? '<span class="rib">最受欢迎</span>' : ''}<h3>${p.name}</h3><p class="for">${p.for}</p>
+   <div class="price">${price}</div><p class="bill-n">${note}</p><div class="cta">${cta}</div>
+   <ul>${p.id === 'team' || p.id === 'pro' || p.id === 'ent' ? `<li class="inh">${ic('check')}包含${p.id === 'team' ? '免费版' : p.id === 'pro' ? '团队版' : '专业版'}全部功能，另加：</li>` : ''}${p.feats.map(f => `<li>${ic('check')}<span>${f}</span></li>`).join('')}</ul></article>`;
+}
+function secPlans(state) {
+  return `<div class="hero"><div class="wrap"><h1>按团队规模付费，用多少算多少</h1><p>签署方免费，不占席位 · 所有付费版 14 天免费试用，不用绑卡</p>
+   <div class="bill"><div class="seg" role="group" aria-label="付费周期"><button type="button" data-bill="month" aria-pressed="${S.bill === 'month'}">按月付</button><button type="button" data-bill="year" aria-pressed="${S.bill === 'year'}">按年付</button></div><span class="save">年付省 20%</span></div>
+   ${S.login ? `<div><span class="curbar">${ic('check-c', 'ic-sm')}你现在是 <b>团队版 · ${DATA.current.seats} 席 · 按月付</b>，本期 ${DATA.cycle.start}～${DATA.cycle.end}，还剩 ${DATA.cycle.left} 天</span></div>` : ''}</div></div>
+   <div class="wrap"><div class="cards">${DATA.plans.map(planCard).join('')}</div>
+   <div class="trust"><span>${ic('shield', 'ic-sm')}符合《电子签名法》</span><span>${ic('lock', 'ic-sm')}合同加密存储 · 时间戳存证</span><span>${ic('refresh', 'ic-sm')}7 天内不满意全额退款</span><span>${ic('file', 'ic-sm')}可开增值税专票</span></div></div>`;
+}
+function secCalc() {
+  const C = calcAll(), be = breakEven();
+  const best = C.best;
+  let recH;
+  if (C.entNeed) recH = `<div class="rec ent"><small>建议询价</small><h3>${S.seats > 100 ? `${S.seats} 席超过专业版上限 100 席` : '需要单点登录 SSO'}，适合企业版</h3><p>企业版按规模和部署方式报价，通常比按席位购买便宜 15%～30%。<button class="btn-link" type="button" data-go="contact">留下联系方式，1 个工作日内报价</button></p></div>`;
+  else if (best && best.p.id === 'free') recH = `<div class="rec"><small>推荐</small><h3>免费版就够用：<b>¥0</b></h3><p>1 个席位、每月 ${S.docs} 份在免费额度 5 份以内。人多了或份数超了再升级，数据不用迁移。</p></div>`;
+  else if (best) { const alt = C.Qs.find(q => q.ok && q.p.id !== best.p.id && q.p.id !== 'free'); recH = `<div class="rec"><small>推荐 · 最省的可用套餐</small><h3>${best.p.name}：每月 <b>${y2(best.total)}</b></h3><p>${best.s} 席 × ${y2(unit(best.p))}${best.ov ? ` + 超出 ${best.extra} 份 × ${y2(best.p.over)}` : `，含 ${best.inc} 份用不完`}${alt ? `；比${alt.p.name}每月省 ${y2(alt.total - best.total)}` : ''}${S.bill === 'year' ? `；按年付一年 ${y2(best.base * 12 + best.ov * 12)}` : `；改年付每年省 ${y2(best.s * best.p.price * 12 * (1 - DATA.yearOff))}`}。${be != null && best.p.id === 'team' ? `<br>同样 ${S.seats} 席，每月合同达到 <b>${be} 份</b>起专业版更省。` : ''}</p></div>`; }
+  else recH = `<div class="rec ent"><small>没有合适的套餐</small><h3>当前需求只有企业版能满足</h3><p><button class="btn-link" type="button" data-go="contact">联系销售</button></p></div>`;
+  const cols = C.Qs.filter(q => q.p.id !== 'ent');
+  const cell = (q, v, isTot) => !q.ok ? (isTot ? `<td class="na">${esc(q.why)}</td>` : '<td class="na">—</td>') : `<td class="${best && best.p.id === q.p.id ? 'best' : ''}">${v}</td>`;
+  return `<section class="blk" id="sec-calc"><div class="wrap"><div class="blk-hd"><div><h2>用量计算器</h2><p>填团队人数和每月合同份数，逐个套餐算出每月要付多少</p></div><div class="r"><div class="seg" role="group" aria-label="计算器付费周期"><button type="button" data-bill="month" aria-pressed="${S.bill === 'month'}">按月付</button><button type="button" data-bill="year" aria-pressed="${S.bill === 'year'}">按年付</button></div></div></div>
+   <div class="calc"><section class="card cin" aria-label="填写用量">
+    <div class="row"><div class="lab"><label for="seats-r">发起合同的人数（席位）</label><span class="stepper"><button type="button" data-sstep="-1" aria-label="减少席位" ${S.seats <= 1 ? 'disabled' : ''}>${ic('minus', 'ic-sm')}</button><input id="seats-n" inputmode="numeric" value="${S.seats}" aria-label="席位数"><button type="button" data-sstep="1" aria-label="增加席位" ${S.seats >= 200 ? 'disabled' : ''}>${ic('plus', 'ic-sm')}</button></span></div><input type="range" id="seats-r" min="1" max="200" value="${S.seats}"><div class="tk"><span>1</span><span>50</span><span>100</span><span>200</span></div></div>
+    <div class="row"><div class="lab"><label for="docs-r">每月合同份数</label><span class="stepper"><button type="button" data-dstep="-50" aria-label="减少 50 份" ${S.docs <= 0 ? 'disabled' : ''}>${ic('minus', 'ic-sm')}</button><input id="docs-n" inputmode="numeric" value="${S.docs}" aria-label="每月合同份数"><button type="button" data-dstep="50" aria-label="增加 50 份" ${S.docs >= 5000 ? 'disabled' : ''}>${ic('plus', 'ic-sm')}</button></span></div><input type="range" id="docs-r" min="0" max="5000" step="10" value="${S.docs}"><div class="tk"><span>0</span><span>1000</span><span>2500</span><span>5000</span></div></div>
+    <div class="row" style="margin:0"><div class="lab">还需要</div><div class="needs">${[['flow', '盖章前走审批', '专业版起'], ['api', '和自家系统对接（API）', '专业版起'], ['sso', '公司统一账号登录（SSO）', '企业版']].map(n => `<label><input type="checkbox" data-need="${n[0]}" ${S.need[n[0]] ? 'checked' : ''}>${n[1]}<small>${n[2]}</small></label>`).join('')}</div></div>
+   </section>
+   <section class="card cout" aria-live="polite">${recH}<div style="overflow-x:auto"><table class="cmp-t"><thead><tr><th>每月（${S.bill === 'year' ? '年付折算' : '月付'}）</th>${cols.map(q => `<th>${q.p.name}<small>${q.p.price ? `${y2(unit(q.p))} / 席` : '免费'}</small></th>`).join('')}</tr></thead><tbody>
+    <tr><td>计费席位</td>${cols.map(q => cell(q, q.s + (q.s > S.seats ? `<small style="display:block;font-weight:400;font-size:11px;color:var(--ink-500)">${q.p.min} 席起</small>` : ''))).join('')}</tr>
+    <tr><td>席位费</td>${cols.map(q => cell(q, y2(q.base))).join('')}</tr>
+    <tr><td>包含合同</td>${cols.map(q => cell(q, q.inc + ' 份')).join('')}</tr>
+    <tr><td>超出费</td>${cols.map(q => cell(q, q.extra ? `${q.extra} × ${y2(q.p.over)} = ${y2(q.ov)}` : '¥0.00')).join('')}</tr>
+    <tr class="tot"><td>合计 / 月</td>${cols.map(q => cell(q, y2(q.total), true)).join('')}</tr></tbody></table></div>
+    <p class="ft">席位不足最少席位按最少席位计费；超出费按月结算，不打年付折扣；价格含 6% 增值税。企业版按需报价，未列出。</p></section></div></div></section>`;
+}
+function secCompare() {
+  const names = DATA.plans.map(p => p.name);
+  let rows = DATA.compare;
+  if (S.diff) rows = rows.filter(r => !(String(r[2]) === String(r[3]) && String(r[3]) === String(r[4]) && String(r[4]) === String(r[5])));
+  const groups = [...new Set(rows.map(r => r[0]))];
+  const v = (x, i) => x === true ? `<td class="${i === 2 ? 'hot' : ''}">${ic('check')}<span class="sr-only">有</span></td>` : x === '' ? `<td class="no${i === 2 ? ' hot' : ''}">—<span class="sr-only">没有</span></td>` : `<td class="${i === 2 ? 'hot' : ''}">${esc(x)}</td>`;
+  return `<section class="blk" id="sec-compare"><div class="wrap"><div class="blk-hd"><div><h2>功能对比</h2><p>${DATA.compare.length} 项 · ${S.diff ? `只看差异：${rows.length} 项不同` : '带问号的点开有说明'}</p></div><div class="r"><label class="check" style="min-height:36px"><input type="checkbox" id="diff" ${S.diff ? 'checked' : ''}>只看差异</label></div></div>
+   <div class="ctw"><table class="ct"><thead><tr><th scope="col"><span>功能</span></th>${DATA.plans.map((p, i) => `<th scope="col" class="${p.hot ? 'hot' : ''}"><b>${p.name}</b><span>${p.price == null ? '询价' : p.price === 0 ? '免费' : `${y2(unit(p))} / 席 / 月`}</span></th>`).join('')}</tr></thead><tbody>
+   ${groups.map(g => `<tr class="grp"><td colspan="5">${g}</td></tr>` + rows.filter(r => r[0] === g).map(r => { const k = DATA.compare.indexOf(r); return `<tr><td>${esc(r[1])}${r[6] ? `<button class="tip" type="button" data-tip="${k}" aria-expanded="${S.tips.has(k)}" aria-label="说明：${esc(r[1])}">${ic('info')}</button>${S.tips.has(k) ? `<span class="tipx">${esc(r[6])}</span>` : ''}` : ''}</td>${[2, 3, 4, 5].map((c, i) => v(r[c], i)).join('')}</tr>`; }).join('')).join('')}</tbody></table></div></div></section>`;
+}
+function hl(t) { if (!S.fq) return t; const q = S.fq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); return t.replace(new RegExp(`(${q})(?![^<]*>)`, 'g'), '<mark>$1</mark>'); }
+function secFaq() {
+  const L = DATA.faq.map((f, i) => [f, i]).filter(([f]) => !S.fq || (f[0] + f[1].replace(/<[^>]+>/g, '')).includes(S.fq));
+  return `<section class="blk" id="sec-faq"><div class="wrap"><div class="faq"><div class="fside"><h2 style="font-size:26px;color:var(--ink-hero)">常见问题</h2><p>没找到答案？工作日 9:00-18:00 在线客服 5 分钟内回复。</p><div class="input-wrap">${ic('search')}<input class="input" id="fq" placeholder="搜：退款、发票、升级…" aria-label="搜索常见问题" value="${esc(S.fq)}"></div></div>
+   <div>${L.length ? L.map(([f, i]) => { const o = S.open.has(i) || !!S.fq; return `<div class="qa"><button class="q" type="button" data-qa="${i}" aria-expanded="${o}" aria-controls="qa-${i}">${hl(esc(f[0]))}${ic('chev-d')}</button>${o ? `<div class="a" id="qa-${i}">${hl(f[1])}</div>` : ''}</div>`; }).join('') : P.stateBlock({ icon: 'search', title: `没有找到「${S.fq}」相关的问题`, body: '换个说法试试，比如「多少钱」「能退吗」；或者直接问客服。', acts: '<button class="btn" type="button" data-fqclear>清空搜索</button><button class="btn btn-primary" type="button" data-toast="已打开在线客服（示例）">问客服</button>' })}</div></div></div></section>`;
+}
+function ferr() {
+  const f = S.form, e = {};
+  if (!f.co.trim()) e.co = '请填写公司名称'; else if (f.co.trim().length < 4) e.co = '请填写营业执照上的全称';
+  if (!f.name.trim()) e.name = '请填写联系人';
+  if (!/^1\d{10}$/.test(f.phone)) e.phone = f.phone ? `手机号是 11 位，现在 ${f.phone.replace(/\D/g, '').length} 位` : '请填写手机号';
+  if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(f.mail)) e.mail = f.mail ? '邮箱格式不对' : '请填写工作邮箱';
+  if (!f.size) e.size = '请选择公司规模';
+  return e;
+}
+function secContact(state) {
+  const f = S.form, e = S.tried ? ferr() : {}, dom = (f.mail.split('@')[1] || '').toLowerCase(), personal = DATA.freeMail.includes(dom);
+  const fe = k => e[k] ? `<span class="field-err" id="${k}-e">${e[k]}</span>` : '';
+  const form = S.sent ? `<div class="done" role="status"><div class="ok">${ic('check')}</div><h3>已收到，顾问会在 1 个工作日内联系你</h3><p>${esc(f.name || '林示例')}，我们会打 ${esc((f.phone || '13800001234').replace(/(\d{3})\d{4}(\d{4})/, '$1****$2'))} 联系你（工作日 9:00-18:00），报价单发到 ${esc(f.mail || 'lin@hz-example.com')}。<br>工单编号 <span class="mono">ENT-20261111-0386</span></p><div style="display:flex;gap:8px;justify-content:center;margin-top:16px"><button class="btn" type="button" data-toast="已下载《企业版方案说明》PDF（示例）">${ic('download')}下载方案说明</button><button class="btn btn-primary" type="button" data-go="plans">回到套餐</button></div></div>` :
+    `<form class="cf" id="cf" novalidate><h3>企业版询价</h3><p>留下联系方式，顾问 1 个工作日内给你报价方案</p>
+    ${state === 'error' ? `<div class="banner danger" style="display:flex;gap:8px;padding:10px 12px;border-radius:var(--r-md);background:var(--danger-soft);color:var(--danger);font-size:13px;margin-bottom:14px">${ic('alert', 'ic-sm')}<span>提交没有成功（网络超时，示例）。填写内容都还在，再点一次提交即可。</span></div>` : ''}
+    <div class="g2"><div class="field"><label class="label" for="f-co">公司名称<span class="req">*</span></label><input class="input${e.co ? ' is-error' : ''}" id="f-co" value="${esc(f.co)}" placeholder="营业执照上的全称" aria-describedby="co-e" autocomplete="organization">${fe('co')}</div>
+    <div class="field"><label class="label" for="f-name">联系人<span class="req">*</span></label><input class="input${e.name ? ' is-error' : ''}" id="f-name" value="${esc(f.name)}" autocomplete="name">${fe('name')}</div></div>
+    <div class="g2"><div class="field"><label class="label" for="f-phone">手机<span class="req">*</span></label><input class="input${e.phone ? ' is-error' : ''}" id="f-phone" inputmode="numeric" maxlength="11" value="${esc(f.phone)}" autocomplete="tel">${fe('phone')}</div>
+    <div class="field"><label class="label" for="f-mail">工作邮箱<span class="req">*</span></label><input class="input${e.mail ? ' is-error' : ''}" id="f-mail" inputmode="email" value="${esc(f.mail)}" autocomplete="email">${fe('mail') || (personal ? '<span class="field-hint" style="color:var(--warning)">这是个人邮箱，用公司邮箱能更快拿到报价</span>' : '')}</div></div>
+    <div class="field"><label class="label" for="f-size">公司规模<span class="req">*</span></label><select class="select${e.size ? ' is-error' : ''}" id="f-size"><option value="">请选择</option>${DATA.sizes.map(s => `<option ${f.size === s ? 'selected' : ''}>${s}</option>`).join('')}</select>${fe('size')}</div>
+    <div class="field"><span class="label">关心哪些<span class="opt">可多选</span></span><div class="needs">${['私有化部署', '单点登录', '多子公司管理', 'API 对接', '定制合同模板'].map(n => `<label><input type="checkbox" data-fneed="${n}" ${f.needs.includes(n) ? 'checked' : ''}>${n}</label>`).join('')}</div></div>
+    <div class="field"><label class="label" for="f-note">补充说明<span class="opt">选填</span></label><textarea class="textarea" id="f-note" maxlength="200" placeholder="例：集团 12 家子公司，每月约 3 万份采购合同">${esc(f.note)}</textarea></div>
+    <button class="btn btn-primary" type="button" data-fsubmit ${S.sending ? 'disabled' : ''}>${S.sending ? '<span class="spin"></span>提交中…' : '提交询价'}</button><p class="legal">提交即同意我们为报价联系你；不会用于其他用途</p></form>`;
+  return `<section class="blk" id="sec-contact"><div class="wrap"><div class="contact"><div><div class="blk-hd" style="margin-bottom:12px"><div><h2>企业版：给集团和大团队</h2><p>50 席起 · 按规模报价 · 支持私有化</p></div></div>
+   <div class="ent-pts">${[['users', '多子公司、多公章统一管理', '集团统一看所有子公司的合同和用印，按子公司分别结算'], ['shield', '单点登录与永久审计', '员工用公司统一账号登录，离职自动收回；所有操作永久留痕'], ['layers', '私有化或专属云', '部署在你的机房或专属云，数据不出内网'], ['headset', '专属顾问 7×24', '上线陪跑 30 天，SLA 99.95%，低于承诺按比例赔服务时长']].map(x => `<div>${ic(x[0])}<span><b>${x[1]}</b>${x[2]}</span></div>`).join('')}</div></div>
+   <section class="card">${form}</section></div></div></section>`;
+}
+function pPage(sec, state) {
+  chrome(sec);
+  if (state === 'loading') { PG.innerHTML = `<div class="wrap" style="padding:48px 24px" aria-busy="true"><div class="sk" style="height:36px;width:420px;max-width:100%;margin:0 auto 14px"></div><div class="sk" style="height:16px;width:300px;max-width:100%;margin:0 auto 32px"></div><div class="cards">${Array.from({ length: 4 }, () => `<div class="sk-c"><div class="sk" style="height:18px;width:40%"></div><div class="sk" style="height:36px;width:60%"></div><div class="sk" style="height:42px;width:100%"></div><div class="sk" style="height:12px;width:90%"></div><div class="sk" style="height:12px;width:80%"></div></div>`).join('')}</div></div>`; return; }
+  if (state === 'error' && sec === 'plans') { PG.innerHTML = `<div class="wrap" style="padding:48px 0">${P.stateBlock({ error: true, title: '价格没加载出来', body: '价格服务暂时不可用（错误编号 PRICE-503，示例）。你也可以直接联系销售获取报价。', acts: `<button class="btn btn-primary" type="button" data-retry>${ic('refresh')}重试</button><button class="btn" type="button" data-toast="已打开在线客服（示例）">联系销售</button>` })}</div>`; return; }
+  PG.innerHTML = `<section id="sec-plans">${secPlans(state)}</section>${secCalc()}${secCompare()}${secFaq()}${secContact(state)}`;
+}
+
+/* ---------------- 流转 ---------------- */
+function draw() { const y = window.scrollY; pPage(S.page, P.state.state === 'error' && S.page === 'contact' ? 'error' : 'normal'); window.scrollTo(0, y); }
+function toSec(sec) { if (document.body.classList.contains('shot')) return; const el = $('#sec-' + sec); if (el && sec !== 'plans') el.scrollIntoView({ block: 'start' }); else window.scrollTo(0, 0); }
+function go(sec) { S.page = sec; carry = true; P.go(sec, 'normal'); }
+function setSeats(v) { S.seats = Math.max(1, Math.min(200, Math.round(v) || 1)); }
+function setDocs(v) { S.docs = Math.max(0, Math.min(5000, Math.round(v) || 0)); }
+function redrawCalc() { const el = $('#sec-calc'), ae = document.activeElement && document.activeElement.id; el.outerHTML = secCalc(); if (ae) { const x = $('#' + ae); if (x) { x.focus({ preventScroll: true }); if (x.setSelectionRange && x.type !== 'range') x.setSelectionRange(x.value.length, x.value.length); } } }
+function redrawContact() { const el = $('#sec-contact'); if (el) el.outerHTML = secContact(P.state.state === 'error' ? 'error' : 'normal'); }
+function modal(html) { md.innerHTML = html; P.open(md); }
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b || b.closest('.pp,.tplbar,.pq-drawer')) return;
+  const d = b.dataset;
+  if (d.toast) { toast(d.toast); return; }
+  if (d.go) { go(d.go); return; }
+  if (d.bill) { S.bill = d.bill; draw(); toast(S.bill === 'year' ? '已切到年付：单价按 8 折显示' : '已切到月付'); return; }
+  if ('login' in d) { S.login = true; draw(); toast('已登录：杭州示例科技（团队版 5 席）', 'ok'); return; }
+  if (d.trial) { modal(`<div class="layer-hd"><h2 id="md-t">免费试用${PL(d.trial).name} 14 天</h2></div><div class="layer-bd"><p style="font-size:14px;color:var(--ink-700);line-height:1.8">试用期内功能和${PL(d.trial).name}一样，最多 ${PL(d.trial).min} 席、50 份合同；不用绑卡，到期不会自动扣费，到期后转为免费版，合同都保留。</p></div><div class="layer-ft"><button class="btn" type="button" data-mx>再看看</button><button class="btn btn-primary" type="button" data-mok="trial">用手机号开始试用</button></div>`); return; }
+  if ('signup' in d) { toast('已打开注册页（示例）'); return; }
+  if ('mx' in d) { P.close(md); return; }
+  if (d.mok === 'trial') { P.close(md); toast('试用已开通，到期日 11-25（示例）', 'ok'); return; }
+  if (d.upgrade) { const to = PL(d.upgrade), from = PL(DATA.current.plan), n = DATA.current.seats, s = Math.max(n, to.min), c = DATA.cycle, diff = (to.price * s - from.price * n) * c.left / c.days;
+    modal(`<div class="layer-hd"><h2 id="md-t">升级到${to.name}</h2></div><div class="layer-bd"><dl class="dsum"><dt>现在</dt><dd>${from.name} · ${n} 席 · ${y2(from.price * n)} / 月</dd><dt>升级后</dt><dd>${to.name} · ${s} 席${s > n ? `（${to.min} 席起，多 ${s - n} 席）` : ''} · ${y2(to.price * s)} / 月</dd><dt>本期剩余</dt><dd>${c.left} / ${c.days} 天（到 ${c.end}）</dd><dt>今天补差价</dt><dd class="big">${y2(diff)}</dd></dl><p class="muted" style="font-size:12px;margin-top:10px">计算：(${y2(to.price * s)} − ${y2(from.price * n)}) × ${c.left} ÷ ${c.days} = ${y2(diff)}；12-01 起每月 ${y2(to.price * s)}。立即生效，已用合同份数不清零。</p></div><div class="layer-ft"><button class="btn" type="button" data-mx>取消</button><button class="btn btn-primary" type="button" data-mok="up" data-to="${to.id}">支付 ${y2(diff)} 并升级</button></div>`); return; }
+  if (d.mok === 'up') { P.close(md); DATA.current.plan = d.to; draw(); toast(`已升级到${PL(d.to).name}，立即生效`, 'ok'); return; }
+  if (d.down) { const to = PL(d.down); const ok = await P.confirm({ title: `降级到${to.name}？`, body: to.id === 'free' ? `免费版只有 1 个席位，要先在「成员管理」把 ${DATA.current.seats} 席减到 1 席。降级在本期结束（${DATA.cycle.end}）后生效，不退差价。` : `降级在本期结束（${DATA.cycle.end}）后生效，不退差价。`, ok: to.id === 'free' ? '去减席位' : '确认降级' }); if (ok) toast(to.id === 'free' ? '已打开成员管理（示例）' : `已预约 ${DATA.cycle.end} 后降级`, 'ok'); return; }
+  if (d.sstep) { setSeats(S.seats + +d.sstep); redrawCalc(); return; }
+  if (d.dstep) { setDocs(S.docs + +d.dstep); redrawCalc(); return; }
+  if (d.tip) { const k = +d.tip; S.tips.has(k) ? S.tips.delete(k) : S.tips.add(k); draw(); return; }
+  if (d.qa) { const i = +d.qa; S.open.has(i) ? S.open.delete(i) : S.open.add(i); draw(); return; }
+  if ('fqclear' in d) { S.fq = ''; draw(); return; }
+  if ('fsubmit' in d) { S.tried = true; const er = ferr(); if (Object.keys(er).length) { redrawContact(); const k = Object.keys(er)[0]; const x = $('#f-' + k); if (x) x.focus(); toast(`还有 ${Object.keys(er).length} 项要改`, 'err'); return; }
+    if (S.sending) return; S.sending = true; redrawContact(); setTimeout(() => { S.sending = false; if (S.failNext) { S.failNext = false; carry = true; P.go('contact', 'error'); toSec('contact'); return; } S.sent = true; redrawContact(); toSec('contact'); toast('询价已提交', 'ok'); }, 700); return; }
+  if ('retry' in d) { carry = true; P.go('plans', 'loading'); setTimeout(() => { carry = true; P.go('plans', 'normal'); }, 600); return; }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'seats-r') { setSeats(+t.value); redrawCalc(); }
+  if (t.id === 'docs-r') { setDocs(+t.value); redrawCalc(); }
+  if (t.id === 'fq') { S.fq = t.value.trim(); clearTimeout(t._d); t._d = setTimeout(() => { const sec = $('#sec-faq'); sec.outerHTML = secFaq(); const x = $('#fq'); x.focus(); x.setSelectionRange(x.value.length, x.value.length); }, 200); }
+  const map = { 'f-co': 'co', 'f-name': 'name', 'f-phone': 'phone', 'f-mail': 'mail', 'f-note': 'note' };
+  if (map[t.id]) { S.form[map[t.id]] = t.id === 'f-phone' ? t.value.replace(/\D/g, '') : t.value; if (t.id === 'f-phone' && t.value !== S.form.phone) t.value = S.form.phone; }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'seats-n') { setSeats(+t.value); redrawCalc(); }
+  if (t.id === 'docs-n') { setDocs(+t.value); redrawCalc(); }
+  if (t.dataset.need) { S.need[t.dataset.need] = t.checked; redrawCalc(); }
+  if (t.id === 'diff') { S.diff = t.checked; draw(); }
+  if (t.id === 'f-size') S.form.size = t.value;
+  if (t.dataset.fneed) { const n = t.dataset.fneed; S.form.needs = t.checked ? S.form.needs.concat(n) : S.form.needs.filter(x => x !== n); }
+  if (['f-co', 'f-name', 'f-phone', 'f-mail', 'f-size'].includes(t.id) && (S.tried || t.id === 'f-mail')) setTimeout(() => { const id = document.activeElement && document.activeElement.id; redrawContact(); if (id) { const x = $('#' + id); if (x) x.focus({ preventScroll: true }); } }, 0);
+});
+
+fresh();
+Proto.init({
+  title: 'SaaS 定价页',
+  pages: [
+    { id: 'plans', name: '① 套餐与价格', states: [{ id: 'normal', name: '按月付（未登录）' }, { id: 'yearly', name: '按年付' }, { id: 'current', name: '已登录 · 团队版 5 席' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '价格加载失败' }] },
+    { id: 'calc', name: '② 用量计算器', states: [{ id: 'normal', name: '8 席 · 300 份' }, { id: 'enterprise', name: '220 席 → 建议询价' }, { id: 'free', name: '1 人 · 3 份 → 免费版' }, { id: 'needflow', name: '要审批流 → 专业版' }] },
+    { id: 'compare', name: '③ 功能对比', states: [{ id: 'normal', name: '全部 17 项' }, { id: 'diff', name: '只看差异' }] },
+    { id: 'faq', name: '④ 常见问题', states: [{ id: 'normal', name: '正常' }, { id: 'search', name: '搜索「退款」' }, { id: 'empty', name: '搜不到' }] },
+    { id: 'contact', name: '⑤ 企业询价', states: [{ id: 'normal', name: '空表单' }, { id: 'invalid', name: '校验出错' }, { id: 'done', name: '已提交' }, { id: 'error', name: '提交失败' }] }
+  ],
+  render(page, state) {
+    if (md.classList.contains('show')) P.close(md);
+    if (!carry) {
+      fresh();
+      if (state === 'yearly') S.bill = 'year';
+      if (state === 'current') S.login = true;
+      if (state === 'enterprise') S.seats = 120 + 100;
+      if (state === 'free') { S.seats = 1; S.docs = 3; }
+      if (state === 'needflow') S.need.flow = true;
+      if (state === 'diff') S.diff = true;
+      if (state === 'search') S.fq = '退款';
+      if (state === 'empty') S.fq = '海外发票';
+      if (state === 'invalid') { S.form = { co: '示例', name: '林示例', phone: '1380000123', mail: 'lin@qq', size: '', needs: ['私有化部署'], note: '' }; S.tried = true; }
+      if (state === 'done') { S.form = { co: '杭州示例集团有限公司', name: '林示例', phone: '13800001234', mail: 'lin@hz-example.com', size: '500-999 人', needs: ['私有化部署', '单点登录'], note: '' }; S.sent = true; }
+      if (state === 'error' && page === 'contact') S.form = { co: '杭州示例集团有限公司', name: '林示例', phone: '13800001234', mail: 'lin@hz-example.com', size: '500-999 人', needs: ['私有化部署'], note: '集团 12 家子公司' };
+    }
+    carry = false; S.page = page;
+    pPage(page, state === 'loading' ? 'loading' : state === 'error' ? 'error' : 'normal');
+    setTimeout(() => toSec(page), 30);
+  }
+});
+Proto.prompts(PROMPTS);
+</script>
+</body>
+</html>
