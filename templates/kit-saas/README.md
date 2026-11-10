@@ -69,3 +69,7 @@ DOM 结果：`SECTIONS 6 STATES 62 PROMPTS 3 CHECKS 367 OK`。本次是 jsdom �
 验收时修了（页面内 `<style id="acc-fix">`）：①浅色下提示文字（k3-hint）和左侧目录「N 态」计数在灰底上 4.45:1 → 5.9:1；②状态条超过 10 个状态时窄屏会把页面撑宽，改为自动换行；③宽表格限定在容器内横向滚动；③「只看差异」勾选框所在行高 22px → 32px。
 
 复验命令：`bash _kit/atest.sh kit-saas 1440`（另跑 1280、390）、`bash _kit/gtest.sh kit-saas`、`bash _kit/shot.sh kit-saas "" cover.png 1440 900`。
+
+### 本次预审修复（2026-11-11）
+
+状态：已通过浏览器验收（2026-11-11，1440/500 宽 0 报错、0 溢出、对比度与触控达标）。已按预审证据修复并重打 ZIP；静态预检不能替代浏览器复验。页面提示词及逐组件复制提示词以当前 index.html 为准。
