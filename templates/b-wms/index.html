@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>仓储 WMS · 原型模板</title>
+<!--
+  原型模板 · 积木盒 | 老岳AI编辑部 · 原型组
+  改风格：改下面 :root 里的变量（--accent 换主色）
+  改数据：改 <script> 顶部 DATA
+  演示：右下角「原型面板」切页面和状态；按 H 隐藏面板；URL 可直达 #page=wave&state=short
+-->
+<style>
+/*@KIT_CSS*/
+/* ==========================================================================
+   ① 改风格只改这一块：颜色 / 字体 / 圆角 / 间距 / 阴影
+   改 --accent 一处即可换主色；墨色 5 级控制全部文字和线条
+   ========================================================================== */
+:root{
+  /* 主色（按钮、选中、链接）。换品牌色只改这两行 */
+  --accent:#2F54D4;
+  --accent-soft:#EEF2FD;
+  --accent-ink:#FFFFFF;          /* 主色按钮上的文字色 */
+
+  /* 墨色：文字与线条 */
+  --ink-900:#16171A;             /* 标题、正文 */
+  --ink-700:#44464D;             /* 次要正文 */
+  --ink-500:#6B6D75;             /* 说明、元信息（白底对比度 ≥4.5） */
+  --ink-300:#C7C9CF;             /* 占位、禁用 */
+  --line:#E6E7EA;                /* 分隔线 */
+  --line-soft:#F0F1F3;
+
+  /* 背景 */
+  --bg:#F6F6F7;                  /* 页面底色 */
+  --surface:#FFFFFF;             /* 卡片 / 表格 */
+  --surface-2:#FAFAFB;           /* 表头、悬停 */
+
+  /* 语义色（只用于状态） */
+  --success:#0E7A4F;  --success-soft:#E8F5EE;
+  --warning:#9A5B00;  --warning-soft:#FFF4E0;
+  --danger:#C42B24;   --danger-soft:#FDECEB;
+  --info:#2F54D4;     --info-soft:#EEF2FD;
+
+  /* 字体 */
+  --font-sans:"PingFang SC","HarmonyOS Sans SC","Source Han Sans SC","Noto Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --fs-12:12px; --fs-13:13px; --fs-14:14px; --fs-16:16px; --fs-20:20px; --fs-24:24px; --fs-32:32px;
+
+  /* 圆角 4 档 */
+  --r-sm:6px; --r-md:10px; --r-lg:16px; --r-full:999px;
+
+  /* 间距 */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px; --sp-10:40px;
+
+  /* 阴影：只用很淡的扩散阴影 */
+  --shadow-1:0 1px 2px rgba(22,23,26,.04),0 1px 1px rgba(22,23,26,.03);
+  --shadow-2:0 8px 24px -6px rgba(22,23,26,.10),0 2px 6px rgba(22,23,26,.04);
+  --shadow-3:0 24px 60px -12px rgba(22,23,26,.22),0 4px 12px rgba(22,23,26,.06);
+
+  /* 动效 */
+  --ease:cubic-bezier(.22,.8,.24,1);
+  --dur:220ms;
+
+  /* 尺寸 */
+  --ctl-h:36px;                  /* PC 输入框/按钮高 */
+  --ctl-h-lg:44px;               /* 移动端触控 ≥44 */
+  --bar-h:0px;                   /* 顶部「免费下载」条高度，由脚本控制 */
+}
+/* ============================ ② 基础 ============================ */
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:var(--fs-14);line-height:1.6;color:var(--ink-900);background:var(--bg);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,p{margin:0}
+h1,h2,h3{text-wrap:balance;font-weight:600;letter-spacing:-.01em}
+p{text-wrap:pretty}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent);text-decoration:none}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-size:.92em;letter-spacing:0}
+.muted{color:var(--ink-500)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
+.ic{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ic-sm{width:16px;height:16px}
+.ic-lg{width:24px;height:24px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;transition-duration:1ms!important}}
+
+/* ============================ ③ 按钮 ============================ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:var(--ctl-h);padding:0 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface);color:var(--ink-900);font-size:var(--fs-14);font-weight:500;white-space:nowrap;transition:background var(--dur) var(--ease),border-color var(--dur) var(--ease),transform 80ms var(--ease),box-shadow var(--dur) var(--ease)}
+.btn:hover{border-color:var(--ink-300);background:var(--surface-2)}
+.btn:active{transform:scale(.98)}
+.btn[disabled],.btn.is-disabled{opacity:.45;pointer-events:none}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 1px 2px rgba(22,23,26,.12)}
+.btn-primary:hover{background:var(--accent);border-color:var(--accent);filter:brightness(1.07)}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--ink-700)}
+.btn-ghost:hover{background:var(--line-soft);border-color:transparent}
+.btn-danger{color:var(--danger)}
+.btn-danger:hover{border-color:var(--danger);background:var(--danger-soft)}
+.btn-danger-solid{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn-danger-solid:hover{background:var(--danger);filter:brightness(1.07)}
+.btn-link{border:0;background:none;padding:0 4px;height:auto;color:var(--accent);font-weight:500}
+.btn-link:hover{background:none;text-decoration:underline;text-underline-offset:3px}
+.btn-icon{width:var(--ctl-h);padding:0}
+.btn-lg{height:48px;padding:0 22px;font-size:var(--fs-16);border-radius:var(--r-md)}
+.btn-block{width:100%}
+.btn .spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============================ ④ 表单控件 ============================ */
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>label,.label{font-size:var(--fs-13);color:var(--ink-700);font-weight:500}
+.label .req{color:var(--danger);margin-left:2px}
+.label .opt{color:var(--ink-500);font-weight:400;margin-left:4px}
+.input,.select,.textarea{height:var(--ctl-h);width:100%;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);outline:none;font-size:var(--fs-14)}
+.textarea{height:auto;min-height:88px;padding:10px 12px;resize:vertical;line-height:1.6}
+.input::placeholder,.textarea::placeholder{color:var(--ink-300)}
+.input:hover,.select:hover,.textarea:hover{border-color:var(--ink-300)}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.input.is-error,.textarea.is-error,.select.is-error{border-color:var(--danger);box-shadow:0 0 0 3px var(--danger-soft)}
+.field-hint{font-size:var(--fs-12);color:var(--ink-500)}
+.field-err{font-size:var(--fs-12);color:var(--danger)}
+.select{appearance:none;padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6D75' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.input-wrap{position:relative;display:flex;align-items:center}
+.input-wrap>.ic{position:absolute;left:10px;color:var(--ink-500);pointer-events:none}
+.input-wrap>.input{padding-left:34px}
+.input-wrap>.clear{position:absolute;right:4px;width:28px;height:28px;border:0;background:none;border-radius:var(--r-sm);color:var(--ink-500);display:grid;place-items:center}
+.input-wrap>.clear:hover{background:var(--line-soft)}
+.check{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.check input{appearance:none;width:16px;height:16px;margin:0;border:1.5px solid var(--ink-300);border-radius:4px;background:var(--surface);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none}
+.check input:checked,.check input:indeterminate{background:var(--accent);border-color:var(--accent)}
+.check input:checked::after{content:"";width:8px;height:4px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.check input:indeterminate::after{content:"";width:8px;height:2px;background:#fff;border-radius:1px}
+.seg{display:inline-flex;padding:3px;background:var(--line-soft);border-radius:var(--r-md);gap:2px}
+.seg button{height:30px;padding:0 12px;border:0;background:transparent;border-radius:calc(var(--r-md) - 3px);color:var(--ink-700);font-size:var(--fs-13);font-weight:500;transition:all var(--dur) var(--ease)}
+.seg button[aria-pressed="true"],.seg button.on{background:var(--surface);color:var(--ink-900);box-shadow:var(--shadow-1)}
+
+/* ============================ ⑤ 标签 / 徽标 ============================ */
+.tag{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border-radius:var(--r-full);font-size:var(--fs-12);font-weight:500;white-space:nowrap;background:var(--line-soft);color:var(--ink-700)}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.9}
+.tag.plain::before{display:none}
+.tag-success{background:var(--success-soft);color:var(--success)}
+.tag-warning{background:var(--warning-soft);color:var(--warning)}
+.tag-danger{background:var(--danger-soft);color:var(--danger)}
+.tag-info{background:var(--info-soft);color:var(--info)}
+.tag-neutral{background:var(--line-soft);color:var(--ink-500)}
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+.badge-accent{background:var(--accent);color:var(--accent-ink)}
+.badge-danger{background:var(--danger);color:#fff}
+.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+
+/* ============================ ⑥ 卡片 / 表格 ============================ */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
+.table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-14)}
+.table th{position:sticky;top:0;z-index:1;background:var(--surface-2);text-align:left;font-weight:500;font-size:var(--fs-13);color:var(--ink-500);height:40px;padding:0 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.table td{height:52px;padding:0 12px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.table tbody tr{transition:background 120ms var(--ease)}
+.table tbody tr:hover{background:var(--surface-2)}
+.table td .check,.table th .check{vertical-align:middle;display:inline-flex}
+.table tbody tr.is-selected{background:var(--accent-soft)}
+.table tbody tr.is-current td{background:var(--accent-soft)}
+.table tbody tr.is-current td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.table .r{text-align:right}
+.th-sort{display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:0;color:inherit;font-weight:inherit;font-size:inherit}
+.th-sort .ic{width:14px;height:14px;opacity:.5}
+.th-sort[aria-sort] .ic{opacity:1;color:var(--ink-900)}
+
+/* ============================ ⑦ 骨架 / 空态 / 出错 ============================ */
+.sk{position:relative;overflow:hidden;background:var(--line-soft);border-radius:var(--r-sm)}
+.sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:shimmer 1.4s var(--ease) infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:64px 24px;color:var(--ink-500)}
+.state .state-ic{width:56px;height:56px;border-radius:var(--r-lg);display:grid;place-items:center;background:var(--line-soft);color:var(--ink-500);margin-bottom:6px}
+.state .state-ic .ic{width:26px;height:26px}
+.state.is-error .state-ic{background:var(--danger-soft);color:var(--danger)}
+.state h3{font-size:var(--fs-16);color:var(--ink-900);font-weight:600}
+.state p{max-width:360px;font-size:var(--fs-13)}
+.state .acts{display:flex;gap:8px;margin-top:8px}
+
+/* ============================ ⑧ 弹层：遮罩 / 抽屉 / 弹窗 / 底部弹层 ============================ */
+.mask{position:fixed;inset:0;background:rgba(22,23,26,.36);opacity:0;transition:opacity var(--dur) var(--ease);z-index:40}
+.mask.show{opacity:1}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100vw);background:var(--surface);box-shadow:var(--shadow-3);z-index:41;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 320ms var(--ease)}
+.drawer:not(.show),.sheet:not(.show){visibility:hidden;box-shadow:none;transition:transform 320ms var(--ease),visibility 0s linear 320ms,box-shadow 0s linear 320ms}
+.drawer.show{transform:none}
+.drawer:focus,.modal:focus,.sheet:focus{outline:none}
+.layer-hd{display:flex;align-items:center;gap:12px;padding:18px 24px;border-bottom:1px solid var(--line)}
+.layer-hd h2{font-size:var(--fs-16);flex:1;min-width:0}
+.layer-bd{flex:1;overflow:auto;padding:20px 24px}
+.layer-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--line);background:var(--surface)}
+.modal{position:fixed;left:50%;top:50%;width:min(440px,calc(100vw - 32px));background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow-3);z-index:41;transform:translate(-50%,-48%) scale(.97);opacity:0;transition:transform var(--dur) var(--ease),opacity var(--dur) var(--ease);display:flex;flex-direction:column;max-height:calc(100vh - 64px)}
+.modal.show{transform:translate(-50%,-50%);opacity:1}
+.modal .layer-hd{border-bottom:0;padding-bottom:4px}
+.modal .layer-bd{padding-top:8px}
+.modal .layer-ft{border-top:0;padding-top:4px;padding-bottom:20px}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:var(--r-lg) var(--r-lg) 0 0;box-shadow:var(--shadow-3);z-index:41;transform:translateY(100%);transition:transform 320ms var(--ease);max-height:86%;display:flex;flex-direction:column}
+.sheet.show{transform:none}
+.sheet .grabber{width:36px;height:4px;border-radius:2px;background:var(--line);margin:8px auto 0}
+
+/* ============================ ⑨ Toast ============================ */
+.toast-host{position:fixed;left:50%;top:calc(var(--bar-h) + 12px);transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--r-md);background:var(--ink-900);color:#fff;font-size:var(--fs-14);box-shadow:var(--shadow-2);animation:toastIn 260ms var(--ease);pointer-events:auto}
+.toast .ic{width:16px;height:16px}
+.toast.ok .ic{color:#5BD39A}.toast.err .ic{color:#FF8A80}
+.toast .undo{border:0;background:none;color:#fff;font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:0 0 0 8px}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}}
+
+/* ============================ ⑩ 原型面板（演示用，按 H 隐藏） ============================ */
+.pp{position:fixed;right:20px;bottom:20px;z-index:90;font-size:12px;color:#E9E9EC;font-family:var(--font-sans)}
+.pp-toggle{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 12px;border-radius:var(--r-full);border:1px solid rgba(255,255,255,.08);background:rgba(22,23,26,.92);color:#fff;font-size:12px;font-weight:500;box-shadow:var(--shadow-2);backdrop-filter:blur(12px)}
+.pp-toggle .dot{width:6px;height:6px;border-radius:50%;background:#5BD39A}
+.pp-body{position:absolute;right:0;bottom:46px;width:280px;padding:14px;border-radius:14px;background:rgba(22,23,26,.95);border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow-3);backdrop-filter:blur(16px);display:none}
+.pp.open .pp-body{display:block;animation:toastIn 200ms var(--ease)}
+.pp h4{margin:0 0 8px;font-size:11px;font-weight:500;color:#9A9BA2;letter-spacing:.06em}
+.pp-group{margin-bottom:12px}
+.pp-list{display:flex;flex-wrap:wrap;gap:6px}
+.pp-list button{height:28px;padding:0 10px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.12);background:transparent;color:#D6D7DB;font-size:12px}
+.pp-list button:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.pp-list button.on{background:#fff;color:#16171A;border-color:#fff}
+.pp-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);color:#9A9BA2}
+.pp-foot kbd{font-family:var(--font-mono);font-size:11px;padding:1px 6px;border:1px solid rgba(255,255,255,.2);border-radius:4px;color:#D6D7DB}
+body.pp-hidden .pp,body.shot .pp{display:none}
+
+/* ============================ ⑪ 手机框（移动端模板用） ============================ */
+.stage{min-height:calc(100vh - var(--bar-h));display:flex;align-items:center;justify-content:center;gap:56px;padding:40px 24px;background:radial-gradient(1200px 600px at 70% 20%,#EDEEF2 0%,var(--bg) 60%)}
+.stage-note{max-width:300px;color:var(--ink-700)}
+.stage-note .eyebrow{display:inline-flex;height:24px;align-items:center;padding:0 10px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);font-size:11px;letter-spacing:.08em;color:var(--ink-500);margin-bottom:16px}
+.stage-note h1{font-size:var(--fs-24);color:var(--ink-900);margin-bottom:10px;line-height:1.3}
+.stage-note p{font-size:var(--fs-13);color:var(--ink-500);margin-bottom:16px}
+.stage-note ol{margin:0;padding-left:18px;font-size:var(--fs-13);color:var(--ink-700);line-height:2}
+.phone{position:relative;width:390px;height:844px;flex:none;border-radius:54px;padding:12px;background:#0E0F11;box-shadow:0 0 0 1px #2A2B2F inset,0 40px 80px -20px rgba(22,23,26,.35),0 12px 24px -8px rgba(22,23,26,.2)}
+.screen{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column;isolation:isolate}
+.statusbar{height:47px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;font-size:15px;font-weight:600;position:relative;z-index:5}
+.statusbar .island{position:absolute;left:50%;top:11px;width:120px;height:34px;border-radius:20px;background:#0E0F11;transform:translateX(-50%)}
+.statusbar .sys{display:flex;gap:6px;align-items:center}
+.statusbar .bat{width:25px;height:12px;border:1.5px solid currentColor;border-radius:4px;position:relative;opacity:.9}
+.statusbar .bat::after{content:"";position:absolute;inset:1.5px;right:5px;background:currentColor;border-radius:1.5px}
+.homebar{position:absolute;left:50%;bottom:8px;width:134px;height:5px;border-radius:3px;background:var(--ink-900);transform:translateX(-50%);z-index:50;opacity:.85}
+.navbar{height:48px;flex:none;display:flex;align-items:center;gap:4px;padding:0 8px;position:relative}
+.navbar h1{position:absolute;left:56px;right:56px;text-align:center;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.tap{min-width:44px;min-height:44px;display:inline-grid;place-items:center;border:0;background:none;border-radius:var(--r-md);color:var(--ink-900)}
+.tap:active{background:var(--line-soft)}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.bottombar{flex:none;padding:10px 16px 30px;border-top:1px solid var(--line);background:var(--surface);display:flex;align-items:center;gap:12px}
+.screen .toast-host{position:absolute;top:60px}
+.screen .mask{position:absolute}
+.screen .modal{position:absolute}
+
+@media (max-width:900px){.stage{flex-direction:column;gap:24px}.stage-note{max-width:390px}}
+@media (max-width:430px){.stage{padding:0}.phone{width:100vw;height:100dvh;border-radius:0;padding:0;box-shadow:none}.screen{border-radius:0}.stage-note{display:none}}
+
+/* ============================ ⑫ PC 后台框架（侧栏 + 顶栏） ============================ */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:calc(100vh - var(--bar-h))}
+.side{position:sticky;top:var(--bar-h);height:calc(100vh - var(--bar-h));display:flex;flex-direction:column;gap:2px;padding:16px 12px;border-right:1px solid var(--line);background:var(--surface)}
+.brand{display:flex;align-items:center;gap:10px;height:40px;padding:0 8px;margin-bottom:14px;font-weight:600;font-size:15px}
+.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--ink-900);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;letter-spacing:-.02em}
+.side-label{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:14px 10px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;height:38px;padding:0 10px;border-radius:var(--r-sm);color:var(--ink-700);font-size:var(--fs-14);border:0;background:none;width:100%;text-align:left;transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+.nav-item:hover{background:var(--line-soft);color:var(--ink-900)}
+.nav-item.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.nav-item .badge{margin-left:auto}
+.side-foot{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid var(--line)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--line-soft);color:var(--ink-700);display:grid;place-items:center;font-size:13px;font-weight:600;flex:none}
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:var(--bar-h);z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 32px;background:rgba(246,246,247,.86);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.crumb{display:flex;align-items:center;gap:6px;font-size:var(--fs-13);color:var(--ink-500)}
+.crumb .ic{width:14px;height:14px}
+.crumb b{color:var(--ink-900);font-weight:500}
+.topbar .sp{flex:1}
+.content{padding:24px 32px 64px;max-width:1360px;width:100%}
+.page-hd{display:flex;align-items:flex-end;gap:16px;margin-bottom:20px}
+.page-hd h1{font-size:var(--fs-24);line-height:1.25}
+.page-hd .sub{font-size:var(--fs-13);color:var(--ink-500);margin-top:4px}
+.page-hd .acts{margin-left:auto;display:flex;gap:8px}
+@media (max-width:1100px){.app{grid-template-columns:64px minmax(0,1fr)}.side .t,.side-label,.side .badge,.side-foot .t,.brand .t{display:none}.nav-item{justify-content:center;padding:0}.content{padding:20px}.topbar{padding:0 20px}}
+
+/* ============================ ⑬ 通用小件：数量加减 / 圆形勾选 ============================ */
+.stepper{display:inline-flex;align-items:center;height:32px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);overflow:hidden}
+.stepper button{width:32px;height:100%;border:0;background:none;display:grid;place-items:center;color:var(--ink-700)}
+.stepper button:hover{background:var(--line-soft)}
+.stepper button:disabled{color:var(--ink-300);pointer-events:none}
+.stepper input{width:44px;height:100%;border:0;border-left:1px solid var(--line);border-right:1px solid var(--line);text-align:center;outline:none;font-variant-numeric:tabular-nums;background:none}
+.stepper.lg{height:40px}.stepper.lg button{width:40px}
+.rck{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.rck input{appearance:none;width:20px;height:20px;margin:0;border-radius:50%;border:1.5px solid var(--ink-300);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none;background:var(--surface)}
+.rck input:checked{background:var(--accent);border-color:var(--accent)}
+.rck input:checked::after{content:"";width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.rck input:disabled{background:var(--line-soft);border-color:var(--line)}
+
+/* ============================ ⑭ AI 提示词面板（每个模板必有） ============================ */
+.pq-fab{position:fixed;right:20px;bottom:64px;z-index:89;display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 12px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);color:var(--ink-900);font-size:12px;font-weight:600;box-shadow:var(--shadow-2);font-family:var(--font-sans)}
+.pq-fab .ic{width:16px;height:16px;color:var(--accent)}
+.pq-fab:hover{border-color:var(--ink-300)}
+body.pp-hidden .pq-fab{display:none}
+.pq-drawer{width:min(520px,100vw)}
+.pq-drawer .layer-bd{background:var(--bg);padding:16px}
+.pq-intro{font-size:var(--fs-13);color:var(--ink-500);margin-bottom:12px}
+.pq-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;margin-bottom:12px}
+.pq-card h3{font-size:var(--fs-14);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.pq-card h3 .no{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--ink-900);color:#fff;font-size:11px;font-variant-numeric:tabular-nums}
+.pq-when{font-size:var(--fs-12);color:var(--ink-500);margin-bottom:10px}
+.pq-body{font-size:13px;line-height:1.75;color:var(--ink-700);white-space:pre-wrap;word-break:break-word;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-md);padding:12px 14px;max-height:220px;overflow:auto;font-family:var(--font-sans)}
+.pq-card.open .pq-body{max-height:none}
+.pv{display:inline;padding:1px 6px;margin:0 1px;border-radius:5px;background:var(--accent-soft);color:var(--accent);font-weight:600;cursor:pointer;border:1px dashed transparent;white-space:nowrap}
+.pv:hover,.pv:focus-visible{border-color:var(--accent);outline:none}
+.pv.filled{background:var(--success-soft);color:var(--success)}
+.pv-in{font:inherit;font-size:13px;border:1px solid var(--accent);border-radius:5px;padding:1px 6px;outline:none;box-shadow:0 0 0 3px var(--accent-soft);min-width:80px;max-width:100%;background:var(--surface);color:var(--ink-900)}
+.pq-acts{display:flex;align-items:center;gap:8px;margin-top:10px}
+.pq-acts .sp{flex:1}
+.pq-acts .hint{font-size:12px;color:var(--ink-500)}
+.pq-acts .btn.done{background:var(--success);border-color:var(--success);color:#fff}
+.pq-col{width:340px;flex:none;max-height:844px;display:flex;flex-direction:column;gap:10px}
+.pq-col .pq-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-900)}
+.pq-col .pq-head .ic{color:var(--accent);width:16px;height:16px}
+.pq-col .pq-scroll{overflow:auto;padding-right:4px}
+.pq-col .pq-card{padding:14px;margin-bottom:10px}
+.pq-col .pq-body{max-height:120px}
+@media (max-width:1200px){.pq-col{width:100%;max-width:390px;max-height:none}}
+
+/* ============================ ⑮ 暗色主题（组件库画廊切换用） ============================ */
+:root[data-theme="dark"]{
+  --ink-900:#ECECEF;--ink-700:#C4C5CB;--ink-500:#9A9CA4;--ink-300:#5A5C64;
+  --line:#2E3036;--line-soft:#24262B;--bg:#121316;--surface:#1A1B1F;--surface-2:#202226;
+  --accent-soft:rgba(110,140,255,.16);--info-soft:rgba(110,140,255,.16);
+  --success:#4CC38A;--success-soft:rgba(76,195,138,.14);--warning:#F0B44C;--warning-soft:rgba(240,180,76,.14);--danger:#FF7A72;--danger-soft:rgba(255,122,114,.14);
+  --shadow-1:0 1px 2px rgba(0,0,0,.3);--shadow-2:0 8px 24px -6px rgba(0,0,0,.5);--shadow-3:0 24px 60px -12px rgba(0,0,0,.6);
+}
+
+/* ============================ ⑯ 顶部条：免费下载 · 双击就能打开 · 复制提示词直接给 AI 用 ============================ */
+body.has-tplbar{--bar-h:44px;padding-top:44px}
+.tplbar{position:fixed;left:0;right:0;top:0;height:44px;z-index:88;display:flex;align-items:center;gap:12px;padding:0 16px 0 20px;background:#16171A;color:#E9E9EC;font-size:13px;font-family:var(--font-sans)}
+.tplbar .tb-name{font-weight:600;color:#fff;white-space:nowrap}
+.tplbar .tb-sep{width:1px;height:14px;background:rgba(255,255,255,.18)}
+.tplbar .tb-line{color:#B9BAC0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tplbar .tb-line b{color:#fff;font-weight:500}
+.tplbar .sp{flex:1}
+.tplbar .tb-btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.18);background:transparent;color:#fff;font-size:12px;font-weight:600;white-space:nowrap;text-decoration:none}
+.tplbar .tb-btn:hover{border-color:rgba(255,255,255,.4)}
+.tplbar .tb-btn.primary{background:#fff;color:#16171A;border-color:#fff}
+.tplbar .tb-btn.primary:hover{filter:brightness(.94)}
+.tplbar .tb-btn .ic{width:15px;height:15px}
+.tplbar .tb-hide{width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+.drawer{top:var(--bar-h,0px)}
+body.pp-hidden .tplbar{display:none}
+body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
+@media (max-width:820px){.tplbar .tb-line{display:none}}
+:root[data-theme="dark"]{color-scheme:dark}
+:root[data-theme="dark"] .badge-danger{background:#C9372F;color:#fff}
+:root[data-theme="dark"] .toast{background:#2A2C31;color:#F2F2F4;box-shadow:0 0 0 1px #3A3C42,var(--shadow-2)}
+:root[data-theme="dark"] .brand-mark,:root[data-theme="dark"] .ai-mark{background:#ECECEF;color:#16171A}
+:root[data-theme="dark"] .tab.on{color:#16171A}
+/*@END_KIT_CSS*/
+/* ============================ 本模板样式 ============================ */
+:root{--t-amb:#8A6A2E;--t-amb-soft:#F7F0E2;--t-cold:#1F6E8C;--t-cold-soft:#E4F2F7;--t-frz:#3E4FB0;--t-frz-soft:#E9ECFA}
+.tabs2{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.t2{height:42px;padding:0 14px;border:0;background:none;font-size:14px;color:var(--ink-500);cursor:pointer;position:relative;display:inline-flex;align-items:center;gap:6px}
+.t2[aria-selected="true"]{color:var(--ink-900);font-weight:600}
+.t2[aria-selected="true"]::after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:2px;background:var(--accent)}
+.t2 .cnt{font-size:12px;color:var(--ink-500);background:var(--line-soft);border-radius:9px;padding:0 6px;line-height:18px;font-weight:500}
+.t2 .cnt.warn{background:var(--warning-soft);color:var(--warning)}
+.t2 .cnt.bad{background:var(--danger-soft);color:var(--danger)}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.bar .input-wrap{width:280px}
+.bar .sp{flex:1}
+.bar .sel-n{font-size:13px;color:var(--ink-500)}
+.bar .sel-n b{color:var(--accent)}
+.tblw{overflow-x:auto;border:1px solid var(--line-soft);border-radius:var(--r-md);background:var(--surface)}
+.foot{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--ink-500);margin-top:12px}
+.temp{display:inline-flex;align-items:center;white-space:nowrap;height:22px;padding:0 8px;border-radius:var(--r-full);font-size:12px;font-weight:500}
+.temp.amb{background:var(--t-amb-soft);color:var(--t-amb)}
+.temp.cold{background:var(--t-cold-soft);color:var(--t-cold)}
+.temp.frz{background:var(--t-frz-soft);color:var(--t-frz)}
+.prog{display:inline-flex;align-items:center;gap:8px;min-width:140px}
+.prog i{flex:1;height:6px;border-radius:3px;background:var(--line-soft);overflow:hidden;display:block;min-width:80px}
+.prog i b{display:block;height:100%;background:var(--accent);border-radius:3px}
+.prog.done i b{background:var(--success)}
+.prog span{font-size:12px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi{padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.kpi small{font-size:13px;color:var(--ink-500)}
+.kpi b{font-size:24px;font-variant-numeric:tabular-nums;line-height:1.3}
+.kpi span{font-size:12px;color:var(--ink-500)}
+.kpi.warn b{color:var(--warning)}.kpi.bad b{color:var(--danger)}
+/* 抽屉里的表 */
+.drawer.wide{width:min(820px,100vw)}
+.dsum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 16px;padding:12px 14px;border-radius:var(--r-md);background:var(--surface-2);font-size:13px}
+.dsum dt{color:var(--ink-500);font-size:12px}.dsum dd{margin:2px 0 0;font-weight:500}
+.dt{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.dt th{text-align:left;font-weight:500;font-size:12px;color:var(--ink-500);background:var(--surface-2);height:36px;padding:0 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.dt td{padding:8px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.dt td.m{vertical-align:middle}
+.dt .r{text-align:right}
+.dt .input,.dt .select{height:34px;font-size:13px}
+.dt .input.r{text-align:right}
+.dt .w70{width:70px}.dt .w120{width:128px}.dt .w140{width:140px}
+.dt .sub{display:block;font-size:12px;color:var(--ink-500);margin-top:2px}
+.dt .field-err,.dt .field-warn{display:block;font-size:12px;margin-top:3px;white-space:normal;max-width:180px}
+.field-warn{color:var(--warning)}
+.dt tr.diff td{background:#FFFBF2}
+.dt tr.short td{background:var(--danger-soft)}
+.diffv{font-weight:600;font-variant-numeric:tabular-nums}
+.diffv.neg{color:var(--danger)}.diffv.pos{color:var(--warning)}.diffv.zero{color:var(--ink-500);font-weight:400}
+.sumline{display:flex;gap:16px;align-items:center;font-size:13px;color:var(--ink-700);margin-top:12px;padding:10px 12px;border-radius:var(--r-md);background:var(--surface-2)}
+.sumline b{font-variant-numeric:tabular-nums}
+.alertline{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:var(--r-md);font-size:13px;margin-bottom:12px;line-height:1.6}
+.alertline.warn{background:var(--warning-soft);color:var(--warning)}
+.alertline.bad{background:var(--danger-soft);color:var(--danger)}
+.alertline.info{background:var(--info-soft);color:var(--info)}
+.alertline .ic{flex:none;margin-top:2px}
+.loc{font-family:var(--font-mono);font-size:13px}
+.cap{font-size:12px;color:var(--ink-500)}
+/* 波次 */
+.wplan{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.wcard{border:1px solid var(--line);border-radius:var(--r-md);padding:12px 14px;font-size:13px}
+.wcard h4{font-size:14px;display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.wcard p{margin:0;color:var(--ink-500);line-height:1.7}
+.wcard .nos{font-family:var(--font-mono);font-size:12px;color:var(--ink-700);margin-top:6px;word-break:break-all;line-height:1.6}
+.rule{font-size:13px;color:var(--ink-500);margin-bottom:12px;line-height:1.7}
+.pickseq{font-family:var(--font-mono);font-size:12px;color:var(--ink-500);width:28px}
+@media (max-width:1280px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.bar .input-wrap{width:220px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" aria-label="主导航">
+    <div class="brand"><span class="brand-mark">仓</span><span class="t">示例仓储系统</span></div>
+    <button class="nav-item" type="button" data-toast="作业看板（示例，见 b-dashboard 模板）"><svg class="ic"><use href="#i-chart"/></svg><span class="t">作业看板</span></button>
+    <div class="side-label">入库</div>
+    <button class="nav-item" type="button" data-go="receive"><svg class="ic"><use href="#i-download"/></svg><span class="t">收货</span><span class="badge badge-danger" id="nb-rcv"></span></button>
+    <button class="nav-item" type="button" data-go="putaway"><svg class="ic"><use href="#i-layers"/></svg><span class="t">上架</span><span class="badge badge-danger" id="nb-put"></span></button>
+    <div class="side-label">出库</div>
+    <button class="nav-item" type="button" data-go="wave"><svg class="ic"><use href="#i-flow"/></svg><span class="t">拣货波次</span><span class="badge badge-danger" id="nb-wave"></span></button>
+    <div class="side-label">库存</div>
+    <button class="nav-item" type="button" data-go="stock"><svg class="ic"><use href="#i-grid"/></svg><span class="t">库存与预警</span><span class="badge badge-danger" id="nb-stk"></span></button>
+    <div class="side-foot"><span class="avatar">林</span><span class="t" style="font-size:13px">林示例<br><span class="muted" style="font-size:12px">仓库主管 · 示例一号仓</span></span></div>
+  </aside>
+  <main class="main">
+    <div class="topbar"><nav class="crumb" aria-label="面包屑" id="crumb"></nav><span class="sp"></span><span class="muted" style="font-size:13px">示例一号仓 · 2026-11-10</span></div>
+    <div class="content" id="content"></div>
+  </main>
+</div>
+<div class="drawer" id="dw" aria-labelledby="dw-t"></div>
+
+<script>
+/* ==========================================================================
+   ① 改数据只改这里（示例数据，全部虚构）
+   ========================================================================== */
+const DATA = {
+  today: '2026-11-10',
+  minLifeRatio: 1 / 3,    // 收货时剩余保质期低于总保质期的 1/3 提醒拒收
+  nearDays: 30,           // 到期前 30 天内算「临期」
+  waveMax: 3,             // 每个波次最多几单（真实仓一般 20–50，这里为了演示设小）
+  // 货品主数据：编码 → [名称, 规格, 单位, 温层 amb 常温 / cold 冷藏 / frz 冷冻, 保质期天数, 安全库存]
+  goods: {
+    G1001: ['智利车厘子 J 级', '5kg/箱', '箱', 'cold', 30, 40],
+    G1002: ['散养鸡蛋', '360 枚/箱', '箱', 'cold', 45, 30],
+    G1003: ['谷饲牛腩块', '10kg/箱', '箱', 'frz', 365, 20],
+    G1004: ['东北五常大米', '25kg/袋', '袋', 'amb', 540, 50],
+    G1005: ['低脂鲜牛奶', '950ml×12/箱', '箱', 'cold', 15, 60],
+    G1006: ['速冻水饺', '1kg×10/箱', '箱', 'frz', 270, 25]
+  },
+  // 库位：[编码, 温层, 容量]
+  locs: [['C-01-01', 'cold', 60], ['C-01-02', 'cold', 60], ['C-02-01', 'cold', 80], ['F-01-01', 'frz', 50], ['F-01-02', 'frz', 50], ['A-01-01', 'amb', 120], ['A-01-02', 'amb', 120]],
+  // 库存：[货品, 库位, 批次, 到期日, 数量, 已分配]
+  inv: [
+    ['G1001', 'C-01-01', 'B261028', '2026-11-27', 18, 6], ['G1002', 'C-01-02', 'B261101', '2026-12-16', 26, 4],
+    ['G1003', 'F-01-01', 'B260920', '2027-09-20', 32, 0], ['G1004', 'A-01-01', 'B260801', '2028-01-23', 64, 10],
+    ['G1004', 'A-01-02', 'B260315', '2027-09-06', 20, 0], ['G1005', 'C-02-01', 'B261102', '2026-11-17', 22, 8],
+    ['G1005', 'C-02-01', 'B261028', '2026-11-12', 6, 0], ['G1006', 'F-01-02', 'B260512', '2027-02-06', 9, 0],
+    ['G1002', 'C-01-02', 'B260920', '2026-11-04', 3, 0]
+  ],
+  // 到货通知单（ASN）：单号, 供应商, 预计到货, 状态 wait 待收货 / done 已完成, 明细 [货品, 应收]
+  asn: [
+    { no: 'ASN20261110001', sup: '示例果业', eta: '11-10 08:00', st: 'wait', lines: [['G1001', 40], ['G1005', 30]] },
+    { no: 'ASN20261110002', sup: '示例禽蛋合作社', eta: '11-10 09:30', st: 'wait', lines: [['G1002', 20]] },
+    { no: 'ASN20261110003', sup: '示例冷冻食品', eta: '11-10 13:00', st: 'wait', lines: [['G1003', 15], ['G1006', 30]] },
+    { no: 'ASN20261109007', sup: '示例粮油', eta: '11-09 15:00', st: 'done', lines: [['G1004', 60]], got: '11-09 15:42' }
+  ],
+  // 待上架任务：[货品, 批次, 到期日, 数量, 来源单]
+  putaway: [['G1004', 'B261108', '2028-05-02', 60, 'ASN20261109007']],
+  // 待出库订单：[单号, 线路, 截单时间, 明细 [货品, 数量]]
+  orders: [
+    ['SO1110-0012', '东线', '14:00', [['G1001', 2], ['G1005', 3]]], ['SO1110-0015', '东线', '14:00', [['G1002', 1], ['G1005', 2]]],
+    ['SO1110-0018', '东线', '14:00', [['G1001', 3]]], ['SO1110-0021', '东线', '14:00', [['G1005', 4]]],
+    ['SO1110-0013', '西线', '15:30', [['G1003', 2], ['G1004', 5]]], ['SO1110-0017', '西线', '15:30', [['G1006', 6], ['G1004', 3]]],
+    ['SO1110-0020', '西线', '15:30', [['G1006', 5]]]
+  ],
+  diffReasons: ['少货（供应商少发）', '破损拒收', '质量不合格拒收', '多货（暂存待退）']
+};
+
+/* ==========================================================================
+   ①-2 AI 提示词（页面右侧「AI 提示词」可一键复制；{{变量}} 点一下就能填）
+   ========================================================================== */
+const PROMPTS = [
+ { title: '从零生成这个原型', when: '要做仓库管理系统（入库、上架、拣货、库存预警），想先把一线作业和规则画清楚时用',
+   text: `请帮我做一个可点击的 PC 后台原型（1440 宽、1280 不横滚）：仓储 WMS，4 个页面。
+
+1. 收货：到货通知单列表（单号、供应商、预计到货、品项数、应收数量、状态）；点「收货」开右侧抽屉，逐行：实收数量（系统预填 = 应收）、生产日期、到期日（= 生产日期 + 保质期，系统算）；实收 ≠ 应收时自动算差异并必须选原因（少货 / 破损拒收 / 质量不合格 / 多货）；剩余保质期低于总保质期 1/3 时黄色提醒「建议拒收」；底部汇总应收、实收、差异；确认后生成上架任务；
+2. 上架：待上架任务列表；系统推荐库位（同温层里，同一货品已在的库位优先，其次剩余空间最大的），写清推荐理由；可改库位，温层不符的不能选；数量超过库位剩余空间时报错并写剩余多少；可勾选后批量按推荐库位上架（批量按钮常驻，未勾选置灰）；
+3. 拣货波次：待出库订单（单号、线路、截单时间、温层、件数）；「按规则自动组波」：同线路同温层、每波不超过 N 单，弹出预览，确认后生成波次；波次列表有进度；点波次开拣货单：同一货品合并，按先到期先出（FEFO）分配库位批次，按库位顺序排拣货路径；库存不够的行标红写「缺 N 箱」，可「标记缺货」；
+4. 库存与预警：顶部 4 个数（库存品项、低于安全库存、30 天内到期、已过期）；Tab 全部 / 低库存 / 临期 / 已过期（带数量）；表格：货品、编码、温层、库位、批次、到期日、可用、已分配；补货建议数 = 安全库存 × 2 − 可用合计；勾选后「生成补货单」（常驻，未勾选置灰），确认框列出每个货品建议补多少。
+
+状态（原型面板可切换）：收货 待收货 / 收货抽屉 / 有差异 / 都收完了；上架 正常 / 库位放不下；波次 待组波 / 组波预览 / 拣货单 / 缺货；库存 正常 / 临期预警 / 加载中 / 搜索无结果。
+
+设计要求：颜色、字体、圆角、间距写成 :root 变量，主色只用 --accent，温层（常温 / 冷藏 / 冷冻）各一组颜色变量；图标内联线性 SVG；对比度 ≥4.5:1；抽屉 Esc 关闭、焦点锁定；数字列右对齐、等宽数字；示例数据全部虚构；右下角「原型面板」切状态，按 H 隐藏，#page=xx&state=xx 直达。
+硬性要求：单文件 HTML，不引用外部网址，双击离线可开；货品、库位、库存、到货单、订单、规则阈值集中在脚本顶部 DATA。
+交付：① 完整 HTML；② 规则表（推荐库位、组波、FEFO、临期、补货建议的计算方式）；③ 每个页面「元素 | 交互 | 反馈」表。` },
+ { title: '改成我的业务', when: '手上有这个模板文件，想换成自己仓库的货品、库位和规则时用',
+   text: `附件是一个单文件 HTML 的仓储 WMS 原型。请改成「{{仓库类型，例如：服装电商仓 / 医药仓 / 3C 配件仓}}」。
+
+1. 只改脚本顶部 DATA 和文案；不要改 KIT 标记之间的共用样式和脚本，保留收货差异、推荐库位、自动组波、FEFO 拣货、库存预警和补货建议；
+2. 货品和单位：{{例如：按件管理，有颜色尺码}}；温层换成：{{例如：普通区 / 贵品区 / 退货区}}；
+3. 规则：收货拒收条件 {{例如：效期不足 6 个月}}；组波规则 {{例如：按快递公司 + 单品单件}}；临期天数 {{天}}；
+4. 示例数据标「示例」，单号格式改成：{{单号规则}}。
+交付：改好的完整 HTML，加一张「规则 | 原来 | 改成」对照表。` },
+ { title: '在此基础上加页面 / 状态', when: '评审时被问「盘点怎么做？退货怎么入？」时用',
+   text: `附件是一个单文件 HTML 的仓储 WMS 原型。请在它的基础上加：{{要加的页面或状态}}。
+
+常见例子（选一个或照着写）：
+- 「盘点」：按库位生成盘点任务 → 录实盘数（不显示账面数，防止抄数）→ 差异复盘 → 审核后调整库存；
+- 「退货入库」：扫退货单 → 逐件判断（可二次销售 / 残次 / 报废）→ 分别进不同库区；
+- 「库内移库」：选源库位和目标库位，温层不符拦截，移库后两边库存同时变化。
+
+要求：新页面和状态加进「原型面板」；沿用现有 CSS 变量和组件样式；只改必要的地方。
+交付：完整 HTML，加一张新增部分的「元素 | 交互 | 反馈」说明表。` }
+];
+
+/* ==========================================================================
+   ② 下面是交互逻辑，一般不用改
+   ========================================================================== */
+/*@KIT_JS*/
+/* ==========================================================================
+   原型工具包（不用改）：图标、页面/状态切换、弹层、Toast
+   用法：页面里写 <svg class="ic"><use href="#i-search"/></svg>
+   ========================================================================== */
+(function(){
+  /* ---- 线性图标（24 网格，1.6 描边）。要加图标：照格式加一行 ---- */
+  var ICONS={
+    search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    filter:'<path d="M4 5h16l-6 8v5l-4 2v-7z"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    minus:'<path d="M5 12h14"/>',
+    x:'<path d="M6 6l12 12M18 6 6 18"/>',
+    check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    'chev-d':'<path d="m6 9 6 6 6-6"/>',
+    'chev-u':'<path d="m6 15 6-6 6 6"/>',
+    'chev-r':'<path d="m9 6 6 6-6 6"/>',
+    'chev-l':'<path d="m15 6-6 6 6 6"/>',
+    sort:'<path d="m8 9 4-4 4 4M8 15l4 4 4-4"/>',
+    more:'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>',
+    download:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14"/>',
+    upload:'<path d="M12 19V8m0 0-4 4m4-4 4 4M5 5h14"/>',
+    refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/>',
+    alert:'<path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.5M12 17.2v.1"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.1"/>',
+    'check-c':'<circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.7 2.7L16 9.6"/>',
+    'x-c':'<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',
+    inbox:'<path d="M3 13h5l1.5 3h5L16 13h5"/><path d="M5.5 5h13L21 13v6H3v-6z"/>',
+    file:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
+    home:'<path d="M4 10.5 12 4l8 6.5V20h-5.5v-6h-5v6H4z"/>',
+    grid:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+    chart:'<path d="M4 20V4M4 20h16"/><path d="m8 15 3.5-4 3 2.5L20 7"/>',
+    bars:'<path d="M5 20v-7M10 20V6M15 20v-9M20 20V9"/>',
+    pie:'<path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
+    bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5h4"/>',
+    user:'<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+    users:'<circle cx="9" cy="9" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M15.5 6.2a3 3 0 0 1 0 5.6M17 14.2A5.5 5.5 0 0 1 20.5 19"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>',
+    calendar:'<rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+    cart:'<path d="M3 4h2.5l2 11h11l2-8H7"/><circle cx="9.5" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/>',
+    bag:'<path d="M5 8h14l-1 12H6z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/>',
+    heart:'<path d="M12 19.5s-7.5-4.4-7.5-9.7A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6c0 5.3-7.5 9.7-7.5 9.7z"/>',
+    trash:'<path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/>',
+    edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+    send:'<path d="M12 19V5m0 0-6 6m6-6 6 6"/>',
+    spark:'<path d="M12 3.5 13.8 10.2 20.5 12 13.8 13.8 12 20.5 10.2 13.8 3.5 12 10.2 10.2z"/>',
+    copy:'<rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/>',
+    'thumb-u':'<path d="M7.5 10.5V20H4.5v-9.5zM7.5 10.5 11 4a2 2 0 0 1 2.6 1.9V9h4.7a2 2 0 0 1 2 2.4l-1.4 6.8a2 2 0 0 1-2 1.8H7.5"/>',
+    'thumb-d':'<path d="M7.5 13.5V4H4.5v9.5zM7.5 13.5 11 20a2 2 0 0 0 2.6-1.9V15h4.7a2 2 0 0 0 2-2.4l-1.4-6.8A2 2 0 0 0 16.9 4H7.5"/>',
+    stop:'<rect x="7" y="7" width="10" height="10" rx="2"/>',
+    lock:'<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+    phone:'<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/>',
+    eye:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+    'eye-off':'<path d="M4 4l16 16M10.5 6a9.7 9.7 0 0 1 1.5-.1C18 5.9 21.5 12 21.5 12a16 16 0 0 1-2.6 3.3M6.6 7.2C4 9 2.5 12 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+    pin:'<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+    ticket:'<path d="M4 7.5h16v3a1.8 1.8 0 0 0 0 3.5v3H4v-3a1.8 1.8 0 0 0 0-3.5z"/><path d="M14.5 7.5v10" stroke-dasharray="2 2"/>',
+    wallet:'<rect x="3.5" y="6" width="17" height="13" rx="2"/><path d="M3.5 9.5h17M15.5 14h2"/>',
+    logout:'<path d="M14 4.5H6.5v15H14M10.5 12H20m0 0-3.5-3.5M20 12l-3.5 3.5"/>',
+    layers:'<path d="m12 4 8.5 4.5L12 13 3.5 8.5z"/><path d="m3.5 12.5 8.5 4.5 8.5-4.5"/>',
+    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    msg:'<path d="M4.5 5.5h15v10h-8l-4.5 3.5v-3.5H4.5z"/>',
+    link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    paperclip:'<path d="m19 11.5-7.2 7.2a4.5 4.5 0 0 1-6.4-6.4l7.6-7.6a3 3 0 0 1 4.2 4.2L9.6 16.5a1.5 1.5 0 0 1-2.1-2.1l6.7-6.7"/>',
+    flow:'<circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M6 8.2v3.3A2.5 2.5 0 0 0 8.5 14h7A2.5 2.5 0 0 1 18 16.5v-.1"/>',
+    approve:'<path d="M9 4.5h6l1 2.5h3v13H5V7h3z"/><path d="m9 14 2 2 4-4.5"/>',
+    arrow:'<path d="M5 12h14m0 0-5-5m5 5-5 5"/>',
+    'arrow-up':'<path d="M7 14 12 9l5 5"/>',
+    'arrow-dn':'<path d="M7 10l5 5 5-5"/>',
+    star:'<path d="m12 4 2.4 5 5.4.6-4 3.7 1.1 5.4L12 16l-4.9 2.7 1.1-5.4-4-3.7 5.4-.6z"/>',
+    headset:'<path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13.5" width="4" height="6" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6" rx="1.5"/><path d="M18.5 19.5c0 1-1.5 1.5-4 1.5"/>',
+    book:'<path d="M5 4.5h10.5A2.5 2.5 0 0 1 18 7v12.5H7.5A2.5 2.5 0 0 1 5 17z"/><path d="M5 17a2.5 2.5 0 0 1 2.5-2.5H18"/>',
+    history:'<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5M12 8v4l3 1.8"/>',
+    globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/>',
+    shield:'<path d="M12 3.5 19 6v6c0 4.2-3 7.4-7 8.5-4-1.1-7-4.3-7-8.5V6z"/><path d="m9 12 2 2 4-4.2"/>',
+    play:'<path d="M8 5.5v13l10.5-6.5z"/>',
+    pause:'<path d="M8.5 5.5v13M15.5 5.5v13"/>',
+    share:'<path d="M14 5l6.5 6.5L14 18v-3.8c-4.6 0-7.6 1.4-10 4.8.8-4.9 3.5-9.4 10-10.3z"/>',
+    music:'<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
+    wifi:'<path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.2" r="1"/>',
+    flag:'<path d="M5.5 21V4.5M5.5 4.5h11l-2 4 2 4h-11"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+    moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    code:'<path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5"/>',
+    keyboard:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7.5 14h9"/>',
+    gift:'<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M3.5 9h17M12 9v11M12 9S10.5 4.5 8 5s-1 4 4 4zM12 9s1.5-4.5 4-4 1 4-4 4z"/>'
+  };
+  var sp='<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">';
+  for(var k in ICONS) sp+='<symbol id="i-'+k+'" viewBox="0 0 24 24">'+ICONS[k]+'</symbol>';
+  sp+='</svg>';
+  document.addEventListener('DOMContentLoaded',function(){document.body.insertAdjacentHTML('afterbegin',sp)});
+
+  var P=window.Proto={};
+  P.ic=function(n,cls){return '<svg class="ic '+(cls||'')+'" aria-hidden="true"><use href="#i-'+n+'"/></svg>'};
+  P.esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  P.money=function(n,d){d=d==null?2:d;return Number(n).toLocaleString('zh-CN',{minimumFractionDigits:d,maximumFractionDigits:d})};
+  P.$=function(s,r){return (r||document).querySelector(s)};
+  P.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  /* ---- Toast：Proto.toast('已保存','ok') ---- */
+  P.toast=function(msg,type,opt){
+    opt=opt||{};
+    var host=(opt.host||document.querySelector('.screen')||document.body).querySelector(':scope > .toast-host');
+    var root=opt.host||document.querySelector('.screen')||document.body;
+    if(!host){host=document.createElement('div');host.className='toast-host';host.setAttribute('role','status');host.setAttribute('aria-live','polite');root.appendChild(host)}
+    var t=document.createElement('div');t.className='toast '+(type||'');
+    var icn=type==='ok'?'check-c':type==='err'?'x-c':'info';
+    t.innerHTML=P.ic(icn)+'<span>'+P.esc(msg)+'</span>'+(opt.undo?'<button class="undo" type="button">撤销</button>':'');
+    if(opt.undo) t.querySelector('.undo').onclick=function(){opt.undo();t.remove()};
+    host.appendChild(t);
+    setTimeout(function(){t.style.transition='opacity .3s';t.style.opacity='0';setTimeout(function(){t.remove()},300)},opt.ms||2400);
+  };
+
+  /* ---- 弹层：Esc / 点遮罩关闭、焦点锁定、关闭后焦点回到触发处 ---- */
+  var stack=[];
+  P.open=function(el,opt){
+    opt=opt||{};
+    var host=opt.host||document.body;
+    var mask=document.createElement('div');mask.className='mask';host.appendChild(mask);
+    el.setAttribute('role',el.getAttribute('role')||'dialog');el.setAttribute('aria-modal','true');
+    if(el.parentNode!==host) host.appendChild(el);
+    var item={el:el,mask:mask,back:document.activeElement,onClose:opt.onClose};
+    stack.push(item);
+    void el.offsetWidth;void mask.offsetWidth;(function(){mask.classList.add('show');el.classList.add('show');
+      var f=el.querySelector('[autofocus]');if(f)f.focus({preventScroll:true});else{if(!el.hasAttribute('tabindex'))el.setAttribute('tabindex','-1');el.focus({preventScroll:true})}})();
+    mask.onclick=function(){if(!opt.locked)P.close(el)};
+    return el;
+  };
+  P.close=function(el){
+    var i=-1;for(var j=stack.length-1;j>=0;j--){if(!el||stack[j].el===el){i=j;break}}
+    if(i<0)return;var it=stack.splice(i,1)[0];
+    it.el.classList.remove('show');it.mask.classList.remove('show');
+    setTimeout(function(){it.mask.remove();if(it.el.dataset.temp)it.el.remove()},320);
+    if(it.back&&it.back.focus)it.back.focus({preventScroll:true});
+    if(it.onClose)it.onClose();
+  };
+  document.addEventListener('keydown',function(e){
+    var top=stack[stack.length-1];
+    if(e.key==='Escape'&&top){e.preventDefault();P.close(top.el);return}
+    if(e.key==='Tab'&&top){
+      var f=P.$$('a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])',top.el).filter(function(n){return n.offsetParent!==null});
+      if(!f.length)return;var a=f[0],b=f[f.length-1];
+      if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus()}
+      else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus()}
+      else if(!top.el.contains(document.activeElement)){e.preventDefault();a.focus()}
+    }
+  });
+
+  /* ---- 确认弹窗：Proto.confirm({title,body,ok,danger}).then(...) ---- */
+  P.confirm=function(o){
+    return new Promise(function(res){
+      var m=document.createElement('div');m.className='modal';m.dataset.temp=1;
+      m.setAttribute('aria-labelledby','cf-t');
+      m.innerHTML='<div class="layer-hd"><h2 id="cf-t">'+P.esc(o.title)+'</h2></div><div class="layer-bd"><p class="muted" style="font-size:14px">'+(o.html||P.esc(o.body||''))+'</p></div><div class="layer-ft"><button class="btn" data-k="0" type="button">'+(o.cancel||'取消')+'</button><button class="btn '+(o.danger?'btn-danger-solid':'btn-primary')+'" data-k="1" type="button">'+P.esc(o.ok||'确定')+'</button></div>';
+      var done=false;
+      m.addEventListener('click',function(e){var b=e.target.closest('[data-k]');if(!b)return;done=true;P.close(m);res(b.dataset.k==='1')});
+      P.open(m,{host:o.host,onClose:function(){if(!done)res(false)}});
+      setTimeout(function(){m.querySelector('[data-k="1"]').focus()},30);
+    });
+  };
+
+  /* ---- 页面 / 状态切换 + 原型面板 ----
+     Proto.init({pages:[{id,name}], states:[{id,name}], render:function(page,state){}})
+     URL 直达：#page=list&state=empty ；按 H 隐藏面板 */
+  P.state={};
+  function parse(){var o={};location.hash.replace(/^#/,'').split('&').forEach(function(kv){var p=kv.split('=');if(p[0])o[p[0]]=decodeURIComponent(p[1]||'')});return o}
+  P.go=function(page,state,silent){
+    var c=P.cfg;page=page||P.state.page;
+    if(state==null) state=(page!==P.state.page)?'normal':P.state.state;
+    P.state={page:page,state:state||'normal'};
+    var h='#page='+page+(P.state.state!=='normal'?'&state='+P.state.state:'');
+    if(location.hash!==h) history.replaceState(null,'',h);
+    c.render(P.state.page,P.state.state);
+    syncPanel();
+  };
+  function syncPanel(){
+    P.$$('.pp [data-pg]').forEach(function(b){b.classList.toggle('on',b.dataset.pg===P.state.page)});
+    var sts=stateList();
+    var box=P.$('.pp [data-states]');if(!box)return;
+    box.innerHTML=sts.map(function(s){return '<button type="button" data-st="'+s.id+'" class="'+(s.id===P.state.state?'on':'')+'">'+s.name+'</button>'}).join('');
+  }
+  function stateList(){var c=P.cfg,pg=c.pages.filter(function(p){return p.id===P.state.page})[0]||{};return pg.states||c.states||[{id:'normal',name:'正常'}]}
+  P.init=function(cfg){
+    P.cfg=cfg;
+    var h=parse();
+    var first=(cfg.pages.filter(function(p){return p.id===h.page})[0]||cfg.pages[0]).id;
+    var pp=document.createElement('div');pp.className='pp';
+    pp.innerHTML='<div class="pp-body" role="region" aria-label="原型面板"><div class="pp-group"><h4>页面</h4><div class="pp-list">'+cfg.pages.map(function(p){return '<button type="button" data-pg="'+p.id+'">'+p.name+'</button>'}).join('')+'</div></div><div class="pp-group"><h4>状态</h4><div class="pp-list" data-states></div></div><div class="pp-foot"><span>'+P.esc(cfg.title||'原型模板')+'</span><span><kbd>H</kbd> 隐藏</span></div></div><button class="pp-toggle" type="button" aria-expanded="false"><span class="dot"></span>原型面板</button>';
+    document.body.appendChild(pp);
+    pp.querySelector('.pp-toggle').onclick=function(){var o=pp.classList.toggle('open');this.setAttribute('aria-expanded',o)};
+    pp.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.pg)P.go(b.dataset.pg,'normal');if(b.dataset.st)P.go(null,b.dataset.st)});
+    document.addEventListener('keydown',function(e){if((e.key==='h'||e.key==='H')&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&!e.metaKey&&!e.ctrlKey)document.body.classList.toggle('pp-hidden')});
+    if(/(^|[?&])shot\b/.test(location.search))document.body.classList.add('shot');
+    P.go(first,h.state||'normal');
+  };
+
+
+  /* ---- AI 提示词面板（每个模板、组件库必有；build.py 会检查） ----
+     Proto.prompts([{title, when, text}])   text 里用 {{变量名}} 标变量，点击就地填写
+     PC：右下角「AI 提示词」按钮 → 右侧抽屉；页面有 .stage（手机框）时直接摆在手机框右侧 */
+  var PV={};
+  try{PV=JSON.parse(localStorage.getItem('tpl-pv:'+location.pathname)||'{}')}catch(e){}
+  function savePV(){try{localStorage.setItem('tpl-pv:'+location.pathname,JSON.stringify(PV))}catch(e){}}
+  P.fillPrompt=function(text){return text.replace(/\{\{([^}]+)\}\}/g,function(m,k){k=k.trim();return PV[k]?PV[k]:m})};
+  function bodyHTML(text){
+    return P.esc(text).replace(/\{\{([^}]+)\}\}/g,function(m,k){k=k.trim();var v=PV[k];return '<span class="pv'+(v?' filled':'')+'" role="button" tabindex="0" data-pv="'+P.esc(k)+'" title="点击填写">'+P.esc(v||k)+'</span>'});
+  }
+  P.promptCard=function(p,i){
+    var hasVar=/\{\{/.test(p.text);
+    return '<div class="pq-card" data-pq="'+i+'"><h3><span class="no">'+(i+1)+'</span>'+P.esc(p.title)+'</h3>'+(p.when?'<p class="pq-when">'+P.esc(p.when)+'</p>':'')+
+      '<div class="pq-body">'+bodyHTML(p.text)+'</div><div class="pq-acts"><span class="hint">'+(hasVar?'点高亮处填写，复制时自动替换':'复制后粘到任意 AI 对话里')+'</span><span class="sp"></span>'+
+      '<button class="btn btn-ghost" type="button" data-pq-more>展开</button><button class="btn btn-primary" type="button" data-pq-copy>'+P.ic('copy','ic-sm')+'复制</button></div></div>';
+  };
+  P.copyText=function(text,btn,msg){
+    var done=function(){if(btn){var h=btn.innerHTML;btn.classList.add('done');btn.innerHTML=P.ic('check','ic-sm')+'已复制';setTimeout(function(){btn.classList.remove('done');btn.innerHTML=h},2400)}P.toast(msg||'已复制，粘到 AI 对话里就能用','ok',{host:document.body})};
+    var fin=false,ok=function(){if(!fin){fin=true;done()}};
+    try{navigator.clipboard.writeText(text).then(ok,function(){if(!fin){fin=true;fallback()}});setTimeout(function(){if(!fin){fin=true;fallback()}},800)}catch(e){fin=true;fallback()}
+    function fallback(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();done()}
+  };
+  function wirePrompts(root,list){
+    root.addEventListener('click',function(e){
+      var c=e.target.closest('[data-pq]');if(!c)return;var p=list[+c.dataset.pq];
+      if(e.target.closest('[data-pq-copy]'))P.copyText(P.fillPrompt(p.text),e.target.closest('[data-pq-copy]'));
+      if(e.target.closest('[data-pq-more]')){var o=c.classList.toggle('open');e.target.closest('[data-pq-more]').textContent=o?'收起':'展开'}
+      var v=e.target.closest('[data-pv]');if(v)editVar(v,root,list);
+    });
+    root.addEventListener('keydown',function(e){var v=e.target.closest&&e.target.closest('[data-pv]');if(v&&(e.key==='Enter'||e.key===' ')){e.preventDefault();editVar(v,root,list)}});
+  }
+  function editVar(span,root,list){
+    var k=span.dataset.pv,inp=document.createElement('input');inp.className='pv-in';inp.value=PV[k]||'';inp.placeholder=k;inp.setAttribute('aria-label','填写 '+k);
+    inp.style.width=Math.max(80,Math.min(260,(inp.value||k).length*14+20))+'px';
+    span.replaceWith(inp);inp.focus();
+    var commit=function(){PV[k]=inp.value.trim();if(!PV[k])delete PV[k];savePV();P.$$('[data-pq]',root).forEach(function(c){c.querySelector('.pq-body').innerHTML=bodyHTML(list[+c.dataset.pq].text)})};
+    inp.addEventListener('blur',commit);
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur()}if(e.key==='Escape'){e.stopPropagation();inp.value=PV[k]||'';inp.blur()}});
+  }
+  P.prompts=function(list){
+    P._prompts=list;
+    if(!list||list.length<3)console.error('[提示词面板] 至少 3 条：从零生成 / 改成我的业务 / 加页面或状态');
+    var id=(location.pathname.split('/').filter(Boolean).slice(-2,-1)[0])||'template';
+    var bar=document.createElement('div');bar.className='tplbar';bar.setAttribute('role','region');bar.setAttribute('aria-label','模板说明');
+    bar.innerHTML='<span class="tb-name">'+P.esc(document.title.split(' · ')[0])+'</span><span class="tb-sep"></span><span class="tb-line"><b>免费下载</b> · 双击就能打开 · 复制提示词直接给 AI 用</span><span class="sp"></span><span data-tb-slot></span><a class="tb-btn primary" href="./'+P.esc(decodeURIComponent(id))+'.zip" download>'+P.ic('download')+'免费下载</a><button class="tb-btn tb-hide" type="button" aria-label="隐藏顶部条和原型面板（H）" title="隐藏（H）">'+P.ic('x')+'</button>';
+    document.body.prepend(bar);document.body.classList.add('has-tplbar');P._bar=bar;
+    bar.querySelector('.tb-hide').onclick=function(){document.body.classList.add('pp-hidden')};
+    var intro='<p class="pq-intro">复制下面的提示词，粘到任意 AI 对话里，就能生成或改造这个原型。要求它输出单文件 HTML。</p>';
+    var stage=document.querySelector('.stage');
+    if(stage){
+      var col=document.createElement('aside');col.className='pq-col';col.setAttribute('aria-label','AI 提示词');
+      col.innerHTML='<div class="pq-head">'+P.ic('spark')+'AI 提示词 · 复制就能用</div><div class="pq-scroll">'+list.map(P.promptCard).join('')+'</div>';
+      stage.appendChild(col);wirePrompts(col,list);
+      var jb=document.createElement('button');jb.type='button';jb.className='tb-btn';jb.innerHTML=P.ic('spark')+'AI 提示词 · 一键复制';jb.onclick=function(){col.scrollIntoView({behavior:'smooth',block:'center'});var c=col.querySelector('.pq-card');if(c){c.style.boxShadow='0 0 0 3px var(--accent-soft)';setTimeout(function(){c.style.boxShadow=''},1400)}};bar.querySelector('[data-tb-slot]').appendChild(jb);return;
+    }
+    var fab=document.createElement('button');fab.type='button';fab.className='tb-btn';fab.innerHTML=P.ic('spark')+'AI 提示词 · 一键复制';
+    var dw=document.createElement('aside');dw.className='drawer pq-drawer';dw.setAttribute('aria-label','AI 提示词');
+    dw.innerHTML='<div class="layer-hd"><h2>AI 提示词</h2><button class="btn btn-ghost btn-icon" type="button" data-pq-x aria-label="关闭">'+P.ic('x')+'</button></div><div class="layer-bd">'+intro+list.map(P.promptCard).join('')+'</div>';
+    P._bar.querySelector('[data-tb-slot]').appendChild(fab);document.body.appendChild(dw);wirePrompts(dw,list);
+    fab.onclick=function(){P.open(dw)};
+    dw.querySelector('[data-pq-x]').onclick=function(){P.close(dw)};
+  };
+  /* ---- 骨架行 ---- */
+  P.skRows=function(n,cols){var s='';for(var i=0;i<n;i++){s+='<tr>';for(var j=0;j<cols;j++)s+='<td><div class="sk" style="height:12px;width:'+(40+((i*7+j*13)%50))+'%"></div></td>';s+='</tr>'}return s};
+  /* ---- 状态块 ---- */
+  P.stateBlock=function(o){return '<div class="state '+(o.error?'is-error':'')+'"><div class="state-ic">'+P.ic(o.icon||(o.error?'alert':'inbox'))+'</div><h3>'+P.esc(o.title)+'</h3>'+(o.body?'<p>'+P.esc(o.body)+'</p>':'')+(o.acts?'<div class="acts">'+o.acts+'</div>':'')+'</div>'};
+})();
+/*@END_KIT_JS*/
+
+const { $, $$, ic, esc, toast } = Proto;
+const C = $('#content'), dw = $('#dw');
+const TEMP = { amb: '常温', cold: '冷藏', frz: '冷冻' };
+const g = k => { const x = DATA.goods[k]; return { k, name: x[0], spec: x[1], unit: x[2], temp: x[3], life: x[4], safe: x[5] }; };
+const tempTag = t => `<span class="temp ${t}">${TEMP[t]}</span>`;
+const day = s => new Date(s + 'T00:00:00');
+const addDays = (s, n) => { const d = day(s); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+const diffDays = (a, b) => Math.round((day(a) - day(b)) / 864e5);
+let INV, ASN, PUT, ORD, WAVES, rcv, putSel, ordSel, stTab, stQ, stSel, shortMarked;
+function reset() {
+  INV = DATA.inv.map(r => ({ k: r[0], loc: r[1], batch: r[2], exp: r[3], qty: r[4], lock: r[5] }));
+  ASN = DATA.asn.map(a => JSON.parse(JSON.stringify(a)));
+  PUT = DATA.putaway.map((p, i) => ({ id: 'PA' + (101 + i), k: p[0], batch: p[1], exp: p[2], qty: p[3], from: p[4] }));
+  ORD = DATA.orders.map(o => ({ no: o[0], route: o[1], cut: o[2], lines: o[3], wave: null }));
+  WAVES = []; rcv = null; putSel = new Set(); ordSel = new Set(); stTab = 'all'; stQ = ''; stSel = new Set(); shortMarked = new Set();
+  PUT.forEach(p => p.loc = recommend(p).loc);
+  badges();
+}
+const crumb = (a, b) => { $('#crumb').innerHTML = `${a} ${ic('chev-r')} <b>${b}</b>`; };
+function navOn(p) { $$('[data-go]').forEach(b => { const on = b.dataset.go === p; b.classList.toggle('on', on); on ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'); }); }
+function badges() {
+  const set = (id, n) => { const b = $(id); b.textContent = n || ''; b.style.display = n ? '' : 'none'; };
+  set('#nb-rcv', ASN.filter(a => a.st === 'wait').length); set('#nb-put', PUT.length); set('#nb-wave', ORD.filter(o => !o.wave).length);
+  set('#nb-stk', stockRows().filter(r => r.flag === 'exp' || r.flag === 'near').length);
+}
+const ordTemp = o => { const ts = [...new Set(o.lines.map(l => g(l[0]).temp))]; return ts.includes('frz') ? 'frz' : ts.includes('cold') ? 'cold' : 'amb'; };
+
+/* ---------------- 库位：已用量 & 推荐 ---------------- */
+const used = code => INV.filter(r => r.loc === code).reduce((s, r) => s + r.qty, 0) + PUT.filter(p => p.done && p.loc === code).reduce((s, p) => s + p.qty, 0);
+const locOf = code => DATA.locs.find(l => l[0] === code);
+const free = code => locOf(code)[2] - used(code);
+// 推荐规则：同温层 → 同货品已在且放得下的库位优先 → 否则剩余空间最大的
+function recommend(p) {
+  const t = g(p.k).temp, cands = DATA.locs.filter(l => l[1] === t);
+  const same = cands.filter(l => INV.some(r => r.loc === l[0] && r.k === p.k) && free(l[0]) >= p.qty);
+  if (same.length) return { loc: same[0][0], why: '同一货品已在这个库位，集中存放便于拣货' };
+  const best = cands.slice().sort((a, b) => free(b[0]) - free(a[0]))[0];
+  return { loc: best[0], why: free(best[0]) >= p.qty ? `同温层剩余空间最大（剩 ${free(best[0])}）` : `同温层所有库位都放不下，剩余最多的也只有 ${free(best[0])}` };
+}
+
+/* ---------------- 收货 ---------------- */
+function pageReceive(state) {
+  crumb('入库', '收货'); navOn('receive');
+  const wait = ASN.filter(a => a.st === 'wait'), done = ASN.filter(a => a.st !== 'wait');
+  const row = a => { const qty = a.lines.reduce((s, l) => s + l[1], 0), temps = [...new Set(a.lines.map(l => g(l[0]).temp))];
+    return `<tr><td class="mono">${a.no}</td><td>${esc(a.sup)}</td><td class="num">${a.eta}</td><td>${temps.map(tempTag).join(' ')}</td><td class="r num">${a.lines.length}</td><td class="r num">${qty}</td><td>${a.st === 'wait' ? '<span class="tag tag-warning">待收货</span>' : a.st === 'diff' ? '<span class="tag tag-danger">有差异</span>' : '<span class="tag tag-success">已完成</span>'}</td><td class="num muted">${a.got || '—'}</td><td class="r">${a.st === 'wait' ? `<button class="btn btn-primary" type="button" data-rcv="${a.no}" style="height:32px">收货</button>` : `<button class="btn-link" type="button" data-toast="收货记录（示例）">查看</button>`}</td></tr>`; };
+  const tbl = rows => `<div class="tblw"><table class="table"><thead><tr><th>到货单号</th><th>供应商</th><th>预计到货</th><th>温层</th><th class="r">品项</th><th class="r">应收数量</th><th>状态</th><th>收货时间</th><th class="r">操作</th></tr></thead><tbody>${rows.map(row).join('')}</tbody></table></div>`;
+  C.innerHTML = `<div class="page-hd"><div><h1>收货</h1><p class="sub">按到货通知单收货；实收已按应收预填，只改有差异的行</p></div></div>
+    <div class="tabs2" role="tablist"><button class="t2" role="tab" type="button" aria-selected="true">待收货<span class="cnt ${wait.length ? 'warn' : ''}">${wait.length}</span></button><button class="t2" role="tab" type="button" aria-selected="false" data-toast="已收货 ${done.length} 单（下方列表）">已收货<span class="cnt">${done.length}</span></button></div>
+    ${wait.length ? tbl(wait) : `<div class="card">${Proto.stateBlock({ icon: 'check-c', title: '今天的到货都收完了', body: '新的到货通知单会出现在这里，左侧菜单数字会提醒你。', acts: `<button class="btn" type="button" data-go="putaway">去上架（${PUT.filter(p => !p.done).length}）</button>` })}</div>`}
+    <h3 style="font-size:14px;margin:24px 0 10px">已收货</h3>${tbl(done)}`;
+}
+function rcvDrawer(no) {
+  const a = ASN.find(x => x.no === no);
+  if (!rcv || rcv.no !== no) rcv = { no, rows: a.lines.map(l => { const x = g(l[0]); return { k: l[0], plan: l[1], got: String(l[1]), prod: addDays(DATA.today, -2), reason: '' }; }), err: {} };
+  paintRcv(); Proto.open(dw); dw.classList.add('wide');
+}
+function rcvCalc(r) { const x = g(r.k), exp = r.prod ? addDays(r.prod, x.life) : '', left = exp ? diffDays(exp, DATA.today) : null, low = left !== null && left < x.life * DATA.minLifeRatio; return { x, exp, left, low, diff: (parseInt(r.got, 10) || 0) - r.plan }; }
+function paintRcv() {
+  const a = ASN.find(x => x.no === rcv.no), e = rcv.err;
+  const tot = rcv.rows.reduce((s, r) => ({ plan: s.plan + r.plan, got: s.got + (parseInt(r.got, 10) || 0) }), { plan: 0, got: 0 });
+  const lows = rcv.rows.filter(r => rcvCalc(r).low).length, diffs = rcv.rows.filter(r => rcvCalc(r).diff !== 0).length;
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">收货 · ${a.no}</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div><div class="layer-bd">
+    <dl class="dsum"><div><dt>供应商</dt><dd>${esc(a.sup)}</dd></div><div><dt>预计到货</dt><dd class="num">${a.eta}</dd></div><div><dt>品项</dt><dd class="num">${a.lines.length}</dd></div><div><dt>收货人</dt><dd>林示例</dd></div></dl>
+    ${lows ? `<div class="alertline warn">${ic('alert', 'ic-sm')}<span>${lows} 行剩余保质期不足总保质期的 1/3，建议拒收或联系采购确认。</span></div>` : ''}
+    <table class="dt"><thead><tr><th>货品</th><th>温层</th><th class="r">应收</th><th class="r">实收</th><th class="r">差异</th><th>差异原因</th><th>生产日期</th><th>到期日</th></tr></thead><tbody>
+    ${rcv.rows.map((r, i) => { const c = rcvCalc(r); return `<tr class="${c.diff ? 'diff' : ''}"><td>${esc(c.x.name)}<span class="sub">${r.k} · ${c.x.spec}</span></td><td class="m">${tempTag(c.x.temp)}</td><td class="r m num">${r.plan}</td>
+      <td class="r"><input class="input r num w70 ${e[i + ':got'] ? 'is-error' : ''}" data-rg="${i}" value="${r.got}" inputmode="numeric" aria-label="${c.x.name} 实收">${e[i + ':got'] ? `<span class="field-err">${e[i + ':got']}</span>` : ''}</td>
+      <td class="r m"><span class="diffv ${c.diff < 0 ? 'neg' : c.diff > 0 ? 'pos' : 'zero'}" data-dv="${i}">${c.diff > 0 ? '+' + c.diff : c.diff || '0'}</span></td>
+      <td>${c.diff ? `<select class="select w140 ${e[i + ':reason'] ? 'is-error' : ''}" data-rr="${i}" aria-label="${c.x.name} 差异原因"><option value="">请选择</option>${DATA.diffReasons.filter(t => c.diff > 0 ? t.startsWith('多货') : !t.startsWith('多货')).map(t => `<option ${r.reason === t ? 'selected' : ''}>${t}</option>`).join('')}</select>${e[i + ':reason'] ? `<span class="field-err">${e[i + ':reason']}</span>` : ''}` : '<span class="muted m">—</span>'}</td>
+      <td><input class="input w140 ${e[i + ':prod'] ? 'is-error' : ''}" type="date" data-rp="${i}" value="${r.prod}" max="${DATA.today}" aria-label="${c.x.name} 生产日期">${e[i + ':prod'] ? `<span class="field-err">${e[i + ':prod']}</span>` : ''}</td>
+      <td class="m"><span class="num">${c.exp || '—'}</span>${c.exp ? `<span class="sub ${c.low ? '' : ''}" style="${c.low ? 'color:var(--warning)' : ''}">${c.left < 0 ? '已过期' : `剩 ${c.left} 天 / 共 ${c.x.life} 天`}</span>${c.low ? '<span class="field-warn">不足 1/3，建议拒收</span>' : ''}` : ''}</td></tr>`; }).join('')}
+    </tbody></table>
+    <div class="sumline"><span>应收 <b>${tot.plan}</b></span><span>实收 <b>${tot.got}</b></span><span>差异 <b style="color:${tot.got - tot.plan ? 'var(--danger)' : 'inherit'}">${tot.got - tot.plan > 0 ? '+' : ''}${tot.got - tot.plan}</b></span><span class="muted" style="margin-left:auto">${diffs ? `${diffs} 行有差异，原因会同步给采购` : '与到货单一致'}</span></div></div>
+    <div class="layer-ft"><button class="btn" type="button" data-x>取消</button><button class="btn btn-primary" type="button" data-rcvok>确认收货并生成上架任务</button></div>`;
+}
+function rcvOk() {
+  const e = {}; rcv.rows.forEach((r, i) => { const c = rcvCalc(r); if (!/^\d+$/.test(r.got)) e[i + ':got'] = '填 0 或正整数'; if (c.diff && !r.reason) e[i + ':reason'] = '有差异，请选原因'; if (!r.prod) e[i + ':prod'] = '请填生产日期'; else if (r.prod > DATA.today) e[i + ':prod'] = '不能晚于今天'; });
+  rcv.err = e; if (Object.keys(e).length) { paintRcv(); const f = $('.drawer .is-error'); if (f) f.focus(); toast(`还有 ${Object.keys(e).length} 处要改`, 'err'); return; }
+  const a = ASN.find(x => x.no === rcv.no), hasDiff = rcv.rows.some(r => rcvCalc(r).diff);
+  let n = 0; rcv.rows.forEach(r => { const q = parseInt(r.got, 10); if (!q) return; const p = { id: 'PA' + (102 + PUT.length + n++), k: r.k, batch: 'B' + r.prod.slice(2).replace(/-/g, ''), exp: rcvCalc(r).exp, qty: q, from: a.no }; p.loc = recommend(p).loc; PUT.push(p); });
+  a.st = hasDiff ? 'diff' : 'done'; a.got = '11-10 ' + new Date().toTimeString().slice(0, 5); rcv = null;
+  Proto.close(dw); badges(); pageReceive(); toast(`已收货，生成 ${n} 条上架任务${hasDiff ? '；差异已通知采购' : ''}`, 'ok');
+}
+
+/* ---------------- 上架 ---------------- */
+function pagePutaway() {
+  crumb('入库', '上架'); navOn('putaway');
+  const rows = PUT.filter(p => !p.done), all = rows.length && rows.every(p => putSel.has(p.id));
+  C.innerHTML = `<div class="page-hd"><div><h1>上架</h1><p class="sub">库位已按规则推荐好；同温层里，同一货品已在的库位优先，其次剩余空间最大的</p></div></div>
+    <div class="bar"><span class="sel-n">已选 <b>${putSel.size}</b> 条</span><button class="btn btn-primary" type="button" data-putbatch ${putSel.size ? '' : 'disabled'}>按推荐库位批量上架</button><span class="sp"></span><button class="btn" type="button" data-toast="已打印 ${rows.length} 张上架标签（示例）" ${rows.length ? '' : 'disabled'}>${ic('file')}打印上架单</button></div>
+    ${rows.length ? `<div class="tblw"><table class="table"><thead><tr><th style="width:44px"><label class="check"><input type="checkbox" data-pall ${all ? 'checked' : ''} aria-label="全选"></label></th><th>任务号</th><th>货品</th><th>温层</th><th>批次</th><th>到期日</th><th class="r">数量</th><th>上架库位</th><th>推荐理由</th><th class="r">操作</th></tr></thead><tbody>
+    ${rows.map(p => { const x = g(p.k), rec = recommend(p), fr = free(p.loc), over = p.qty > fr; return `<tr class="${putSel.has(p.id) ? 'is-selected' : ''}"><td><label class="check"><input type="checkbox" data-psel="${p.id}" ${putSel.has(p.id) ? 'checked' : ''} aria-label="选择 ${p.id}"></label></td><td class="mono">${p.id}</td><td>${esc(x.name)}<div class="cap">${p.k}</div></td><td>${tempTag(x.temp)}</td><td class="mono">${p.batch}</td><td class="num">${p.exp}</td><td class="r num">${p.qty} ${x.unit}</td>
+      <td><select class="select" data-ploc="${p.id}" style="width:180px;height:34px" aria-label="${p.id} 上架库位">${DATA.locs.map(l => `<option value="${l[0]}" ${l[0] === p.loc ? 'selected' : ''} ${l[1] !== x.temp ? 'disabled' : ''}>${l[0]} · 剩 ${free(l[0])}${l[1] !== x.temp ? '（' + TEMP[l[1]] + '）' : ''}</option>`).join('')}</select>${over ? `<div class="field-err" style="margin-top:4px">剩余 ${fr}，放不下 ${p.qty}，请换库位或拆分</div>` : ''}</td>
+      <td class="cap" style="white-space:normal;max-width:220px">${p.loc === rec.loc ? rec.why : '已手动改库位'}</td>
+      <td class="r"><button class="btn" type="button" data-putone="${p.id}" style="height:32px" ${over ? 'disabled' : ''}>上架</button></td></tr>`; }).join('')}</tbody></table></div>
+    <div class="foot"><span>共 ${rows.length} 条待上架 · 温层不符的库位不能选</span><span>上架后库存立即可用</span></div>`
+    : `<div class="card">${Proto.stateBlock({ icon: 'check-c', title: '没有待上架的任务', body: '收货确认后会自动生成上架任务。', acts: `<button class="btn" type="button" data-go="receive">去收货</button>` })}</div>`}`;
+  setTimeout(() => { const a = $('[data-pall]'); if (a) a.indeterminate = putSel.size && !all; });
+}
+function doPut(ids) {
+  const bad = ids.filter(id => { const p = PUT.find(x => x.id === id); return p.qty > free(p.loc); });
+  if (bad.length) { toast(`${bad.join('、')} 库位放不下，先换库位`, 'err'); return; }
+  ids.forEach(id => { const p = PUT.find(x => x.id === id); p.done = true; INV.push({ k: p.k, loc: p.loc, batch: p.batch, exp: p.exp, qty: p.qty, lock: 0 }); PUT = PUT.filter(x => x.id !== id); putSel.delete(id); });
+  badges(); pagePutaway(); toast(`已上架 ${ids.length} 条，库存已可用`, 'ok');
+}
+
+/* ---------------- 拣货波次 ---------------- */
+function plan() {
+  const groups = {}; ORD.filter(o => !o.wave && (!ordSel.size || ordSel.has(o.no))).forEach(o => { const key = o.route + '|' + ordTemp(o); (groups[key] = groups[key] || []).push(o); });
+  const out = []; Object.keys(groups).forEach(k => { const [route, temp] = k.split('|'), list = groups[k]; for (let i = 0; i < list.length; i += DATA.waveMax) out.push({ route, temp, orders: list.slice(i, i + DATA.waveMax), cut: list[0].cut }); });
+  return out;
+}
+function pageWave() {
+  crumb('出库', '拣货波次'); navOn('wave');
+  const pend = ORD.filter(o => !o.wave), all = pend.length && pend.every(o => ordSel.has(o.no));
+  const pcs = o => o.lines.reduce((s, l) => s + l[1], 0);
+  C.innerHTML = `<div class="page-hd"><div><h1>拣货波次</h1><p class="sub">组波规则：同线路、同温层，每波最多 ${DATA.waveMax} 单（演示值）；截单早的线路先拣</p></div></div>
+    ${WAVES.length ? `<h3 style="font-size:14px;margin-bottom:10px">波次</h3><div class="tblw" style="margin-bottom:24px"><table class="table"><thead><tr><th>波次号</th><th>线路</th><th>温层</th><th>截单</th><th class="r">订单数</th><th class="r">件数</th><th>拣货进度</th><th>状态</th><th class="r">操作</th></tr></thead><tbody>${WAVES.map(w => { const p = w.picked / w.total; return `<tr><td class="mono">${w.id}</td><td>${w.route}</td><td>${tempTag(w.temp)}</td><td class="num">${w.cut}</td><td class="r num">${w.orders.length}</td><td class="r num">${w.total}</td><td><span class="prog ${p >= 1 ? 'done' : ''}"><i><b style="width:${Math.round(p * 100)}%"></b></i><span>${w.picked}/${w.total}</span></span></td><td>${w.short ? '<span class="tag tag-danger">有缺货</span>' : p >= 1 ? '<span class="tag tag-success">已拣完</span>' : p > 0 ? '<span class="tag tag-info">拣货中</span>' : '<span class="tag tag-neutral">待拣货</span>'}</td><td class="r"><button class="btn" type="button" data-pick="${w.id}" style="height:32px">拣货单</button></td></tr>`; }).join('')}</tbody></table></div>` : ''}
+    <h3 style="font-size:14px;margin-bottom:10px">待组波订单</h3>
+    <div class="bar"><span class="sel-n">${ordSel.size ? `已选 <b>${ordSel.size}</b> 单` : `共 <b>${pend.length}</b> 单，不勾选就按全部组波`}</span><button class="btn btn-primary" type="button" data-plan ${pend.length ? '' : 'disabled'}>${ic('flow')}按规则自动组波</button><span class="sp"></span></div>
+    ${pend.length ? `<div class="tblw"><table class="table"><thead><tr><th style="width:44px"><label class="check"><input type="checkbox" data-oall ${all ? 'checked' : ''} aria-label="全选"></label></th><th>订单号</th><th>线路</th><th>截单时间</th><th>温层</th><th class="r">品项</th><th class="r">件数</th></tr></thead><tbody>${pend.map(o => `<tr class="${ordSel.has(o.no) ? 'is-selected' : ''}"><td><label class="check"><input type="checkbox" data-osel="${o.no}" ${ordSel.has(o.no) ? 'checked' : ''} aria-label="选择 ${o.no}"></label></td><td class="mono">${o.no}</td><td>${o.route}</td><td class="num">${o.cut}</td><td>${tempTag(ordTemp(o))}</td><td class="r num">${o.lines.length}</td><td class="r num">${pcs(o)}</td></tr>`).join('')}</tbody></table></div>`
+      : `<div class="card">${Proto.stateBlock({ icon: 'check-c', title: '订单都已组波', body: '新订单进来会出现在这里。' })}</div>`}`;
+  setTimeout(() => { const a = $('[data-oall]'); if (a) a.indeterminate = ordSel.size && !all; });
+}
+function planModal() {
+  const ws = plan();
+  const m = document.createElement('div'); m.className = 'modal'; m.dataset.temp = 1; m.style.width = 'min(720px,calc(100vw - 32px))'; m.setAttribute('aria-labelledby', 'pl-t');
+  m.innerHTML = `<div class="layer-hd"><h2 id="pl-t">组波预览 · ${ws.length} 个波次</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div><div class="layer-bd"><p class="rule">规则：同线路、同温层合成一波，每波最多 ${DATA.waveMax} 单；冷冻 / 冷藏单独成波，避免拣货时混温。</p><div class="wplan">${ws.map((w, i) => `<div class="wcard"><h4>波次 ${i + 1} ${tempTag(w.temp)}</h4><p>${w.route} · 截单 ${w.cut} · ${w.orders.length} 单 · ${w.orders.reduce((s, o) => s + o.lines.reduce((a, l) => a + l[1], 0), 0)} 件</p><div class="nos">${w.orders.map(o => o.no).join('　')}</div></div>`).join('')}</div></div>
+    <div class="layer-ft"><button class="btn" type="button" data-x>取消</button><button class="btn btn-primary" type="button" data-planok>确认生成 ${ws.length} 个波次</button></div>`;
+  m.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if ('x' in b.dataset) Proto.close(m); if ('planok' in b.dataset) { Proto.close(m); makeWaves(ws); } });
+  document.body.appendChild(m); Proto.open(m);
+}
+function makeWaves(ws, silent) {
+  ws.forEach(w => { const id = 'WV1110' + String(WAVES.length + 1).padStart(2, '0'); w.orders.forEach(o => o.wave = id); WAVES.push({ id, route: w.route, temp: w.temp, cut: w.cut, orders: w.orders.map(o => o.no), total: w.orders.reduce((s, o) => s + o.lines.reduce((a, l) => a + l[1], 0), 0), picked: 0, short: false }); });
+  ordSel.clear(); badges(); pageWave(); if (!silent) toast(`已生成 ${ws.length} 个波次，可以打印拣货单了`, 'ok');
+}
+// 拣货单：同一货品合并 → 按先到期先出（FEFO）分配批次和库位 → 按库位排序得到拣货路径
+function pickList(w) {
+  const need = {}; w.orders.forEach(no => ORD.find(o => o.no === no).lines.forEach(l => need[l[0]] = (need[l[0]] || 0) + l[1]));
+  const lines = []; Object.keys(need).forEach(k => {
+    let left = need[k]; const lots = INV.filter(r => r.k === k && r.exp >= DATA.today && r.qty - r.lock > 0).sort((a, b) => a.exp < b.exp ? -1 : 1);
+    lots.forEach(r => { if (left <= 0) return; const take = Math.min(left, r.qty - r.lock); lines.push({ k, loc: r.loc, batch: r.batch, exp: r.exp, qty: take }); left -= take; });
+    if (left > 0) lines.push({ k, loc: '—', batch: '—', exp: '', qty: 0, short: left });
+  });
+  return lines.sort((a, b) => (a.loc === '—') - (b.loc === '—') || (a.loc < b.loc ? -1 : a.loc > b.loc ? 1 : 0));
+}
+function pickDrawer(id) {
+  const w = WAVES.find(x => x.id === id), lines = pickList(w), shorts = lines.filter(l => l.short);
+  w.short = shorts.length > 0 && shorts.some(l => !shortMarked.has(id + l.k)) ? true : w.short;
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">拣货单 · ${w.id}</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div><div class="layer-bd">
+    <dl class="dsum"><div><dt>线路</dt><dd>${w.route}</dd></div><div><dt>温层</dt><dd>${TEMP[w.temp]}</dd></div><div><dt>订单</dt><dd class="num">${w.orders.length} 单</dd></div><div><dt>截单</dt><dd class="num">${w.cut}</dd></div></dl>
+    <div class="alertline info">${ic('info', 'ic-sm')}<span>同一货品已合并；按先到期先出分配批次，按库位顺序排好路径，从上往下拣即可。</span></div>
+    ${shorts.length ? `<div class="alertline bad">${ic('alert', 'ic-sm')}<span>${shorts.length} 个货品库存不够，标红行可「标记缺货」，系统会通知客服联系客户。</span></div>` : ''}
+    <table class="dt"><thead><tr><th>#</th><th>库位</th><th>货品</th><th>批次</th><th>到期日</th><th class="r">拣货数</th><th></th></tr></thead><tbody>
+    ${lines.map((l, i) => { const x = g(l.k); return `<tr class="${l.short ? 'short' : ''}"><td class="m pickseq">${l.short ? '—' : i + 1}</td><td class="m loc">${l.loc}</td><td>${esc(x.name)}<span class="sub">${l.k} · ${x.spec}</span></td><td class="m mono">${l.batch}</td><td class="m num">${l.exp || '—'}</td><td class="r m num">${l.short ? `<b style="color:var(--danger)">缺 ${l.short} ${x.unit}</b>` : l.qty + ' ' + x.unit}</td><td class="r m">${l.short ? (shortMarked.has(id + l.k) ? '<span class="tag tag-neutral">已标记缺货</span>' : `<button class="btn" type="button" data-short="${id}|${l.k}" style="height:30px">标记缺货</button>`) : ''}</td></tr>`; }).join('')}</tbody></table></div>
+    <div class="layer-ft"><button class="btn" type="button" data-toast="已打印拣货单（示例）">${ic('file')}打印</button><button class="btn btn-primary" type="button" data-pickdone="${id}">拣货完成</button></div>`;
+  if (!dw.classList.contains('show')) { Proto.open(dw); dw.classList.add('wide'); }
+}
+
+/* ---------------- 库存与预警 ---------------- */
+function stockRows() {
+  const avail = {}; INV.forEach(r => { if (r.exp >= DATA.today) avail[r.k] = (avail[r.k] || 0) + r.qty - r.lock; });
+  return INV.map((r, i) => { const x = g(r.k), left = diffDays(r.exp, DATA.today), a = avail[r.k] || 0;
+    const flag = left < 0 ? 'exp' : left <= DATA.nearDays && left < x.life ? 'near' : a < x.safe ? 'low' : '';
+    return Object.assign({ i, x, left, availSku: a, low: a < x.safe, flag }, r); });
+}
+const ST_TABS = [['all', '全部'], ['low', '低于安全库存'], ['near', `${DATA.nearDays} 天内到期`], ['exp', '已过期']];
+const inSt = (r, t) => t === 'all' || (t === 'low' ? r.low : r.flag === t);
+function pageStock(state) {
+  crumb('库存', '库存与预警'); navOn('stock');
+  const R = stockRows(), rows = R.filter(r => inSt(r, stTab) && (!stQ || r.x.name.includes(stQ) || r.k.includes(stQ) || r.loc.includes(stQ)));
+  const skus = [...new Set(INV.map(r => r.k))], lowSku = skus.filter(k => R.find(r => r.k === k).low).length, near = R.filter(r => r.flag === 'near').length, exp = R.filter(r => r.flag === 'exp').length;
+  const all = rows.length && rows.every(r => stSel.has(r.i));
+  let body;
+  if (state === 'loading') body = `<div class="tblw"><table class="table"><thead><tr><th style="width:44px"></th><th>货品</th><th>温层</th><th>库位</th><th>批次</th><th>到期日</th><th class="r">可用</th><th class="r">已分配</th><th>预警</th></tr></thead><tbody>${Proto.skRows(6, 9)}</tbody></table></div>`;
+  else if (!rows.length) body = `<div class="card">${stQ ? Proto.stateBlock({ icon: 'search', title: `没有找到「${stQ}」`, body: '可以搜货品名称、编码或库位。', acts: '<button class="btn" type="button" data-sclr>清空搜索</button>' }) : Proto.stateBlock({ icon: 'check-c', title: '这一类没有需要处理的库存', body: '' })}</div>`;
+  else body = `<div class="tblw"><table class="table"><thead><tr><th style="width:44px"><label class="check"><input type="checkbox" data-sall ${all ? 'checked' : ''} aria-label="全选"></label></th><th>货品</th><th>编码</th><th>温层</th><th>库位</th><th>批次</th><th>到期日</th><th class="r">可用</th><th class="r">已分配</th><th class="r">货品合计 / 安全库存</th><th>预警</th></tr></thead><tbody>
+    ${rows.map(r => `<tr class="${stSel.has(r.i) ? 'is-selected' : ''}"><td><label class="check"><input type="checkbox" data-ssel="${r.i}" ${stSel.has(r.i) ? 'checked' : ''} aria-label="选择 ${r.x.name} ${r.batch}"></label></td><td>${esc(r.x.name)}</td><td class="mono muted">${r.k}</td><td>${tempTag(r.x.temp)}</td><td class="loc">${r.loc}</td><td class="mono">${r.batch}</td><td class="num" style="${r.flag === 'exp' ? 'color:var(--danger)' : r.flag === 'near' ? 'color:var(--warning)' : ''}">${r.exp}</td><td class="r num">${r.qty - r.lock}</td><td class="r num muted">${r.lock}</td><td class="r num" style="${r.low ? 'color:var(--warning);font-weight:600' : ''}">${r.availSku} / ${r.x.safe}</td>
+      <td>${r.flag === 'exp' ? `<span class="tag tag-danger">已过期 ${-r.left} 天</span>` : r.flag === 'near' ? `<span class="tag tag-warning">${r.left} 天后到期</span>` : r.low ? '<span class="tag tag-warning">低库存</span>' : '<span class="muted">—</span>'}</td></tr>`).join('')}</tbody></table></div>
+    <div class="foot"><span>共 ${rows.length} 条批次库存 · 可用 = 数量 − 已分配给订单的；过期批次不计入可用</span><span>补货建议 = 安全库存 × 2 − 可用合计</span></div>`;
+  C.innerHTML = `<div class="page-hd"><div><h1>库存与预警</h1><p class="sub">按批次看库存；低库存按货品合计判断，临期按批次判断</p></div></div>
+    <div class="kpis"><div class="card kpi"><small>库存货品</small><b>${state === 'loading' ? '–' : skus.length}</b><span>${INV.length} 个批次</span></div><div class="card kpi ${lowSku ? 'warn' : ''}"><small>低于安全库存</small><b>${state === 'loading' ? '–' : lowSku}</b><span>个货品</span></div><div class="card kpi ${near ? 'warn' : ''}"><small>${DATA.nearDays} 天内到期</small><b>${state === 'loading' ? '–' : near}</b><span>个批次，优先出库</span></div><div class="card kpi ${exp ? 'bad' : ''}"><small>已过期</small><b>${state === 'loading' ? '–' : exp}</b><span>个批次，已锁定不能出库</span></div></div>
+    <div class="tabs2" role="tablist">${ST_TABS.map(t => { const n = t[0] === 'all' ? R.length : R.filter(r => inSt(r, t[0])).length; return `<button class="t2" role="tab" type="button" aria-selected="${stTab === t[0]}" data-stt="${t[0]}">${t[1]}<span class="cnt ${t[0] === 'exp' && n ? 'bad' : t[0] !== 'all' && n ? 'warn' : ''}">${state === 'loading' ? '–' : n}</span></button>`; }).join('')}</div>
+    <div class="bar"><div class="input-wrap">${ic('search')}<input class="input" id="sq" placeholder="搜货品名称、编码或库位" value="${esc(stQ)}" aria-label="搜索库存"></div><span class="sel-n">已选 <b>${stSel.size}</b> 条</span><button class="btn btn-primary" type="button" data-reorder ${stSel.size ? '' : 'disabled'}>生成补货单</button><button class="btn" type="button" data-lockexp ${stSel.size ? '' : 'disabled'}>转报损</button><span class="sp"></span><button class="btn" type="button" data-toast="已导出 ${rows.length} 条（示例）">${ic('download')}导出</button></div>${body}`;
+  setTimeout(() => { const a = $('[data-sall]'); if (a) a.indeterminate = stSel.size && !all; });
+}
+async function reorder() {
+  const R = stockRows(), ks = [...new Set([...stSel].map(i => R[i].k))];
+  const lines = ks.map(k => { const r = R.find(x => x.k === k), sug = Math.max(0, r.x.safe * 2 - r.availSku); return { r, sug }; });
+  const need = lines.filter(l => l.sug > 0);
+  const ok = await Proto.confirm({ title: need.length ? `生成补货单 · ${need.length} 个货品` : '选中的货品都不用补', body: need.length ? need.map(l => `${l.r.x.name}：可用 ${l.r.availSku}，建议补 ${l.sug} ${l.r.x.unit}`).join('；') + (lines.length > need.length ? `。另有 ${lines.length - need.length} 个库存充足，不补。` : '。') : '可用合计都不低于安全库存 × 2。', ok: need.length ? '生成补货单' : '知道了' });
+  if (ok && need.length) { stSel.clear(); pageStock(); toast(`已生成补货单 RP20261110${String(Math.floor(Math.random() * 90) + 10)}，已推送给采购`, 'ok'); }
+}
+
+/* ---------------- 事件 ---------------- */
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b || b.closest('.pp') || b.closest('.modal')) return;
+  if (b.dataset.toast) toast(b.dataset.toast);
+  if (b.dataset.go) { Proto.go(b.dataset.go, 'normal'); return; }
+  if ('x' in b.dataset && b.closest('.drawer')) Proto.close(dw);
+  if (b.dataset.rcv) rcvDrawer(b.dataset.rcv);
+  if ('rcvok' in b.dataset) rcvOk();
+  if (b.dataset.putone) doPut([b.dataset.putone]);
+  if ('putbatch' in b.dataset) doPut([...putSel]);
+  if ('plan' in b.dataset) planModal();
+  if (b.dataset.pick) pickDrawer(b.dataset.pick);
+  if (b.dataset.short) { const [id, k] = b.dataset.short.split('|'); shortMarked.add(id + k); const w = WAVES.find(x => x.id === id); w.short = pickList(w).filter(l => l.short).some(l => !shortMarked.has(id + l.k)); pickDrawer(id); pageWave(); toast(`已标记缺货：${g(k).name}，客服会联系相关客户`, 'ok'); }
+  if (b.dataset.pickdone) { const w = WAVES.find(x => x.id === b.dataset.pickdone); const un = pickList(w).filter(l => l.short && !shortMarked.has(w.id + l.k)); if (un.length) { toast(`还有 ${un.length} 个缺货行没处理`, 'err'); return; } const sh = pickList(w).filter(l => l.short).reduce((s, l) => s + l.short, 0); w.picked = w.total - sh; w.short = false; w.done = true; Proto.close(dw); pageWave(); toast(`拣货完成${sh ? `，缺货 ${sh} 件已登记` : ''}，进入复核打包`, 'ok'); }
+  if (b.dataset.stt) { stTab = b.dataset.stt; stSel.clear(); pageStock(); $(`[data-stt="${stTab}"]`).focus(); }
+  if ('sclr' in b.dataset) { stQ = ''; pageStock(); }
+  if ('reorder' in b.dataset) reorder();
+  if ('lockexp' in b.dataset) { const R = stockRows(), n = stSel.size, notExp = [...stSel].filter(i => R[i].flag !== 'exp').length; const ok = await Proto.confirm({ title: `${n} 个批次转报损？`, body: `转报损后这些批次从可用库存扣掉，生成报损单待财务审核。${notExp ? `其中 ${notExp} 个还没过期，确认要报损吗？` : ''}`, ok: '转报损', danger: true }); if (!ok) return; const del = [...stSel].sort((a, b) => b - a); const old = INV.slice(); del.forEach(i => INV.splice(i, 1)); stSel.clear(); badges(); pageStock(); toast(`已转报损 ${n} 个批次`, 'ok', { undo: () => { INV = old; badges(); pageStock(); } }); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.rr != null && rcv) { rcv.rows[+t.dataset.rr].reason = t.value; delete rcv.err[t.dataset.rr + ':reason']; t.classList.remove('is-error'); const er = t.parentNode.querySelector('.field-err'); if (er) er.remove(); }
+  if (t.dataset.rp != null && rcv) { rcv.rows[+t.dataset.rp].prod = t.value; delete rcv.err[t.dataset.rp + ':prod']; paintRcv(); const n = $(`[data-rp="${t.dataset.rp}"]`); if (n) n.focus(); }
+  if (t.dataset.ploc) { const p = PUT.find(x => x.id === t.dataset.ploc); p.loc = t.value; pagePutaway(); $(`[data-ploc="${p.id}"]`).focus(); }
+  if (t.dataset.psel) { t.checked ? putSel.add(t.dataset.psel) : putSel.delete(t.dataset.psel); pagePutaway(); $(`[data-psel="${t.dataset.psel}"]`).focus(); }
+  if ('pall' in t.dataset) { PUT.filter(p => !p.done).forEach(p => t.checked ? putSel.add(p.id) : putSel.delete(p.id)); pagePutaway(); $('[data-pall]').focus(); }
+  if (t.dataset.osel) { t.checked ? ordSel.add(t.dataset.osel) : ordSel.delete(t.dataset.osel); pageWave(); $(`[data-osel="${t.dataset.osel}"]`).focus(); }
+  if ('oall' in t.dataset) { ORD.filter(o => !o.wave).forEach(o => t.checked ? ordSel.add(o.no) : ordSel.delete(o.no)); pageWave(); $('[data-oall]').focus(); }
+  if (t.dataset.ssel) { const i = +t.dataset.ssel; t.checked ? stSel.add(i) : stSel.delete(i); pageStock(); $(`[data-ssel="${i}"]`).focus(); }
+  if ('sall' in t.dataset) { const R = stockRows().filter(r => inSt(r, stTab) && (!stQ || r.x.name.includes(stQ) || r.k.includes(stQ) || r.loc.includes(stQ))); R.forEach(r => t.checked ? stSel.add(r.i) : stSel.delete(r.i)); pageStock(); $('[data-sall]').focus(); }
+});
+let sqT;
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.rg != null && rcv) {
+    const i = +t.dataset.rg; t.value = t.value.replace(/\D/g, ''); rcv.rows[i].got = t.value; delete rcv.err[i + ':got'];
+    const c = rcvCalc(rcv.rows[i]), had = !!t.closest('tr').querySelector('[data-rr]');
+    if (!!c.diff !== had) { if (!c.diff) rcv.rows[i].reason = ''; paintRcv(); const n = $(`[data-rg="${i}"]`); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }
+    else { const dv = $(`[data-dv="${i}"]`); dv.textContent = c.diff > 0 ? '+' + c.diff : c.diff || '0'; dv.className = 'diffv ' + (c.diff < 0 ? 'neg' : c.diff > 0 ? 'pos' : 'zero'); t.classList.remove('is-error'); }
+  }
+  if (t.id === 'sq') { clearTimeout(sqT); sqT = setTimeout(() => { stQ = t.value.trim(); pageStock(); const i = $('#sq'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 250); }
+});
+
+Proto.init({
+  title: '仓储 WMS',
+  pages: [
+    { id: 'receive', name: '收货', states: [{ id: 'normal', name: '待收货' }, { id: 'drawer', name: '收货抽屉' }, { id: 'diff', name: '有差异 / 临期' }, { id: 'empty', name: '都收完了' }] },
+    { id: 'putaway', name: '上架', states: [{ id: 'normal', name: '正常' }, { id: 'full', name: '库位放不下' }] },
+    { id: 'wave', name: '拣货波次', states: [{ id: 'normal', name: '待组波' }, { id: 'plan', name: '组波预览' }, { id: 'pick', name: '拣货单' }, { id: 'short', name: '缺货' }] },
+    { id: 'stock', name: '库存与预警', states: [{ id: 'normal', name: '正常' }, { id: 'warn', name: '临期预警' }, { id: 'loading', name: '加载中' }, { id: 'empty', name: '搜索无结果' }] }
+  ],
+  render(page, state) {
+    if (dw.classList.contains('show')) Proto.close(dw); dw.classList.remove('wide'); $$('.modal.show').forEach(m => Proto.close(m)); reset();
+    if (page === 'receive') { if (state === 'empty') ASN.forEach(a => { if (a.st === 'wait') { a.st = 'done'; a.got = '11-10 09:12'; } }); badges(); pageReceive(); if (state === 'drawer') rcvDrawer(ASN[0].no); if (state === 'diff') { rcvDrawer(ASN[0].no); rcv.rows[0].got = '36'; rcv.rows[1].prod = '2026-10-30'; rcvOk(); } }
+    if (page === 'putaway') { PUT.push({ id: 'PA102', k: 'G1001', batch: 'B261108', exp: '2026-12-08', qty: 40, from: 'ASN20261110001' }, { id: 'PA103', k: 'G1003', batch: 'B261101', exp: '2027-11-01', qty: 15, from: 'ASN20261110003' }); PUT.forEach(p => p.loc = recommend(p).loc); if (state === 'full') { const p = PUT.find(x => x.k === 'G1003'); p.qty = 30; p.loc = 'F-01-01'; } badges(); pagePutaway(); }
+    if (page === 'wave') { if (state !== 'normal' && state !== 'plan') { makeWaves(plan(), true); } else pageWave(); if (state === 'plan') planModal(); if (state === 'pick') pickDrawer(WAVES[0].id); if (state === 'short') { const w = WAVES.find(x => pickList(x).some(l => l.short)); pageWave(); pickDrawer(w.id); } }
+    if (page === 'stock') { if (state === 'warn') stTab = 'near'; if (state === 'empty') stQ = '榴莲'; pageStock(state); }
+    window.scrollTo(0, 0);
+  }
+});
+Proto.prompts(PROMPTS);
+</script>
+</body>
+</html>
