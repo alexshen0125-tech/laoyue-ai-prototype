@@ -1,4 +1,16 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>消息模板与发送管理 · 积木盒</title><style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>站内信与通知中心 · 原型模板</title>
+<!--
+  原型模板 · 积木盒 | 老岳AI编辑部 · 原型组
+  改风格：改下面 :root 里的变量（--accent 换主色）
+  改数据：改 <script> 顶部 DATA
+  演示：右下角「原型面板」切页面和状态；按 H 隐藏面板；URL 可直达 #page=records&state=empty
+-->
+<style>
 /*@KIT_CSS*/
 /* ==========================================================================
    ① 改风格只改这一块：颜色 / 字体 / 圆角 / 间距 / 阴影
@@ -329,7 +341,7 @@ body.has-tplbar{--bar-h:44px;padding-top:44px}
 .tplbar .tb-btn.primary{background:#fff;color:#16171A;border-color:#fff}
 .tplbar .tb-btn.primary:hover{filter:brightness(.94)}
 .tplbar .tb-btn .ic{width:15px;height:15px}
-.tplbar .tb-hide{width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+.tplbar .tb-hide{flex-shrink:0;width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
 .drawer{top:var(--bar-h,0px)}
 body.pp-hidden .tplbar{display:none}
 body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
@@ -340,11 +352,308 @@ body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
 :root[data-theme="dark"] .brand-mark,:root[data-theme="dark"] .ai-mark{background:#ECECEF;color:#16171A}
 :root[data-theme="dark"] .tab.on{color:#16171A}
 /*@END_KIT_CSS*/
+/* ============================ 本模板样式 ============================ */
+/* ---- 后台框架（复用 b-shell：.sh 侧栏 + .tb 顶栏 + .crumb2 面包屑 + .tabsbar 页签） ---- */
+.sh{display:grid;grid-template-columns:var(--sw,224px) minmax(0,1fr);min-height:calc(100vh - var(--bar-h))}
+.sb{position:sticky;top:var(--bar-h);height:calc(100vh - var(--bar-h));display:flex;flex-direction:column;background:var(--surface);border-right:1px solid var(--line);overflow:hidden}
+.sb-brand{display:flex;align-items:center;gap:10px;height:56px;padding:0 16px;font-weight:600;font-size:15px;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
+.sb-brand .brand-mark{flex:none}
+.sb-nav{flex:1;overflow-y:auto;padding:10px 8px;scrollbar-width:thin}
+.sb-sec{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:12px 10px 6px;white-space:nowrap}
+.ni{display:flex;align-items:center;gap:10px;width:100%;height:40px;padding:0 10px;border:0;background:none;border-radius:var(--r-sm);color:var(--ink-700);font-size:14px;text-align:left;cursor:pointer;white-space:nowrap;position:relative}
+.ni:hover{background:var(--line-soft);color:var(--ink-900)}
+.ni .ic{flex:none}
+.ni .t{flex:1;overflow:hidden;text-overflow:ellipsis}
+.ni.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.sb-foot{border-top:1px solid var(--line-soft);padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:13px;white-space:nowrap}
+.sb-foot small{display:block;font-size:12px;color:var(--ink-500)}
+.tb{position:sticky;top:var(--bar-h);z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 24px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tb .sp{flex:1}
+.crumb2{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-500);min-width:0;overflow:hidden}
+.crumb2 button{border:0;background:none;color:var(--ink-500);font-size:13px;padding:2px 4px;border-radius:4px;cursor:pointer;white-space:nowrap;min-height:24px}
+.crumb2 button:hover{color:var(--ink-900);background:var(--line-soft)}
+.crumb2 b{color:var(--ink-900);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb2 .ic{width:14px;height:14px;flex:none}
+.tabsbar{display:flex;gap:4px;padding:8px 24px 0;border-bottom:1px solid var(--line);background:var(--surface);overflow-x:auto;scrollbar-width:none}
+.ptab{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid var(--line);border-bottom:0;border-radius:var(--r-sm) var(--r-sm) 0 0;background:var(--surface-2);font-size:13px;color:var(--ink-700);cursor:pointer;white-space:nowrap}
+.ptab.on{background:var(--surface);color:var(--ink-900);font-weight:500;box-shadow:inset 0 2px 0 var(--accent)}
+.pg{padding:24px;max-width:1400px}
+.pg-hd{display:flex;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.pg-hd h1{font-size:22px;line-height:1.3}
+.pg-hd p{font-size:13px;color:var(--ink-500);margin-top:4px}
+.pg-hd .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.tw{position:relative;overflow-x:auto;border-top:1px solid var(--line-soft)}
+.cb{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:28px;cursor:pointer}
+.err-pg{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;min-height:460px}
+.err-pg .code{font-size:64px;font-weight:700;line-height:1;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.err-pg h2{font-size:20px;margin:14px 0 6px}
+.err-pg p{font-size:14px;color:var(--ink-500);max-width:460px;line-height:1.7}
+.err-pg .acts{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+@media (max-width:1000px){.sh{--sw:64px}.sb .t,.sb-sec,.sb-foot .t,.sb-brand .t,.ni .badge{display:none}.ni{justify-content:center;padding:0}.sb-brand{justify-content:center;padding:0}.sb-foot{justify-content:center;padding:10px 0}}
+@media (max-width:640px){.sh{grid-template-columns:minmax(0,1fr)}.sb{display:none}.tb{padding:0 12px;gap:8px}.tabsbar{padding:8px 12px 0}.pg{padding:16px 12px}.pg-hd h1{font-size:19px}.tb .hide-s{display:none}}
 
-:root{--accent:#245953;--accent-soft:color-mix(in srgb,var(--accent) 10%,white);--paper:#f4f3ee;--editorial:#183d38;--space:24px;--cover-a:#dbe6df;--cover-b:#e8d9bf;--chart-height:150px}
-body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32px 32px 180px}.mast{display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:24px}.mast .sp{flex:1}.mast strong{font-size:20px}.edition{font-family:var(--font-mono);color:var(--accent);font-size:12px;letter-spacing:2px}.hero .edition{color:rgba(255,255,255,.78)}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.nav .on{background:var(--accent);color:var(--accent-ink)}.hero{padding:32px;background:var(--editorial);color:var(--accent-ink);border-radius:var(--r-lg);margin-bottom:24px}.hero h1{font-size:32px;margin:8px 0}.hero p{opacity:.9;max-width:650px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.two{display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:24px}.card{padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);min-width:0}.card h2{font-size:20px;margin:0 0 16px}.card h3{font-size:16px;margin:8px 0}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}.toolbar input{flex:1;min-width:140px}.field{display:grid;gap:8px;margin:16px 0}.field input,.field textarea,.field select,.toolbar input,.toolbar select{padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);max-width:100%}.field textarea{min-height:100px}.stat{font-size:32px;font-family:var(--font-mono);font-weight:600;margin:12px 0}.row{padding:16px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}.row .grow{flex:1;min-width:0}.caption{color:var(--ink-500);font-size:13px}.notice{padding:14px 18px;background:var(--accent-soft);border-left:3px solid var(--accent);margin:16px 0}.error{color:var(--danger);min-height:20px}.empty-box{text-align:center;padding:64px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}.empty-box h2{margin:16px}.loading-grid{display:grid;gap:20px}.loading-grid .sk{height:100px}.scroll-table{overflow:auto}.cover-art{height:160px;border-radius:var(--r-sm);background:var(--cover-a);display:flex;align-items:center;justify-content:center;font-size:36px;font-family:serif;color:var(--editorial);margin-bottom:16px}.card:nth-child(even) .cover-art{background:var(--cover-b)}.chart{display:flex;gap:14px;align-items:end;height:var(--chart-height);margin:24px 0}.bar{flex:1;background:var(--accent);min-width:24px;border:0;border-radius:var(--r-sm) var(--r-sm) 0 0;color:var(--accent-ink);cursor:pointer}.reading{font-family:serif;font-size:var(--reader-size,20px);line-height:2.1;max-width:680px;margin:auto}.reading.night{background:var(--ink-900);color:var(--surface);padding:24px;border-radius:var(--r-md)}.steps{display:flex;gap:16px;padding:16px 0;flex-wrap:wrap}.steps span{padding:8px 14px;background:var(--surface);border-radius:var(--r-full)}.steps .active{background:var(--accent);color:var(--accent-ink)}.meter{width:100%;accent-color:var(--accent)}.mobile .workspace{width:min(100%,430px);background:var(--bg);padding:24px 20px 180px;min-height:844px;border:1px solid var(--line);border-radius:var(--r-lg);margin:24px auto}.mobile .grid,.mobile .two{grid-template-columns:1fr}.mobile .hero{padding:24px}.mobile .hero h1{font-size:26px}.mobile button,.mobile input,.mobile select{min-height:44px}.mobile .chart{overflow:auto}.question{padding:20px;border:1px solid var(--line);border-radius:var(--r-md);margin:16px 0}.question label{display:block;padding:12px}.score{font:600 64px var(--font-mono);color:var(--accent)}button:disabled{cursor:not-allowed}input[type=checkbox],input[type=radio]{accent-color:var(--accent)}@media(max-width:800px){.workspace{padding:20px 16px 180px}.grid,.two{grid-template-columns:1fr}.hero h1{font-size:26px}.mast{flex-wrap:wrap}.table{min-width:560px}}
+.ni .badge{margin-left:auto}
+.belln{position:relative}
+.belln .badge{position:absolute;top:2px;right:0;min-width:16px;height:16px;font-size:10px;padding:0 4px}
+/* 通知中心三栏 */
+.inbox{display:grid;grid-template-columns:200px minmax(300px,400px) minmax(0,1fr);height:calc(100vh - var(--bar-h) - 56px - 43px);min-height:560px;background:var(--surface);border-top:0}
+.ib-cat{border-right:1px solid var(--line);padding:12px 8px;overflow-y:auto}
+.ib-cat h3{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:10px 10px 6px;font-weight:500}
+.cat{display:flex;align-items:center;gap:10px;width:100%;height:38px;padding:0 10px;border:0;background:none;border-radius:var(--r-sm);font-size:14px;color:var(--ink-700);cursor:pointer;text-align:left}
+.cat:hover{background:var(--line-soft)}
+.cat[aria-current="true"]{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.cat .c{margin-left:auto;font-size:12px;font-variant-numeric:tabular-nums;color:var(--ink-500)}
+.cat .c.u{color:#fff;background:var(--danger);border-radius:9px;padding:0 6px;line-height:18px;font-weight:600}
+.ib-list{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.ib-tools{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+.ib-tools .input-wrap{flex:1;min-width:140px}
+.ib-tools .input{height:34px}
+.ib-bulk{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line-soft);font-size:13px;color:var(--ink-500);background:var(--surface-2)}
+.ib-bulk .sp{flex:1}
+.ib-bulk .btn{height:30px;font-size:13px;padding:0 10px}
+.ib-scroll{flex:1;overflow-y:auto}
+.msg{display:grid;grid-template-columns:28px 1fr;gap:6px;padding:12px 14px 12px 8px;border-bottom:1px solid var(--line-soft);cursor:pointer;position:relative}
+.msg:hover{background:var(--surface-2)}
+.msg.on{background:var(--accent-soft)}
+.msg.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.msg:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.msg .top{display:flex;align-items:center;gap:6px;min-width:0}
+.msg .dot{width:8px;height:8px;border-radius:50%;background:var(--danger);flex:none}
+.msg .dot.r{background:transparent}
+.msg .ty{font-size:12px;color:var(--ink-500);white-space:nowrap}
+.msg time{margin-left:auto;font-size:12px;color:var(--ink-500);white-space:nowrap;font-variant-numeric:tabular-nums}
+.msg b{display:block;font-size:14px;font-weight:500;color:var(--ink-700);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg.unread b{font-weight:600;color:var(--ink-900)}
+.msg p{font-size:13px;color:var(--ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.msg .flags{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.msg .flags .tag{height:20px;font-size:11px}
+.ib-read{display:flex;flex-direction:column;min-height:0;min-width:0}
+.rd-hd{padding:20px 24px 14px;border-bottom:1px solid var(--line-soft)}
+.rd-hd .row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-500);flex-wrap:wrap}
+.rd-hd h2{font-size:19px;line-height:1.4;margin:8px 0 6px}
+.rd-acts{display:flex;gap:4px;margin-left:auto}
+.rd-bd{flex:1;overflow-y:auto;padding:20px 24px 28px}
+.rd-bd .txt{font-size:14px;line-height:1.9;color:var(--ink-900);white-space:pre-wrap;max-width:720px}
+.obj{margin-top:18px;border:1px solid var(--line);border-radius:var(--r-md);max-width:720px;overflow:hidden}
+.obj-hd{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--line-soft);font-size:14px;flex-wrap:wrap}
+.obj-hd .mono{font-size:13px}
+.obj dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px;margin:0;padding:14px 16px}
+.obj dt{font-size:12px;color:var(--ink-500)}
+.obj dd{margin:2px 0 0;font-size:14px;overflow-wrap:anywhere}
+.obj-ft{display:flex;gap:8px;align-items:center;padding:12px 16px;border-top:1px solid var(--line-soft);flex-wrap:wrap}
+.obj-ft .muted{font-size:13px;margin-right:auto}
+.cfm{margin-top:18px;max-width:720px;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--r-md);background:var(--warning-soft);color:var(--warning);font-size:13px;flex-wrap:wrap}
+.cfm.done{background:var(--success-soft);color:var(--success)}
+.cfm .btn{margin-left:auto}
+.att{display:flex;align-items:center;gap:10px;margin-top:14px;max-width:420px;padding:10px 12px;border:1px solid var(--line-soft);border-radius:var(--r-md);font-size:13px}
+.att .sp{flex:1;min-width:0}
+.att small{display:block;color:var(--ink-500);font-size:12px}
+.back-m{display:none}
+/* 发送 */
+.cp-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;align-items:start}
+.cp-grid>*{min-width:0}
+.sec{padding:18px 20px}
+.sec h2{font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sec h2 .muted{font-size:13px;font-weight:400}
+.fg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 16px}
+.fg .full{grid-column:1/-1}
+.fg .field{margin-bottom:14px}
+.lab-row{display:flex;align-items:center}
+.lab-row .cnt{margin-left:auto;font-size:12px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.lab-row .cnt.over{color:var(--danger)}
+.seg2{display:flex;gap:6px;flex-wrap:wrap}
+.seg2 button{height:34px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);font-size:13px;color:var(--ink-700);cursor:pointer}
+.seg2 button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:500}
+.picks{display:flex;gap:6px;flex-wrap:wrap;min-height:40px;padding:6px;border:1px solid var(--line);border-radius:var(--r-sm);align-items:center}
+.picks.is-error{border-color:var(--danger)}
+.pk{display:inline-flex;align-items:center;gap:4px;height:28px;padding:0 4px 0 10px;border-radius:var(--r-full);background:var(--accent-soft);color:var(--accent);font-size:13px}
+.pk button{width:24px;height:24px;border:0;background:none;color:inherit;border-radius:50%;display:grid;place-items:center;cursor:pointer;padding:0}
+.pk button:hover{background:rgba(47,84,212,.12)}
+.pk.ex{background:var(--line-soft);color:var(--ink-700)}
+.addpk{height:28px;border:1px dashed var(--line);background:none;border-radius:var(--r-full);padding:0 10px;font-size:13px;color:var(--ink-700);cursor:pointer}
+.chs{display:flex;gap:10px;flex-wrap:wrap}
+.chs label{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-sm);font-size:13px;cursor:pointer}
+.chs label.lock{background:var(--surface-2);cursor:not-allowed}
+.vars{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--ink-500)}
+.vars button{height:26px;padding:0 8px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);font-size:12px;color:var(--ink-700);cursor:pointer;font-family:var(--font-mono)}
+.sw{flex:none;width:40px;height:24px;border-radius:12px;border:0;background:var(--ink-300);position:relative;cursor:pointer;padding:0}
+.sw::after{content:"";position:absolute;left:2px;top:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform var(--dur) var(--ease)}
+.sw[aria-checked="true"]{background:var(--accent)}
+.sw[aria-checked="true"]::after{transform:translateX(16px)}
+.sw:disabled{opacity:.5;cursor:not-allowed}
+.swrow{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-700);min-height:36px;flex-wrap:wrap}
+.mpv{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.mpv-hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surface-2);font-size:12px;color:var(--ink-500);border-bottom:1px solid var(--line-soft)}
+.mpv-bd{padding:14px 16px}
+.mpv-bd b{display:block;font-size:15px;margin:6px 0 6px;white-space:normal;word-break:break-all}
+.mpv-bd p{font-size:13px;line-height:1.8;color:var(--ink-700);white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;overflow:hidden}
+.est{list-style:none;margin:0;padding:0;font-size:13px}
+.est li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line-soft)}
+.est li:last-child{border-bottom:0;font-weight:600}
+.est span:last-child{font-variant-numeric:tabular-nums;text-align:right}
+.ft-bar{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px 20px;margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--shadow-2);flex-wrap:wrap}
+.ft-bar .why{font-size:13px;color:var(--ink-500);margin-right:auto}
+.ft-bar .why.bad{color:var(--danger)}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:var(--r-md);font-size:13px;line-height:1.7;margin-bottom:16px}
+.banner .ic{margin-top:3px;flex:none}
+.banner.danger{background:var(--danger-soft);color:var(--danger)}
+.banner.info{background:var(--info-soft);color:var(--info)}
+.banner .btn{margin-left:auto;height:30px;flex:none}
+/* 发送记录 */
+.flt{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 16px}
+.flt .input-wrap{width:240px}
+.flt .select{width:140px}
+.flt .sp{flex:1}
+.rate{display:flex;align-items:center;gap:8px;min-width:130px}
+.rate .bar{flex:1;height:6px;border-radius:3px;background:var(--line-soft);overflow:hidden;min-width:56px}
+.rate .bar i{display:block;height:100%;background:var(--accent)}
+.rate .bar i.full{background:var(--success)}
+.rate span{font-size:12px;color:var(--ink-500);font-variant-numeric:tabular-nums;white-space:nowrap}
+.table tbody tr.row-clk{cursor:pointer}
+.table tbody tr.row-clk:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.ttl{max-width:240px;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.foot{display:flex;align-items:center;gap:12px;padding:12px 16px;font-size:13px;color:var(--ink-500);border-top:1px solid var(--line-soft);flex-wrap:wrap}
+.dsum{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px 12px;font-size:14px;margin:0 0 18px}
+.dsum dt{color:var(--ink-500)}.dsum dd{margin:0;overflow-wrap:anywhere}
+.dw-h3{font-size:13px;font-weight:600;color:var(--ink-700);margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.dept{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.dept div{display:grid;grid-template-columns:88px minmax(0,1fr) 72px;gap:10px;align-items:center;font-size:13px}
+.dept .bar{height:8px;border-radius:4px;background:var(--line-soft);overflow:hidden}
+.dept .bar i{display:block;height:100%;background:var(--accent)}
+.dept b{text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.unr{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.unr span{font-size:12px;padding:2px 8px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700)}
+/* 设置 */
+.mx th,.mx td{text-align:center}
+.mx th:first-child,.mx td:first-child{text-align:left}
+.mx td small{display:block;font-size:12px;color:var(--ink-500);white-space:normal;max-width:300px}
+.mx .sw{margin:0 auto;display:block}
+.dnd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px}
+.dnd .select{width:110px}
+.sk-blk{padding:20px}.sk-blk .sk{margin-bottom:12px}
+@media (max-width:1240px){.inbox{grid-template-columns:168px minmax(260px,340px) minmax(0,1fr)}.cp-grid{grid-template-columns:1fr}.obj dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){.inbox{grid-template-columns:minmax(0,1fr);height:auto}.ib-cat{display:flex;gap:6px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:8px}.ib-cat h3{display:none}.cat{width:auto;flex:none;white-space:nowrap}.ib-list{border-right:0;max-height:none}.ib-scroll{overflow:visible}.inbox.reading .ib-list,.inbox.reading .ib-cat{display:none}.inbox:not(.reading) .ib-read{display:none}.back-m{display:inline-flex}.fg{grid-template-columns:1fr}}
+@media (max-width:640px){.rd-hd,.rd-bd{padding-left:16px;padding-right:16px}.obj dl{grid-template-columns:1fr}.flt .input-wrap,.flt .select{width:100%}.ft-bar{position:static}.ft-bar .why{width:100%}}
+</style>
+</head>
+<body>
+<div class="sh">
+  <aside class="sb" aria-label="主导航"><div class="sb-brand"><span class="brand-mark">协</span><span class="t">示例协同 · 运营后台</span></div>
+    <nav class="sb-nav" id="nav"></nav>
+    <div class="sb-foot"><span class="avatar">赵</span><span class="t">赵示例<small>采购主管 · 管理员</small></span></div>
+  </aside>
+  <main style="min-width:0;display:flex;flex-direction:column">
+    <div class="tb"><nav class="crumb2" id="crumb" aria-label="面包屑"></nav><span class="sp"></span>
+      <button class="btn btn-ghost btn-icon belln" type="button" id="bell" data-go="inbox"><svg class="ic"><use href="#i-bell"/></svg><span class="badge badge-danger" id="bellN"></span></button></div>
+    <div class="tabsbar" id="tabs" role="tablist" aria-label="已打开的页面"></div>
+    <div id="page" style="flex:1;min-width:0"></div>
+  </main>
+</div>
+<div class="drawer" id="dw" aria-labelledby="dw-t"></div>
 
-</style></head><body class="desktop"><main class="workspace"><header class="mast"><div><div class="edition">PROTOTYPE / 示例</div><strong>消息模板与发送管理</strong></div><span class="sp"></span><span class="caption">积木盒 · 可点击原型</span></header><nav id="nav" class="nav" aria-label="页面导航"></nav><div id="content"></div></main><script>
+<script>
+/* ==========================================================================
+   ① 改数据只改这里（示例数据，全部虚构）
+   ========================================================================== */
+const DATA = {
+  me: { name: '赵示例', role: '采购主管', dept: '采购部' },
+  // 分类：id / 名称 / 图标
+  cats: [['all', '全部', 'inbox'], ['todo', '待我处理', 'check-c'], ['approval', '审批', 'approve'], ['mention', '@我与评论', 'msg'], ['task', '任务提醒', 'clock'], ['notice', '系统公告', 'flag'], ['system', '账号与系统', 'shield']],
+  // 站内信：id, 分类, 标题, 摘要/正文, 来源, 时间, 已读, 待处理, 星标, 需确认, 关联对象
+  msgs: [
+    { id: 'm1', cat: 'approval', title: '【待你审批】采购单 PO-20261111-0217 · ¥12,860.00', body: '王示例 提交了采购单，金额超过 ¥10,000，需要采购主管审批。\n供应商：滨河鲜蔬合作社；预计到货 11-13；本月该供应商已采购 ¥48,320.00（预算 ¥60,000.00）。', from: '审批中心', at: '10:52', read: false, todo: true, star: false,
+      obj: { kind: '采购单', no: 'PO-20261111-0217', st: ['待审核', 'warning'], f: [['供应商', '滨河鲜蔬合作社'], ['金额', '¥12,860.00'], ['提交人', '王示例 · 11-11 10:50'], ['商品', '6 种（叶菜 4、根茎 2）'], ['收货仓', '示例中心仓 2 号库'], ['审批时限', '今天 18:00 前']], acts: 'approve' } },
+    { id: 'm2', cat: 'mention', title: '林示例 在「双11 采购复盘」中提到了你', body: '「@赵示例 第 3 页退货率的口径要再核一下：现在用的是退货金额 / 采购金额，财务那边用的是退货件数 / 收货件数，两个数差了 1.8 个百分点。」', from: '文档 · 双11 采购复盘', at: '10:31', read: false, todo: true, star: false,
+      obj: { kind: '评论', no: '第 3 页 · 退货率', st: ['未回复', 'info'], f: [['文档', '双11 采购复盘'], ['评论人', '林示例 · 数据分析'], ['所在位置', '第 3 页 图表下方']], acts: 'reply' } },
+    { id: 'm3', cat: 'task', title: '【今天到期】华东区 11 月供应商对账 · 还剩 2 项', body: '任务「华东区 11 月供应商对账」今天 18:00 到期，还有 2 项没完成：\n1. 滨河鲜蔬合作社 差异 ¥326.40 待确认\n2. 示例冷链物流 运费发票未上传', from: '任务 · 许示例 指派', at: '09:00', read: false, todo: true, star: true,
+      obj: { kind: '任务', no: 'TK-20261101-0045', st: ['进行中 · 4/6', 'info'], f: [['负责人', '赵示例'], ['截止', '11-11 18:00'], ['指派人', '许示例']], acts: 'task' } },
+    { id: 'm4', cat: 'notice', title: '【需确认】11-15（周日）02:00–04:00 系统升级停机通知', body: '为升级订单与库存服务，11 月 15 日 02:00–04:00 全部系统暂停使用，期间无法下单、收货和审批。\n请各部门负责人提前安排：\n· 夜班收货在 01:30 前完成登记；\n· 需要在停机期间提交的审批，请在 14 日 22:00 前提交。\n升级完成后会再发一条通知。', from: '系统公告 · 信息部 周示例', at: '昨天 18:20', read: false, todo: true, star: false, confirm: { need: true, done: false, due: '11-14 22:00' }, pin: true,
+      att: ['停机期间应急预案_v2.pdf', '418 KB'] },
+    { id: 'm5', cat: 'approval', title: '你提交的报销单 BX-20261108-0032 已通过', body: '报销金额 ¥386.50（差旅 · 示例市供应商走访），财务 孙示例 已审核通过，预计 11-13 打款到尾号 6621 的银行卡。', from: '审批中心', at: '昨天 16:05', read: true, todo: false, star: false,
+      obj: { kind: '报销单', no: 'BX-20261108-0032', st: ['已通过', 'success'], f: [['金额', '¥386.50'], ['审核人', '孙示例 · 财务'], ['预计打款', '11-13']], acts: 'view' } },
+    { id: 'm6', cat: 'system', title: '你的账号在新设备登录', body: '11-10 08:47，你的账号在 Windows · Chrome（示例市，IP 10.24.**.**）登录。\n如果不是你本人操作，请立即修改密码，并在「账号安全」里退出该设备。', from: '账号安全', at: '昨天 08:47', read: true, todo: false, star: false, sec: true },
+    { id: 'm7', cat: 'task', title: '许示例 把「门店巡检表模板更新」指派给你', body: '截止 11-14。需要把冷柜温度记录从每天 2 次改成每天 3 次，并加上「除霜时间」一栏。', from: '任务 · 许示例 指派', at: '11-09 15:40', read: true, todo: true, star: false,
+      obj: { kind: '任务', no: 'TK-20261109-0071', st: ['未开始', 'neutral'], f: [['负责人', '赵示例'], ['截止', '11-14 18:00'], ['指派人', '许示例']], acts: 'task' } },
+    { id: 'm8', cat: 'approval', title: '韩示例 撤回了付款申请 FK-20261109-0007', body: '付款申请 FK-20261109-0007（示例冷链物流，¥8,400.00）已由申请人撤回，原因：发票抬头开错，重开后再提交。你不用再处理。', from: '审批中心', at: '11-09 11:12', read: true, todo: false, star: false,
+      obj: { kind: '付款申请', no: 'FK-20261109-0007', st: ['已撤回', 'neutral'], f: [['收款方', '示例冷链物流'], ['金额', '¥8,400.00'], ['撤回人', '韩示例']], acts: 'view' } },
+    { id: 'm9', cat: 'notice', title: '11 月起报销必须上传电子发票原件', body: '从 11 月 1 日起，报销单只接受电子发票原件（PDF / OFD），截图和照片不再受理。已提交的 10 月报销不受影响。', from: '系统公告 · 财务部 孙示例', at: '11-08 09:30', read: true, todo: false, star: false },
+    { id: 'm10', cat: 'mention', title: '周示例 回复了你在「供应商年度评估」中的评论', body: '「按你说的，交付准时率权重从 20% 提到 30%，价格权重降到 25%。评估表已更新，周五前给各供应商打分。」', from: '任务 · 供应商年度评估', at: '11-07 17:26', read: true, todo: false, star: false },
+    { id: 'm11', cat: 'task', title: '【已逾期 1 天】冷链车温控月报', body: '「10 月冷链车温控月报」截止 11-10，已逾期 1 天。3 台车（沪A·示例 01 / 03 / 07）的温控记录还没上传。', from: '任务 · 系统规则', at: '11-11 08:00', read: false, todo: true, star: false,
+      obj: { kind: '任务', no: 'TK-20261005-0012', st: ['已逾期', 'danger'], f: [['负责人', '赵示例'], ['截止', '11-10 18:00'], ['缺少', '3 台车的记录']], acts: 'task' } },
+    { id: 'm12', cat: 'system', title: '导出完成：供应商对账明细_10月.xlsx', body: '你在 11-06 14:20 发起的导出已完成，共 1,842 行。文件 7 天内有效（11-13 14:22 前）。', from: '导出中心', at: '11-06 14:22', read: true, todo: false, star: false, att: ['供应商对账明细_10月.xlsx', '2.3 MB'] }
+  ],
+  // 发送记录：标题, 类型, 接收范围, 人数, 已读, 需确认(null=不需要)/已确认, 渠道, 发送人, 时间, 状态
+  sent: [
+    ['11-15 系统升级停机通知', '系统公告', '全公司', 486, 312, 287, '站内信 + 邮件', '周示例', '11-10 18:20', 'sent'],
+    ['12 月新版考勤制度', '系统公告', '全公司（排除外包 35 人）', 451, 0, null, '站内信 + 邮件', '林示例', '定时 11-20 09:00', 'scheduled'],
+    ['年终盘点人员安排', '通知', '仓储部', 38, 0, null, '—', '赵示例', '11-11 10:05 保存', 'draft'],
+    ['11 月起报销需上传电子发票原件', '系统公告', '全公司', 486, 451, null, '站内信 + 企业微信', '孙示例', '11-08 09:30', 'sent'],
+    ['双11 值班安排与联系方式', '通知', '运营部、客服部', 74, 74, 74, '站内信 + 短信', '许示例', '11-07 17:00', 'sent'],
+    ['门店巡检新标准（冷柜 3 次/天）', '通知', '华东门店店长', 26, 21, 18, '站内信', '许示例', '11-05 14:12', 'sent'],
+    ['冷链车温控月报提交提醒', '提醒', '物流部 · 车队长', 12, 9, null, '站内信', '系统规则', '每月 5 日 09:00', 'cycle'],
+    ['10 月绩效面谈时间', '通知', '指定 9 人', 9, 3, null, '站内信', '林示例', '11-03 11:00', 'recalled'],
+    ['供应商对账截止提醒', '提醒', '采购部', 19, 19, null, '站内信 + 邮件', '系统规则', '11-02 09:00', 'partial']
+  ],
+  // 发送记录抽屉：按部门已读、未读名单（只写第一条的）
+  deptRead: [['采购部', 19, 17], ['仓储部', 38, 21], ['运营部', 52, 40], ['客服部', 22, 19], ['物流部', 64, 33], ['门店', 236, 151], ['其他', 55, 31]],
+  unread: ['钱示例', '孙示例（仓储）', '吴示例', '郑示例', '冯示例', '陈示例', '褚示例', '卫示例', '蒋示例', '沈示例'],
+  // 接收范围可选：名称, 人数
+  scopes: [['全公司', 486], ['采购部', 19], ['仓储部', 38], ['运营部', 52], ['客服部', 22], ['物流部', 64], ['华东门店店长', 26], ['角色：门店店长', 41]],
+  // 通知设置：事件, 说明, 站内信, 邮件, 短信, 企业微信, 是否锁定（安全类必收）
+  prefs: [
+    ['审批待办', '有单据等你审批', 1, 1, 0, 1, 0],
+    ['审批结果', '你提交的单据通过 / 驳回', 1, 0, 0, 1, 0],
+    ['@我与评论回复', '文档、任务里有人提到你', 1, 0, 0, 1, 0],
+    ['任务到期 / 逾期', '到期当天 09:00、逾期每天 09:00', 1, 1, 0, 0, 0],
+    ['系统公告', '公司与部门公告；「需确认」的公告一定会收到', 1, 1, 0, 0, 0],
+    ['导出完成', '大文件导出完成后提醒下载', 1, 0, 0, 0, 0],
+    ['账号安全', '新设备登录、改密码；为安全起见不能关闭', 1, 1, 1, 0, 1]
+  ]
+};
+
+/* ==========================================================================
+   ①-2 AI 提示词（页面顶部「AI 提示词」可一键复制；{{变量}} 点一下就能填）
+   ========================================================================== */
+const PROMPTS = [
+ { title: '从零生成这个原型', when: '后台要做「消息中心 / 站内信」，想把收消息、发消息、看已读、通知偏好一次定下来时用',
+   text: `请帮我做一个可点击的 PC 后台原型（1440 宽，500 宽不横滚）：站内信与通知中心。左侧栏 + 顶栏面包屑（顶栏铃铛显示未读数，随已读实时减少）+ 页签。
+
+4 个页面：
+1. 通知中心（三栏）：左 = 分类（全部 / 待我处理 / 审批 / @我与评论 / 任务提醒 / 系统公告 / 账号与系统），每类显示未读数；中 = 消息列表（未读红点加粗、类型、时间、摘要，标签：待处理 / 需确认 / 置顶 / 星标），可搜索、只看未读、勾选后批量已读 / 归档，「本类全部已读」；右 = 阅读区：正文 + 关联对象卡片（如采购单：单号、状态、金额、供应商，直接「通过 / 驳回」，处理完消息自动变「已处理」）；系统公告「需确认」要点「我已阅读并知晓」，记录确认时间；账号安全消息给「不是我本人，去改密码」；打开即已读，可标回未读、星标、归档（可撤销）；
+2. 发送站内信（管理员）：消息类型、标题（≤40 字）、接收范围（部门 / 角色 / 指定人，可多选）、排除人员、正文（≤1000 字，可插入 {姓名}{部门} 变量）、跳转链接（校验 http/https）、附件、发送渠道（站内信必选，邮件 / 短信 / 企业微信可选，短信超 70 字按 2 条计）、发送时间（立即 / 定时，定时至少晚于现在 5 分钟）、需要确认阅读 + 确认截止、置顶天数；右侧实时预览收件人看到的样子 + 预计人数和短信费用（去重后）；
+3. 发送记录：列 = 标题、类型、接收范围、人数、已读率（进度条）、确认数、渠道、发送人、发送时间、状态（已发送 / 定时中 / 草稿 / 周期发送 / 已撤回 / 部分失败）、操作；点一行抽屉：按部门已读率、未读名单、「催读」（24 小时内只能 1 次）、「撤回」（7 天内，已读的人会看到「已撤回」）；
+4. 通知设置：事件 × 渠道 开关矩阵，账号安全类锁定不能关；免打扰时段（安全与需确认公告除外）；有未保存修改时提示。
+
+状态（原型面板可切换）：每页 正常 / 空 / 加载中 / 出错，通知中心加「消息已被撤回」「关联单据无权限」，发送页加「校验出错」「无发送权限」。
+数据要像真的：每条消息标题、来源、金额、时间都不同。
+硬性要求：单文件 HTML，不引用外部网址，双击离线可开；颜色写成 :root 变量；数据集中在脚本顶部 DATA。
+交付：① 完整 HTML；② 消息类型 × 渠道 × 是否可关闭 对照表；③ 状态清单。` },
+ { title: '改成我的业务', when: '手上有这个模板，要换成自己系统的消息类型和关联单据时用',
+   text: `附件是一个单文件 HTML 的站内信与通知中心原型。请改成「{{系统名称，例如：门店运营后台}}」。
+
+1. 只改脚本顶部 DATA 和文案，不动 KIT 标记之间的共用样式和脚本；保留三栏阅读、批量已读、需确认公告、发送预览、已读统计、催读撤回、通知偏好；
+2. 消息分类换成：{{分类，例如：订单异常、库存预警、排班变更、系统公告}}；
+3. 每类消息的关联对象和能直接做的操作：{{例如：库存预警 → 货品卡片 + 「发起补货」；订单异常 → 订单卡片 + 「联系顾客」「改约时间」}}，处理完消息自动变「已处理」；
+4. 不能关闭的通知：{{例如：账号安全、食品安全召回}}；
+5. 接收范围可选：{{部门 / 角色 / 门店清单与人数}}，预计人数按去重后算；
+6. 示例消息每条都不同，标「示例」，不出现真实公司名。
+交付：改好的完整 HTML + 消息类型 × 渠道对照表。` },
+ { title: '在此基础上加页面 / 状态', when: '评审追问「消息太多怎么办」「能不能按模板发」时用',
+   text: `附件是一个单文件 HTML 的站内信与通知中心原型。请在它的基础上加：{{要加的页面或状态}}。
+
+常见例子（选一个或照着写）：
+- 「消息聚合」：同一单据 1 小时内的多条消息合并成一条「采购单 PO-xxx 有 3 条更新」，展开看每条；
+- 「消息模板」：发送页可选模板（停机通知、制度更新、值班安排），模板带变量和默认渠道，改模板不影响已发出的；
+- 「铃铛快览」：点顶栏铃铛弹出最近 8 条未读，可直接标已读，底部「查看全部」进通知中心；
+- 「发送审批」：全公司范围的公告要部门负责人审批后才发出，发送记录多一个「待审批」状态。
+
+要求：新页面或状态加进「原型面板」；未读数在铃铛、分类、列表三处保持一致；沿用现有 CSS 变量和组件样式，只改必要的地方。
+交付：完整 HTML + 新增部分的「元素 | 交互 | 反馈」说明表。` }
+];
+
+/* ==========================================================================
+   ② 下面是交互逻辑，一般不用改
+   ========================================================================== */
 /*@KIT_JS*/
 /* ==========================================================================
    原型工具包（不用改）：图标、页面/状态切换、弹层、Toast
@@ -610,44 +919,303 @@ body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32p
   P.stateBlock=function(o){return '<div class="state '+(o.error?'is-error':'')+'"><div class="state-ic">'+P.ic(o.icon||(o.error?'alert':'inbox'))+'</div><h3>'+P.esc(o.title)+'</h3>'+(o.body?'<p>'+P.esc(o.body)+'</p>':'')+(o.acts?'<div class="acts">'+o.acts+'</div>':'')+'</div>'};
 })();
 /*@END_KIT_JS*/
-</script><script>
-// 示例业务数据：仅本次会话修改，刷新恢复；在这里替换字段和数据。
-const DATA={"templates": [{"id": "T01", "name": "示例订单通知", "text": "您的订单 {{订单号}} 已备货，请留意通知。"}, {"id": "T02", "name": "示例预约提醒", "text": "您预约的 {{服务名称}} 将于明日开始。"}], "records": [{"id": "S01", "to": "示例会员甲", "text": "示例订单已备货", "status": "成功", "reason": ""}, {"id": "S02", "to": "示例会员乙", "text": "示例预约提醒", "status": "失败", "reason": "示例通道超时"}]};
-const PAGES=[{"id": "templates", "name": "消息模板", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}, {"id": "compose", "name": "创建发送", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}, {"id": "submitting", "name": "发送中"}, {"id": "success", "name": "发送成功"}, {"id": "failed", "name": "发送失败"}]}, {"id": "records", "name": "发送记录", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}];
-const PROMPTS=[{"title": "从零生成这个原型", "when": "要从需求开始搭建可演示的页面时用", "text": "请用单文件 HTML 创建「消息模板与发送管理」可点击原型。用途：适合通知平台的模板维护、变量替换、发送前确认、失败重试与发送记录评审。包含页面：消息模板、创建发送、发送记录。业务交互：填写名称与含变量正文，必填校验，保存后预览随模板更新；填写收件人与变量后确认，模拟发送中，成功追加发送记录；选择失败记录并确认，原记录变成功，按钮禁用防止重复；状态和收件人查询，过滤结果可查看完整发送详情。每个主页面提供正常、空、骨架加载、出错和重试，表单提供校验、提交中、成功、失败。数据集中在 DATA；样式使用 CSS 变量；图标内联 SVG；示例数据标示例。不使用外部依赖，离线双击可开。顶部提供免费下载说明，右下角原型面板支持 URL 直达和 H 隐藏，弹窗支持 Esc 和焦点归还。交付 HTML、README 和交互说明表。"}, {"title": "改成我的业务", "when": "点击高亮变量填写，然后一键复制", "text": "附件是「消息模板与发送管理」HTML 原型，请改成我的业务：产品名称为「{{产品名称}}」，目标用户「{{目标用户}}」，字段和示例数据「{{字段与示例数据}}」，业务规则「{{业务规则}}」。保留 消息模板、创建发送、发送记录 的完整链路与所有空、加载、出错状态。修改 DATA 和模板变量，不改共用 KIT 标记内代码。所有金额、数量、状态随操作联动；不能执行的操作写原因。交付可离线打开的完整 HTML 和更新后的交互表。"}, {"title": "加页面或状态", "when": "需要扩展当前链路时用", "text": "请在「消息模板与发送管理」中增加「{{新增页面或状态}}」，入口为「{{入口位置}}」，成功结果为「{{成功反馈}}」，失败恢复方式为「{{失败恢复方式}}」。沿用当前 CSS 变量、DATA 与 Proto 页面面板；保留已有流程。为新增列表补正常、空、加载、出错；为新增表单补校验、提交中、成功、失败。离开页面应取消定时回调。更新 README 的状态表和交互表，保持单文件离线可用。"}];
 
-const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s)), e=Proto.esc;
-const btn=(label,action,primary=false,disabled=false)=>`<button type="button" class="btn ${primary?'btn-primary':''}" data-act="${action}" ${disabled?'disabled':''}>${label}</button>`;
-const field=(label,id,value='',type='text')=>`<label class="field">${label}<input id="${id}" type="${type}" value="${e(String(value))}"></label>`;
-const card=(title,body)=>`<section class="card"><h2>${title}</h2>${body}</section>`;
-const money=n=>Proto.money(n);
-const notice=t=>`<div class="notice" role="status">${t}</div>`;
-function download(name,text,type='text/plain'){const a=document.createElement('a'),u=URL.createObjectURL(new Blob(['\ufeff',text],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function modal(title,body){const m=document.createElement('div');m.className='modal';m.dataset.temp='1';m.setAttribute('aria-label',title);m.innerHTML=`<div class="layer-hd"><h2>${title}</h2></div><div class="layer-bd">${body}</div><div class="layer-ft"><button class="btn" data-close>关闭</button></div>`;Proto.open(m);m.querySelector('[data-close]').onclick=()=>Proto.close(m);return m}
-let timer=null, epoch=0;
-function go(page,state='normal'){Proto.go(page,state)}
-function later(fn,ms=500){clearTimeout(timer);const v=epoch;timer=setTimeout(()=>{if(v===epoch)fn()},ms)}
-function refresh(){render(Proto.state.page,Proto.state.state)}
-function fallback(page,state){if(state==='loading')return '<div class="loading-grid" aria-busy="true" aria-label="加载中"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>';
-if(state==='error')return `<div class="empty-box">${Proto.ic('alert')}<h2>暂时无法加载</h2><p>示例服务响应超时，本次修改仍保留。</p>${btn('重试','retry',true)}</div>`;
-if(state==='empty')return `<div class="empty-box">${Proto.ic('inbox')}<h2>这里还没有内容</h2><p>可以载入示例数据，继续演示完整流程。</p>${btn('载入示例','example',true)}</div>`;return null}
-function render(page,state){epoch++;clearTimeout(timer);$$('.modal.show').forEach(m=>Proto.close(m));$('#nav').innerHTML=PAGES.map(p=>`<button class="btn ${p.id===page?'on':''}" data-page="${p.id}">${p.name}</button>`).join('');$('#content').innerHTML=fallback(page,state)||view(page,state);if(typeof mount==='function')mount(page,state)}
-document.addEventListener('click',ev=>{const p=ev.target.closest('[data-page]');if(p){go(p.dataset.page);return}const b=ev.target.closest('[data-act]');if(!b||b.disabled)return;const a=b.dataset.act;if(a==='retry'){const page=Proto.state.page;go(page,'loading');later(()=>go(page));return}if(a==='example'){go(Proto.state.page);return}action(a,b)});
+const P = Proto, { $, $$, ic, esc, toast } = Proto;
+const PG = $('#page'), dw = $('#dw');
+const SST = { sent: ['已发送', 'success'], scheduled: ['定时中', 'info'], draft: ['草稿', 'neutral'], cycle: ['周期发送', 'info'], recalled: ['已撤回', 'neutral'], partial: ['部分失败', 'warning'] };
+let M, S, F, PF, IB, carry = false;
+const clone = o => JSON.parse(JSON.stringify(o));
+function fresh() {
+  M = clone(DATA.msgs); S = clone(DATA.sent); PF = clone(DATA.prefs);
+  IB = { cat: 'all', cur: 'm1', q: '', unreadOnly: false, sel: new Set(), archived: new Set(), reading: false, mode: '' };
+  F = { type: '通知', title: '', scope: [], ex: [], body: '', link: '', att: false, ch: { mail: false, sms: false, wx: true }, when: 'now', at: '2026-11-11 15:00', confirm: false, due: '2026-11-13 18:00', pin: '不置顶', errs: {}, tried: false };
+  RQ = { q: '', type: '', st: '', urged: new Set() }; PF.dirty = 0; PF.dnd = ['22:00', '08:00', true];
+}
+let RQ;
+const unread = c => M.filter(m => !IB.archived.has(m.id) && !m.read && (c === 'all' || m.cat === c || (c === 'todo' && m.todo))).length;
+const inCat = (m, c) => c === 'all' || m.cat === c || (c === 'todo' && m.todo);
 
+function chrome(title, tab) {
+  const u = unread('all');
+  $('#nav').innerHTML = `<div class="sb-sec">工作</div><button class="ni" type="button" data-toast="工作台（示例）">${ic('home')}<span class="t">工作台</span></button><button class="ni ${tab === 'inbox' ? 'on' : ''}" type="button" data-go="inbox">${ic('bell')}<span class="t">通知中心</span>${u ? `<span class="badge badge-danger">${u}</span>` : ''}</button><button class="ni" type="button" data-toast="采购单（示例）">${ic('file')}<span class="t">采购单</span></button>
+  <div class="sb-sec">消息管理</div><button class="ni ${tab === 'compose' ? 'on' : ''}" type="button" data-go="compose">${ic('send')}<span class="t">发送站内信</span></button><button class="ni ${tab === 'records' ? 'on' : ''}" type="button" data-go="records">${ic('history')}<span class="t">发送记录</span></button><button class="ni ${tab === 'settings' ? 'on' : ''}" type="button" data-go="settings">${ic('settings')}<span class="t">通知设置</span></button>`;
+  $('#crumb').innerHTML = `<button type="button" data-toast="工作台（示例）">工作台</button>${ic('chev-r')}<b>${title}</b>`;
+  $('#bellN').textContent = u; $('#bellN').hidden = !u; $('#bell').setAttribute('aria-label', `通知中心，${u} 条未读`);
+  $('#tabs').innerHTML = [['inbox', '通知中心'], ['compose', '发送站内信'], ['records', '发送记录'], ['settings', '通知设置']].map(t => `<span class="ptab ${t[0] === tab ? 'on' : ''}" role="tab" tabindex="0" aria-selected="${t[0] === tab}" data-go="${t[0]}">${t[1]}</span>`).join('');
+}
+function head(t, sub, acts) { return `<div class="pg-hd"><div><h1>${t}</h1>${sub ? `<p>${sub}</p>` : ''}</div>${acts ? `<div class="acts">${acts}</div>` : ''}</div>`; }
+function skel(n) { return `<section class="card sk-blk" aria-busy="true" aria-label="正在加载"><div class="sk" style="height:18px;width:220px"></div><div class="sk" style="height:12px;width:420px"></div><table class="table" style="margin-top:12px"><tbody>${P.skRows(n, 8)}</tbody></table></section>`; }
+function errCard(t, b, pg) { return `<section class="card">${P.stateBlock({ error: true, title: t, body: b, acts: `<button class="btn btn-primary" type="button" data-retry="${pg}">${ic('refresh')}重试</button>` })}</section>`; }
+function noPerm(t, b) { return `<section class="card"><div class="err-pg"><div class="code">403</div><h2>${t}</h2><p>${b}</p><div class="acts"><button class="btn" type="button" data-go="inbox">去通知中心</button><button class="btn btn-primary" type="button" data-apply>申请权限</button></div></div></section>`; }
 
-let selected='T01',draft={to:'示例会员甲',value:'DEMO-2026-01'},filter='全部',historyQuery='';
-function template(){return DATA.templates.find(t=>t.id===selected)||DATA.templates[0]}
-function content(){return template().text.replace(/\{\{[^}]+\}\}/g,()=>draft.value)}
-function view(p,s){if(p==='templates')return `<section class="hero"><div class="edition">MESSAGE / 示例</div><h1>每一次触达，都有据可查</h1><p>先维护模板，再预览收件人与正文；发送记录保留失败原因，重发成功后不重复发送。</p></section><div class="grid">${DATA.templates.map(t=>card(e(t.name),`<p>${e(t.text)}</p>${btn('编辑模板','edit:'+t.id)}${btn('用此模板发送','use:'+t.id,true)}`)).join('')}</div>`;
-if(p==='records'){const all=DATA.records.filter(r=>(filter==='全部'||r.status===filter)&&r.to.includes(historyQuery));return `${card('发送记录',`<div class="toolbar"><label>状态 <select id="record-filter">${['全部','成功','失败'].map(x=>`<option ${filter===x?'selected':''}>${x}</option>`).join('')}</select></label><input id="record-search" aria-label="搜索收件人" placeholder="搜索示例收件人" value="${e(historyQuery)}">${btn('查询','search')}</div>${all.length?all.map(r=>`<div class="row"><div class="grow"><b>${e(r.to)}</b><p>${e(r.text)}</p><span class="caption">${r.id} · ${r.status} ${e(r.reason)}</span></div>${btn('详情','detail:'+r.id)}${btn(r.status==='成功'?'已发送':'重发','resend:'+r.id,false,r.status==='成功')}</div>`).join(''):notice('没有符合筛选条件的记录。')}`)}`}
-if(s==='submitting')return card('发送中','<div class="sk" style="height:30px"></div><p>示例请求处理中，请勿重复提交。</p>');
-if(s==='success')return card('发送完成',notice('消息已加入本次示例发送记录。')+btn('查看记录','records',true));
-if(s==='failed')return card('发送失败',notice('示例通道超时，草稿仍保留。')+btn('返回草稿重试','back',true));
-return `<div class="two">${card('填写发送内容',`<label class="field">模板<select id="template-id">${DATA.templates.map(t=>`<option value="${t.id}" ${selected===t.id?'selected':''}>${e(t.name)}</option>`).join('')}</select></label>${field('收件人（示例）','recipient',draft.to)}${field('模板变量值','variable',draft.value)}<p class="error" id="send-error" role="alert"></p>${btn('预览并确认发送','preview',true)}`)}${card('正文预览',`<p id="message-preview">${e(content())}</p><p class="caption">仅本地模拟，不对外发送。</p>`)}</div>`}
-function mount(p,s){if(p==='compose'&&s==='normal'){$('#template-id').onchange=ev=>{selected=ev.target.value;refresh()};['recipient','variable'].forEach((id,i)=>$('#'+id).oninput=ev=>{draft[i?'value':'to']=ev.target.value;$('#message-preview').textContent=content()})}if(p==='records'&&s==='normal')$('#record-filter').onchange=ev=>{filter=ev.target.value;refresh()}}
-async function action(a){const [k,id]=a.split(':');if(k==='use'){selected=id;go('compose')}if(k==='edit'){const t=DATA.templates.find(t=>t.id===id),m=modal('编辑示例模板',field('模板名称','template-name',t.name)+`<label class="field">正文（保留一个 {{变量}}）<textarea id="template-text">${e(t.text)}</textarea></label><p id="template-error" class="error"></p>`+btn('保存模板','save-template',true));m.querySelector('[data-act]').onclick=()=>{const name=$('#template-name').value.trim(),text=$('#template-text').value.trim();if(!name||!text||text.length>300||!/\{\{[^}]+\}\}/.test(text)){$('#template-error').textContent='名称必填，正文须含 {{变量}} 且不超过 300 字';return}t.name=name;t.text=text;Proto.close(m);refresh()}}
-if(a==='preview'){if(!draft.to.trim()||!draft.value.trim()){$('#send-error').textContent='请填写收件人与模板变量';return}if(await Proto.confirm({title:'确认示例发送',body:'收件人：'+draft.to+'；正文：'+content(),ok:'确认发送'})){go('compose','submitting');later(()=>{DATA.records.unshift({id:'S'+(DATA.records.length+1),to:draft.to,text:content(),status:'成功',reason:''});go('compose','success')},650)}}if(a==='records')go('records');if(a==='back')go('compose');if(a==='search'){historyQuery=$('#record-search').value.trim();refresh()}if(k==='detail'){const r=DATA.records.find(x=>x.id===id);modal('发送详情',`<p>${e(r.to)} · ${r.status}</p><p>${e(r.text)}</p><p>${e(r.reason||'示例通道已返回成功')}</p>`)}if(k==='resend'){const r=DATA.records.find(x=>x.id===id);if(r.status!=='失败')return;if(await Proto.confirm({title:'重发失败消息',body:'将向 '+r.to+' 重发原消息。',ok:'确认重发'})){r.status='成功';r.reason='重试成功';refresh();Proto.toast('重发成功','ok')}}}
-window.round2Test=async({ok,act,input,click,wait})=>{go('compose');input('#recipient','');act('preview');ok($('#send-error').textContent.includes('请填写'),'必填阻断');input('#recipient','示例测试收件人');input('#variable','DEMO-88');act('preview');await wait(1);ok($('.modal.show').textContent.includes('DEMO-88'),'发送预览变量替换');click('.modal.show [data-k="1"]');await wait(700);ok(Proto.state.state==='success','发送成功');go('records');ok($('#content').textContent.includes('示例测试收件人'),'记录联动');act('resend:S02');await wait(1);click('.modal.show [data-k="1"]');await wait(1);ok(DATA.records.find(r=>r.id==='S02').status==='成功','失败重发更新状态');ok($('[data-act="resend:S02"]').disabled,'重发成功禁止重复')};
+/* ---------------- ① 通知中心 ---------------- */
+function listOf() { return M.filter(m => !IB.archived.has(m.id) && inCat(m, IB.cat) && (!IB.unreadOnly || !m.read) && (!IB.q || (m.title + m.body + m.from).includes(IB.q))).sort((a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0)); }
+function msgItem(m) {
+  const cn = DATA.cats.find(c => c[0] === m.cat)[1];
+  return `<div class="msg ${m.read ? '' : 'unread'} ${m.id === IB.cur ? 'on' : ''}" role="option" aria-selected="${m.id === IB.cur}" tabindex="0" data-msg="${m.id}">
+    <label class="cb" data-stop><span class="check"><input type="checkbox" data-msel="${m.id}" aria-label="选择：${esc(m.title)}" ${IB.sel.has(m.id) ? 'checked' : ''}></span></label>
+    <div style="min-width:0"><div class="top"><span class="dot ${m.read ? 'r' : ''}" aria-label="${m.read ? '已读' : '未读'}"></span><span class="ty">${cn} · ${esc(m.from.split(' · ')[0])}</span><time>${m.at}</time></div><b>${esc(m.title)}</b><p>${esc(m.body.split('\n')[0])}</p>
+    ${m.todo || m.confirm || m.pin || m.star || m.done ? `<div class="flags">${m.pin ? '<span class="tag tag-info plain">置顶</span>' : ''}${m.done ? '<span class="tag tag-success plain">已处理</span>' : m.todo ? '<span class="tag tag-warning plain">待处理</span>' : ''}${m.confirm && !m.confirm.done ? '<span class="tag tag-danger plain">需确认</span>' : ''}${m.star ? '<span class="tag tag-neutral plain">★ 星标</span>' : ''}</div>` : ''}</div></div>`;
+}
+function readPane(state) {
+  const m = M.find(x => x.id === IB.cur);
+  if (state === 'recalled') return `<div class="rd-bd">${P.stateBlock({ icon: 'history', title: '这条消息已被发送人撤回', body: '「10 月绩效面谈时间」已由 林示例 于 11-11 10:40 撤回，原因：接收名单发错。正确的通知会另发。', acts: '<button class="btn" type="button" data-back>返回列表</button>' })}</div>`;
+  if (!m || IB.archived.has(m.id)) return `<div class="rd-bd">${P.stateBlock({ icon: 'inbox', title: '选一条消息查看', body: '左边点任意一条，正文和关联单据会显示在这里。' })}</div>`;
+  const o = m.obj, noperm = state === 'noperm' && o;
+  let objHTML = '';
+  if (noperm) objHTML = `<div class="obj"><div class="obj-hd">${ic('lock', 'ic-sm')}${o.kind} <span class="mono">${o.no}</span></div><div style="padding:16px;font-size:13px;color:var(--ink-700);line-height:1.8">你没有「${o.kind} · 查看」权限，看不到单据内容（消息正文仍可阅读）。<br>可申请权限，审批人：采购总监 梁示例。</div><div class="obj-ft"><button class="btn btn-primary" type="button" data-apply>申请查看权限</button></div></div>`;
+  else if (o) {
+    const ft = m.done ? `<span class="muted">${ic('check', 'ic-sm')} ${m.done}</span>` : o.acts === 'approve' ? `<span class="muted">今天 18:00 前未审批会提醒你的上级</span><button class="btn btn-danger" type="button" data-rej>驳回</button><button class="btn btn-primary" type="button" data-appr>${ic('check')}通过</button>` : o.acts === 'reply' ? `<span class="muted">回复会通知 林示例</span><button class="btn btn-primary" type="button" data-toast="已打开文档并定位到评论（示例）">去回复</button>` : o.acts === 'task' ? `<span class="muted">完成后消息自动变「已处理」</span><button class="btn" type="button" data-toast="已打开任务（示例）">打开任务</button><button class="btn btn-primary" type="button" data-taskdone>标记任务完成</button>` : `<button class="btn" type="button" data-toast="已打开 ${o.no}（示例）">查看${o.kind}</button>`;
+    objHTML = `<div class="obj"><div class="obj-hd">${ic('file', 'ic-sm')}${o.kind} <span class="mono">${o.no}</span><span class="tag tag-${o.st[1]}">${o.st[0]}</span></div><dl>${o.f.map(x => `<div><dt>${x[0]}</dt><dd>${esc(x[1])}</dd></div>`).join('')}</dl><div class="obj-ft">${ft}</div></div>`;
+  }
+  return `<div class="rd-hd"><div class="row"><button class="btn btn-ghost back-m" type="button" data-back>${ic('chev-l', 'ic-sm')}返回</button><span>${esc(m.from)}</span><span>·</span><span>${m.at}</span>
+    <span class="rd-acts"><button class="btn btn-ghost btn-icon" type="button" data-star aria-pressed="${m.star}" aria-label="${m.star ? '取消星标' : '星标'}" title="星标">${ic('star')}</button><button class="btn btn-ghost btn-icon" type="button" data-unread aria-label="标为未读" title="标为未读">${ic('eye-off')}</button><button class="btn btn-ghost btn-icon" type="button" data-arch aria-label="归档" title="归档">${ic('inbox')}</button></span></div>
+    <h2>${esc(m.title)}</h2>${m.pin ? '<span class="tag tag-info plain">置顶至 11-15</span>' : ''}</div>
+  <div class="rd-bd"><div class="txt">${esc(m.body)}</div>${objHTML}
+  ${m.att ? `<div class="att">${ic('paperclip')}<span class="sp"><b style="font-weight:500">${m.att[0]}</b><small>${m.att[1]}</small></span><button class="btn" type="button" data-toast="已开始下载 ${m.att[0]}（示例）">下载</button></div>` : ''}
+  ${m.confirm ? (m.confirm.done ? `<div class="cfm done">${ic('check-c')}<span>你已于 ${m.confirm.done} 确认阅读。发送人可以在「发送记录」里看到。</span></div>` : `<div class="cfm">${ic('alert')}<span>这条公告需要确认阅读，截止 ${m.confirm.due}。未确认会在截止前 2 小时再提醒一次。</span><button class="btn btn-primary" type="button" data-cfm>我已阅读并知晓</button></div>`) : ''}
+  ${m.sec ? `<div class="cfm" style="background:var(--danger-soft);color:var(--danger)">${ic('shield')}<span>不认识这次登录？</span><button class="btn btn-danger" type="button" data-toast="已打开账号安全 · 修改密码（示例）">不是我本人，去改密码</button></div>` : ''}</div>`;
+}
+function pInbox(state) {
+  chrome('通知中心', 'inbox');
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${skel(9)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${errCard('消息没加载出来', '消息服务响应超时（错误编号 MSG-504-3C1D，示例）。新消息不会丢，重试即可。', 'inbox')}</div>`; return; }
+  if (state === 'empty') { M.forEach(m => { m.read = true; m.todo = false; }); }
+  const L = listOf(), cur = M.find(x => x.id === IB.cur);
+  const selN = [...IB.sel].filter(id => L.some(m => m.id === id)).length;
+  PG.innerHTML = `<div class="inbox ${IB.reading ? 'reading' : ''}">
+  <nav class="ib-cat" aria-label="消息分类"><h3>分类</h3>${DATA.cats.map(c => { const u = unread(c[0]); return `<button class="cat" type="button" data-cat="${c[0]}" aria-current="${IB.cat === c[0]}">${ic(c[2], 'ic-sm')}<span>${c[1]}</span><span class="c ${u ? 'u' : ''}">${u || M.filter(m => !IB.archived.has(m.id) && inCat(m, c[0])).length}</span></button>`; }).join('')}
+    <h3 style="margin-top:12px">其他</h3><button class="cat" type="button" data-toast="已归档 ${IB.archived.size} 条（示例）">${ic('inbox', 'ic-sm')}<span>已归档</span><span class="c">${IB.archived.size}</span></button></nav>
+  <section class="ib-list" aria-label="消息列表"><div class="ib-tools"><div class="input-wrap">${ic('search')}<input class="input" id="ibq" placeholder="搜标题、正文、来源" aria-label="搜索消息" value="${esc(IB.q)}"></div><label class="swrow" style="min-height:34px;gap:6px"><button class="sw" type="button" role="switch" id="uonly" aria-checked="${IB.unreadOnly}" aria-label="只看未读"></button>只看未读</label></div>
+    <div class="ib-bulk">${selN ? `已选 ${selN} 条` : `${L.length} 条 · 未读 ${L.filter(m => !m.read).length}`}<span class="sp"></span><button class="btn" type="button" data-bread ${selN ? '' : 'disabled'}>标为已读</button><button class="btn" type="button" data-barch ${selN ? '' : 'disabled'}>归档</button><button class="btn" type="button" data-allread ${unread(IB.cat) ? '' : 'disabled'}>本类全部已读</button></div>
+    <div class="ib-scroll" role="listbox" aria-label="消息">${L.length ? L.map(msgItem).join('') : P.stateBlock({ icon: IB.q ? 'search' : 'check-c', title: IB.q ? `没有包含「${IB.q}」的消息` : IB.unreadOnly ? '这一类没有未读消息' : '这一类还没有消息', body: IB.q ? '换个关键字试试，或清空搜索。' : state === 'empty' ? '都看完了。新消息到达时铃铛会出现红点。' : '有新消息会第一时间出现在这里。', acts: IB.q || IB.unreadOnly ? '<button class="btn" type="button" data-ibreset>清空筛选</button>' : '' })}</div></section>
+  <article class="ib-read" aria-label="消息内容">${state === 'empty' && !cur ? '' : readPane(state)}</article></div>`;
+}
+function openMsg(id, focus) {
+  IB.cur = id; IB.reading = true; const m = M.find(x => x.id === id); if (m && !m.read) m.read = true;
+  pInbox(P.state.state === 'noperm' || P.state.state === 'recalled' ? 'normal' : P.state.state);
+  if (focus) { const el = $(`[data-msg="${id}"]`); if (el) el.focus(); }
+}
 
-Proto.init({pages:PAGES,render});Proto.prompts(PROMPTS);
-</script></body></html>
+/* ---------------- ② 发送站内信 ---------------- */
+function recipients() {
+  const sc = F.scope.map(s => DATA.scopes.find(x => x[0] === s));
+  if (F.scope.includes('全公司')) return 486 - F.ex.length;
+  let n = sc.reduce((a, s) => a + s[1], 0);
+  if (F.scope.includes('华东门店店长') && F.scope.includes('角色：门店店长')) n -= 26; // 华东店长同属门店店长角色，去重
+  return Math.max(0, n - F.ex.length);
+}
+function validate() {
+  const e = {};
+  if (!F.title.trim()) e.title = '请填写标题'; else if (F.title.length > 40) e.title = `标题最多 40 字，现在 ${F.title.length} 字`;
+  if (!F.scope.length) e.scope = '至少选一个接收范围';
+  if (!F.body.trim()) e.body = '请填写正文'; else if (F.body.length > 1000) e.body = '正文最多 1000 字';
+  if (F.link && !/^https?:\/\/\S+\.\S+/.test(F.link)) e.link = '链接要以 http:// 或 https:// 开头';
+  if (F.when === 'later') { const t = new Date(F.at.replace(' ', 'T')); if (isNaN(t) || t < new Date('2026-11-11T11:05:00')) e.at = '定时要晚于现在 5 分钟以上（现在 11-11 11:00）'; }
+  if (F.confirm && F.due <= (F.when === 'later' ? F.at : '2026-11-11 11:00')) e.due = '确认截止要晚于发送时间';
+  return e;
+}
+function smsN() { const len = (F.title + '：' + F.body).length; return len <= 70 ? 1 : Math.ceil(len / 67); }
+function field(id, label, inner, opt) { const er = F.tried && F.errs[id]; return `<div class="field ${opt && opt.full ? 'full' : ''}"><div class="lab-row"><label class="label" for="${id}" style="margin:0">${label}${opt && opt.req ? '<span class="req" style="color:var(--danger)"> *</span>' : ''}</label>${opt && opt.cnt ? `<span class="cnt ${opt.cnt[0] > opt.cnt[1] ? 'over' : ''}" id="${id}-n">${opt.cnt[0]}/${opt.cnt[1]}</span>` : ''}</div><div style="margin-top:6px">${inner}</div>${er ? `<span class="field-err">${er}</span>` : opt && opt.hint ? `<span class="field-hint">${opt.hint}</span>` : ''}</div>`; }
+function pCompose(state) {
+  chrome('发送站内信', 'compose');
+  const hd = head('发送站内信', '发给部门、角色或指定的人；站内信一定会送达，邮件 / 短信 / 企业微信按需加。', `<button class="btn" type="button" data-draft>存草稿</button>`);
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('没有「发送站内信」权限', '你当前的角色「采购主管」只能给本部门发通知。发全公司公告需要「消息管理员」角色，审批人：信息部 周示例。')}</div>`; return; }
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(6)}</div>`; return; }
+  F.errs = validate(); const er = F.tried ? F.errs : {}, n = recipients(), sms = smsN(), nErr = Object.keys(F.errs).length;
+  const pickBtns = DATA.scopes.filter(s => !F.scope.includes(s[0]));
+  PG.innerHTML = `<div class="pg">${hd}
+  ${state === 'error' ? `<div class="banner danger" role="alert">${ic('alert')}<span><b>发送失败：</b>邮件网关拒绝了请求（错误编号 MAIL-421，示例）。站内信还没发出，内容已保留，可以去掉邮件渠道后重发，或稍后重试。</span><button class="btn" type="button" data-send>重试发送</button></div>` : ''}
+  ${F.tried && nErr ? `<div class="banner danger" role="alert">${ic('alert')}<span>有 ${nErr} 处要改：${Object.values(F.errs).join('；')}</span></div>` : ''}
+  <div class="cp-grid"><div>
+  <section class="card sec"><h2>内容</h2><div class="fg">
+    ${field('type', '消息类型', `<div class="seg2" role="group" aria-label="消息类型">${['系统公告', '通知', '提醒'].map(x => `<button type="button" data-ftype="${x}" aria-pressed="${F.type === x}">${x}</button>`).join('')}</div>`, { req: 1, hint: F.type === '系统公告' ? '会出现在所有人的「系统公告」分类' : F.type === '提醒' ? '适合到期、截止类，可设周期发送' : '一般业务通知' })}
+    ${field('pin', '置顶', `<select class="select" id="pin" data-f="pin">${['不置顶', '置顶 3 天', '置顶 7 天'].map(x => `<option ${F.pin === x ? 'selected' : ''}>${x}</option>`).join('')}</select>`, { hint: '置顶的消息排在列表最上面' })}
+    ${field('title', '标题', `<input class="input ${er.title ? 'is-error' : ''}" id="title" data-f="title" value="${esc(F.title)}" placeholder="例：年终盘点人员安排（12-28～12-30）">`, { req: 1, full: 1, cnt: [F.title.length, 40] })}
+    ${field('body', '正文', `<textarea class="textarea ${er.body ? 'is-error' : ''}" id="body" data-f="body" rows="6" style="min-height:140px" placeholder="写清楚：什么事、什么时候、要大家做什么">${esc(F.body)}</textarea><div class="vars">插入变量：<button type="button" data-var="{姓名}">{姓名}</button><button type="button" data-var="{部门}">{部门}</button><button type="button" data-var="{截止时间}">{截止时间}</button><span>发送时替换成每个人自己的</span></div>`, { req: 1, full: 1, cnt: [F.body.length, 1000] })}
+    ${field('link', '跳转链接', `<input class="input ${er.link ? 'is-error' : ''}" id="link" data-f="link" value="${esc(F.link)}" placeholder="https://（可选，点消息直接打开）">`, {})}
+    ${field('att', '附件', F.att ? `<div class="att" style="margin:0">${ic('paperclip')}<span class="sp">盘点分区与人员表.xlsx<small>64 KB</small></span><button class="btn btn-ghost btn-icon" type="button" data-unatt aria-label="移除附件">${ic('x')}</button></div>` : `<button class="btn" type="button" data-addatt>${ic('paperclip')}添加附件（≤ 20 MB）</button>`, {})}
+  </div></section>
+  <section class="card sec" style="margin-top:16px"><h2>发给谁、怎么发</h2><div class="fg">
+    ${field('scope', '接收范围', `<div class="picks ${er.scope ? 'is-error' : ''}" id="scope">${F.scope.map(s => `<span class="pk">${s}<button type="button" data-unscope="${s}" aria-label="移除 ${s}">${ic('x', 'ic-sm')}</button></span>`).join('')}<select class="select" id="addscope" aria-label="添加接收范围" style="width:auto;height:30px;border-style:dashed;font-size:13px"><option value="">＋ 添加部门 / 角色</option>${pickBtns.map(s => `<option value="${s[0]}">${s[0]}（${s[1]} 人）</option>`).join('')}</select></div>`, { req: 1, full: 1, hint: '同一个人在多个范围里只发 1 次' })}
+    ${field('ex', '排除人员', `<div class="picks">${F.ex.map(s => `<span class="pk ex">${s}<button type="button" data-unex="${s}" aria-label="不再排除 ${s}">${ic('x', 'ic-sm')}</button></span>`).join('')}${F.ex.length < 3 ? `<button class="addpk" type="button" data-addex>＋ 排除休假人员</button>` : ''}</div>`, { full: 1 })}
+    ${field('ch', '发送渠道', `<div class="chs"><label class="lock"><span class="check"><input type="checkbox" checked disabled aria-label="站内信（必选）"></span>站内信 <span class="muted">必选</span></label>${[['mail', '邮件'], ['sms', '短信'], ['wx', '企业微信']].map(c => `<label><span class="check"><input type="checkbox" data-ch="${c[0]}" ${F.ch[c[0]] ? 'checked' : ''}></span>${c[1]}</label>`).join('')}</div>`, { full: 1, hint: F.ch.sms ? `短信按 ${sms} 条 / 人计（超过 70 字拆条），约 ¥${(n * sms * 0.05).toFixed(2)}` : '短信 ¥0.05 / 条，适合必须马上看到的' })}
+    ${field('when', '发送时间', `<div class="seg2" role="group" aria-label="发送时间"><button type="button" data-when="now" aria-pressed="${F.when === 'now'}">立即发送</button><button type="button" data-when="later" aria-pressed="${F.when === 'later'}">定时发送</button></div>${F.when === 'later' ? `<input class="input ${er.at ? 'is-error' : ''}" id="at" data-f="at" value="${esc(F.at)}" style="margin-top:8px" aria-label="定时时间">` : ''}`, {})}
+    ${field('confirm', '需要确认阅读', `<div class="swrow"><button class="sw" type="button" role="switch" id="fcfm" aria-checked="${F.confirm}" aria-label="需要确认阅读"></button><span>${F.confirm ? '收件人要点「我已阅读并知晓」' : '关闭'}</span></div>${F.confirm ? `<input class="input ${er.due ? 'is-error' : ''}" id="due" data-f="due" value="${esc(F.due)}" style="margin-top:8px" aria-label="确认截止时间">` : ''}`, { hint: F.confirm ? '截止前 2 小时自动提醒未确认的人' : '' })}
+  </div></section></div>
+  <aside><section class="card sec"><h2>收件人看到的样子</h2><div class="mpv"><div class="mpv-hd">${ic('bell', 'ic-sm')}${F.type} · ${DATA.me.dept} ${DATA.me.name}<span style="margin-left:auto">${F.when === 'later' ? F.at.slice(5) : '刚刚'}</span></div><div class="mpv-bd">${F.pin !== '不置顶' ? '<span class="tag tag-info plain">置顶</span> ' : ''}${F.confirm ? '<span class="tag tag-danger plain">需确认</span>' : ''}<b>${F.title ? esc(F.title) : '<span class="muted">（标题）</span>'}</b><p>${F.body ? esc(F.body.replace(/\{姓名\}/g, '钱示例').replace(/\{部门\}/g, '仓储部').replace(/\{截止时间\}/g, F.due)) : '<span class="muted">（正文）</span>'}</p>${F.att ? `<div class="att" style="margin-top:8px">${ic('paperclip')}<span class="sp">盘点分区与人员表.xlsx</span></div>` : ''}</div></div><p class="muted" style="font-size:12px;margin-top:8px">预览用 钱示例（仓储部）替换变量</p></section>
+  <section class="card sec" style="margin-top:16px"><h2>预计送达</h2><ul class="est">${F.scope.map(s => `<li><span>${s}</span><span>${DATA.scopes.find(x => x[0] === s)[1]} 人</span></li>`).join('') || '<li style="font-weight:400"><span class="muted">还没选接收范围</span><span>—</span></li>'}${F.scope.includes('华东门店店长') && F.scope.includes('角色：门店店长') ? '<li><span>重复（华东店长同属门店店长）</span><span>−26 人</span></li>' : ''}${F.ex.length ? `<li><span>排除</span><span>−${F.ex.length} 人</span></li>` : ''}<li><span>合计（去重后）</span><span>${n} 人${F.ch.sms ? ` · 短信 ¥${(n * sms * 0.05).toFixed(2)}` : ''}</span></li></ul></section></aside></div>
+  <div class="ft-bar"><span class="why ${F.tried && nErr ? 'bad' : ''}">${F.tried && nErr ? `有 ${nErr} 处要改` : n ? `将${F.when === 'later' ? '于 ' + F.at + ' ' : '立即'}发给 ${n} 人：站内信${F.ch.mail ? ' + 邮件' : ''}${F.ch.sms ? ' + 短信' : ''}${F.ch.wx ? ' + 企业微信' : ''}` : '填好标题、正文和接收范围后可以发送'}</span><button class="btn" type="button" data-go="records">取消</button><button class="btn btn-primary" type="button" data-send>${ic('send')}${F.when === 'later' ? '定时发送' : '发送'}</button></div></div>`;
+}
+async function send() {
+  F.tried = true; F.errs = validate();
+  if (Object.keys(F.errs).length) { pCompose('normal'); const f = $('.is-error'); if (f) f.focus(); return; }
+  const n = recipients();
+  const ok = await P.confirm({ title: F.when === 'later' ? `定时发送给 ${n} 人？` : `发送给 ${n} 人？`, body: `${F.when === 'later' ? '将于 ' + F.at + ' 发出，之前可以在发送记录里取消。' : '发出后 7 天内可撤回，已读的人会看到「已撤回」。'}${F.ch.sms ? ` 短信约 ¥${(n * smsN() * 0.05).toFixed(2)}。` : ''}`, ok: F.when === 'later' ? '定时发送' : '发送' });
+  if (!ok) return;
+  S.unshift([F.title, F.type, F.scope.join('、') + (F.ex.length ? `（排除 ${F.ex.length} 人）` : ''), n, 0, F.confirm ? 0 : null, ['站内信', F.ch.mail && '邮件', F.ch.sms && '短信', F.ch.wx && '企业微信'].filter(Boolean).join(' + '), DATA.me.name, F.when === 'later' ? '定时 ' + F.at.slice(5) : '刚刚', F.when === 'later' ? 'scheduled' : 'sent']);
+  RQ.fresh = true; carry = true; P.go('records', 'normal'); toast(F.when === 'later' ? `已设定时，${F.at} 发给 ${n} 人` : `已发送给 ${n} 人`, 'ok');
+}
+
+/* ---------------- ③ 发送记录 ---------------- */
+function rows() { return S.map((r, i) => [r, i]).filter(([r]) => (!RQ.q || (r[0] + r[2] + r[7]).includes(RQ.q)) && (!RQ.type || r[1] === RQ.type) && (!RQ.st || r[9] === RQ.st)); }
+function rateCell(r) {
+  if (['draft', 'scheduled'].includes(r[9])) return '<span class="muted" style="font-size:12px">未发出</span>';
+  const p = Math.round(r[4] / r[3] * 100); return `<div class="rate" title="${r[4]}/${r[3]} 人已读"><div class="bar"><i class="${p >= 100 ? 'full' : ''}" style="width:${p}%"></i></div><span>${p}%</span></div>`;
+}
+function pRecords(state) {
+  chrome('发送记录', 'records');
+  const hd = head('发送记录', '看谁读了、谁没读；7 天内可撤回，24 小时内可催读 1 次。', `<button class="btn btn-primary" type="button" data-go="compose">${ic('send')}发送站内信</button>`);
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(8)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${errCard('发送记录没加载出来', '统计服务暂时不可用（错误编号 STAT-503，示例）。已发出的消息不受影响。', 'records')}</div>`; return; }
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('只能看自己发的消息', '查看全部发送记录需要「消息管理员」角色。你发过的消息可以在「我发出的」里查看。')}</div>`; return; }
+  if (state === 'empty') { PG.innerHTML = `<div class="pg">${hd}<section class="card">${P.stateBlock({ icon: 'send', title: '还没发过站内信', body: '发出后可以在这里看已读率、催读和撤回。', acts: `<button class="btn btn-primary" type="button" data-go="compose">发第一条</button>` })}</section></div>`; return; }
+  const R = rows();
+  PG.innerHTML = `<div class="pg">${hd}<section class="card"><div class="flt"><div class="input-wrap">${ic('search')}<input class="input" id="rq" placeholder="标题 / 接收范围 / 发送人" aria-label="搜索发送记录" value="${esc(RQ.q)}"></div>
+  <select class="select" id="rtype" aria-label="类型"><option value="">全部类型</option>${['系统公告', '通知', '提醒'].map(x => `<option ${RQ.type === x ? 'selected' : ''}>${x}</option>`).join('')}</select>
+  <select class="select" id="rst" aria-label="状态"><option value="">全部状态</option>${Object.keys(SST).map(k => `<option value="${k}" ${RQ.st === k ? 'selected' : ''}>${SST[k][0]}</option>`).join('')}</select><span class="sp"></span><span class="muted" style="font-size:13px">共 ${R.length} 条</span></div>
+  ${R.length ? `<div class="tw"><table class="table"><thead><tr><th>标题</th><th>类型</th><th>接收范围</th><th class="r">人数</th><th>已读率</th><th>确认阅读</th><th>发送人</th><th>发送时间</th><th>状态</th><th>操作</th></tr></thead><tbody>
+  ${R.map(([r, i]) => `<tr class="row-clk ${RQ.fresh && i === 0 ? 'is-current' : ''}" tabindex="0" data-rec="${i}"><td><div class="ttl" title="${esc(r[0])}">${esc(r[0])}</div></td><td>${r[1]}</td><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis" title="${esc(r[2])}">${esc(r[2])}</td><td class="r num">${r[3]}</td><td>${rateCell(r)}</td><td class="num">${r[5] == null ? '<span class="muted">不需要</span>' : `${r[5]}/${r[3]}`}</td><td>${r[7]}</td><td class="muted num">${r[8]}</td><td><span class="tag tag-${SST[r[9]][1]}">${SST[r[9]][0]}</span></td>
+  <td>${r[9] === 'draft' ? `<button class="btn-link" type="button" data-edit="${i}">继续编辑</button>` : r[9] === 'scheduled' ? `<button class="btn-link" type="button" data-cancel="${i}">取消定时</button>` : r[9] === 'recalled' ? '<span class="muted">—</span>' : `<button class="btn-link" type="button" data-rec-open="${i}">已读详情</button>`}</td></tr>`).join('')}</tbody></table></div>
+  <div class="foot">已读率 = 打开过消息的人 / 接收人数（悬停看人数）；邮件、短信只统计送达，不计入已读；渠道在「已读详情」里看</div>`
+  : P.stateBlock({ icon: 'search', title: '没有符合条件的记录', body: '换个关键字，或清空筛选。', acts: '<button class="btn" type="button" data-rreset>清空筛选</button>' })}</section></div>`;
+}
+function openRec(i) {
+  const r = S[i], p = r[3] ? Math.round(r[4] / r[3] * 100) : 0, first = i === S.findIndex(x => x[0] === DATA.sent[0][0]);
+  const canRecall = r[9] === 'sent' || r[9] === 'partial', urged = RQ.urged.has(r[0]);
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">${esc(r[0])}</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div>
+  <div class="layer-bd"><dl class="dsum"><dt>状态</dt><dd><span class="tag tag-${SST[r[9]][1]}">${SST[r[9]][0]}</span></dd><dt>接收范围</dt><dd>${esc(r[2])} · ${r[3]} 人</dd><dt>渠道</dt><dd>${r[6]}</dd><dt>发送</dt><dd>${r[7]} · ${r[8]}</dd><dt>已读</dt><dd class="num">${r[4]} / ${r[3]}（${p}%）</dd>${r[5] != null ? `<dt>确认阅读</dt><dd class="num">${r[5]} / ${r[3]}，截止 11-14 22:00</dd>` : ''}</dl>
+  ${r[9] === 'partial' ? `<div class="banner danger">${ic('alert')}<span>邮件有 2 封退信：钱示例（邮箱已停用）、吴示例（邮箱已满）。站内信已全部送达。</span></div>` : ''}
+  ${first ? `<h3 class="dw-h3">按部门已读</h3><div class="dept">${DATA.deptRead.map(d => `<div><span>${d[0]}</span><span class="bar"><i style="width:${d[2] / d[1] * 100}%"></i></span><b>${d[2]}/${d[1]}</b></div>`).join('')}</div>
+  <h3 class="dw-h3">未读 ${r[3] - r[4]} 人 <span class="muted" style="font-weight:400">（显示前 10 位）</span></h3><div class="unr">${DATA.unread.map(x => `<span>${x}</span>`).join('')}</div>` : `<p class="muted" style="font-size:13px">${r[3] - r[4] ? `还有 ${r[3] - r[4]} 人未读。` : '全部已读。'}</p>`}</div>
+  <div class="layer-ft"><button class="btn" type="button" ${canRecall ? `data-recall="${i}"` : 'disabled'} title="${canRecall ? '' : '这条不能撤回'}">撤回</button><button class="btn btn-primary" type="button" ${r[3] - r[4] && !urged && canRecall ? `data-urge="${i}"` : 'disabled'}>${urged ? '今天已催读' : r[3] - r[4] ? `催读 ${r[3] - r[4]} 人` : '全部已读'}</button></div>`;
+  P.open(dw);
+}
+
+/* ---------------- ④ 通知设置 ---------------- */
+function pSettings(state) {
+  chrome('通知设置', 'settings');
+  const hd = head('通知设置', '只影响你自己收到的通知；站内信是所有消息的底线渠道，不能关。', '');
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(7)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${errCard('设置没加载出来', '读取你的通知偏好失败（错误编号 PREF-500，示例）。当前按默认设置给你发通知。', 'settings')}</div>`; return; }
+  if (state === 'empty') { PG.innerHTML = `<div class="pg">${hd}<section class="card">${P.stateBlock({ icon: 'bell', title: '还没绑定其他渠道', body: '你的账号没有填邮箱、手机号，也没绑定企业微信，所以只能收站内信。绑定后可以在这里选择哪些通知同时发到哪里。', acts: `<button class="btn btn-primary" type="button" data-toast="已打开个人资料 · 联系方式（示例）">去绑定</button>` })}</section></div>`; return; }
+  const chn = ['站内信', '邮件', '短信', '企业微信'];
+  PG.innerHTML = `<div class="pg">${hd}<section class="card"><div class="tw" style="border-top:0"><table class="table mx"><thead><tr><th>通知类型</th>${chn.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>
+  ${PF.map((p, i) => `<tr><td><b style="font-weight:500">${p[0]}</b>${p[6] ? ' <span class="tag tag-neutral plain" style="height:20px;font-size:11px">不能关闭</span>' : ''}<small>${p[1]}</small></td>${[2, 3, 4, 5].map(k => `<td><button class="sw" type="button" role="switch" data-pf="${i}-${k}" aria-checked="${!!p[k]}" aria-label="${p[0]} · ${chn[k - 2]}" ${k === 2 || p[6] ? 'disabled' : ''}></button></td>`).join('')}</tr>`).join('')}</tbody></table></div></section>
+  <section class="card sec" style="margin-top:16px"><h2>免打扰时段 <span class="muted">期间邮件、短信、企业微信先存着，结束后一起发；站内信照常</span></h2>
+  <div class="dnd"><button class="sw" type="button" role="switch" id="dnd" aria-checked="${PF.dnd[2]}" aria-label="开启免打扰"></button><span>每天</span><select class="select" id="dnd1" aria-label="开始时间" ${PF.dnd[2] ? '' : 'disabled'}>${['21:00', '22:00', '23:00'].map(x => `<option ${PF.dnd[0] === x ? 'selected' : ''}>${x}</option>`).join('')}</select><span>到次日</span><select class="select" id="dnd2" aria-label="结束时间" ${PF.dnd[2] ? '' : 'disabled'}>${['07:00', '08:00', '09:00'].map(x => `<option ${PF.dnd[1] === x ? 'selected' : ''}>${x}</option>`).join('')}</select><span class="muted">账号安全、需确认的系统公告不受免打扰限制</span></div></section>
+  <div class="ft-bar"><span class="why">${PF.dirty ? `有 ${PF.dirty} 处修改还没保存` : '没有未保存的修改'}</span><button class="btn" type="button" data-pfreset ${PF.dirty ? '' : 'disabled'}>撤销修改</button><button class="btn btn-primary" type="button" data-pfsave ${PF.dirty ? '' : 'disabled'}>保存</button></div></div>`;
+}
+
+/* ---------------- 渲染与事件 ---------------- */
+const PAGES = { inbox: pInbox, compose: pCompose, records: pRecords, settings: pSettings };
+function draw() { PAGES[P.state.page](P.state.state); }
+function go(pg) { if (pg === P.state.page) return; carry = true; P.go(pg, 'normal'); window.scrollTo(0, 0); }
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button,[data-msg],[data-rec],[data-go]');
+  if (!b || b.closest('.pp,.pq-drawer,.tplbar,.modal')) return;
+  if (e.target.closest('[data-stop]')) return;
+  if (b.dataset.toast) toast(b.dataset.toast);
+  if (b.dataset.go) { if (dw.classList.contains('show')) P.close(dw); if (P.state.page === 'settings' && PF.dirty && b.dataset.go !== 'settings') { const ok = await P.confirm({ title: '有修改没保存，确定离开？', body: `${PF.dirty} 处通知设置的修改会丢失。`, ok: '不保存，离开' }); if (!ok) return; PF = clone(DATA.prefs); PF.dirty = 0; PF.dnd = ['22:00', '08:00', true]; } go(b.dataset.go); return; }
+  if (b.dataset.msg) { openMsg(b.dataset.msg); return; }
+  if (b.dataset.cat) { IB.cat = b.dataset.cat; IB.sel.clear(); const L = listOf(); if (L.length && !L.some(m => m.id === IB.cur)) IB.cur = L[0].id; pInbox(P.state.state); return; }
+  if (b.id === 'uonly') { IB.unreadOnly = !IB.unreadOnly; pInbox(P.state.state); return; }
+  if ('ibreset' in b.dataset) { IB.q = ''; IB.unreadOnly = false; pInbox(P.state.state); }
+  if ('back' in b.dataset) { IB.reading = false; pInbox('normal'); }
+  const m = M.find(x => x.id === IB.cur);
+  if ('star' in b.dataset) { m.star = !m.star; pInbox(P.state.state); toast(m.star ? '已加星标' : '已取消星标'); }
+  if ('unread' in b.dataset) { m.read = false; IB.reading = false; pInbox(P.state.state); toast('已标为未读'); }
+  if ('arch' in b.dataset) { archive([m.id]); }
+  if ('bread' in b.dataset) { const n = [...IB.sel].length; IB.sel.forEach(id => M.find(x => x.id === id).read = true); IB.sel.clear(); pInbox(P.state.state); toast(`${n} 条已标为已读`, 'ok'); }
+  if ('barch' in b.dataset) archive([...IB.sel]);
+  if ('allread' in b.dataset) { const n = unread(IB.cat); M.filter(x => inCat(x, IB.cat)).forEach(x => x.read = true); pInbox(P.state.state); toast(`「${DATA.cats.find(c => c[0] === IB.cat)[1]}」${n} 条已全部标为已读`, 'ok'); }
+  if ('appr' in b.dataset) { m.done = '你已于 刚刚 审批通过，已通知 王示例 和供应商'; m.todo = false; m.obj.st = ['已审核', 'success']; pInbox(P.state.state); toast('已通过 ' + m.obj.no, 'ok'); }
+  if ('rej' in b.dataset) { const ok = await P.confirm({ title: '驳回采购单？', body: '会退回给 王示例 修改；原因可以在采购单里补充。', ok: '驳回', danger: true }); if (ok) { m.done = '你已于 刚刚 驳回，已退回给 王示例'; m.todo = false; m.obj.st = ['已驳回', 'danger']; pInbox(P.state.state); toast('已驳回', 'ok'); } }
+  if ('taskdone' in b.dataset) { m.done = '任务已于 刚刚 标记完成，已通知 ' + m.obj.f[2][1]; m.todo = false; m.obj.st = ['已完成', 'success']; pInbox(P.state.state); toast('任务已完成', 'ok'); }
+  if ('cfm' in b.dataset) { m.confirm.done = '11-11 11:00'; m.todo = false; pInbox(P.state.state); toast('已确认阅读，发送人能看到', 'ok'); }
+  // 发送页
+  if (b.dataset.ftype) { F.type = b.dataset.ftype; pCompose(P.state.state); }
+  if (b.dataset.when) { F.when = b.dataset.when; pCompose(P.state.state); }
+  if (b.id === 'fcfm') { F.confirm = !F.confirm; pCompose(P.state.state); }
+  if (b.dataset.unscope) { F.scope = F.scope.filter(s => s !== b.dataset.unscope); pCompose(P.state.state); }
+  if (b.dataset.unex) { F.ex = F.ex.filter(s => s !== b.dataset.unex); pCompose(P.state.state); }
+  if ('addex' in b.dataset) { F.ex.push(['冯示例（产假）', '褚示例（年假）', '卫示例（病假）'][F.ex.length]); pCompose(P.state.state); }
+  if ('addatt' in b.dataset) { F.att = true; pCompose(P.state.state); toast('已添加附件（示例）', 'ok'); }
+  if ('unatt' in b.dataset) { F.att = false; pCompose(P.state.state); }
+  if (b.dataset.var) { const t = $('#body'), s = t.selectionStart || F.body.length; F.body = F.body.slice(0, s) + b.dataset.var + F.body.slice(s); pCompose(P.state.state); const t2 = $('#body'); t2.focus(); t2.setSelectionRange(s + b.dataset.var.length, s + b.dataset.var.length); }
+  if ('send' in b.dataset) send();
+  if ('draft' in b.dataset) { toast(F.title ? `草稿「${F.title}」已保存` : '草稿已保存（标题为空）', 'ok'); }
+  // 发送记录
+  if (b.dataset.recOpen) { openRec(+b.dataset.recOpen); return; }
+  if (b.dataset.rec && !e.target.closest('button')) { const r = S[+b.dataset.rec]; if (r[9] === 'draft' || r[9] === 'scheduled' || r[9] === 'recalled') { toast(r[9] === 'recalled' ? '已撤回的消息没有已读统计' : '还没发出，没有已读统计'); return; } openRec(+b.dataset.rec); return; }
+  if (b.dataset.edit) { const r = S[+b.dataset.edit]; F.title = r[0]; F.type = r[1]; F.scope = ['仓储部']; F.body = '{姓名}你好：\n年终盘点定在 12-28～12-30，每天 20:00 开始。请按附件里的分区到岗，盘点期间仓库暂停收发货。'; F.att = true; go('compose'); }
+  if (b.dataset.cancel) { const ok = await P.confirm({ title: '取消定时发送？', body: '会变成草稿，内容保留。', ok: '取消定时' }); if (ok) { S[+b.dataset.cancel][9] = 'draft'; S[+b.dataset.cancel][8] = '刚刚 取消定时'; pRecords('normal'); toast('已取消定时，转为草稿', 'ok'); } }
+  if ('rreset' in b.dataset) { RQ.q = ''; RQ.type = ''; RQ.st = ''; pRecords('normal'); }
+  if (b.dataset.urge) { const r = S[+b.dataset.urge]; RQ.urged.add(r[0]); P.close(dw); toast(`已向 ${r[3] - r[4]} 位未读的人再发一次提醒`, 'ok'); }
+  if (b.dataset.recall) { const r = S[+b.dataset.recall]; const ok = await P.confirm({ title: '撤回这条消息？', body: `${r[3]} 人的通知中心里会变成「已撤回」，已读的 ${r[4]} 人也会看到。邮件、短信已送达的无法撤回。`, ok: '撤回', danger: true }); if (ok) { r[9] = 'recalled'; P.close(dw); pRecords('normal'); toast('已撤回', 'ok'); } }
+  if ('x' in b.dataset) P.close(dw);
+  // 设置
+  if (b.dataset.pf) { const [i, k] = b.dataset.pf.split('-').map(Number); PF[i][k] = PF[i][k] ? 0 : 1; PF.dirty = PF.reduce((s, p, j) => s + [3, 4, 5].filter(c => p[c] !== DATA.prefs[j][c]).length, 0) + (PF.dnd[2] !== true ? 1 : 0); pSettings('normal'); }
+  if (b.id === 'dnd') { PF.dnd[2] = !PF.dnd[2]; PF.dirty = PF.reduce((s, p, j) => s + [3, 4, 5].filter(c => p[c] !== DATA.prefs[j][c]).length, 0) + (PF.dnd[2] !== true ? 1 : 0); pSettings('normal'); }
+  if ('pfsave' in b.dataset) { DATA.prefs = clone(PF.slice(0, DATA.prefs.length)); PF.dirty = 0; pSettings('normal'); toast('通知设置已保存', 'ok'); }
+  if ('pfreset' in b.dataset) { PF = clone(DATA.prefs); PF.dirty = 0; PF.dnd = ['22:00', '08:00', true]; pSettings('normal'); toast('已撤销修改'); }
+  if (b.dataset.retry) { const pg = b.dataset.retry; carry = true; P.go(pg, 'loading'); setTimeout(() => { carry = true; P.go(pg, 'normal'); toast('已重新加载', 'ok'); }, 700); }
+  if ('apply' in b.dataset) { b.disabled = true; b.textContent = '已申请，等待审批'; toast('已提交权限申请', 'ok'); }
+});
+function archive(ids) {
+  if (!ids.length) return; ids.forEach(id => IB.archived.add(id)); IB.sel.clear();
+  const L = listOf(); if (ids.includes(IB.cur)) { IB.cur = L.length ? L[0].id : ''; IB.reading = false; }
+  pInbox(P.state.state);
+  toast(`已归档 ${ids.length} 条`, '', { undo: () => { ids.forEach(id => IB.archived.delete(id)); pInbox(P.state.state); }, host: document.body, ms: 4000 });
+}
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.msel) { t.checked ? IB.sel.add(t.dataset.msel) : IB.sel.delete(t.dataset.msel); pInbox(P.state.state); }
+  if (t.id === 'addscope' && t.value) { F.scope.push(t.value); pCompose(P.state.state); }
+  if (t.dataset.ch) { F.ch[t.dataset.ch] = t.checked; pCompose(P.state.state); }
+  if (t.id === 'pin') F.pin = t.value, pCompose(P.state.state);
+  if (t.id === 'rtype') { RQ.type = t.value; pRecords('normal'); }
+  if (t.id === 'rst') { RQ.st = t.value; pRecords('normal'); }
+  if (t.id === 'dnd1' || t.id === 'dnd2') { PF.dnd[t.id === 'dnd1' ? 0 : 1] = t.value; PF.dirty = Math.max(PF.dirty, 1); pSettings('normal'); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'ibq') { IB.q = t.value.trim(); clearTimeout(t._d); t._d = setTimeout(() => { pInbox(P.state.state); const q = $('#ibq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }, 250); }
+  if (t.id === 'rq') { RQ.q = t.value.trim(); clearTimeout(t._d); t._d = setTimeout(() => { pRecords('normal'); const q = $('#rq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }, 250); }
+  if (t.dataset.f && t.tagName !== 'SELECT') { F[t.dataset.f] = t.value; const c = $('#' + t.id + '-n'); if (c) { const max = t.id === 'title' ? 40 : 1000; c.textContent = t.value.length + '/' + max; c.classList.toggle('over', t.value.length > max); } }
+});
+document.addEventListener('focusout', e => { const t = e.target; if (t.dataset && t.dataset.f && t.tagName !== 'SELECT' && P.state.page === 'compose') { const rel = e.relatedTarget, rid = rel && rel.id; setTimeout(() => { if (!t.isConnected) return; pCompose(P.state.state); if (rid) { const r = document.getElementById(rid); if (r) r.focus(); } }, 0); } });
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  if (t.dataset && t.dataset.msg && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openMsg(t.dataset.msg, true); }
+  if (t.dataset && t.dataset.msg && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); const L = listOf(), i = L.findIndex(m => m.id === t.dataset.msg) + (e.key === 'ArrowDown' ? 1 : -1); if (L[i]) openMsg(L[i].id, true); }
+  if (t.dataset && t.dataset.rec && e.key === 'Enter' && t.tagName === 'TR') t.click();
+  if (t.classList && t.classList.contains('ptab') && e.key === 'Enter') t.click();
+});
+
+fresh();
+Proto.init({
+  title: '站内信与通知中心',
+  pages: [
+    { id: 'inbox', name: '① 通知中心', states: [{ id: 'normal', name: '正常（5 条未读）' }, { id: 'empty', name: '空（全部已读）' }, { id: 'recalled', name: '消息已被撤回' }, { id: 'noperm', name: '关联单据无权限' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }] },
+    { id: 'compose', name: '② 发送站内信', states: [{ id: 'normal', name: '填写中（已预填）' }, { id: 'empty', name: '空白新建' }, { id: 'invalid', name: '校验出错' }, { id: 'error', name: '发送失败' }, { id: 'loading', name: '加载中' }, { id: 'noperm', name: '无发送权限' }] },
+    { id: 'records', name: '③ 发送记录', states: [{ id: 'normal', name: '正常（9 条）' }, { id: 'empty', name: '空' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限' }] },
+    { id: 'settings', name: '④ 通知设置', states: [{ id: 'normal', name: '正常' }, { id: 'empty', name: '空（未绑定渠道）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }] }
+  ],
+  render(page, state) {
+    if (dw.classList.contains('show')) P.close(dw);
+    if (!carry) {
+      fresh();
+      if (page === 'compose' && state !== 'empty') { F.type = '通知'; F.title = '年终盘点人员安排（12-28～12-30）'; F.scope = ['仓储部', '物流部']; F.ex = ['冯示例（产假）']; F.body = '{姓名}你好：\n年终盘点定在 12-28～12-30，每天 20:00 开始。请按附件里的分区到岗，盘点期间仓库暂停收发货。\n有排班冲突的，请在 {截止时间} 前找部门负责人调整。'; F.att = true; F.confirm = true; F.ch.sms = true; }
+      if (page === 'compose' && state === 'invalid') { F.title = '年终盘点人员安排，请仓储部、物流部全体同事务必按时到岗并提前做好交接'; F.scope = []; F.link = 'www.示例.com/pd'; F.when = 'later'; F.at = '2026-11-11 10:30'; F.tried = true; }
+      if (page === 'inbox' && state === 'recalled') { IB.cur = ''; }
+      if (page === 'inbox' && state === 'noperm') { IB.cur = 'm1'; }
+    }
+    carry = false;
+    PAGES[page](state === 'invalid' ? 'normal' : state);
+  }
+});
+Proto.prompts(PROMPTS);
+</script>
+</body>
+</html>
