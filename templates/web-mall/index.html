@@ -1,4 +1,16 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PC 商城与购物车 · 积木盒</title><style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PC 商城 · 原型模板</title>
+<!--
+  原型模板 · 积木盒 | 老岳AI编辑部 · 原型组
+  改风格：改下面 :root 里的变量（--accent 换主色）
+  改数据：改 <script> 顶部 DATA
+  演示：右下角「原型面板」切页面和状态；按 H 隐藏面板；URL 可直达 #page=cart&state=empty
+-->
+<style>
 /*@KIT_CSS*/
 /* ==========================================================================
    ① 改风格只改这一块：颜色 / 字体 / 圆角 / 间距 / 阴影
@@ -329,7 +341,7 @@ body.has-tplbar{--bar-h:44px;padding-top:44px}
 .tplbar .tb-btn.primary{background:#fff;color:#16171A;border-color:#fff}
 .tplbar .tb-btn.primary:hover{filter:brightness(.94)}
 .tplbar .tb-btn .ic{width:15px;height:15px}
-.tplbar .tb-hide{width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+.tplbar .tb-hide{flex-shrink:0;width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
 .drawer{top:var(--bar-h,0px)}
 body.pp-hidden .tplbar{display:none}
 body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
@@ -340,11 +352,323 @@ body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
 :root[data-theme="dark"] .brand-mark,:root[data-theme="dark"] .ai-mark{background:#ECECEF;color:#16171A}
 :root[data-theme="dark"] .tab.on{color:#16171A}
 /*@END_KIT_CSS*/
+/* ============================ 本模板样式 ============================ */
+:root{--accent:#7A3E1D;--accent-soft:#F6EDE6;--price:#B4261E;--cream:#F7F3EE;--bg:#FAF8F5}
+body{background:var(--bg)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+/* 顶部 */
+.top-strip{background:#2B1A10;color:#EADBCB;font-size:12px}
+.top-strip .wrap{display:flex;align-items:center;gap:18px;height:32px}
+.top-strip .sp{flex:1}
+.top-strip button{border:0;background:none;color:#EADBCB;font-size:12px;min-height:28px;padding:0 2px;cursor:pointer}
+.hdr{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:var(--bar-h);z-index:20}
+.hdr .wrap{display:flex;align-items:center;gap:24px;height:72px}
+.logo{display:flex;align-items:center;gap:10px;border:0;background:none;padding:0;cursor:pointer;flex:none}
+.logo .mk{width:38px;height:38px;border-radius:10px;background:var(--accent);display:grid;place-items:center}
+.logo b{font-size:19px;letter-spacing:.02em;color:var(--ink-900);white-space:nowrap}
+.logo small{display:block;font-size:11px;color:var(--ink-500);font-weight:400;letter-spacing:.06em}
+.srch{flex:1;max-width:560px;display:flex;align-items:stretch;height:42px;border:2px solid var(--accent);border-radius:21px;overflow:visible;position:relative;background:var(--surface)}
+.srch input{flex:1;min-width:0;border:0;outline:0;background:none;padding:0 16px;font-size:14px;border-radius:21px 0 0 21px}
+.srch>button{flex:none;border:0;background:var(--accent);color:#fff;padding:0 22px;font-size:14px;font-weight:600;border-radius:0 19px 19px 0;cursor:pointer;display:flex;align-items:center;gap:6px}
+.sugg{position:absolute;left:-2px;right:-2px;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--shadow-3);padding:6px;z-index:30}
+.sugg button{display:flex;align-items:center;gap:10px;width:100%;min-height:38px;padding:0 10px;border:0;background:none;border-radius:var(--r-sm);font-size:14px;color:var(--ink-900);text-align:left;cursor:pointer}
+.sugg button:hover,.sugg button:focus-visible{background:var(--cream)}
+.sugg small{margin-left:auto;font-size:12px;color:var(--ink-500)}
+.sugg h4{font-size:12px;color:var(--ink-500);font-weight:500;padding:6px 10px 2px}
+.hot{display:flex;gap:4px;flex-wrap:wrap;padding:2px 6px 6px}
+.hot button{width:auto;min-height:30px;padding:0 10px;border-radius:var(--r-full);background:var(--cream);font-size:13px}
+.hicons{display:flex;align-items:center;gap:6px;margin-left:auto;flex:none}
+.hic{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:52px;min-height:48px;justify-content:center;border:0;background:none;font-size:12px;color:var(--ink-700);border-radius:var(--r-sm);cursor:pointer}
+.hic:hover{background:var(--cream)}
+.hic .badge{position:absolute;top:2px;right:6px;background:var(--price);color:#fff}
+.catnav{background:var(--surface);border-bottom:1px solid var(--line)}
+.catnav .wrap{display:flex;gap:4px;height:46px;align-items:center;overflow-x:auto;scrollbar-width:none}
+.catnav button{flex:none;height:34px;padding:0 14px;border:0;background:none;border-radius:17px;font-size:14px;color:var(--ink-700);cursor:pointer;white-space:nowrap}
+.catnav button[aria-current="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.catnav .promo{margin-left:auto;color:var(--price);font-weight:600}
+main.pgw{padding:20px 0 60px}
+.crumb3{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--ink-500);margin-bottom:14px;flex-wrap:wrap}
+.crumb3 button{border:0;background:none;color:var(--ink-500);font-size:13px;padding:0 2px;min-height:24px;cursor:pointer}
+.crumb3 b{color:var(--ink-900);font-weight:500}
+.crumb3 .ic{width:12px;height:12px}
+/* 商品图（内联 SVG 插画，不用占位字） */
+.pimg{display:block;width:100%;aspect-ratio:1/1;border-radius:var(--r-md);overflow:hidden}
+.pimg svg{display:block;width:100%;height:100%}
+/* 列表 */
+.lay{display:grid;grid-template-columns:220px minmax(0,1fr);gap:20px;align-items:start}
+.lay>*{min-width:0}
+.fbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:6px 16px 14px;position:sticky;top:calc(var(--bar-h) + 136px)}
+.fbox h3{font-size:13px;font-weight:600;margin:12px 0 8px;color:var(--ink-900);display:flex;align-items:center}
+.fbox h3 .clr{margin-left:auto;font-weight:400}
+.fopt{display:flex;align-items:center;gap:8px;min-height:32px;font-size:14px;color:var(--ink-700);cursor:pointer}
+.fopt small{margin-left:auto;color:var(--ink-500);font-size:12px}
+.prange{display:flex;gap:6px;align-items:center}
+.prange .input{height:32px;padding:0 8px;font-size:13px}
+.lbar{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:8px 12px;margin-bottom:14px;flex-wrap:wrap}
+.lbar .seg button{height:30px}
+.lbar .sp{flex:1}
+.lbar .cnt{font-size:13px;color:var(--ink-500)}
+.fchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.fchip{display:inline-flex;align-items:center;gap:2px;height:28px;padding:0 4px 0 10px;border-radius:14px;background:var(--accent-soft);color:var(--accent);font-size:13px;border:0;cursor:pointer}
+.fchip .ic{width:14px;height:14px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.pc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:10px 10px 12px;display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:border-color var(--dur) var(--ease),transform var(--dur) var(--ease);position:relative}
+.pc:hover{border-color:#C9B4A3;transform:translateY(-2px)}
+.pc:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pc .nm{font-size:14px;line-height:1.45;height:40px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;color:var(--ink-900)}
+.pc .sub{font-size:12px;color:var(--ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc .pr{display:flex;align-items:baseline;gap:6px}
+.price{color:var(--price);font-weight:700;font-variant-numeric:tabular-nums}
+.price small{font-size:.6em;margin-right:1px}
+.pc .pr .price{font-size:20px}
+.orig{font-size:12px;color:var(--ink-500);text-decoration:line-through}
+.pc .meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-500)}
+.pc .meta .sp{flex:1}
+.addq{width:34px;height:34px;border-radius:50%;border:0;background:var(--accent);color:#fff;display:grid;place-items:center;cursor:pointer;flex:none}
+.addq:disabled{background:var(--line);color:var(--ink-500);cursor:not-allowed}
+.ptags{display:flex;gap:4px;flex-wrap:wrap;min-height:20px}
+.pt{font-size:11px;height:20px;padding:0 6px;border-radius:4px;display:inline-flex;align-items:center;border:1px solid #EBC7C2;color:var(--price);background:#FFF6F5}
+.pt.n{border-color:#C7D6EE;color:#2B55A3;background:#F3F7FD}
+.pt.w{border-color:#EBD7B0;color:#8A5400;background:#FFF8EA}
+.soldmask{position:absolute;inset:10px 10px auto 10px;aspect-ratio:1/1;border-radius:var(--r-md);background:rgba(255,255,255,.55);display:grid;place-items:center}
+.soldmask span{background:rgba(22,23,26,.78);color:#fff;font-size:13px;padding:6px 14px;border-radius:var(--r-full)}
+.pager{display:flex;gap:6px;justify-content:center;margin-top:22px;align-items:center;flex-wrap:wrap}
+.pager button{min-width:36px;height:36px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-sm);font-size:14px;cursor:pointer}
+.pager button[aria-current="true"]{border-color:var(--accent);background:var(--accent);color:#fff}
+.pager span{font-size:13px;color:var(--ink-500);margin-left:8px}
+.fbtn{display:none}
+/* 详情 */
+.pd{display:grid;grid-template-columns:480px minmax(0,1fr);gap:36px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:24px}
+.pd>*{min-width:0}
+.gal .pimg{border-radius:var(--r-lg)}
+.thumbs{display:flex;gap:8px;margin-top:10px}
+.thumbs button{width:64px;height:64px;border-radius:var(--r-sm);border:2px solid transparent;padding:0;background:none;cursor:pointer;overflow:hidden}
+.thumbs button[aria-pressed="true"]{border-color:var(--accent)}
+.thumbs .pimg{border-radius:4px}
+.pd h1{font-size:22px;line-height:1.4}
+.pd .sub{font-size:14px;color:var(--ink-500);margin-top:6px;line-height:1.6}
+.pbox{background:linear-gradient(90deg,#FFF5F2,#FBF3EC);border-radius:var(--r-md);padding:14px 16px;margin:16px 0}
+.pbox .row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pbox .lab{font-size:13px;color:var(--ink-500);width:56px;flex:none}
+.pbox .price{font-size:30px}
+.pbox .promo{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink-700);margin-top:8px;flex-wrap:wrap}
+.opt{display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;align-items:start;margin-bottom:14px}
+.opt>span{font-size:13px;color:var(--ink-500);line-height:38px}
+.sku{display:flex;gap:8px;flex-wrap:wrap}
+.sku button{min-height:38px;padding:0 14px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);font-size:14px;color:var(--ink-900);cursor:pointer;position:relative}
+.sku button small{color:var(--ink-700);margin-left:4px}
+.sku button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);font-weight:500}
+.sku button[aria-disabled="true"]{color:var(--ink-500);border-style:dashed;cursor:not-allowed;background:var(--surface-2)}
+.sku button[aria-disabled="true"] small{color:var(--ink-500)}
+.qty{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.qty .muted{font-size:13px}
+.stepper button{width:36px}
+.stepper input{width:52px}
+.dlv{font-size:14px;line-height:1.7}
+.dlv select{height:34px;max-width:100%}
+.dlv .ok{color:var(--success)}
+.buy{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+.buy .btn{height:48px;padding:0 32px;font-size:16px;border-radius:24px}
+.btn-cart{background:#F1E3D8;color:var(--accent);border-color:#E7D2C2}
+.btn-cart:hover{background:#EAD6C6}
+.svc{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-size:12px;color:var(--ink-500)}
+.svc span{display:flex;align-items:center;gap:4px}
+.svc .ic{width:14px;height:14px;color:var(--success)}
+.notice{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:var(--r-md);background:var(--warning-soft);color:var(--warning);font-size:13px;margin-top:12px;flex-wrap:wrap}
+.notice .btn{margin-left:auto}
+.dtabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:24px 0 0;background:var(--surface);border-radius:var(--r-lg) var(--r-lg) 0 0;padding:0 16px;overflow-x:auto;position:sticky;top:calc(var(--bar-h) + 118px);z-index:5}
+.dtab{height:48px;padding:0 16px;border:0;background:none;font-size:15px;color:var(--ink-500);cursor:pointer;position:relative;white-space:nowrap}
+.dtab[aria-selected="true"]{color:var(--ink-900);font-weight:600}
+.dtab[aria-selected="true"]::after{content:"";position:absolute;left:14px;right:14px;bottom:-1px;height:2px;background:var(--accent)}
+.dpanel{background:var(--surface);border:1px solid var(--line);border-top:0;border-radius:0 0 var(--r-lg) var(--r-lg);padding:20px 24px}
+.ptab-t{width:100%;border-collapse:collapse;font-size:14px;max-width:720px}
+.ptab-t th,.ptab-t td{border:1px solid var(--line-soft);padding:10px 14px;text-align:left}
+.ptab-t th{width:140px;background:var(--cream);font-weight:500;color:var(--ink-700)}
+.story{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;max-width:900px}
+.story div{background:var(--cream);border-radius:var(--r-md);padding:16px}
+.story b{display:block;font-size:15px;margin-bottom:6px}
+.story p{font-size:13px;color:var(--ink-700);line-height:1.8}
+.flavor{display:flex;flex-direction:column;gap:8px;max-width:420px;margin-top:16px}
+.flavor div{display:grid;grid-template-columns:56px minmax(0,1fr) 28px;gap:10px;align-items:center;font-size:13px}
+.flavor i{display:block;height:8px;border-radius:4px;background:var(--line-soft);overflow:hidden}
+.flavor i b{display:block;height:100%;background:var(--accent)}
+.rv-sum{display:flex;gap:24px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.rv-sum .sc{font-size:36px;font-weight:700;color:var(--price)}
+.rv{border-top:1px solid var(--line-soft);padding:14px 0;display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px}
+.rv .avatar{width:36px;height:36px;font-size:14px}
+.rv .h{font-size:13px;color:var(--ink-500);display:flex;gap:10px;flex-wrap:wrap}
+.rv .h b{color:var(--ink-900);font-weight:500}
+.rv p{font-size:14px;line-height:1.8;margin-top:4px}
+.rv .rep{font-size:13px;background:var(--cream);border-radius:var(--r-sm);padding:8px 12px;margin-top:8px;color:var(--ink-700)}
+.stars{color:#9A5B00;letter-spacing:1px}
+.cb{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:28px;cursor:pointer}
+/* 购物车 */
+.cart{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.cart>*{min-width:0}
+.cbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}
+.chd{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line-soft);font-size:14px;flex-wrap:wrap}
+.chd .sp{flex:1}
+.fullcut{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;background:#FFF6F2;color:var(--ink-700);border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+.fullcut .pt{flex:none}
+.fullcut button{margin-left:auto}
+.ci{display:grid;grid-template-columns:28px 88px minmax(0,1fr) 112px 130px 96px 64px;gap:14px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line-soft)}
+.ci:last-child{border-bottom:0}
+.ci .pimg{width:88px;height:88px}
+.ci .nm{font-size:14px;line-height:1.5;color:var(--ink-900)}
+.ci .sk2{display:inline-flex;align-items:center;gap:4px;margin-top:6px;font-size:12px;color:var(--ink-700);background:var(--surface-2);border:1px solid var(--line-soft);border-radius:4px;padding:2px 6px;min-height:26px;cursor:pointer}
+.ci .chgp{font-size:12px;color:var(--success);margin-top:4px}
+.ci .tot{font-weight:700;color:var(--price);font-variant-numeric:tabular-nums;text-align:right}
+.ci .ops{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+.ci .ops button{font-size:12px}
+.ci.dead{background:var(--surface-2)}
+.ci.dead .nm{color:var(--ink-500)}
+.ci .why{font-size:12px;color:var(--warning)}
+.ci .lim{font-size:12px;color:var(--warning);margin-top:4px}
+.sumbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;position:sticky;top:calc(var(--bar-h) + 136px)}
+.sumbox h3{font-size:16px;margin-bottom:12px}
+.sl{display:flex;justify-content:space-between;font-size:14px;padding:6px 0;color:var(--ink-700);gap:12px}
+.sl b{font-weight:500;color:var(--ink-900);font-variant-numeric:tabular-nums}
+.sl.dis b{color:var(--price)}
+.sl.tot{border-top:1px solid var(--line-soft);margin-top:6px;padding-top:12px;align-items:baseline}
+.sl.tot .price{font-size:26px}
+.cpn{width:100%;margin:6px 0 2px}
+.sumbox .btn-primary{width:100%;height:48px;font-size:16px;border-radius:24px;margin-top:12px}
+.sumbox .hint{font-size:12px;color:var(--ink-500);margin-top:8px;line-height:1.6}
+.loginbar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--info-soft);color:var(--info);font-size:13px;border-radius:var(--r-md);margin-bottom:14px;flex-wrap:wrap}
+.loginbar .btn{margin-left:auto}
+/* 结算 */
+.co{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+.co>*{min-width:0}
+.cos{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:14px}
+.cos h2{font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.cos h2 .btn-link{margin-left:auto;font-size:13px;font-weight:400}
+.addrs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.addr{border:1.5px solid var(--line);border-radius:var(--r-md);padding:12px;text-align:left;background:var(--surface);cursor:pointer;font-size:13px;line-height:1.6;color:var(--ink-700);min-height:96px}
+.addr b{display:block;font-size:14px;color:var(--ink-900)}
+.addr[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.radios{display:flex;gap:10px;flex-wrap:wrap}
+.rb{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1.5px solid var(--line);border-radius:var(--r-md);background:var(--surface);cursor:pointer;font-size:14px;color:var(--ink-900)}
+.rb small{color:var(--ink-700);font-size:12px}
+.rb[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.oi{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line-soft);font-size:14px}
+.oi:first-of-type{border-top:0}
+.oi .pimg{width:56px;height:56px}
+.oi small{display:block;color:var(--ink-500);font-size:12px}
+.fg2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 14px;margin-top:12px}
+.done{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:48px 24px;text-align:center}
+.done .ok{width:64px;height:64px;border-radius:50%;background:var(--success-soft);color:var(--success);display:grid;place-items:center;margin:0 auto 14px}
+.done .ok .ic{width:32px;height:32px}
+.done h2{font-size:22px}
+.done p{font-size:14px;color:var(--ink-500);margin-top:8px;line-height:1.8}
+.done .acts{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.foot{border-top:1px solid var(--line);background:var(--surface);padding:24px 0;font-size:12px;color:var(--ink-500)}
+.foot .wrap{display:flex;gap:28px;flex-wrap:wrap}
+.foot b{color:var(--ink-700);font-weight:500}
+.sk-g .sk{border-radius:var(--r-md)}
+.statebox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}
+@media (max-width:1200px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.pd{grid-template-columns:400px minmax(0,1fr)}.ci{grid-template-columns:28px 72px minmax(0,1fr) 104px 112px;}.ci .pimg{width:72px;height:72px}.ci .tot{grid-column:4}.ci .ops{grid-column:5;flex-direction:row;justify-content:flex-end;gap:10px}.ci>.unit{display:none}}
+@media (max-width:1000px){.lay{grid-template-columns:1fr}.fbox{display:none;position:static}.fbox.open{display:block}.fbtn{display:inline-flex}.cart,.co{grid-template-columns:1fr}.sumbox{position:static}.pd{grid-template-columns:1fr}.gal{max-width:420px}.story{grid-template-columns:1fr}.addrs{grid-template-columns:1fr}.top-strip .opt-s{display:none}}
+@media (max-width:760px){.wrap{padding:0 12px}.hdr .wrap{gap:10px;height:auto;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}.srch{order:3;max-width:none;flex:1 1 100%}.logo small{display:none}.hic span.t{display:none}.hic{min-width:44px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ci{grid-template-columns:28px 64px minmax(0,1fr);row-gap:8px}.ci .pimg{width:64px;height:64px}.ci .stp,.ci .tot,.ci .ops{grid-column:3}.ci .ops{flex-direction:row;justify-content:flex-start}.ci .tot{text-align:left}.pd{padding:14px}.fg2{grid-template-columns:1fr}.dtabs{position:static}.dpanel{padding:16px 12px}.buy .btn{flex:1;padding:0 12px}.lbar .seg{overflow-x:auto;max-width:100%}.lbar .seg button{padding:0 8px}}
+</style>
+</head>
+<body>
+<div class="top-strip"><div class="wrap"><span>示例咖啡器具商城 · 示例站，商品与价格均为虚构</span><span class="sp"></span><span class="opt-s">满 ¥99 包邮 · 咖啡豆 3 日内新鲜烘焙</span><button type="button" data-toast="客服（示例）：工作日 9:00–21:00">联系客服</button></div></div>
+<header class="hdr"><div class="wrap">
+  <button class="logo" type="button" data-go="list" aria-label="回到首页"><span class="mk"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M4 9h13v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3.5c0 1 .8 1.4.8 2.4M11.5 3.5c0 1 .8 1.4.8 2.4"/></svg></span><b>山谷咖啡<small>示例 · 豆子与器具</small></b></button>
+  <div class="srch" id="srch"><input id="q" type="search" placeholder="搜咖啡豆、滤杯、磨豆机" aria-label="搜索商品" autocomplete="off"><button type="button" data-search><svg class="ic ic-sm"><use href="#i-search"/></svg>搜索</button></div>
+  <div class="hicons"><button class="hic" type="button" data-toast="收藏夹（示例）"><svg class="ic"><use href="#i-heart"/></svg><span class="t">收藏</span></button><button class="hic" type="button" data-go="cart" id="cartic" aria-label="购物车"><svg class="ic"><use href="#i-cart"/></svg><span class="t">购物车</span><span class="badge" id="cartn"></span></button><button class="hic" type="button" id="acct" data-acct><svg class="ic"><use href="#i-user"/></svg><span class="t" id="acctn">陈示例</span></button></div>
+</div></header>
+<nav class="catnav" aria-label="商品分类"><div class="wrap" id="catnav"></div></nav>
+<main class="pgw"><div class="wrap" id="page"></div></main>
+<footer class="foot"><div class="wrap"><span><b>正品保障</b> 品牌直供</span><span><b>新鲜烘焙</b> 下单后 72 小时内烘焙发货</span><span><b>7 天无理由</b> 咖啡豆拆封除外</span><span><b>客服</b> 工作日 9:00–21:00</span><span>示例站 · 不接受真实订单</span></div></footer>
+<div class="drawer" id="dw" aria-labelledby="dw-t"></div>
 
-:root{--accent:#245953;--accent-soft:color-mix(in srgb,var(--accent) 10%,white);--paper:#f4f3ee;--editorial:#183d38;--space:24px;--cover-a:#dbe6df;--cover-b:#e8d9bf;--chart-height:150px}
-body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32px 32px 180px}.mast{display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:24px}.mast .sp{flex:1}.mast strong{font-size:20px}.edition{font-family:var(--font-mono);color:var(--accent);font-size:12px;letter-spacing:2px}.hero .edition{color:rgba(255,255,255,.78)}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.nav .on{background:var(--accent);color:var(--accent-ink)}.hero{padding:32px;background:var(--editorial);color:var(--accent-ink);border-radius:var(--r-lg);margin-bottom:24px}.hero h1{font-size:32px;margin:8px 0}.hero p{opacity:.9;max-width:650px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.two{display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:24px}.card{padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);min-width:0}.card h2{font-size:20px;margin:0 0 16px}.card h3{font-size:16px;margin:8px 0}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}.toolbar input{flex:1;min-width:140px}.field{display:grid;gap:8px;margin:16px 0}.field input,.field textarea,.field select,.toolbar input,.toolbar select{padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);max-width:100%}.field textarea{min-height:100px}.stat{font-size:32px;font-family:var(--font-mono);font-weight:600;margin:12px 0}.row{padding:16px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}.row .grow{flex:1;min-width:0}.caption{color:var(--ink-500);font-size:13px}.notice{padding:14px 18px;background:var(--accent-soft);border-left:3px solid var(--accent);margin:16px 0}.error{color:var(--danger);min-height:20px}.empty-box{text-align:center;padding:64px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}.empty-box h2{margin:16px}.loading-grid{display:grid;gap:20px}.loading-grid .sk{height:100px}.scroll-table{overflow:auto}.cover-art{height:160px;border-radius:var(--r-sm);background:var(--cover-a);display:flex;align-items:center;justify-content:center;font-size:36px;font-family:serif;color:var(--editorial);margin-bottom:16px}.card:nth-child(even) .cover-art{background:var(--cover-b)}.chart{display:flex;gap:14px;align-items:end;height:var(--chart-height);margin:24px 0}.bar{flex:1;background:var(--accent);min-width:24px;border:0;border-radius:var(--r-sm) var(--r-sm) 0 0;color:var(--accent-ink);cursor:pointer}.reading{font-family:serif;font-size:var(--reader-size,20px);line-height:2.1;max-width:680px;margin:auto}.reading.night{background:var(--ink-900);color:var(--surface);padding:24px;border-radius:var(--r-md)}.steps{display:flex;gap:16px;padding:16px 0;flex-wrap:wrap}.steps span{padding:8px 14px;background:var(--surface);border-radius:var(--r-full)}.steps .active{background:var(--accent);color:var(--accent-ink)}.meter{width:100%;accent-color:var(--accent)}.mobile .workspace{width:min(100%,430px);background:var(--bg);padding:24px 20px 180px;min-height:844px;border:1px solid var(--line);border-radius:var(--r-lg);margin:24px auto}.mobile .grid,.mobile .two{grid-template-columns:1fr}.mobile .hero{padding:24px}.mobile .hero h1{font-size:26px}.mobile button,.mobile input,.mobile select{min-height:44px}.mobile .chart{overflow:auto}.question{padding:20px;border:1px solid var(--line);border-radius:var(--r-md);margin:16px 0}.question label{display:block;padding:12px}.score{font:600 64px var(--font-mono);color:var(--accent)}button:disabled{cursor:not-allowed}input[type=checkbox],input[type=radio]{accent-color:var(--accent)}@media(max-width:800px){.workspace{padding:20px 16px 180px}.grid,.two{grid-template-columns:1fr}.hero h1{font-size:26px}.mast{flex-wrap:wrap}.table{min-width:560px}}
+<script>
+/* ==========================================================================
+   ① 改数据只改这里（示例数据，全部虚构）
+   ========================================================================== */
+const DATA = {
+  cats: ['全部', '咖啡豆', '器具', '杯具', '耗材', '即饮'],
+  // 商品：id, 名称, 分类, 品牌, 卖点, 价格, 原价, 已售, 评分, 评价数, 标签, 插画类型, 主色, 库存（0 = 售罄）
+  goods: [
+    ['p1', '埃塞俄比亚 耶加雪菲 G1 水洗 · 浅烘 250g', '咖啡豆', '山谷示例', '柑橘、茉莉花香，酸质明亮', 89, 108, 3412, 4.9, 1206, ['满199减20'], 'bag', '#D9E6C8', 118],
+    ['p2', '云南保山 小粒咖啡 · 中烘 250g', '咖啡豆', '山谷示例', '坚果、红糖，口感圆润', 58, 72, 5870, 4.8, 2310, ['满199减20', '回购最多'], 'bag', '#F0D9B5', 260],
+    ['p3', '哥伦比亚 慧兰 · 中深烘 250g', '咖啡豆', '远山示例', '可可、焦糖，适合加奶', 76, 0, 1980, 4.7, 655, ['满199减20'], 'bag', '#E9C8B8', 74],
+    ['p4', '意式拼配「午后」· 深烘 1kg', '咖啡豆', '远山示例', '黑巧、烤坚果，意式机专用', 168, 198, 2604, 4.8, 980, ['仅剩 12 件'], 'bag', '#CDB8A6', 12],
+    ['p5', 'V60 款陶瓷滤杯 02 号 · 釉白', '器具', '器物示例', '有田烧陶瓷，1～4 杯', 129, 0, 864, 4.9, 312, ['新品'], 'dripper', '#E3E7EC', 46],
+    ['p6', '手冲细口壶 600ml · 可温控 ±1℃', '器具', '器物示例', '保温 60 分钟，鹅颈出水稳', 459, 529, 412, 4.8, 207, ['满399减50'], 'kettle', '#DCE3E0', 23],
+    ['p7', '手摇磨豆机 · 不锈钢锥刀 38mm', '器具', '研示例', '30 档刻度，手冲到意式', 329, 0, 1133, 4.7, 486, [], 'grinder', '#E5DDD3', 58],
+    ['p8', '手冲电子秤 · 带计时 0.1g', '器具', '研示例', 'USB 充电，自动计时', 139, 159, 2058, 4.6, 903, [], 'scale', '#E1E1E6', 140],
+    ['p9', '耐热玻璃分享壶 400ml', '器具', '器物示例', '高硼硅玻璃，刻度 100/200/300', 69, 0, 1507, 4.8, 588, [], 'server', '#DDE8EE', 95],
+    ['p10', '双层隔热玻璃杯 250ml · 2 只装', '杯具', '器物示例', '不烫手、不起雾', 99, 118, 3320, 4.7, 1402, ['满199减20'], 'cup', '#EFE6DA', 210],
+    ['p11', '无漂白 V 形滤纸 02 号 · 100 张', '耗材', '山谷示例', '原木浆，无纸味', 25, 0, 9870, 4.9, 4120, ['回购最多'], 'filter', '#EFE3CF', 900],
+    ['p12', '冷萃咖啡液 · 无糖 12 瓶装', '即饮', '远山示例', '0 添加，冷藏 30 天', 118, 138, 4211, 4.6, 1520, [], 'bottle', '#D4C2B4', 0]
+  ],
+  // 耶加雪菲的规格与库存：规格 × 研磨
+  sku: { size: [['250g', 89, 108], ['500g', 168, 198], ['1kg', 318, 368]], grind: ['咖啡豆（不研磨）', '手冲中细', '意式细粉'],
+    stock: { '250g|咖啡豆（不研磨）': 86, '250g|手冲中细': 23, '250g|意式细粉': 0, '500g|咖啡豆（不研磨）': 41, '500g|手冲中细': 0, '500g|意式细粉': 5, '1kg|咖啡豆（不研磨）': 9, '1kg|手冲中细': 0, '1kg|意式细粉': 0 }, limit: 5 },
+  addrs: [['陈示例', '138****5521', '示例市滨江区 江南大道 588 号 3 幢 1201', '11-13（周四）', 0], ['陈示例', '138****5521', '示例市西湖区 文三路 90 号 示例大厦 15 楼（公司）', '11-13（周四）', 0], ['陈晓示例', '139****0372', '远方示例市 沙依巴克区 友好路 12 号', '11-18（周二）', 12]],
+  reviews: [
+    ['周示例', 5, '11-09', '250g · 手冲中细', '柑橘味很明显，92℃ 1:15 冲出来像喝茶，回购第三次了。烘焙日期 11-05，收到 11-08，很新鲜。', '', 1],
+    ['林示例', 5, '11-08', '500g · 咖啡豆', '豆子大小很均匀，挑不出瑕疵豆。浅烘对新手可能偏酸，建议水温高一点。', '谢谢建议～浅烘豆 93～94℃ 会更甜。', 0],
+    ['韩示例', 4, '11-06', '250g · 咖啡豆', '香气好，但包装的单向阀有点漏气，第二周香味弱了一些。', '已为您补发一个密封罐，请留意物流。', 1],
+    ['许示例', 5, '11-05', '250g · 手冲中细', '磨好的粉一周内喝完没问题，懒人友好。', '', 0],
+    ['谢示例', 3, '11-02', '1kg · 咖啡豆', '1kg 太多了，后面一个月风味掉得明显，建议买 250g。', '感谢反馈，详情页已补充「1kg 建议多人分享」。', 0],
+    ['钱示例', 5, '10-30', '250g · 咖啡豆', '做冰手冲很好喝，花香在冰的时候更突出。', '', 1],
+    ['孙示例', 2, '10-27', '500g · 意式细粉', '意式细粉对我的机器还是偏粗，萃取 18 秒就流完了。', '意式粉建议按您的机器选「咖啡豆」自己磨，我们已联系您退换。', 0],
+    ['吴示例', 5, '10-25', '250g · 咖啡豆', '送朋友的，包装很好看，附了冲煮卡片。', '', 1]
+  ],
+  // 购物车：商品 id、规格、数量、加入时价格、是否勾选
+  cart: [['p1', '250g · 手冲中细', 2, 99, 1], ['p5', '釉白', 1, 129, 1], ['p11', '02 号 · 100 张', 3, 25, 1], ['p8', '黑色', 1, 139, 0]],
+  dead: [['p12', '12 瓶装', '已售罄，预计 11-20 到货'], ['p4', '1kg', '商品已下架']],
+  cut: [[399, 50], [199, 20]],     // 满减：满 N 减 M（取最高一档）
+  coupons: [['新人券', 15, 100, '全场'], ['器具券', 30, 300, '器具']],
+  freeShip: 99, ship: 8
+};
 
-</style></head><body class="desktop"><main class="workspace"><header class="mast"><div><div class="edition">PROTOTYPE / 示例</div><strong>PC 商城与购物车</strong></div><span class="sp"></span><span class="caption">积木盒 · 可点击原型</span></header><nav id="nav" class="nav" aria-label="页面导航"></nav><div id="content"></div></main><script>
+/* ==========================================================================
+   ①-2 AI 提示词（页面顶部「AI 提示词」可一键复制；{{变量}} 点一下就能填）
+   ========================================================================== */
+const PROMPTS = [
+ { title: '从零生成这个原型', when: '要做 PC 端独立商城（品牌官网商城、垂直品类店），想把列表、详情规格、购物车算价一次定下来时用',
+   text: `请帮我做一个可点击的 PC 商城原型（1440 宽，500 宽不横滚）：精品咖啡豆与器具商城，12 个商品。
+
+1. 顶部：Logo、搜索框（输入框和「搜索」按钮在同一行连成一体，聚焦时下拉显示历史搜索和热搜，输入时联想商品名）、收藏、购物车（数量角标）、账户；下面一行分类导航；
+2. 列表：左侧筛选（分类、品牌、价格区间、只看有货），已选条件显示成可删除的标签；排序 综合 / 销量 / 价格升降 / 新品；商品卡：图、名称两行截断、卖点、价格 + 划线原价、已售、评分、促销标签（满减 / 新品 / 仅剩 N 件）；售罄卡片蒙层「已售罄」且快捷加购置灰；没有结果给建议；
+3. 详情：大图 + 缩略图；价格区（会员价、满减说明）；规格「重量 × 研磨」联动库存：某组合无货时该按钮虚线置灰并在悬停写「暂时无货」，所有组合都无货时整款显示「到货提醒」；数量步进器上限 = min(库存, 限购 5)，超过时写原因；配送地址下拉换算预计送达日和运费（偏远地区 +¥12）；Tab：详情（产地故事 + 风味雷达条）/ 规格参数 / 评价（按 全部 / 有图 / 好评 / 中差评 筛选，商家回复）/ 售后；
+4. 购物车：勾选（全选只作用有效商品）、改规格、步进器、加入后降价提示「比加入时降 ¥10」、超过库存提示；失效商品分组（售罄 / 下架）可一键清空；满减进度「再买 ¥17 可减 50」；优惠券自动选最优、不满足门槛的写差多少；右侧合计 = 商品金额 − 满减 − 优惠券 + 运费（满 99 包邮），未勾选时结算置灰；
+5. 结算：选地址、配送方式（标准 / 次日达 +¥12 / 门店自提）、发票（个人 / 单位，单位校验税号 15～20 位）、支付方式、备注 ≤50 字；提交后显示订单号和「请在 14:50 前支付」（写截止时间，不做跳秒倒计时）。
+
+状态（原型面板可切换）：列表 正常 / 搜索无结果 / 加载 / 出错；详情 正常 / 整款售罄 / 加载 / 出错；购物车 正常 / 空 / 未登录（登录后合并）/ 加载 / 出错；结算 正常 / 提交中 / 库存变化 / 下单成功。
+商品图不要用占位字或灰块，用内联 SVG 画出每种商品的轮廓（豆袋、滤杯、手冲壶、磨豆机…）。
+硬性要求：单文件 HTML，不引用外部网址，双击离线可开；金额全部由数据算出；颜色写成 :root 变量；数据集中在脚本顶部 DATA。
+交付：① 完整 HTML；② 购物车算价规则表（满减、券、运费的先后顺序和示例）；③ 状态清单。` },
+ { title: '改成我的业务', when: '手上有这个模板，要换成服装、母婴、数码、生鲜等自己的品类时用',
+   text: `附件是一个单文件 HTML 的 PC 商城原型。请改成「{{店铺和品类，例如：童装品牌官方商城}}」。
+
+1. 只改脚本顶部 DATA 和文案，不动 KIT 标记之间的共用样式和脚本；保留搜索联想、筛选标签、规格联动库存、购物车算价、失效商品、结算校验；
+2. 分类：{{分类，例如：上衣、裤装、外套、鞋袜、配饰}}；12 个商品每个名称、价格、销量、评分都不同；
+3. 规格维度：{{例如：颜色 × 尺码（90 / 100 / 110 / 120）}}，写一张库存表，故意留 2～3 个无货组合；限购：{{规则}}；
+4. 促销规则：{{例如：满 299 减 30、满 599 减 80；新人券 20（满 150）}}，按「先满减、后用券、最后算运费」计算；运费：{{例如：满 99 包邮，否则 ¥10}}；
+5. 商品图：用内联 SVG 画 {{品类}} 的轮廓插画，每种商品形状不同、底色不同；
+6. 示例数据标「示例」，不出现真实品牌名。
+交付：改好的完整 HTML + 算价规则表。` },
+ { title: '在此基础上加页面 / 状态', when: '评审追问「订阅怎么做」「能不能对比」「库存紧张怎么提示」时用',
+   text: `附件是一个单文件 HTML 的 PC 商城原型。请在它的基础上加：{{要加的页面或状态}}。
+
+常见例子（选一个或照着写）：
+- 「周期购」：详情页可选「每 2 周 / 每月送一次」，订阅价 9 折，购物车里周期购单独一组，结算页写清首次和后续扣款日期；
+- 「商品对比」：列表卡片勾「对比」（最多 4 个），底部浮条，进对比页按参数逐行对比、相同项可隐藏；
+- 「库存紧张」：库存 ≤5 时详情和购物车写「仅剩 N 件」，结算时被别人买走则弹出「XX 只剩 1 件，已帮你改为 1」；
+- 「会员价」：登录且为会员时价格区显示会员价和省多少，未登录显示「登录看会员价」。
+
+要求：新页面或状态加进「原型面板」；金额全部由数据算出，与购物车合计对得上；沿用现有 CSS 变量和组件样式，只改必要的地方。
+交付：完整 HTML + 新增部分的「元素 | 交互 | 反馈」说明表。` }
+];
+
+/* ==========================================================================
+   ② 下面是交互逻辑，一般不用改
+   ========================================================================== */
 /*@KIT_JS*/
 /* ==========================================================================
    原型工具包（不用改）：图标、页面/状态切换、弹层、Toast
@@ -610,44 +934,302 @@ body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32p
   P.stateBlock=function(o){return '<div class="state '+(o.error?'is-error':'')+'"><div class="state-ic">'+P.ic(o.icon||(o.error?'alert':'inbox'))+'</div><h3>'+P.esc(o.title)+'</h3>'+(o.body?'<p>'+P.esc(o.body)+'</p>':'')+(o.acts?'<div class="acts">'+o.acts+'</div>':'')+'</div>'};
 })();
 /*@END_KIT_JS*/
-</script><script>
-// 示例业务数据：仅本次会话修改，刷新恢复；在这里替换字段和数据。
-const DATA={"products": [{"id": "P01", "name": "示例桌面收纳盒", "category": "桌面", "price": 89, "stock": 5, "mark": "收纳", "desc": "模块化分区，让常用物品各得其所。"}, {"id": "P02", "name": "示例随行水杯", "category": "出行", "price": 129, "stock": 3, "mark": "随行", "desc": "简洁杯身，适合日常通勤。"}, {"id": "P03", "name": "示例阅读台灯", "category": "桌面", "price": 199, "stock": 0, "mark": "阅读", "desc": "柔和光线，安放一段阅读时光。"}], "cart": {}, "orders": []};
-const PAGES=[{"id": "home", "name": "商城首页", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}, {"id": "list", "name": "商品列表", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}, {"id": "detail", "name": "商品详情", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}, {"id": "cart", "name": "购物车", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}, {"id": "submitting", "name": "结算中"}, {"id": "success", "name": "订单成功"}, {"id": "failed", "name": "结算失败"}]}];
-const PROMPTS=[{"title": "从零生成这个原型", "when": "要从需求开始搭建可演示的页面时用", "text": "请用单文件 HTML 创建「PC 商城与购物车」可点击原型。用途：适合 PC 商城首页、商品检索、商品详情、购物车和创建订单链路评审。包含页面：商城首页、商品列表、商品详情、购物车。业务交互：关键词分类及价格排序，真实过滤示例数据，无结果有清除入口；填写数量加入购物车，校验正整数及累加库存上限；改数量或确认移除，小计与总计联动，移除有二次确认；创建示例订单，提交中后扣库存、生成订单、清空购物车。每个主页面提供正常、空、骨架加载、出错和重试，表单提供校验、提交中、成功、失败。数据集中在 DATA；样式使用 CSS 变量；图标内联 SVG；示例数据标示例。不使用外部依赖，离线双击可开。顶部提供免费下载说明，右下角原型面板支持 URL 直达和 H 隐藏，弹窗支持 Esc 和焦点归还。交付 HTML、README 和交互说明表。"}, {"title": "改成我的业务", "when": "点击高亮变量填写，然后一键复制", "text": "附件是「PC 商城与购物车」HTML 原型，请改成我的业务：产品名称为「{{产品名称}}」，目标用户「{{目标用户}}」，字段和示例数据「{{字段与示例数据}}」，业务规则「{{业务规则}}」。保留 商城首页、商品列表、商品详情、购物车 的完整链路与所有空、加载、出错状态。修改 DATA 和模板变量，不改共用 KIT 标记内代码。所有金额、数量、状态随操作联动；不能执行的操作写原因。交付可离线打开的完整 HTML 和更新后的交互表。"}, {"title": "加页面或状态", "when": "需要扩展当前链路时用", "text": "请在「PC 商城与购物车」中增加「{{新增页面或状态}}」，入口为「{{入口位置}}」，成功结果为「{{成功反馈}}」，失败恢复方式为「{{失败恢复方式}}」。沿用当前 CSS 变量、DATA 与 Proto 页面面板；保留已有流程。为新增列表补正常、空、加载、出错；为新增表单补校验、提交中、成功、失败。离开页面应取消定时回调。更新 README 的状态表和交互表，保持单文件离线可用。"}];
 
-const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s)), e=Proto.esc;
-const btn=(label,action,primary=false,disabled=false)=>`<button type="button" class="btn ${primary?'btn-primary':''}" data-act="${action}" ${disabled?'disabled':''}>${label}</button>`;
-const field=(label,id,value='',type='text')=>`<label class="field">${label}<input id="${id}" type="${type}" value="${e(String(value))}"></label>`;
-const card=(title,body)=>`<section class="card"><h2>${title}</h2>${body}</section>`;
-const money=n=>Proto.money(n);
-const notice=t=>`<div class="notice" role="status">${t}</div>`;
-function download(name,text,type='text/plain'){const a=document.createElement('a'),u=URL.createObjectURL(new Blob(['\ufeff',text],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function modal(title,body){const m=document.createElement('div');m.className='modal';m.dataset.temp='1';m.setAttribute('aria-label',title);m.innerHTML=`<div class="layer-hd"><h2>${title}</h2></div><div class="layer-bd">${body}</div><div class="layer-ft"><button class="btn" data-close>关闭</button></div>`;Proto.open(m);m.querySelector('[data-close]').onclick=()=>Proto.close(m);return m}
-let timer=null, epoch=0;
-function go(page,state='normal'){Proto.go(page,state)}
-function later(fn,ms=500){clearTimeout(timer);const v=epoch;timer=setTimeout(()=>{if(v===epoch)fn()},ms)}
-function refresh(){render(Proto.state.page,Proto.state.state)}
-function fallback(page,state){if(state==='loading')return '<div class="loading-grid" aria-busy="true" aria-label="加载中"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>';
-if(state==='error')return `<div class="empty-box">${Proto.ic('alert')}<h2>暂时无法加载</h2><p>示例服务响应超时，本次修改仍保留。</p>${btn('重试','retry',true)}</div>`;
-if(state==='empty')return `<div class="empty-box">${Proto.ic('inbox')}<h2>这里还没有内容</h2><p>可以载入示例数据，继续演示完整流程。</p>${btn('载入示例','example',true)}</div>`;return null}
-function render(page,state){epoch++;clearTimeout(timer);$$('.modal.show').forEach(m=>Proto.close(m));$('#nav').innerHTML=PAGES.map(p=>`<button class="btn ${p.id===page?'on':''}" data-page="${p.id}">${p.name}</button>`).join('');$('#content').innerHTML=fallback(page,state)||view(page,state);if(typeof mount==='function')mount(page,state)}
-document.addEventListener('click',ev=>{const p=ev.target.closest('[data-page]');if(p){go(p.dataset.page);return}const b=ev.target.closest('[data-act]');if(!b||b.disabled)return;const a=b.dataset.act;if(a==='retry'){const page=Proto.state.page;go(page,'loading');later(()=>go(page));return}if(a==='example'){go(Proto.state.page);return}action(a,b)});
+const P = Proto, { $, $$, ic, esc, toast } = Proto;
+const PG = $('#page'), dw = $('#dw');
+const G = id => DATA.goods.find(g => g[0] === id);
+const yuan = (n, big) => `<span class="price">${big === false ? '' : '<small>¥</small>'}${Number(n).toFixed(2).replace(/\.00$/, '')}</span>`;
+const m2 = n => '¥' + Number(n).toFixed(2);
+let L, D, C, CO, carry = false;
+function fresh() {
+  L = { cat: '全部', brand: new Set(), min: '', max: '', stock: false, sort: 'mix', q: '', page: 1, fopen: false };
+  D = { size: '250g', grind: '手冲中细', qty: 1, img: 0, tab: 'story', rf: 'all', addr: 0, notify: false, soldout: false };
+  C = { items: DATA.cart.map(c => ({ id: c[0], spec: c[1], n: c[2], was: c[3], on: !!c[4] })), dead: DATA.dead.map(x => x.slice()), coupon: 'auto', login: true };
+  CO = { addr: 0, ship: 'std', inv: 'none', title: '个人', taxno: '', company: '', pay: 'wx', note: '', tried: false, done: null, stockChg: false };
+}
 
+/* ---------------- 商品插画（内联 SVG） ---------------- */
+function art(kind, bg, label, variant) {
+  const ink = '#3B2516', s = `<svg viewBox="0 0 200 200" role="img" aria-label="${esc(label)}"><rect width="200" height="200" fill="${bg}"/><ellipse cx="100" cy="168" rx="62" ry="8" fill="rgba(59,37,22,.10)"/>`;
+  const v = variant || 0;
+  const code = /埃塞/.test(label) ? ['ETHIOPIA', 'G1 · WASHED'] : /云南/.test(label) ? ['YUNNAN', 'MEDIUM'] : /哥伦比亚/.test(label) ? ['COLOMBIA', 'HUILA'] : /意式/.test(label) ? ['ESPRESSO', 'BLEND · 1KG'] : ['SINGLE', 'ORIGIN'];
+  const dark = /意式/.test(label) ? 1 : 0;
+  const K = {
+    bag: `<path d="M58 52h84l8 112H50z" fill="${['#F7EFE3', '#2E211A', '#F7EFE3'][(v + dark) % 3]}" stroke="${ink}" stroke-width="2"/><path d="M58 52l8-14h68l8 14" fill="#E8DCCB" stroke="${ink}" stroke-width="2"/><rect x="70" y="86" width="60" height="50" rx="4" fill="${bg}" stroke="${ink}" stroke-width="1.5"/><text x="100" y="106" text-anchor="middle" font-size="${code[0].length > 7 ? 9.5 : 11}" font-weight="700" fill="${ink}" font-family="sans-serif">${code[0]}</text><text x="100" y="122" text-anchor="middle" font-size="${code[1].length > 8 ? 7.5 : 9}" fill="${ink}" font-family="sans-serif">${code[1]}</text><circle cx="100" cy="70" r="6" fill="none" stroke="${(v + dark) % 3 === 1 ? '#E8DCCB' : ink}" stroke-width="1.5"/>`,
+    dripper: `<path d="M56 70h88l-26 52H82z" fill="#FBFBFA" stroke="${ink}" stroke-width="2"/><path d="M68 78l14 36M100 78v38M132 78l-14 36" stroke="#D5D8DC" stroke-width="2"/><rect x="74" y="122" width="52" height="10" rx="3" fill="#FBFBFA" stroke="${ink}" stroke-width="2"/><path d="M144 76c14 0 14 22 0 22" fill="none" stroke="${ink}" stroke-width="2"/><rect x="66" y="132" width="68" height="8" rx="4" fill="#E4E6E9" stroke="${ink}" stroke-width="1.5"/>`,
+    kettle: `<path d="M62 92h68v58a8 8 0 0 1-8 8H70a8 8 0 0 1-8-8z" fill="#2F3A3C" stroke="${ink}" stroke-width="2"/><rect x="70" y="80" width="52" height="12" rx="4" fill="#3E4A4D" stroke="${ink}" stroke-width="2"/><circle cx="96" cy="74" r="6" fill="#B08A5B"/><path d="M62 104c-26 4-30 30-36 44 6-2 8-6 10-8" fill="none" stroke="#2F3A3C" stroke-width="6" stroke-linecap="round"/><path d="M130 98c20 0 22 40 0 44" fill="none" stroke="#B08A5B" stroke-width="7" stroke-linecap="round"/><rect x="58" y="158" width="76" height="8" rx="4" fill="#1E2526"/>`,
+    grinder: `<rect x="74" y="78" width="52" height="82" rx="8" fill="#C9CDD1" stroke="${ink}" stroke-width="2"/><rect x="74" y="118" width="52" height="8" fill="#9EA4AA"/><path d="M100 78V52h40" fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round"/><circle cx="146" cy="52" r="9" fill="#8B5E3C" stroke="${ink}" stroke-width="2"/><rect x="82" y="66" width="36" height="12" rx="3" fill="#B7BCC1" stroke="${ink}" stroke-width="1.5"/>`,
+    scale: `<rect x="46" y="112" width="108" height="40" rx="8" fill="#26282C" stroke="${ink}" stroke-width="2"/><rect x="54" y="104" width="92" height="10" rx="4" fill="#3A3D42"/><rect x="62" y="124" width="44" height="18" rx="3" fill="#9FE3C1"/><text x="84" y="138" text-anchor="middle" font-size="12" font-family="monospace" fill="#18382A">15.0</text><text x="128" y="138" text-anchor="middle" font-size="10" font-family="monospace" fill="#C9CCD4">0:00</text>`,
+    server: `<path d="M70 70h60l-6 84a8 8 0 0 1-8 7H84a8 8 0 0 1-8-7z" fill="rgba(255,255,255,.55)" stroke="${ink}" stroke-width="2"/><path d="M75 118h50l-3 36a6 6 0 0 1-6 5H84a6 6 0 0 1-6-5z" fill="#6B3A1E"/><path d="M130 82c18 2 18 34 0 38" fill="none" stroke="${ink}" stroke-width="2.5"/><path d="M70 70l-8-6" stroke="${ink}" stroke-width="2"/><path d="M84 96h10M84 108h10" stroke="${ink}" stroke-width="1.5"/>`,
+    cup: `<path d="M56 78h40l-4 72H60z" fill="rgba(255,255,255,.6)" stroke="${ink}" stroke-width="2"/><path d="M62 104h28l-2 40H64z" fill="#8A4F2A"/><path d="M106 86h40l-4 66h-32z" fill="rgba(255,255,255,.6)" stroke="${ink}" stroke-width="2"/><path d="M111 112h30l-2 34h-26z" fill="#C79A6B"/>`,
+    filter: `<path d="M48 66h70l-22 70H70z" fill="#F5EBDD" stroke="${ink}" stroke-width="1.5" transform="rotate(-8 83 100)"/><path d="M70 70h70l-22 70H92z" fill="#F1E2CC" stroke="${ink}" stroke-width="1.5"/><path d="M92 74h70l-22 70h-26z" fill="#FBF4EA" stroke="${ink}" stroke-width="1.5" transform="rotate(8 127 108)"/>`,
+    bottle: [0, 1, 2].map(i => `<g transform="translate(${54 + i * 32} 0)"><rect x="0" y="80" width="26" height="78" rx="6" fill="#2A1A12" stroke="${ink}" stroke-width="1.5"/><rect x="6" y="68" width="14" height="14" rx="2" fill="#D9C6B2" stroke="${ink}" stroke-width="1.5"/><rect x="3" y="104" width="20" height="28" rx="2" fill="#EDE1D3"/></g>`).join('')
+  };
+  return s + K[kind] + '</svg>';
+}
+const pimg = (g, v) => `<span class="pimg">${art(g[11], g[12], g[1], v)}</span>`;
 
-let selected='P01',query='',category='全部',sort='默认',qty=1,lastOrder=null;
-const product=()=>DATA.products.find(x=>x.id===selected)||DATA.products[0];
-const cartRows=()=>DATA.products.filter(x=>DATA.cart[x.id]);
-const total=()=>cartRows().reduce((s,p)=>s+p.price*DATA.cart[p.id],0);
-function tiles(list){return list.map(p=>card(e(p.name),`<div class="cover-art" aria-hidden="true">${p.mark}</div><p>${e(p.desc)}</p><div class="toolbar"><b>¥${p.price}</b><span class="caption">${p.stock?'有货':'暂时缺货'}</span></div>${btn('查看商品','product:'+p.id,true)}`)).join('')}
-function view(p,s){if(p==='home')return `<section class="hero"><div class="edition">EVERYDAY OBJECTS / 示例商城</div><h1>留一点空间，给日常</h1><p>精选桌面与出行用品。原创示例商品，仅作原型评审。</p>${btn('浏览全部商品','list',true)}</section><div class="grid">${tiles(DATA.products)}</div>`;
-if(p==='list'){let list=DATA.products.filter(x=>x.name.includes(query)&&(category==='全部'||x.category===category));if(sort==='价格从低到高')list.sort((a,b)=>a.price-b.price);return `<div class="toolbar"><input id="query" aria-label="商品搜索" placeholder="搜索商品名称" value="${e(query)}"><select id="category" aria-label="分类">${['全部','桌面','出行'].map(x=>`<option ${category===x?'selected':''}>${x}</option>`).join('')}</select><select id="sort" aria-label="排序">${['默认','价格从低到高'].map(x=>`<option ${sort===x?'selected':''}>${x}</option>`).join('')}</select>${btn('筛选','search',true)}${btn('重置','reset')}</div><p>共 ${list.length} 件示例商品</p>${list.length?`<div class="grid">${tiles(list)}</div>`:card('没有找到商品','<p>尝试清空关键词或换个分类。</p>'+btn('清除筛选','reset',true))}`}
-if(p==='detail'){const x=product();return `<div class="two"><section class="card"><div class="cover-art" style="height:320px">${x.mark}</div></section>${card(e(x.name),`<p>${e(x.desc)}</p><div class="stat">¥${x.price}</div><p>库存 ${x.stock} 件</p>${field('购买数量','quantity',qty,'number')}<p id="cart-error" class="error" role="alert"></p>${btn(x.stock?'加入购物车':'缺货暂不可买','add',true,!x.stock)}${btn('查看购物车','cart')}`)}</div>`}
-if(s==='submitting')return card('正在结算','<div class="sk" style="height:30px"></div><p>正在创建示例订单。</p>');if(s==='failed')return card('结算失败',notice('示例服务超时，购物车未清空。')+btn('回购物车重试','cart',true));if(s==='success')return card('示例订单已创建',`<p>订单号 ${lastOrder?lastOrder.id:'DEMO-ORDER-PREVIEW'}</p><div class="stat">¥${money(lastOrder?lastOrder.amount:89)}</div><p>本原型无真实支付与配送。</p>${btn('继续购物','list',true)}`);
-const list=cartRows();return card('购物车',list.length?`${list.map(x=>`<div class="row"><div class="grow"><b>${e(x.name)}</b><p>单价 ¥${x.price} / 库存 ${x.stock}</p></div><label>数量 <input style="width:70px" type="number" min="1" max="${x.stock}" data-quantity="${x.id}" value="${DATA.cart[x.id]}" aria-label="${e(x.name)}数量"></label><b>¥${money(x.price*DATA.cart[x.id])}</b>${btn('移除','remove:'+x.id)}</div>`).join('')}<div class="toolbar"><b>合计 ¥${money(total())}</b>${btn('创建示例订单','checkout',true)}</div><p id="checkout-error" class="error" role="alert"></p>`:notice('购物车还是空的，先去挑选示例商品。')+btn('去逛逛','list',true))}
-function mount(p,s){if(p==='list'&&s==='normal'){$('#category').onchange=ev=>{category=ev.target.value;query=$('#query').value.trim();refresh()};$('#sort').onchange=ev=>{sort=ev.target.value;refresh()}}$$('[data-quantity]').forEach(el=>el.onchange=()=>{const x=DATA.products.find(x=>x.id===el.dataset.quantity),n=+el.value;if(!Number.isInteger(n)||n<1||n>x.stock){el.value=DATA.cart[x.id];Proto.toast('数量须在 1 到库存之间','err');return}DATA.cart[x.id]=n;refresh()})}
-async function action(a){const [k,id]=a.split(':');if(k==='product'){selected=id;qty=1;go('detail')}if(a==='list')go('list');if(a==='search'){query=$('#query').value.trim();refresh()}if(a==='reset'){query='';category='全部';sort='默认';refresh()}if(a==='add'){const x=product(),n=+$('#quantity').value;if(!Number.isInteger(n)||n<1||n+(DATA.cart[x.id]||0)>x.stock){$('#cart-error').textContent='请输入正整数，购物车总数不能超过库存';return}DATA.cart[x.id]=(DATA.cart[x.id]||0)+n;Proto.toast('已加入购物车','ok')}if(a==='cart')go('cart');if(k==='remove'){if(await Proto.confirm({title:'移除商品',body:'从购物车移除此示例商品？'})){delete DATA.cart[id];refresh()}}if(a==='checkout'){if(!cartRows().length)return;if(cartRows().some(x=>DATA.cart[x.id]>x.stock)){$('#checkout-error').textContent='部分商品库存不足';return}const amount=total(),items=cartRows().map(x=>({id:x.id,qty:DATA.cart[x.id]}));go('cart','submitting');later(()=>{items.forEach(x=>DATA.products.find(p=>p.id===x.id).stock-=x.qty);lastOrder={id:'DEMO-ORDER-'+(DATA.orders.length+1),amount,items};DATA.orders.push(lastOrder);DATA.cart={};go('cart','success')},650)}}
-window.round2Test=async({ok,act,input,wait})=>{go('list');input('#query','不存在');act('search');ok($('#content').textContent.includes('没有找到商品'),'真实搜索无结果');act('reset');act('product:P01');input('#quantity','6');act('add');ok($('#cart-error').textContent.includes('库存'),'超库存阻断');input('#quantity','2');act('add');act('cart');ok($('#content').textContent.includes('178.00'),'购物车金额联动');input('[data-quantity="P01"]','3','change');ok(total()===267,'购物车修改数量');act('checkout');await wait(700);ok(lastOrder.amount===267&&DATA.products[0].stock===2,'结算金额与库存更新');ok(!Object.keys(DATA.cart).length,'成功清空购物车')};
+/* ---------------- 顶部 ---------------- */
+function chrome(cur) {
+  $('#catnav').innerHTML = DATA.cats.map(c => `<button type="button" data-cat="${c}" aria-current="${cur === 'list' && L.cat === c && !L.q}">${c}</button>`).join('') + `<button class="promo" type="button" data-toast="双 11 活动页（示例）：咖啡豆满 199 减 20">双 11 · 满 199 减 20</button>`;
+  const n = C.login ? C.items.reduce((s, x) => s + x.n, 0) : 0;
+  $('#cartn').textContent = n; $('#cartn').hidden = !n; $('#cartic').setAttribute('aria-label', `购物车，${n} 件`);
+  $('#acctn').textContent = C.login ? '陈示例' : '登录';
+}
+function crumb(arr) { return `<nav class="crumb3" aria-label="面包屑"><button type="button" data-go="list">首页</button>${arr.map((x, i) => ic('chev-r') + (i === arr.length - 1 ? `<b>${esc(x[0])}</b>` : `<button type="button" ${x[1]}>${esc(x[0])}</button>`)).join('')}</nav>`; }
+function errBox(t, b, pg) { return `<div class="statebox">${P.stateBlock({ error: true, title: t, body: b, acts: `<button class="btn btn-primary" type="button" data-retry="${pg}">${ic('refresh')}重试</button>` })}</div>`; }
 
-Proto.init({pages:PAGES,render});Proto.prompts(PROMPTS);
-</script></body></html>
+/* ---------------- ① 列表 ---------------- */
+function filtered() {
+  let a = DATA.goods.filter(g => (L.cat === '全部' || g[2] === L.cat) && (!L.brand.size || L.brand.has(g[3])) && (!L.stock || g[13] > 0) && (L.min === '' || g[5] >= +L.min) && (L.max === '' || g[5] <= +L.max) && (!L.q || (g[1] + g[2] + g[4]).toLowerCase().includes(L.q.toLowerCase())));
+  const k = { sales: (x, y) => y[7] - x[7], up: (x, y) => x[5] - y[5], down: (x, y) => y[5] - x[5], new: (x, y) => (y[10].includes('新品') ? 1 : 0) - (x[10].includes('新品') ? 1 : 0) }[L.sort];
+  if (k) a = a.slice().sort(k);
+  return a;
+}
+function card(g) {
+  const sold = g[13] === 0;
+  return `<article class="pc" tabindex="0" data-pd="${g[0]}" aria-label="${esc(g[1])}，${g[5]} 元">${pimg(g)}${sold ? '<div class="soldmask"><span>已售罄 · 11-20 到货</span></div>' : ''}
+  <div class="ptags">${g[10].map(t => `<span class="pt ${t === '新品' ? 'n' : /仅剩|回购/.test(t) ? 'w' : ''}">${t}</span>`).join('')}</div>
+  <div class="nm">${esc(g[1])}</div><div class="sub">${esc(g[4])}</div>
+  <div class="pr">${yuan(g[5])}${g[6] ? `<span class="orig">¥${g[6]}</span>` : ''}</div>
+  <div class="meta"><span>已售 ${g[7] >= 10000 ? (g[7] / 10000).toFixed(1) + '万' : g[7].toLocaleString('zh-CN')}</span><span>★ ${g[8]}</span><span class="sp"></span><button class="addq" type="button" data-quick="${g[0]}" ${sold ? 'disabled aria-label="已售罄，不能加购"' : `aria-label="加入购物车：${esc(g[1])}"`}>${ic('plus')}</button></div></article>`;
+}
+function pList(state) {
+  chrome('list');
+  const title = L.q ? `搜索「${L.q}」` : L.cat;
+  const hd = crumb(L.q ? [[`搜索「${L.q}」`]] : [[L.cat]]);
+  if (state === 'loading') { PG.innerHTML = hd + `<div class="lay"><div class="fbox"><div class="sk" style="height:200px;margin-top:12px"></div></div><div class="grid sk-g">${Array.from({ length: 8 }, () => '<div class="pc"><div class="sk" style="aspect-ratio:1/1"></div><div class="sk" style="height:14px;width:80%"></div><div class="sk" style="height:18px;width:40%"></div></div>').join('')}</div></div>`; return; }
+  if (state === 'error') { PG.innerHTML = hd + errBox('商品没加载出来', '网络不太稳定（错误编号 MALL-502，示例）。购物车里的商品不受影响。', 'list'); return; }
+  const a = filtered(), brands = [...new Set(DATA.goods.map(g => g[3]))];
+  const chips = [...L.brand].map(b => [`品牌：${b}`, `data-unbrand="${b}"`]).concat(L.min !== '' || L.max !== '' ? [[`价格：${L.min || 0}～${L.max || '不限'}`, 'data-unprice']] : []).concat(L.stock ? [['只看有货', 'data-unstock']] : []);
+  PG.innerHTML = hd + `<div class="lay"><aside class="fbox ${L.fopen ? 'open' : ''}" aria-label="筛选">
+    <h3>分类</h3>${DATA.cats.map(c => `<label class="fopt"><input type="radio" name="fc" data-fcat="${c}" ${L.cat === c ? 'checked' : ''}>${c}<small>${c === '全部' ? DATA.goods.length : DATA.goods.filter(g => g[2] === c).length}</small></label>`).join('')}
+    <h3>品牌${L.brand.size ? '<button class="btn-link clr" type="button" data-unbrand="*">清除</button>' : ''}</h3>${brands.map(b => `<label class="fopt"><span class="check"><input type="checkbox" data-brand="${b}" ${L.brand.has(b) ? 'checked' : ''}></span>${b}<small>${DATA.goods.filter(g => g[3] === b).length}</small></label>`).join('')}
+    <h3>价格</h3><div class="prange"><input class="input num" id="pmin" inputmode="numeric" placeholder="¥ 最低" aria-label="最低价" value="${esc(L.min)}"><span class="muted">–</span><input class="input num" id="pmax" inputmode="numeric" placeholder="¥ 最高" aria-label="最高价" value="${esc(L.max)}"></div>
+    <div class="fopt" style="margin-top:4px;flex-wrap:wrap;gap:6px">${[['0', '100'], ['100', '300'], ['300', '']].map(r => `<button class="btn" type="button" data-prange="${r[0]}-${r[1]}" style="height:28px;padding:0 8px;font-size:12px">${r[1] ? `¥${r[0]}–${r[1]}` : `¥${r[0]} 以上`}</button>`).join('')}</div>
+    <h3>库存</h3><label class="fopt"><span class="check"><input type="checkbox" id="fstock" ${L.stock ? 'checked' : ''}></span>只看有货</label></aside>
+  <section><div class="lbar"><button class="btn fbtn" type="button" data-fopen>${ic('filter')}筛选${chips.length ? `（${chips.length}）` : ''}</button><div class="seg" role="group" aria-label="排序">${[['mix', '综合'], ['sales', '销量'], ['up', '价格 ↑'], ['down', '价格 ↓'], ['new', '新品']].map(s => `<button type="button" data-sort="${s[0]}" aria-pressed="${L.sort === s[0]}">${s[1]}</button>`).join('')}</div><span class="sp"></span><span class="cnt">${esc(title)} · 共 ${a.length} 件</span></div>
+  ${chips.length ? `<div class="fchips">${chips.map(c => `<button class="fchip" type="button" ${c[1]} aria-label="移除条件 ${esc(c[0])}">${esc(c[0])}${ic('x')}</button>`).join('')}<button class="btn-link" type="button" data-fclear style="font-size:13px">全部清除</button></div>` : ''}
+  ${a.length && state !== 'empty' ? `<div class="grid">${a.map(card).join('')}</div><div class="pager"><button type="button" aria-current="true">1</button><span>已显示全部 ${a.length} 件</span></div>`
+  : `<div class="statebox">${P.stateBlock({ icon: 'search', title: L.q ? `没找到「${L.q}」相关的商品` : '没有符合条件的商品', body: L.q ? '换个说法试试，比如「滤杯」「手冲壶」「浅烘」。也可以看看大家常买的：' : '放宽价格区间或去掉品牌条件试试。', acts: L.q ? ['滤杯', '浅烘', '磨豆机'].map(k => `<button class="btn" type="button" data-kw="${k}">${k}</button>`).join('') : '<button class="btn btn-primary" type="button" data-fclear>清除全部筛选</button>' })}</div>`}</section></div>`;
+}
+
+/* ---------------- ② 详情 ---------------- */
+const stockOf = (s, g) => DATA.sku.stock[s + '|' + g];
+function pDetail(state) {
+  chrome('detail');
+  const g = G('p1'), hd = crumb([['咖啡豆', 'data-cat="咖啡豆"'], ['耶加雪菲 G1']]);
+  if (state === 'loading') { PG.innerHTML = hd + `<div class="pd"><div class="sk" style="aspect-ratio:1/1"></div><div>${[60, 20, 90, 40, 40, 48].map(h => `<div class="sk" style="height:${h}px;margin-bottom:14px"></div>`).join('')}</div></div>`; return; }
+  if (state === 'error') { PG.innerHTML = hd + errBox('商品详情没加载出来', '商品信息服务超时（错误编号 PDP-504，示例）。', 'detail'); return; }
+  const so = D.soldout, st = so ? 0 : stockOf(D.size, D.grind), sz = DATA.sku.size.find(x => x[0] === D.size);
+  const maxQ = Math.min(st, DATA.sku.limit), ad = DATA.addrs[D.addr];
+  const imgs = [0, 1, 2];
+  const R = DATA.reviews, rf = D.rf, RL = R.filter(r => rf === 'all' || (rf === 'img' && r[6]) || (rf === 'good' && r[1] >= 4) || (rf === 'bad' && r[1] <= 3));
+  const panel = {
+    story: `<div class="story"><div><b>产地 · 耶加雪菲 孔加</b><p>海拔 1,900～2,200 米，小农合作社采收，红果手工挑选。示例数据。</p></div><div><b>处理 · 水洗</b><p>去果皮后发酵 36 小时再水洗，干净、酸质明亮，没有发酵味。</p></div><div><b>烘焙 · 浅烘</b><p>一爆后 40 秒出锅，保留花香。本批 11-08 烘焙，最佳赏味 11-15～12-08。</p></div></div>
+      <div class="flavor" aria-label="风味">${[['酸质', 8], ['甜感', 7], ['醇厚', 4], ['花香', 9], ['余韵', 7]].map(f => `<div><span>${f[0]}</span><i><b style="width:${f[1] * 10}%"></b></i><span class="num">${f[1]}</span></div>`).join('')}</div>
+      <p class="muted" style="font-size:13px;margin-top:14px">冲煮建议：15g 粉 · 225ml 水 · 92～94℃ · 2 分 30 秒</p>`,
+    spec: `<table class="ptab-t"><tbody>${[['品名', '埃塞俄比亚 耶加雪菲 G1'], ['产区', '耶加雪菲 孔加合作社'], ['品种', '原生种'], ['处理法', '水洗'], ['烘焙度', '浅烘（Agtron #78）'], ['净含量', DATA.sku.size.map(s => s[0]).join(' / ')], ['保质期', '12 个月（开封后建议 30 天内喝完）'], ['储存', '阴凉干燥，避光；不建议冷藏'], ['发货', '下单后 72 小时内烘焙发货']].map(r => `<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('')}</tbody></table>`,
+    review: `<div class="rv-sum"><span class="sc">${g[8]}</span><span><span class="stars">★★★★★</span><br><span class="muted" style="font-size:13px">${g[9].toLocaleString('zh-CN')} 条评价 · 好评率 96%</span></span><div class="seg" role="group" aria-label="筛选评价">${[['all', `全部 ${R.length}`], ['img', `有图 ${R.filter(r => r[6]).length}`], ['good', `好评 ${R.filter(r => r[1] >= 4).length}`], ['bad', `中差评 ${R.filter(r => r[1] <= 3).length}`]].map(x => `<button type="button" data-rf="${x[0]}" aria-pressed="${rf === x[0]}">${x[1]}</button>`).join('')}</div></div>
+      ${RL.map(r => `<div class="rv"><span class="avatar">${r[0][0]}</span><div><div class="h"><b>${r[0]}</b><span class="stars" aria-label="${r[1]} 星">${'★'.repeat(r[1])}<span style="color:var(--ink-500)">${'☆'.repeat(5 - r[1])}</span></span><span>${r[2]}</span><span>${r[3]}</span></div><p>${esc(r[4])}</p>${r[6] ? `<div style="display:flex;gap:6px;margin-top:8px">${[0, 1].map(v => `<span class="pimg" style="width:72px;height:72px">${art('bag', g[12], '买家图', v + 1)}</span>`).join('')}</div>` : ''}${r[5] ? `<div class="rep"><b style="font-weight:500">商家回复：</b>${esc(r[5])}</div>` : ''}</div></div>`).join('') || '<p class="muted">没有这类评价</p>'}
+      <p class="muted" style="font-size:12px;margin-top:8px">示例：显示最近 ${RL.length} 条</p>`,
+    after: `<table class="ptab-t"><tbody>${[['退换', '未拆封 7 天无理由；已拆封的咖啡豆不退，但有质量问题（受潮、霉变、发错）48 小时内拍照联系客服，补发或退款'], ['破损', '运输破损签收时拒收，或 24 小时内拍照，免费补发'], ['发票', '下单时选择，订单完成后 3 个工作日内开出电子发票'], ['运费', '满 ¥99 包邮，否则 ¥8；偏远地区 +¥12']].map(r => `<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('')}</tbody></table>`
+  };
+  PG.innerHTML = hd + `<div class="pd"><div class="gal">${pimg(g, D.img)}<div class="thumbs" role="group" aria-label="商品图">${imgs.map(i => `<button type="button" data-img="${i}" aria-pressed="${D.img === i}" aria-label="第 ${i + 1} 张图">${pimg(g, i)}</button>`).join('')}</div></div>
+  <div><h1>${esc(g[1].replace(' 250g', ''))}</h1><p class="sub">${esc(g[4])} · 11-08 烘焙 · 已售 ${g[7].toLocaleString('zh-CN')} · ★ ${g[8]}（${g[9].toLocaleString('zh-CN')} 条评价）</p>
+   <div class="pbox"><div class="row"><span class="lab">价格</span>${yuan(sz[1])}<span class="orig">¥${sz[2]}</span><span class="pt">${Math.round(sz[1] / sz[2] * 100) / 10} 折</span></div>
+    <div class="promo"><span class="lab">促销</span><span class="pt">满199减20</span><span class="pt">满399减50</span><span>全店通用，可与新人券叠加</span></div></div>
+   ${so ? `<div class="notice">${ic('alert')}<span>这款所有规格都卖完了，下一批 11-20 烘焙、11-21 发货。</span><button class="btn btn-primary" type="button" data-notify ${D.notify ? 'disabled' : ''}>${D.notify ? '已订阅到货提醒' : '到货提醒我'}</button></div>` : ''}
+   <div class="opt"><span>重量</span><div class="sku" role="group" aria-label="重量">${DATA.sku.size.map(s => { const any = !so && DATA.sku.grind.some(gr => stockOf(s[0], gr) > 0); return `<button type="button" data-size="${s[0]}" aria-pressed="${D.size === s[0]}" ${any ? '' : 'aria-disabled="true" title="暂时无货"'}>${s[0]}<small>¥${s[1]}</small></button>`; }).join('')}</div></div>
+   <div class="opt"><span>研磨</span><div class="sku" role="group" aria-label="研磨">${DATA.sku.grind.map(gr => { const n = so ? 0 : stockOf(D.size, gr); return `<button type="button" data-grind="${gr}" aria-pressed="${D.grind === gr}" ${n > 0 ? '' : 'aria-disabled="true" title="这个组合暂时无货"'}>${gr}${n > 0 && n <= 9 ? `<small>仅剩 ${n}</small>` : n ? '' : '<small>无货</small>'}</button>`; }).join('')}</div></div>
+   <div class="opt"><span>数量</span><div class="qty"><div class="stepper"><button type="button" data-q="-1" aria-label="减少" ${D.qty <= 1 || !st ? 'disabled' : ''}>${ic('minus', 'ic-sm')}</button><input id="dq" class="num" inputmode="numeric" aria-label="数量" value="${st ? D.qty : 0}" ${st ? '' : 'disabled'}><button type="button" data-q="1" aria-label="增加" ${D.qty >= maxQ || !st ? 'disabled' : ''}>${ic('plus', 'ic-sm')}</button></div>
+    <span class="muted">${!st ? '所选规格无货' : `库存 ${st} 件 · 每人限购 ${DATA.sku.limit} 件${D.qty >= maxQ ? `（已到上限：${st < DATA.sku.limit ? '库存只有 ' + st + ' 件' : '限购 ' + DATA.sku.limit + ' 件'}）` : ''}`}</span></div></div>
+   <div class="opt"><span>配送</span><div class="dlv"><select class="select" id="daddr" aria-label="配送地址">${DATA.addrs.map((a, i) => `<option value="${i}" ${D.addr === i ? 'selected' : ''}>${a[2]}</option>`).join('')}</select><div style="margin-top:4px"><span class="ok">现在下单，预计 ${ad[3]} 送达</span> · 运费 ${ad[4] ? `¥${8 + ad[4]}（偏远地区 +¥${ad[4]}，满 ¥99 只收 ¥${ad[4]}）` : '满 ¥99 包邮'}</div></div></div>
+   <div class="buy"><button class="btn btn-cart" type="button" data-add ${st ? '' : 'disabled'}>${ic('cart')}加入购物车</button><button class="btn btn-primary" type="button" data-buynow ${st ? '' : 'disabled'}>立即购买</button></div>
+   <div class="svc"><span>${ic('check-c')}72 小时内烘焙发货</span><span>${ic('check-c')}未拆封 7 天无理由</span><span>${ic('check-c')}受潮霉变包退</span></div></div></div>
+  <div class="dtabs" role="tablist" aria-label="商品信息">${[['story', '商品详情'], ['spec', '规格参数'], ['review', `评价 ${g[9].toLocaleString('zh-CN')}`], ['after', '售后保障']].map(t => `<button class="dtab" type="button" role="tab" data-dtab="${t[0]}" aria-selected="${D.tab === t[0]}">${t[1]}</button>`).join('')}</div>
+  <div class="dpanel" role="tabpanel">${panel[D.tab]}</div>`;
+}
+
+/* ---------------- ③ 购物车 ---------------- */
+function calc() {
+  const on = C.items.filter(x => x.on), sub = on.reduce((s, x) => s + G(x.id)[5] * x.n, 0);
+  const tools = on.filter(x => G(x.id)[2] === '器具').reduce((s, x) => s + G(x.id)[5] * x.n, 0);
+  const tier = DATA.cut.find(c => sub >= c[0]), cut = tier ? tier[1] : 0;
+  const next = DATA.cut.slice().reverse().find(c => sub < c[0]);
+  const after = sub - cut;
+  const avail = DATA.coupons.map(c => ({ c, ok: (c[3] === '全场' ? after : tools) >= c[2], gap: c[2] - (c[3] === '全场' ? after : tools) }));
+  let cp = null; if (C.coupon === 'auto') { const ok = avail.filter(a => a.ok).sort((a, b) => b.c[1] - a.c[1]); cp = ok[0] ? ok[0].c : null; } else if (C.coupon !== 'none') { const a = avail.find(x => x.c[0] === C.coupon); cp = a && a.ok ? a.c : null; }
+  const dis = cut + (cp ? cp[1] : 0), goods = sub - dis, ship = !on.length ? 0 : sub >= DATA.freeShip ? 0 : DATA.ship;
+  return { on, sub, cut, tier, next, cp, avail, total: Math.max(0, goods) + ship, ship, n: on.reduce((s, x) => s + x.n, 0) };
+}
+function pCart(state) {
+  chrome('cart');
+  const hd = crumb([['购物车']]);
+  if (state === 'loading') { PG.innerHTML = hd + `<div class="cart"><div class="cbox">${[1, 2, 3].map(() => '<div class="ci"><span></span><div class="sk" style="height:88px"></div><div class="sk" style="height:40px"></div></div>').join('')}</div><div class="sumbox"><div class="sk" style="height:180px"></div></div></div>`; return; }
+  if (state === 'error') { PG.innerHTML = hd + errBox('购物车没加载出来', '购物车服务暂时不可用（错误编号 CART-503，示例）。商品不会丢，稍后重试即可。', 'cart'); return; }
+  if (!C.login) {
+    PG.innerHTML = hd + `<div class="loginbar">${ic('user')}<span>你还没登录，下面是这台电脑上加入的 2 件商品；登录后会和账号里的购物车合并（同款同规格数量相加，不超过限购）。</span><button class="btn btn-primary" type="button" data-login>登录并合并</button></div><div class="cbox">${[['p9', '400ml', 1], ['p11', '02 号 · 100 张', 1]].map(x => { const g = G(x[0]); return `<div class="ci" style="grid-template-columns:88px minmax(0,1fr) 120px"><span class="pimg" style="width:88px;height:88px">${art(g[11], g[12], g[1])}</span><div><div class="nm">${esc(g[1])}</div><div class="sk2" style="cursor:default">${x[1]}</div></div><div class="tot">${m2(g[5] * x[2])}</div></div>`; }).join('')}</div>`; return;
+  }
+  if (state === 'empty' || (!C.items.length && !C.dead.length)) { PG.innerHTML = hd + `<div class="statebox">${P.stateBlock({ icon: 'cart', title: '购物车是空的', body: '去挑几款豆子吧。新人下单满 ¥100 立减 ¥15。', acts: `<button class="btn btn-primary" type="button" data-go="list">去逛逛</button><button class="btn" type="button" data-cat="咖啡豆">看咖啡豆</button>` })}</div><h3 style="font-size:16px;margin:24px 0 12px">大家常买</h3><div class="grid">${['p2', 'p11', 'p10', 'p5'].map(id => card(G(id))).join('')}</div>`; return; }
+  const k = calc(), allOn = C.items.length && C.items.every(x => x.on);
+  PG.innerHTML = hd + `<div class="cart"><div>
+  <div class="cbox"><div class="chd"><label class="fopt" style="min-height:28px"><span class="check"><input type="checkbox" id="call" ${allOn ? 'checked' : ''} aria-label="全选有效商品"></span>全选（${C.items.length}）</label><span class="sp"></span><span class="muted" style="font-size:13px">单价</span><span class="muted" style="font-size:13px;width:130px;text-align:center">数量</span><span class="muted" style="font-size:13px;width:96px;text-align:right">小计</span><span style="width:64px"></span></div>
+   <div class="fullcut"><span class="pt">满减</span>${k.tier ? `已满 ¥${k.tier[0]}，减 ¥${k.tier[1]}` : '满 ¥199 减 20，满 ¥399 减 50'}${k.next ? `；<b style="color:var(--price);font-weight:600">再买 ¥${(k.next[0] - k.sub).toFixed(2).replace(/\.00$/, '')} 可减 ${k.next[1]}</b>` : '，已是最高档'}${k.next ? `<button class="btn-link" type="button" data-cat="耗材" style="font-size:13px">去凑单 ›</button>` : ''}</div>
+   ${C.items.map((x, i) => { const g = G(x.id), drop = x.was - g[5], lim = x.n >= Math.min(g[13], 5); return `<div class="ci"><label class="cb"><span class="check"><input type="checkbox" data-con="${i}" ${x.on ? 'checked' : ''} aria-label="选择 ${esc(g[1])}"></span></label><span class="pimg">${art(g[11], g[12], g[1])}</span>
+    <div><div class="nm">${esc(g[1])}</div><button class="sk2" type="button" data-spec="${i}">${esc(x.spec)} ${ic('chev-d', 'ic-sm')}</button>${drop > 0 ? `<div class="chgp">比加入时降 ¥${drop}</div>` : ''}${g[13] <= 12 ? `<div class="lim">仅剩 ${g[13]} 件</div>` : ''}</div>
+    <div class="unit num">¥${g[5]}${g[6] ? `<br><span class="orig">¥${g[6]}</span>` : ''}</div>
+    <div class="stp"><div class="stepper"><button type="button" data-cq="${i}:-1" aria-label="减少" ${x.n <= 1 ? 'disabled' : ''}>${ic('minus', 'ic-sm')}</button><input class="num" data-cin="${i}" inputmode="numeric" aria-label="${esc(g[1])} 数量" value="${x.n}"><button type="button" data-cq="${i}:1" aria-label="增加" ${lim ? 'disabled' : ''}>${ic('plus', 'ic-sm')}</button></div>${lim ? `<div class="lim">最多 ${Math.min(g[13], 5)} 件</div>` : ''}</div>
+    <div class="tot">${m2(g[5] * x.n)}</div><div class="ops"><button class="btn-link" type="button" data-fav="${i}">移入收藏</button><button class="btn-link" type="button" data-del="${i}">删除</button></div></div>`; }).join('')}</div>
+  ${C.dead.length ? `<div class="cbox" style="margin-top:14px"><div class="chd"><b style="font-weight:600">失效商品 ${C.dead.length} 件</b><span class="sp"></span><button class="btn-link" type="button" data-cleardead>清空失效商品</button></div>${C.dead.map(d => { const g = G(d[0]); return `<div class="ci dead" style="grid-template-columns:28px 88px minmax(0,1fr) auto"><span class="tag tag-neutral plain" style="height:20px;font-size:11px;padding:0 4px">失效</span><span class="pimg" style="filter:grayscale(.8);opacity:.7">${art(g[11], g[12], g[1])}</span><div><div class="nm">${esc(g[1])}</div><div class="why">${d[2]}</div></div><button class="btn" type="button" data-toast="${d[0] === 'p12' ? '已订阅到货提醒（示例）' : '已为你找到相似商品（示例）'}">${d[0] === 'p12' ? '到货提醒' : '找相似'}</button></div>`; }).join('')}</div>` : ''}</div>
+  <aside class="sumbox" aria-label="结算"><h3>结算明细</h3><div class="sl"><span>商品金额（${k.n} 件）</span><b>${m2(k.sub)}</b></div><div class="sl dis"><span>满减</span><b>${k.cut ? '−' + m2(k.cut) : '—'}</b></div>
+   <label class="label" for="cpn" style="font-size:13px;margin-top:6px;display:block">优惠券</label><select class="select cpn" id="cpn"><option value="auto" ${C.coupon === 'auto' ? 'selected' : ''}>自动选最优${C.coupon === 'auto' && k.cp ? `（${k.cp[0]} −¥${k.cp[1]}）` : ''}</option>${k.avail.map(a => `<option value="${a.c[0]}" ${C.coupon === a.c[0] ? 'selected' : ''} ${a.ok ? '' : 'disabled'}>${a.c[0]} ¥${a.c[1]}（${a.c[3]}满 ${a.c[2]}）${a.ok ? '' : ` 还差 ¥${a.gap.toFixed(0)}`}</option>`).join('')}<option value="none" ${C.coupon === 'none' ? 'selected' : ''}>不使用优惠券</option></select>
+   <div class="sl dis"><span>优惠券</span><b>${k.cp ? '−' + m2(k.cp[1]) : '—'}</b></div><div class="sl"><span>运费</span><b>${!k.on.length ? '—' : k.ship ? m2(k.ship) + `（满 ¥${DATA.freeShip} 包邮）` : '包邮'}</b></div>
+   <div class="sl tot"><span>合计</span>${yuan(k.total)}</div><button class="btn btn-primary" type="button" data-go="checkout" ${k.on.length ? '' : 'disabled'}>${k.on.length ? `去结算（${k.n}）` : '先勾选商品'}</button>
+   <p class="hint">计算顺序：先满减，再用券，最后算运费（按商品金额判断是否包邮）。${k.cut + (k.cp ? k.cp[1] : 0) ? `本单共省 ¥${(k.cut + (k.cp ? k.cp[1] : 0)).toFixed(0)}。` : ''}</p></aside></div>`;
+}
+
+/* ---------------- ④ 结算 ---------------- */
+function coErr() {
+  const e = {};
+  if (CO.inv === 'ent') { if (!CO.company.trim()) e.company = '请填写单位名称'; if (!/^[0-9A-Z]{15,20}$/.test(CO.taxno.trim())) e.taxno = '税号是 15～20 位数字或大写字母'; }
+  if (CO.note.length > 50) e.note = '备注最多 50 字';
+  return e;
+}
+function pCheckout(state) {
+  chrome('checkout');
+  const hd = crumb([['购物车', 'data-go="cart"'], ['确认订单']]);
+  if (state === 'loading') { PG.innerHTML = hd + `<div class="co"><div>${[120, 80, 140].map(h => `<div class="cos"><div class="sk" style="height:${h}px"></div></div>`).join('')}</div><div class="sumbox"><div class="sk" style="height:200px"></div></div></div>`; return; }
+  const k = calc();
+  if (CO.done || state === 'success') { const no = 'DD20261111' + '142' + String(k.n).padStart(2, '0') + '78'; PG.innerHTML = crumb([['下单成功']]) + `<div class="done"><span class="ok">${ic('check')}</span><h2>订单已提交，请尽快支付</h2><p>订单号 <span class="mono">${no}</span> · 应付 <b style="color:var(--price)">${m2(CO.done ? CO.done.total : k.total)}</b><br>请在 11-11 14:50 前支付，超时订单自动取消、优惠券退回。<br>咖啡豆会在支付后 72 小时内烘焙，预计 ${DATA.addrs[CO.addr][3]} 送达。</p><div class="acts"><button class="btn btn-primary" type="button" data-toast="已打开${CO.pay === 'wx' ? '微信' : CO.pay === 'ali' ? '支付宝' : '银行卡'}支付（示例）">去支付 ${m2(CO.done ? CO.done.total : k.total)}</button><button class="btn" type="button" data-toast="订单详情（示例）">查看订单</button><button class="btn" type="button" data-go="list">继续逛逛</button></div></div>`; return; }
+  const shipFee = CO.ship === 'next' ? 12 : 0, remote = CO.ship === 'self' ? 0 : DATA.addrs[CO.addr][4];
+  const total = k.total + shipFee + remote, e = CO.tried ? coErr() : {};
+  PG.innerHTML = hd + `${state === 'error' || CO.stockChg ? `<div class="notice" role="alert" style="margin:0 0 14px">${ic('alert')}<span><b>库存有变化：</b>「耶加雪菲 250g · 手冲中细」刚被买走一部分，只剩 1 件，你要的是 2 件。</span><button class="btn" type="button" data-fixstock>改为 1 件并继续</button><button class="btn" type="button" data-go="cart">回购物车</button></div>` : ''}
+  <div class="co"><div>
+  <section class="cos"><h2>收货地址<button class="btn-link" type="button" data-toast="新增地址（示例）">＋ 新增地址</button></h2><div class="addrs" role="group" aria-label="收货地址">${DATA.addrs.map((a, i) => `<button class="addr" type="button" data-addr="${i}" aria-pressed="${CO.addr === i}"><b>${a[0]} ${a[1]}</b>${a[2]}<br><span style="color:${a[4] ? 'var(--warning)' : 'var(--success)'}">${a[4] ? `偏远地区 +¥${a[4]} · ` : ''}预计 ${a[3]} 送达</span></button>`).join('')}</div></section>
+  <section class="cos"><h2>配送方式</h2><div class="radios" role="group" aria-label="配送方式">${[['std', '标准快递', k.ship ? `¥${k.ship}` : '包邮'], ['next', '次日达', '+¥12，仅示例市'], ['self', '门店自提', '滨江店 · 免运费']].map(r => `<button class="rb" type="button" data-ship="${r[0]}" aria-pressed="${CO.ship === r[0]}" ${r[0] === 'next' && CO.addr === 2 ? 'disabled title="该地址不支持次日达"' : ''}>${r[1]}<small>${r[2]}</small></button>`).join('')}</div></section>
+  <section class="cos"><h2>商品清单 <span class="muted" style="font-weight:400;font-size:13px">${k.n} 件</span><button class="btn-link" type="button" data-go="cart">回购物车修改</button></h2>${k.on.map(x => { const g = G(x.id); return `<div class="oi"><span class="pimg">${art(g[11], g[12], g[1])}</span><span>${esc(g[1])}<small>${esc(x.spec)} × ${CO.stockChg === 'fixed' && x.id === 'p1' ? 1 : x.n}</small></span><b class="num">${m2(g[5] * (CO.stockChg === 'fixed' && x.id === 'p1' ? 1 : x.n))}</b></div>`; }).join('')}</section>
+  <section class="cos"><h2>发票</h2><div class="radios" role="group" aria-label="发票">${[['none', '不开发票'], ['per', '电子普票 · 个人'], ['ent', '电子普票 · 单位']].map(r => `<button class="rb" type="button" data-inv="${r[0]}" aria-pressed="${CO.inv === r[0]}">${r[1]}</button>`).join('')}</div>
+   ${CO.inv === 'ent' ? `<div class="fg2"><div class="field"><label class="label" for="company">单位名称<span style="color:var(--danger)"> *</span></label><input class="input ${e.company ? 'is-error' : ''}" id="company" data-co="company" value="${esc(CO.company)}" placeholder="与营业执照一致">${e.company ? `<span class="field-err">${e.company}</span>` : ''}</div><div class="field"><label class="label" for="taxno">税号<span style="color:var(--danger)"> *</span></label><input class="input mono ${e.taxno ? 'is-error' : ''}" id="taxno" data-co="taxno" value="${esc(CO.taxno)}" placeholder="15～20 位">${e.taxno ? `<span class="field-err">${e.taxno}</span>` : ''}</div></div>` : CO.inv === 'per' ? '<p class="muted" style="font-size:13px;margin-top:10px">抬头：陈示例 · 订单完成后 3 个工作日内发到邮箱 c***@example.com</p>' : ''}</section>
+  <section class="cos"><h2>支付方式</h2><div class="radios" role="group" aria-label="支付方式">${[['wx', '微信支付'], ['ali', '支付宝'], ['card', '银行卡']].map(r => `<button class="rb" type="button" data-pay="${r[0]}" aria-pressed="${CO.pay === r[0]}">${r[1]}</button>`).join('')}</div>
+   <div class="field" style="margin-top:14px"><label class="label" for="note">订单备注 <span class="muted" style="font-weight:400" id="note-n">${CO.note.length}/50</span></label><input class="input ${e.note ? 'is-error' : ''}" id="note" data-co="note" value="${esc(CO.note)}" placeholder="例：送朋友的，不要放价格单">${e.note ? `<span class="field-err">${e.note}</span>` : ''}</div></section></div>
+  <aside class="sumbox"><h3>应付金额</h3><div class="sl"><span>商品金额</span><b>${m2(k.sub)}</b></div><div class="sl dis"><span>满减</span><b>${k.cut ? '−' + m2(k.cut) : '—'}</b></div><div class="sl dis"><span>优惠券${k.cp ? ` · ${k.cp[0]}` : ''}</span><b>${k.cp ? '−' + m2(k.cp[1]) : '—'}</b></div><div class="sl"><span>运费</span><b>${k.ship ? m2(k.ship) : '包邮'}</b></div>${shipFee ? `<div class="sl"><span>次日达</span><b>${m2(shipFee)}</b></div>` : ''}${remote ? `<div class="sl"><span>偏远地区</span><b>${m2(remote)}</b></div>` : ''}
+   <div class="sl tot"><span>应付</span>${yuan(total)}</div><button class="btn btn-primary" type="button" data-submit ${state === 'submitting' ? 'disabled' : ''}>${state === 'submitting' ? '<span class="spin"></span>正在提交…' : `提交订单 ${m2(total)}`}</button><p class="hint">提交后 30 分钟内支付；咖啡豆支付后才开始烘焙。</p></aside></div>`;
+}
+
+/* ---------------- 事件 ---------------- */
+const PAGES = { list: pList, detail: pDetail, cart: pCart, checkout: pCheckout };
+function draw() { PAGES[P.state.page](['soldout', 'guest'].includes(P.state.state) ? 'normal' : P.state.state); }
+function go(pg) { carry = true; P.go(pg, 'normal'); window.scrollTo(0, 0); }
+function addCart(id, spec, n) { const ex = C.items.find(x => x.id === id && x.spec === spec); const g = G(id); if (ex) ex.n = Math.min(ex.n + n, Math.min(g[13], 5)); else C.items.unshift({ id, spec, n, was: g[5], on: true }); chrome(P.state.page); }
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button,[data-pd]');
+  if (!b || b.closest('.pp,.pq-drawer,.tplbar,.modal')) { if (!e.target.closest('#srch')) closeSugg(); return; }
+  if (!b.closest('#srch')) closeSugg();
+  if (b.dataset.toast) toast(b.dataset.toast);
+  if (b.dataset.go) { if (b.dataset.go === 'checkout' && !calc().on.length) return; if (b.dataset.go === 'list') { L.q = ''; $('#q').value = ''; } go(b.dataset.go); return; }
+  if (b.dataset.cat) { L.cat = b.dataset.cat; L.q = ''; $('#q').value = ''; go('list'); if (P.state.page === 'list') pList('normal'); return; }
+  if (b.dataset.quick) { e.stopPropagation(); const g = G(b.dataset.quick); addCart(g[0], g[0] === 'p1' ? '250g · 咖啡豆（不研磨）' : '默认', 1); toast(`已加入购物车：${g[1].slice(0, 16)}…`, 'ok'); return; }
+  if (b.dataset.pd) { if (b.dataset.pd !== 'p1') toast('示例只做了「耶加雪菲」的详情，其他商品同样结构'); go('detail'); return; }
+  if ('search' in b.dataset) { doSearch($('#q').value.trim()); return; }
+  if (b.dataset.kw) { $('#q').value = b.dataset.kw; doSearch(b.dataset.kw); return; }
+  if (b.dataset.sort) { L.sort = b.dataset.sort; pList('normal'); return; }
+  if (b.dataset.unbrand) { b.dataset.unbrand === '*' ? L.brand.clear() : L.brand.delete(b.dataset.unbrand); pList('normal'); return; }
+  if ('unprice' in b.dataset) { L.min = ''; L.max = ''; pList('normal'); return; }
+  if ('unstock' in b.dataset) { L.stock = false; pList('normal'); return; }
+  if ('fclear' in b.dataset) { L.brand.clear(); L.min = ''; L.max = ''; L.stock = false; L.q = ''; $('#q').value = ''; L.cat = '全部'; carry = true; P.go('list', 'normal'); return; }
+  if (b.dataset.prange) { const [a, c] = b.dataset.prange.split('-'); L.min = a; L.max = c; pList('normal'); return; }
+  if ('fopen' in b.dataset) { L.fopen = !L.fopen; pList('normal'); return; }
+  // 详情
+  if (b.dataset.img) { D.img = +b.dataset.img; draw(); return; }
+  if (b.dataset.size) { if (b.getAttribute('aria-disabled') === 'true') { toast(`${b.dataset.size} 所有研磨方式都无货`, 'err'); return; } D.size = b.dataset.size; if (!(stockOf(D.size, D.grind) > 0)) { const gr = DATA.sku.grind.find(x => stockOf(D.size, x) > 0); toast(`${D.size} 没有「${D.grind}」，已帮你换成「${gr}」`); D.grind = gr; } D.qty = Math.min(D.qty, stockOf(D.size, D.grind), DATA.sku.limit); draw(); return; }
+  if (b.dataset.grind) { if (b.getAttribute('aria-disabled') === 'true') { toast(`${D.size} · ${b.dataset.grind} 暂时无货`, 'err'); return; } D.grind = b.dataset.grind; D.qty = Math.max(1, Math.min(D.qty, stockOf(D.size, D.grind), DATA.sku.limit)); draw(); return; }
+  if (b.dataset.q) { D.qty += +b.dataset.q; draw(); return; }
+  if ('add' in b.dataset) { addCart('p1', `${D.size} · ${D.grind}`, D.qty); toast(`已加入购物车：${D.size} · ${D.grind} × ${D.qty}`, 'ok'); return; }
+  if ('buynow' in b.dataset) { addCart('p1', `${D.size} · ${D.grind}`, D.qty); C.items.forEach((x, i) => x.on = i === 0); go('checkout'); return; }
+  if ('notify' in b.dataset) { D.notify = true; draw(); toast('已订阅：11-21 到货后短信通知你', 'ok'); return; }
+  if (b.dataset.dtab) { D.tab = b.dataset.dtab; draw(); return; }
+  if (b.dataset.rf) { D.rf = b.dataset.rf; draw(); return; }
+  // 购物车
+  if (b.dataset.cq) { const [i, d] = b.dataset.cq.split(':').map(Number); C.items[i].n += d; pCart('normal'); return; }
+  if (b.dataset.del != null) { const it = C.items.splice(+b.dataset.del, 1)[0]; pCart('normal'); toast(`已删除 ${G(it.id)[1].slice(0, 12)}…`, '', { undo: () => { C.items.splice(+b.dataset.del, 0, it); pCart('normal'); }, ms: 4000 }); return; }
+  if (b.dataset.fav != null) { const it = C.items.splice(+b.dataset.fav, 1)[0]; pCart('normal'); toast(`已移入收藏：${G(it.id)[1].slice(0, 12)}…`, 'ok'); return; }
+  if (b.dataset.spec != null) { openSpec(+b.dataset.spec); return; }
+  if (b.dataset.pickspec) { const [i, s] = [+b.dataset.i, b.dataset.pickspec]; C.items[i].spec = s; P.close(dw); pCart('normal'); toast('已改规格：' + s, 'ok'); return; }
+  if ('x' in b.dataset) { P.close(dw); return; }
+  if ('cleardead' in b.dataset) { const ok = await P.confirm({ title: '清空失效商品？', body: `${C.dead.length} 件失效商品会从购物车移除。`, ok: '清空' }); if (ok) { C.dead = []; pCart('normal'); toast('已清空失效商品', 'ok'); } return; }
+  if ('login' in b.dataset || b.id === 'acct') { if (!C.login) { C.login = true; addCart('p9', '400ml', 1); const f = C.items.find(x => x.id === 'p11'); f.n += 1; carry = true; P.go('cart', 'normal'); toast('已登录，合并了 2 件商品（滤纸数量相加为 4）', 'ok'); } else toast('账户中心（示例）'); return; }
+  // 结算
+  if (b.dataset.addr) { CO.addr = +b.dataset.addr; if (CO.addr === 2 && CO.ship === 'next') CO.ship = 'std'; pCheckout('normal'); return; }
+  if (b.dataset.ship) { CO.ship = b.dataset.ship; pCheckout('normal'); return; }
+  if (b.dataset.inv) { CO.inv = b.dataset.inv; pCheckout('normal'); return; }
+  if (b.dataset.pay) { CO.pay = b.dataset.pay; pCheckout('normal'); return; }
+  if ('fixstock' in b.dataset) { const it = C.items.find(x => x.id === 'p1'); if (it) it.n = 1; CO.stockChg = false; carry = true; P.go('checkout', 'normal'); toast('已改为 1 件，金额已重新计算', 'ok'); return; }
+  if ('submit' in b.dataset) { CO.tried = true; const er = coErr(); if (Object.keys(er).length) { pCheckout('normal'); const f = $('.is-error'); if (f) f.focus(); toast(`有 ${Object.keys(er).length} 处要改`, 'err'); return; } pCheckout('submitting'); setTimeout(() => { const k = calc(); CO.done = { total: k.total + (CO.ship === 'next' ? 12 : 0) + (CO.ship === 'self' ? 0 : DATA.addrs[CO.addr][4]) }; carry = true; P.go('checkout', 'normal'); window.scrollTo(0, 0); }, 800); return; }
+  if (b.dataset.retry) { const pg = b.dataset.retry; carry = true; P.go(pg, 'loading'); setTimeout(() => { carry = true; P.go(pg, 'normal'); }, 700); return; }
+});
+function openSpec(i) {
+  const it = C.items[i], g = G(it.id), opts = it.id === 'p1' ? DATA.sku.size.flatMap(s => DATA.sku.grind.map(gr => [`${s[0]} · ${gr}`, stockOf(s[0], gr)])) : [[it.spec, g[13]]];
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">改规格</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div><div class="layer-bd"><div style="display:flex;gap:12px;align-items:center;margin-bottom:14px"><span class="pimg" style="width:72px;height:72px">${art(g[11], g[12], g[1])}</span><b style="font-weight:500">${esc(g[1])}</b></div><div class="sku" role="group" aria-label="规格">${opts.map(o => `<button type="button" data-pickspec="${o[0]}" data-i="${i}" aria-pressed="${it.spec === o[0]}" ${o[1] > 0 ? '' : 'aria-disabled="true" disabled'}>${o[0]}<small>${o[1] > 0 ? '' : '无货'}</small></button>`).join('')}</div>${it.id === 'p1' ? '' : '<p class="muted" style="font-size:13px;margin-top:12px">这件商品只有一个规格。</p>'}</div>`;
+  P.open(dw);
+}
+// 搜索联想
+function closeSugg() { const s = $('.sugg'); if (s) s.remove(); }
+function openSugg(v) {
+  closeSugg(); const box = document.createElement('div'); box.className = 'sugg'; box.setAttribute('role', 'listbox');
+  const hits = v ? DATA.goods.filter(g => (g[1] + g[4]).includes(v)).slice(0, 6) : [];
+  box.innerHTML = v ? (hits.length ? hits.map(g => `<button type="button" role="option" data-kw="${esc(v)}">${ic('search', 'ic-sm')}<span>${esc(g[1]).replace(esc(v), `<b>${esc(v)}</b>`)}</span><small>${g[2]}</small></button>`).join('') : `<h4>没有联想结果，回车直接搜「${esc(v)}」</h4>`) : `<h4>最近搜过</h4><div class="hot">${['耶加雪菲', '滤纸 02'].map(k => `<button type="button" data-kw="${k}">${k}</button>`).join('')}</div><h4>大家都在搜</h4><div class="hot">${['浅烘', '手冲壶', '磨豆机', '冷萃', '滤杯'].map(k => `<button type="button" data-kw="${k}">${k}</button>`).join('')}</div>`;
+  $('#srch').appendChild(box);
+}
+function doSearch(v) { closeSugg(); L.q = v; L.cat = '全部'; L.page = 1; carry = true; P.go('list', 'normal'); window.scrollTo(0, 0); }
+$('#q').addEventListener('focus', e => openSugg(e.target.value.trim()));
+$('#q').addEventListener('input', e => openSugg(e.target.value.trim()));
+$('#q').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(e.target.value.trim()); if (e.key === 'Escape') { closeSugg(); e.target.blur(); } if (e.key === 'ArrowDown') { const f = $('.sugg button'); if (f) { e.preventDefault(); f.focus(); } } });
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.fcat) { L.cat = t.dataset.fcat; pList('normal'); }
+  if (t.dataset.brand) { t.checked ? L.brand.add(t.dataset.brand) : L.brand.delete(t.dataset.brand); pList('normal'); }
+  if (t.id === 'fstock') { L.stock = t.checked; pList('normal'); }
+  if (t.id === 'pmin' || t.id === 'pmax') { const v = t.value.replace(/\D/g, ''); L[t.id === 'pmin' ? 'min' : 'max'] = v; if (L.min !== '' && L.max !== '' && +L.min > +L.max) { [L.min, L.max] = [L.max, L.min]; toast('最低价大于最高价，已帮你对调'); } pList('normal'); }
+  if (t.id === 'daddr') { D.addr = +t.value; draw(); }
+  if (t.id === 'dq') { const st = stockOf(D.size, D.grind), mx = Math.min(st, DATA.sku.limit); let v = parseInt(t.value, 10); if (!(v >= 1)) v = 1; if (v > mx) { toast(st < DATA.sku.limit ? `库存只有 ${st} 件` : `每人限购 ${DATA.sku.limit} 件`, 'err'); v = mx; } D.qty = v; draw(); }
+  if (t.id === 'call') { C.items.forEach(x => x.on = t.checked); pCart('normal'); }
+  if (t.dataset.con != null) { C.items[+t.dataset.con].on = t.checked; pCart('normal'); }
+  if (t.dataset.cin != null) { const it = C.items[+t.dataset.cin], g = G(it.id), mx = Math.min(g[13], 5); let v = parseInt(t.value, 10); if (!(v >= 1)) v = 1; if (v > mx) { toast(`${g[1].slice(0, 10)}… 最多 ${mx} 件`, 'err'); v = mx; } it.n = v; pCart('normal'); }
+  if (t.id === 'cpn') { C.coupon = t.value; pCart('normal'); }
+});
+document.addEventListener('input', e => { const t = e.target; if (t.dataset.co) { CO[t.dataset.co] = t.value; if (t.id === 'note') $('#note-n').textContent = t.value.length + '/50'; } });
+document.addEventListener('focusout', e => { const t = e.target; if (t.dataset && t.dataset.co && CO.tried) { setTimeout(() => { if (t.isConnected) pCheckout('normal'); }, 0); } });
+document.addEventListener('keydown', e => { const t = e.target; if (t.dataset && t.dataset.pd && (e.key === 'Enter')) { e.preventDefault(); t.click(); } });
+
+fresh();
+Proto.init({
+  title: 'PC 商城',
+  pages: [
+    { id: 'list', name: '① 商品列表', states: [{ id: 'normal', name: '正常（12 件）' }, { id: 'empty', name: '搜索无结果' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }] },
+    { id: 'detail', name: '② 商品详情', states: [{ id: 'normal', name: '正常（规格联动库存）' }, { id: 'soldout', name: '整款售罄' }, { id: 'review', name: '评价 Tab' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }] },
+    { id: 'cart', name: '③ 购物车', states: [{ id: 'normal', name: '正常（含失效商品）' }, { id: 'empty', name: '空' }, { id: 'guest', name: '未登录（登录后合并）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }] },
+    { id: 'checkout', name: '④ 确认订单', states: [{ id: 'normal', name: '正常' }, { id: 'invalid', name: '单位发票校验出错' }, { id: 'error', name: '库存变化' }, { id: 'submitting', name: '提交中' }, { id: 'success', name: '下单成功' }, { id: 'loading', name: '加载中' }] }
+  ],
+  render(page, state) {
+    if (dw.classList.contains('show')) P.close(dw); closeSugg();
+    if (!carry) {
+      fresh(); $('#q').value = '';
+      if (page === 'list' && state === 'empty') { L.q = '虹吸壶'; $('#q').value = '虹吸壶'; }
+      if (page === 'detail' && state === 'soldout') D.soldout = true;
+      if (page === 'detail' && state === 'review') { D.tab = 'review'; }
+      if (page === 'cart' && state === 'guest') C.login = false;
+      if (page === 'cart' && state === 'empty') { C.items = []; C.dead = []; }
+      if (page === 'checkout' && state === 'invalid') { CO.inv = 'ent'; CO.company = '示例咖啡工作室'; CO.taxno = '91330106MA2'; CO.tried = true; }
+      if (page === 'checkout' && state === 'error') CO.stockChg = true;
+    }
+    carry = false;
+    const st = { soldout: 'normal', review: 'normal', guest: 'normal', invalid: 'normal' }[state] || state;
+    PAGES[page](page === 'list' && state === 'empty' ? 'normal' : st);
+    window.scrollTo(0, 0);
+  }
+});
+Proto.prompts(PROMPTS);
+</script>
+</body>
+</html>
