@@ -1,4 +1,16 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>批量导入与逐行校验 · 积木盒</title><style>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>批量导入 · 原型模板</title>
+<!--
+  原型模板 · 积木盒 | 老岳AI编辑部 · 原型组
+  改风格：改下面 :root 里的变量（--accent 换主色）
+  改数据：改 <script> 顶部 DATA
+  演示：右下角「原型面板」切页面和状态；按 H 隐藏面板；URL 可直达 #page=check&state=allpass
+-->
+<style>
 /*@KIT_CSS*/
 /* ==========================================================================
    ① 改风格只改这一块：颜色 / 字体 / 圆角 / 间距 / 阴影
@@ -329,7 +341,7 @@ body.has-tplbar{--bar-h:44px;padding-top:44px}
 .tplbar .tb-btn.primary{background:#fff;color:#16171A;border-color:#fff}
 .tplbar .tb-btn.primary:hover{filter:brightness(.94)}
 .tplbar .tb-btn .ic{width:15px;height:15px}
-.tplbar .tb-hide{width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+.tplbar .tb-hide{flex-shrink:0;width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
 .drawer{top:var(--bar-h,0px)}
 body.pp-hidden .tplbar{display:none}
 body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
@@ -340,11 +352,361 @@ body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
 :root[data-theme="dark"] .brand-mark,:root[data-theme="dark"] .ai-mark{background:#ECECEF;color:#16171A}
 :root[data-theme="dark"] .tab.on{color:#16171A}
 /*@END_KIT_CSS*/
+/* ============================ 本模板样式 ============================ */
+/* ---- 后台框架（复用 b-shell：.sh 侧栏 + .tb 顶栏 + .crumb2 面包屑 + .tabsbar 页签） ---- */
+.sh{display:grid;grid-template-columns:var(--sw,224px) minmax(0,1fr);min-height:calc(100vh - var(--bar-h))}
+.sb{position:sticky;top:var(--bar-h);height:calc(100vh - var(--bar-h));display:flex;flex-direction:column;background:var(--surface);border-right:1px solid var(--line);overflow:hidden}
+.sb-brand{display:flex;align-items:center;gap:10px;height:56px;padding:0 16px;font-weight:600;font-size:15px;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
+.sb-brand .brand-mark{flex:none}
+.sb-nav{flex:1;overflow-y:auto;padding:10px 8px;scrollbar-width:thin}
+.sb-sec{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:12px 10px 6px;white-space:nowrap}
+.ni{display:flex;align-items:center;gap:10px;width:100%;height:40px;padding:0 10px;border:0;background:none;border-radius:var(--r-sm);color:var(--ink-700);font-size:14px;text-align:left;cursor:pointer;white-space:nowrap;position:relative}
+.ni:hover{background:var(--line-soft);color:var(--ink-900)}
+.ni .ic{flex:none}
+.ni .t{flex:1;overflow:hidden;text-overflow:ellipsis}
+.ni.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.sb-foot{border-top:1px solid var(--line-soft);padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:13px;white-space:nowrap}
+.sb-foot small{display:block;font-size:12px;color:var(--ink-500)}
+.tb{position:sticky;top:var(--bar-h);z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 24px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tb .sp{flex:1}
+.crumb2{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-500);min-width:0;overflow:hidden}
+.crumb2 button{border:0;background:none;color:var(--ink-500);font-size:13px;padding:2px 4px;border-radius:4px;cursor:pointer;white-space:nowrap;min-height:24px}
+.crumb2 button:hover{color:var(--ink-900);background:var(--line-soft)}
+.crumb2 b{color:var(--ink-900);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb2 .ic{width:14px;height:14px;flex:none}
+.tabsbar{display:flex;gap:4px;padding:8px 24px 0;border-bottom:1px solid var(--line);background:var(--surface);overflow-x:auto;scrollbar-width:none}
+.ptab{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid var(--line);border-bottom:0;border-radius:var(--r-sm) var(--r-sm) 0 0;background:var(--surface-2);font-size:13px;color:var(--ink-700);cursor:pointer;white-space:nowrap}
+.ptab.on{background:var(--surface);color:var(--ink-900);font-weight:500;box-shadow:inset 0 2px 0 var(--accent)}
+.pg{padding:24px;max-width:1400px}
+.pg-hd{display:flex;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.pg-hd h1{font-size:22px;line-height:1.3}
+.pg-hd p{font-size:13px;color:var(--ink-500);margin-top:4px}
+.pg-hd .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.tw{position:relative;overflow-x:auto;border-top:1px solid var(--line-soft)}
+.cb{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:28px;cursor:pointer}
+.err-pg{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;min-height:460px}
+.err-pg .code{font-size:64px;font-weight:700;line-height:1;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.err-pg h2{font-size:20px;margin:14px 0 6px}
+.err-pg p{font-size:14px;color:var(--ink-500);max-width:460px;line-height:1.7}
+.err-pg .acts{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+@media (max-width:1000px){.sh{--sw:64px}.sb .t,.sb-sec,.sb-foot .t,.sb-brand .t,.ni .badge{display:none}.ni{justify-content:center;padding:0}.sb-brand{justify-content:center;padding:0}.sb-foot{justify-content:center;padding:10px 0}}
+@media (max-width:640px){.sh{grid-template-columns:minmax(0,1fr)}.sb{display:none}.tb{padding:0 12px;gap:8px}.tabsbar{padding:8px 12px 0}.pg{padding:16px 12px}.pg-hd h1{font-size:19px}.tb .hide-s{display:none}}
 
-:root{--accent:#245953;--accent-soft:color-mix(in srgb,var(--accent) 10%,white);--paper:#f4f3ee;--editorial:#183d38;--space:24px;--cover-a:#dbe6df;--cover-b:#e8d9bf;--chart-height:150px}
-body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32px 32px 180px}.mast{display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:24px}.mast .sp{flex:1}.mast strong{font-size:20px}.edition{font-family:var(--font-mono);color:var(--accent);font-size:12px;letter-spacing:2px}.hero .edition{color:rgba(255,255,255,.78)}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}.nav .on{background:var(--accent);color:var(--accent-ink)}.hero{padding:32px;background:var(--editorial);color:var(--accent-ink);border-radius:var(--r-lg);margin-bottom:24px}.hero h1{font-size:32px;margin:8px 0}.hero p{opacity:.9;max-width:650px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.two{display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:24px}.card{padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);min-width:0}.card h2{font-size:20px;margin:0 0 16px}.card h3{font-size:16px;margin:8px 0}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}.toolbar input{flex:1;min-width:140px}.field{display:grid;gap:8px;margin:16px 0}.field input,.field textarea,.field select,.toolbar input,.toolbar select{padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);max-width:100%}.field textarea{min-height:100px}.stat{font-size:32px;font-family:var(--font-mono);font-weight:600;margin:12px 0}.row{padding:16px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}.row .grow{flex:1;min-width:0}.caption{color:var(--ink-500);font-size:13px}.notice{padding:14px 18px;background:var(--accent-soft);border-left:3px solid var(--accent);margin:16px 0}.error{color:var(--danger);min-height:20px}.empty-box{text-align:center;padding:64px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}.empty-box h2{margin:16px}.loading-grid{display:grid;gap:20px}.loading-grid .sk{height:100px}.scroll-table{overflow:auto}.cover-art{height:160px;border-radius:var(--r-sm);background:var(--cover-a);display:flex;align-items:center;justify-content:center;font-size:36px;font-family:serif;color:var(--editorial);margin-bottom:16px}.card:nth-child(even) .cover-art{background:var(--cover-b)}.chart{display:flex;gap:14px;align-items:end;height:var(--chart-height);margin:24px 0}.bar{flex:1;background:var(--accent);min-width:24px;border:0;border-radius:var(--r-sm) var(--r-sm) 0 0;color:var(--accent-ink);cursor:pointer}.reading{font-family:serif;font-size:var(--reader-size,20px);line-height:2.1;max-width:680px;margin:auto}.reading.night{background:var(--ink-900);color:var(--surface);padding:24px;border-radius:var(--r-md)}.steps{display:flex;gap:16px;padding:16px 0;flex-wrap:wrap}.steps span{padding:8px 14px;background:var(--surface);border-radius:var(--r-full)}.steps .active{background:var(--accent);color:var(--accent-ink)}.meter{width:100%;accent-color:var(--accent)}.mobile .workspace{width:min(100%,430px);background:var(--bg);padding:24px 20px 180px;min-height:844px;border:1px solid var(--line);border-radius:var(--r-lg);margin:24px auto}.mobile .grid,.mobile .two{grid-template-columns:1fr}.mobile .hero{padding:24px}.mobile .hero h1{font-size:26px}.mobile button,.mobile input,.mobile select{min-height:44px}.mobile .chart{overflow:auto}.question{padding:20px;border:1px solid var(--line);border-radius:var(--r-md);margin:16px 0}.question label{display:block;padding:12px}.score{font:600 64px var(--font-mono);color:var(--accent)}button:disabled{cursor:not-allowed}input[type=checkbox],input[type=radio]{accent-color:var(--accent)}@media(max-width:800px){.workspace{padding:20px 16px 180px}.grid,.two{grid-template-columns:1fr}.hero h1{font-size:26px}.mast{flex-wrap:wrap}.table{min-width:560px}}
+/* 步骤条 */
+.steps{display:flex;gap:0;margin-bottom:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.stp{flex:1;display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13px;color:var(--ink-500);position:relative;min-width:0}
+.stp + .stp{border-left:1px solid var(--line-soft)}
+.stp .n{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:600;flex:none;background:var(--surface)}
+.stp b{display:block;font-size:14px;color:var(--ink-700);font-weight:500;white-space:nowrap}
+.stp small{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stp.done .n{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.stp.cur{background:var(--accent-soft)}
+.stp.cur .n{border-color:var(--accent);color:var(--accent)}
+.stp.cur b{color:var(--accent)}
+.stp.bad .n{border-color:var(--danger);color:var(--danger)}
+/* 列表 */
+.flt{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 16px}
+.flt .input-wrap{width:260px}
+.flt .select{width:150px}
+.flt .sp{flex:1}
+.selbar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--accent-soft);font-size:13px;color:var(--ink-700);border-top:1px solid var(--line-soft)}
+.selbar b{color:var(--accent)}
+.prog{display:flex;align-items:center;gap:8px;min-width:120px}
+.prog .bar{flex:1;height:6px;border-radius:3px;background:var(--line-soft);overflow:hidden;display:flex}
+.prog .bar i{display:block;height:100%}
+.prog .bar .ok{background:var(--success)}
+.prog .bar .bad{background:var(--danger)}
+.prog .bar .run{background:var(--accent)}
+.prog span{font-size:12px;color:var(--ink-500);font-variant-numeric:tabular-nums;white-space:nowrap}
+.table td.clk{cursor:pointer}
+.table tbody tr.row-clk{cursor:pointer}
+.table tbody tr.row-clk:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.foot{display:flex;align-items:center;gap:12px;padding:12px 16px;font-size:13px;color:var(--ink-500);border-top:1px solid var(--line-soft);flex-wrap:wrap}
+.foot .sp{flex:1}
+/* 上传 */
+.up-grid{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:16px;align-items:start}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:260px;border:1.5px dashed var(--ink-300);border-radius:var(--r-lg);background:var(--surface-2);text-align:center;padding:28px;cursor:pointer;transition:border-color var(--dur) var(--ease),background var(--dur) var(--ease)}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.drop .dic{width:56px;height:56px;border-radius:var(--r-lg);background:var(--surface);display:grid;place-items:center;color:var(--accent);box-shadow:var(--shadow-1)}
+.drop .dic .ic{width:26px;height:26px}
+.drop b{font-size:16px}
+.drop p{font-size:13px;color:var(--ink-500);line-height:1.7}
+.drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.fcard{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
+.fcard .fic{width:44px;height:44px;border-radius:var(--r-md);background:var(--success-soft);color:var(--success);display:grid;place-items:center;flex:none;font-size:12px;font-weight:700}
+.fcard .m{flex:1;min-width:0}
+.fcard .m b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fcard .m small{font-size:12px;color:var(--ink-500)}
+.upbar{height:6px;border-radius:3px;background:var(--line-soft);overflow:hidden;margin-top:8px}
+.upbar i{display:block;height:100%;background:var(--accent);transition:width .3s var(--ease)}
+.sheets{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.sheets button{height:32px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-full);background:var(--surface);font-size:13px;color:var(--ink-700);cursor:pointer}
+.sheets button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:500}
+.rules{margin:0;padding:0;list-style:none;font-size:13px;color:var(--ink-700);line-height:1.9}
+.rules li{display:flex;gap:8px}
+.rules .ic{margin-top:5px;color:var(--ink-500);flex:none}
+.sec{padding:18px 20px}
+.sec h2{font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec h2 .muted{font-weight:400;font-size:13px}
+.sec h2 .r{margin-left:auto}
+.fg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px}
+.fg .full{grid-column:1/-1}
+.fg .field{margin-bottom:12px}
+.seg2{display:flex;gap:6px;flex-wrap:wrap}
+.seg2 button{height:34px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);font-size:13px;color:var(--ink-700);cursor:pointer}
+.seg2 button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:500}
+.sw{flex:none;width:40px;height:24px;border-radius:12px;border:0;background:var(--ink-300);position:relative;cursor:pointer;padding:0}
+.sw::after{content:"";position:absolute;left:2px;top:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform var(--dur) var(--ease)}
+.sw[aria-checked="true"]{background:var(--accent)}
+.sw[aria-checked="true"]::after{transform:translateX(16px)}
+.swrow{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-700);min-height:36px}
+.ft-bar{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px 20px;margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--shadow-2);flex-wrap:wrap}
+.ft-bar .why{font-size:13px;color:var(--ink-500);margin-right:auto}
+.ft-bar .why.bad{color:var(--danger)}
+/* 映射 */
+.map-grid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:16px;align-items:start}
+.samp{display:flex;gap:6px;flex-wrap:nowrap}
+.samp span{font-size:12px;padding:1px 6px;border-radius:4px;background:var(--surface-2);border:1px solid var(--line-soft);color:var(--ink-700);max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-mono)}
+.table td .select{height:32px;width:150px;font-size:13px}
+.table td .select.is-error{border-color:var(--danger)}
+.table tr.dup td{background:var(--danger-soft)}
+.mk{font-size:12px;white-space:nowrap}
+.req-list{list-style:none;margin:0;padding:0}
+.req-list li{display:flex;align-items:center;gap:8px;font-size:13px;min-height:32px;border-bottom:1px solid var(--line-soft)}
+.req-list li:last-child{border-bottom:0}
+.req-list .ok{color:var(--success)}
+.req-list .no{color:var(--danger)}
+.req-list small{margin-left:auto;color:var(--ink-500);font-size:12px;white-space:nowrap}
+/* 校验 */
+.sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-bottom:1px solid var(--line-soft)}
+.sum > div{padding:16px 20px;border-right:1px solid var(--line-soft)}
+.sum > div:last-child{border-right:0}
+.sum span{font-size:12px;color:var(--ink-500)}
+.sum b{display:block;font-size:24px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
+.sum b.e{color:var(--danger)}.sum b.w{color:var(--warning)}.sum b.s{color:var(--success)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:14px 16px 0}
+.chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-full);background:var(--surface);font-size:13px;color:var(--ink-700);cursor:pointer}
+.chip b{font-weight:600;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{border-color:var(--ink-900);background:var(--ink-900);color:#fff}
+.chip.e b{color:var(--danger)}.chip.w b{color:var(--warning)}
+.chip[aria-pressed="true"] b{color:#fff}
+.fix{display:flex;align-items:center;gap:6px}
+.fix .input{height:32px;width:170px;font-size:13px;font-family:var(--font-mono)}
+.fix .input.is-error{border-color:var(--danger)}
+.val-old{font-family:var(--font-mono);font-size:13px;color:var(--danger);text-decoration:line-through}
+.val-empty{font-size:12px;color:var(--ink-500)}
+.table tr.fixed td{background:var(--success-soft)}
+.hint{font-size:12px;color:var(--ink-500);white-space:normal;min-width:200px;max-width:280px;line-height:1.5}
+.lvl-e{color:var(--danger);font-weight:600;font-size:13px}
+.lvl-w{color:var(--warning);font-weight:600;font-size:13px}
+.vbar{display:flex;flex-direction:column;gap:10px;padding:4px 0}
+.vbar div{display:grid;grid-template-columns:112px minmax(0,1fr) 28px;gap:10px;align-items:center;font-size:13px}
+.vbar i{display:block;height:8px;border-radius:4px;background:var(--danger)}
+.vbar i.w{background:#C98A1B}
+.vbar b{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+.checking{padding:40px 24px;text-align:center}
+.checking .upbar{max-width:420px;margin:16px auto 8px;height:8px}
+.checking ol{list-style:none;padding:0;margin:18px auto 0;max-width:420px;text-align:left;font-size:13px;line-height:2.1;color:var(--ink-700)}
+.checking li .ic{vertical-align:-3px;margin-right:6px}
+/* 结果 */
+.res-hd{display:flex;align-items:center;gap:18px;padding:22px 24px}
+.res-ic{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;flex:none}
+.res-ic .ic{width:28px;height:28px}
+.res-ic.ok{background:var(--success-soft);color:var(--success)}
+.res-ic.warn{background:var(--warning-soft);color:var(--warning)}
+.res-ic.rv{background:var(--line-soft);color:var(--ink-500)}
+.res-hd h2{font-size:20px}
+.res-hd p{font-size:13px;color:var(--ink-500);margin-top:4px;line-height:1.7}
+.res-hd .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:var(--r-md);font-size:13px;line-height:1.7;margin-bottom:16px}
+.banner .ic{margin-top:3px;flex:none}
+.banner.warn{background:var(--warning-soft);color:var(--warning)}
+.banner.info{background:var(--info-soft);color:var(--info)}
+.banner.neutral{background:var(--line-soft);color:var(--ink-700)}
+.banner .btn{margin-left:auto;height:30px;flex:none}
+/* 抽屉 */
+.dsum{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px 12px;font-size:14px;margin:0 0 18px}
+.dsum dt{color:var(--ink-500)}.dsum dd{margin:0;overflow-wrap:anywhere}
+.tl{list-style:none;margin:0 0 18px;padding:0}
+.tl li{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:10px;font-size:13px;padding-bottom:12px;position:relative}
+.tl li::before{content:"";position:absolute;left:8px;top:18px;bottom:0;width:1.5px;background:var(--line-soft)}
+.tl li:last-child::before{display:none}
+.tl .d{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--accent);background:var(--surface);margin-top:2px}
+.tl .d.bad{border-color:var(--danger)}
+.tl time{color:var(--ink-500);font-variant-numeric:tabular-nums}
+.rsn{list-style:none;margin:0;padding:0;border:1px solid var(--line-soft);border-radius:var(--r-md)}
+.rsn li{display:flex;gap:10px;align-items:center;padding:10px 12px;font-size:13px;border-bottom:1px solid var(--line-soft)}
+.rsn li:last-child{border-bottom:0}
+.rsn b{margin-left:auto;font-variant-numeric:tabular-nums}
+.dw-h3{font-size:13px;font-weight:600;color:var(--ink-700);margin:0 0 8px}
+.sk-blk{padding:20px}
+.sk-blk .sk{margin-bottom:12px}
+.map-grid>*,.up-grid>*,.ck-grid>*{min-width:0}
+.sec h2{flex-wrap:wrap}
+.ck-grid{display:block}
+.ck-side{border-left:1px solid var(--line-soft)}
+@media (max-width:1240px){.ck-grid{grid-template-columns:1fr}.ck-side{border-left:0;border-top:1px solid var(--line-soft)}.up-grid,.map-grid{grid-template-columns:1fr}}
+@media (max-width:900px){.sum{grid-template-columns:repeat(2,minmax(0,1fr))}.sum > div:nth-child(2){border-right:0}.sum > div:nth-child(-n+2){border-bottom:1px solid var(--line-soft)}.steps{flex-wrap:wrap}.stp{flex:1 1 50%}.stp small{display:none}.res-hd{flex-wrap:wrap}.res-hd .acts{margin-left:0}}
+@media (max-width:640px){.ft-bar{position:static}.flt .input-wrap,.flt .select{width:100%}.fg{grid-template-columns:1fr}.stp{padding:10px}.stp b{font-size:13px}.ft-bar .why{width:100%}}
+</style>
+</head>
+<body>
+<div class="sh">
+  <aside class="sb" aria-label="主导航"><div class="sb-brand"><span class="brand-mark">鲜</span><span class="t">示例鲜生 · 商品中心</span></div>
+    <nav class="sb-nav">
+      <div class="sb-sec">商品</div>
+      <button class="ni" type="button" data-toast="商品资料（示例）"><svg class="ic"><use href="#i-bag"/></svg><span class="t">商品资料</span></button>
+      <button class="ni" type="button" data-toast="类目与属性（示例）"><svg class="ic"><use href="#i-layers"/></svg><span class="t">类目与属性</span></button>
+      <button class="ni" type="button" data-toast="价格管理（示例）"><svg class="ic"><use href="#i-wallet"/></svg><span class="t">价格管理</span></button>
+      <div class="sb-sec">数据</div>
+      <button class="ni on" type="button" data-go="list" aria-current="page"><svg class="ic"><use href="#i-upload"/></svg><span class="t">批量导入</span></button>
+      <button class="ni" type="button" data-toast="导出记录（示例）"><svg class="ic"><use href="#i-download"/></svg><span class="t">导出记录</span></button>
+      <button class="ni" type="button" data-toast="映射方案（示例）"><svg class="ic"><use href="#i-flow"/></svg><span class="t">映射方案</span></button>
+      <button class="ni" type="button" data-toast="操作日志（示例）"><svg class="ic"><use href="#i-history"/></svg><span class="t">操作日志</span></button>
+    </nav>
+    <div class="sb-foot"><span class="avatar">周</span><span class="t">周示例<small>商品运营 · 华东区</small></span></div>
+  </aside>
+  <main style="min-width:0;display:flex;flex-direction:column">
+    <div class="tb"><nav class="crumb2" id="crumb" aria-label="面包屑"></nav><span class="sp"></span>
+      <button class="btn btn-ghost hide-s" type="button" data-tpl>下载导入模板</button>
+      <button class="btn btn-ghost btn-icon" type="button" aria-label="通知 2 条" data-toast="通知：IMP-20261110-0011 已完成，49 行失败（示例）"><svg class="ic"><use href="#i-bell"/></svg></button></div>
+    <div class="tabsbar" id="tabs" role="tablist" aria-label="已打开的页面"></div>
+    <div id="page" style="flex:1"></div>
+  </main>
+</div>
+<div class="drawer" id="dw" aria-labelledby="dw-t"></div>
 
-</style></head><body class="desktop"><main class="workspace"><header class="mast"><div><div class="edition">PROTOTYPE / 示例</div><strong>批量导入与逐行校验</strong></div><span class="sp"></span><span class="caption">积木盒 · 可点击原型</span></header><nav id="nav" class="nav" aria-label="页面导航"></nav><div id="content"></div></main><script>
+<script>
+/* ==========================================================================
+   ① 改数据只改这里（示例数据，全部虚构）
+   ========================================================================== */
+const DATA = {
+  // 导入记录：[批次号, 文件名, 导入对象, 总行数, 成功, 失败, 状态, 发起人, 发起时间, 耗时, 映射方案]
+  // 状态：done 已完成 / partial 部分失败 / failed 全部失败 / running 写入中 / revoked 已撤销 / draft 未完成
+  tasks: [
+    ['IMP-20261111-0013', '商品资料_11月新品_v3.xlsx', '商品资料', 286, 0, 0, 'draft', '周示例', '11-11 10:42', '—', '自动识别'],
+    ['IMP-20261111-0012', '冬季火锅食材_新品.xlsx', '商品资料', 148, 148, 0, 'done', '周示例', '11-11 09:16', '42 秒', '火锅新品'],
+    ['IMP-20261110-0011', '华东门店_期初库存.csv', '期初库存', 3920, 3871, 49, 'partial', '林示例', '11-10 18:05', '6 分 12 秒', '期初库存标准'],
+    ['IMP-20261110-0010', '供应商资料_补录.xlsx', '供应商', 37, 0, 37, 'failed', '韩示例', '11-10 15:31', '9 秒', '—'],
+    ['IMP-20261110-0009', '调价单_双11_第2批.xlsx', '商品价格', 1204, 1204, 0, 'done', '周示例', '11-10 11:20', '1 分 03 秒', '调价方案 A'],
+    ['IMP-20261109-0008', '会员客户_线下门店.csv', '客户', 8650, 8402, 248, 'partial', '许示例', '11-09 20:47', '11 分 30 秒', '门店会员'],
+    ['IMP-20261109-0007', '商品资料_秋冬零食.xlsx', '商品资料', 512, 509, 3, 'revoked', '林示例', '11-09 14:02', '2 分 14 秒', '秋冬零食'],
+    ['IMP-20261109-0006', '华南仓_期初库存.xlsx', '期初库存', 2311, 1458, 0, 'running', '谢示例', '11-11 10:38', '已用 3 分 20 秒', '期初库存标准'],
+    ['IMP-20261108-0005', '条码补全_第3批.csv', '商品资料', 96, 96, 0, 'done', '韩示例', '11-08 16:44', '11 秒', '条码补全'],
+    ['IMP-20261107-0004', '供应商资料_新增.xlsx', '供应商', 22, 22, 0, 'done', '许示例', '11-07 10:09', '6 秒', '供应商标准'],
+    ['IMP-20261106-0003', '客户分级_Q4.xlsx', '客户', 1530, 1488, 42, 'partial', '谢示例', '11-06 17:52', '2 分 41 秒', '客户分级'],
+    ['IMP-20261105-0002', '商品资料_进口酒水.xlsx', '商品资料', 64, 61, 3, 'partial', '周示例', '11-05 13:27', '19 秒', '进口酒水']
+  ],
+  // 批次失败原因（抽屉里展示）：批次号 → [[原因, 行数, 能否重试]]
+  reasons: {
+    'IMP-20261110-0011': [['门店编码不存在（如 MD-0921 已关店）', 31, false], ['库存数量为负数', 12, false], ['写入超时', 6, true]],
+    'IMP-20261110-0010': [['表头与「供应商」模板不符：缺少「统一社会信用代码」列', 37, false]],
+    'IMP-20261109-0008': [['手机号格式不对', 166, false], ['手机号已被其他会员使用', 71, false], ['写入超时', 11, true]],
+    'IMP-20261109-0007': [['条形码被占用', 3, false]],
+    'IMP-20261106-0003': [['客户编号不存在', 40, false], ['等级不在「A/B/C/D」内', 2, false]],
+    'IMP-20261105-0002': [['进口酒水缺少「原产国」', 3, false]]
+  },
+  // 本次文件：源列（文件里的表头）、前 3 行示例值、自动识别的目标字段、识别方式 exact 完全匹配 / fuzzy 近似需确认 / manual 手动
+  file: { name: '商品资料_11月新品_v3.xlsx', size: '186 KB', sheets: ['新品', '已下架', '填写说明'], rows: 286 },
+  src: [
+    ['商品编码', ['SP-110231', 'SP-110232', 'SP-110233'], 'sku', 'exact'],
+    ['商品名称', ['澳洲肥牛卷 500g', '手打虾滑 150g', '鲜切羊肉片 400g'], 'name', 'exact'],
+    ['规格', ['500g/盒', '150g/袋', '400g/盒'], 'spec', 'exact'],
+    ['计量单位', ['盒', '袋', '盒'], 'unit', 'fuzzy'],
+    ['条码', ['6901234500017', '6901234500024', '6901234500031'], 'barcode', 'fuzzy'],
+    ['大类', ['冷冻肉类', '冷冻水产', '冷冻肉类'], 'cat1', 'fuzzy'],
+    ['小类', ['牛肉', '虾制品', '羊肉'], 'cat2', 'fuzzy'],
+    ['进价(含税)', ['32.80', '18.50', '41.00'], 'cost', 'exact'],
+    ['建议零售价', ['49.90', '26.90', '59.90'], 'price', 'fuzzy'],
+    ['税率', ['9%', '9%', '9%'], 'tax', 'exact'],
+    ['保质期(天)', ['365', '180', '365'], 'shelf', 'exact'],
+    ['供应商编码', ['V-0318', 'V-0402', 'V-0318'], 'vendor', 'exact'],
+    ['品牌', ['示例牧场', '渔湾示例', '示例牧场'], 'brand', 'exact'],
+    ['采购员备注', ['首批 200 箱', '需冷链', '—'], 'ignore', 'manual']
+  ],
+  // 系统里的目标字段：key → [名称, 是否必填]
+  tgt: { sku: ['商品编码', 1], name: ['商品名称', 1], spec: ['规格', 0], unit: ['单位', 1], barcode: ['条形码', 0], cat1: ['一级类目', 1], cat2: ['二级类目', 0], cost: ['进价（含税）', 0], price: ['零售价', 1], tax: ['税率', 0], shelf: ['保质期（天）', 0], vendor: ['供应商编码', 0], brand: ['品牌', 0], status: ['上架状态', 0] },
+  // 校验问题：[行号, 商品编码, 商品名称, 问题字段, 当前值, 问题类型, 级别 e错误/w警告, 处理建议, 修正规则]
+  issues: [
+    [17, 'SP-110247', '韩式部队锅底料 300g', '条形码', '69012345007', '条码位数不对', 'e', '条形码应为 13 位数字，当前 11 位', 'barcode'],
+    [23, '', '黑椒牛仔骨 300g', '商品编码', '', '必填为空', 'e', '商品编码不能为空，格式 SP- 加 6 位数字', 'sku'],
+    [31, 'SP-110261', '潮汕牛肉丸 250g', '单位', '盒装', '单位不在单位库', 'e', '可填：盒 / 袋 / 箱 / 千克 / 包', 'unit'],
+    [44, 'SP-110274', '番茄火锅底料 200g', '零售价', '二十九', '不是数字', 'e', '填数字，最多 2 位小数，如 29.00', 'money'],
+    [58, 'SP-110232', '手打虾滑 150g', '商品编码', 'SP-110232', '文件内重复', 'e', '与第 3 行编码相同；改成新编码，或删掉其中一行', 'sku'],
+    [76, 'SP-110306', '冻豆腐 500g', '一级类目', '豆制品冷冻', '类目不存在', 'e', '可填：冷冻肉类 / 冷冻水产 / 冷冻面点 / 豆制品', 'cat'],
+    [92, 'SP-110322', '红薯宽粉 240g', '零售价', '', '必填为空', 'e', '零售价不能为空', 'money'],
+    [118, 'SP-110348', '鲜鸭血 400g', '保质期（天）', '-7', '数值越界', 'e', '保质期应为 1～1095 天', 'int'],
+    [141, 'SP-110371', '蟹味棒 200g', '条形码', '6901234501x12', '条码位数不对', 'e', '只能是数字，13 位', 'barcode'],
+    [167, 'SP-110397', '牛百叶 300g', '税率', '13', '格式错误', 'e', '写成百分比：9% 或 13%', 'tax'],
+    [203, 'SP-110433', '水晶虾饺 12 只装', '单位', '只', '单位不在单位库', 'e', '可填：盒 / 袋 / 箱 / 千克 / 包', 'unit'],
+    [251, 'SP-110481', '鱼豆腐 250g', '供应商编码', 'V-9999', '供应商不存在', 'e', '系统里没有 V-9999；可填 V-0318 / V-0402 / V-0517', 'vendor'],
+    [9, 'SP-110239', '精品肥羊卷 400g', '零售价', '35.00', '售价低于进价', 'w', '进价 38.60，毛利为负；确认无误可直接导入', ''],
+    [12, 'SP-110242', '千层毛肚 200g', '商品编码', 'SP-110242', '系统已存在', 'w', '会按「已存在的商品：覆盖」更新原资料', ''],
+    [35, 'SP-110265', '鸡蛋蛋饺 300g', '品牌', '', '品牌为空', 'w', '非必填，导入后品牌显示「无品牌」', ''],
+    [67, 'SP-110297', '经典午餐肉 340g', '商品编码', 'SP-110297', '系统已存在', 'w', '会按「已存在的商品：覆盖」更新原资料', ''],
+    [88, 'SP-110318', '撒尿牛丸 500g', '规格', '500克', '规格写法不统一', 'w', '其他行写「g」，建议改为 500g', ''],
+    [152, 'SP-110382', '龙口粉丝 180g', '保质期（天）', '730', '保质期偏长', 'w', '同类目平均 365 天，确认无误可直接导入', ''],
+    [229, 'SP-110459', '鲜黄喉 250g', '进价（含税）', '6.80', '进价偏离', 'w', '比 V-0402 上次报价 11.70 低 42%', '']
+  ],
+  // 写入阶段失败：[行号, 商品编码, 商品名称, 阶段, 原因, 能否直接重试, 修正提示]
+  writeFails: [
+    [12, 'SP-110242', '千层毛肚 200g', '写入', '原商品正被调价单 TJ-20261111-0004 锁定', true, ''],
+    [97, 'SP-110327', '鲜鸭肠 250g', '写入', '数据库响应超时（3 秒）', true, ''],
+    [133, 'SP-110363', '金针菇 300g', '写入', '数据库响应超时（3 秒）', true, ''],
+    [188, 'SP-110418', '鱼籽福袋 200g', '关联条码', '条形码 6901234501883 在 10:51 被商品 SP-100912 占用', false, '换一个条形码'],
+    [240, 'SP-110470', '火锅川粉 200g', '关联类目', '二级类目「粉丝粉条」已于 11-11 10:05 停用', false, '改成在用的二级类目']
+  ],
+  units: ['盒', '袋', '箱', '千克', '包'],
+  cats: ['冷冻肉类', '冷冻水产', '冷冻面点', '豆制品'],
+  vendors: ['V-0318', 'V-0402', 'V-0517'],
+  cats2: ['粉丝', '粉条', '火锅粉'],
+  limit: { mb: 10, rows: 5000 }
+};
+
+/* ==========================================================================
+   ①-2 AI 提示词（页面顶部「AI 提示词」可一键复制；{{变量}} 点一下就能填）
+   ========================================================================== */
+const PROMPTS = [
+ { title: '从零生成这个原型', when: '要做「Excel 批量导入」功能，想把字段映射、逐行校验、部分失败这几步一次定下来时用',
+   text: `请帮我做一个可点击的 PC 后台原型（1440 宽，500 宽不横滚）：商品资料批量导入。左侧栏 + 顶栏面包屑 + 页签的后台框架。
+
+流程 4 步，顶部步骤条：上传文件 → 字段映射 → 校验与修正 → 导入结果。
+1. 导入记录页：表格列 = 批次号、文件名、导入对象、总行数、结果（成功/失败分段进度条）、状态（已完成 / 部分失败 / 全部失败 / 写入中 / 已撤销 / 未完成）、发起人、发起时间、耗时、操作；按导入对象、状态、关键字筛选；勾选后「下载失败报告」（未勾选时置灰并写原因）；点一行右侧抽屉：步骤时间线 + 失败原因分布（每类写行数、能否重试）+「重试可重试的行」「撤销本批（24 小时内）」；
+2. 上传：拖拽区（不露浏览器原生文件控件）支持 .xlsx / .csv，≤10 MB、≤5000 行；多工作表时让我选表；右侧 13 个导入设置：导入对象、模板版本、匹配主键、已存在的商品（跳过 / 覆盖 / 只补空字段）、表头所在行、数据起始行（必须大于表头行）、日期格式、金额单位、遇到错误时（整批不导 / 跳过错误行）、自动上架开关、完成后通知谁、批次备注；
+3. 字段映射：每个源列显示前 3 行示例值，自动识别目标字段并标「完全匹配 / 近似·需确认 / 手动」；右侧必填字段清单实时打勾；两列映射到同一字段时两行标红、不能下一步；可「保存为映射方案」；
+4. 校验：汇总（总行数 / 错误行 / 警告行 / 可导入行）+ 按问题类型的分布条；明细表列 = 行号、商品编码、商品名称、问题字段、当前值、问题、级别、处理建议；错误行可以就地改值，改对了这行变绿、数字实时减少；警告不拦截；底部两个按钮「跳过 N 行错误，导入 M 行」「全部改好再导入」；
+5. 结果：部分失败时写清成功几行、失败几行；失败分两种——锁定 / 超时能直接重试，条码被占用 / 类目停用要先改值再重试；可下载失败行、可撤销本批。
+
+状态（原型面板可切换）：每页都有 正常 / 空 / 加载中 / 出错 / 无权限；映射页加「必填未映射」，校验页加「全部通过」「校验中（进度）」，结果页加「全部成功」「已撤销」。
+数据要像真的：每行商品名、编码、金额都不同，数字前后对得上（可导入 = 总行数 − 错误行）。
+硬性要求：单文件 HTML，不引用外部网址，双击离线可开；颜色写成 :root 变量；数据集中在脚本顶部 DATA。
+交付：① 完整 HTML；② 校验规则表（字段 | 规则 | 报错文案 | 是否拦截）；③ 状态清单。` },
+ { title: '改成我的业务', when: '手上有这个模板，要换成客户、库存、员工等别的导入对象时用',
+   text: `附件是一个单文件 HTML 的批量导入原型。请改成导入「{{导入对象，例如：期初库存}}」。
+
+1. 只改脚本顶部 DATA 和文案，不动 KIT 标记之间的共用样式和脚本；保留 4 步流程、所有状态、就地修正和部分失败重试；
+2. 目标字段（标出必填）：{{字段清单，例如：仓库编码*、货品编码*、批次号、数量*、成本单价、生产日期}}；
+3. 主键和重复规则：用「{{主键，例如：仓库编码+货品编码+批次号}}」判断重复；文件内重复算错误，系统已存在按「{{已存在时怎么办}}」处理；
+4. 校验规则逐条写进 DATA.issues 的示例里：{{规则，例如：数量不能为负、生产日期不能晚于今天、仓库必须是启用状态}}，每条都要给能直接照做的处理建议；
+5. 写入阶段可能失败的原因：{{例如：库存被盘点单锁定、货品已停用}}，分清能直接重试和要先改值的；
+6. 示例数据每行都不同，标「示例」，不出现真实公司名。
+交付：改好的完整 HTML + 校验规则表（字段 | 规则 | 报错文案 | 是否拦截）。` },
+ { title: '在此基础上加页面 / 状态', when: '评审追问「导入一半关了页面怎么办」「能不能先预览再导」时用',
+   text: `附件是一个单文件 HTML 的批量导入原型。请在它的基础上加：{{要加的页面或状态}}。
+
+常见例子（选一个或照着写）：
+- 「后台导入」：超过 2000 行时提交后可以离开页面，顶栏铃铛出现进度，完成后通知「成功 N 行，失败 M 行」，点通知回到结果页；
+- 「导入前对比」：「已存在的商品：覆盖」时，列出将被覆盖的商品和每个字段「原值 → 新值」，可逐行取消覆盖；
+- 「映射方案管理」：方案列表（名称、适用对象、列数、最近使用），上传时按表头自动推荐最匹配的方案，命中率低于 80% 时提示确认。
+
+要求：新页面或状态加进「原型面板」；数字要和现有汇总对得上；沿用现有 CSS 变量和组件样式，只改必要的地方。
+交付：完整 HTML + 新增部分的「元素 | 交互 | 反馈」说明表。` }
+];
+
+/* ==========================================================================
+   ② 下面是交互逻辑，一般不用改
+   ========================================================================== */
 /*@KIT_JS*/
 /* ==========================================================================
    原型工具包（不用改）：图标、页面/状态切换、弹层、Toast
@@ -610,42 +972,362 @@ body{background:var(--paper)}.workspace{max-width:1200px;margin:auto;padding:32p
   P.stateBlock=function(o){return '<div class="state '+(o.error?'is-error':'')+'"><div class="state-ic">'+P.ic(o.icon||(o.error?'alert':'inbox'))+'</div><h3>'+P.esc(o.title)+'</h3>'+(o.body?'<p>'+P.esc(o.body)+'</p>':'')+(o.acts?'<div class="acts">'+o.acts+'</div>':'')+'</div>'};
 })();
 /*@END_KIT_JS*/
-</script><script>
-// 示例业务数据：仅本次会话修改，刷新恢复；在这里替换字段和数据。
-const DATA={"headers": ["名称", "数量"], "rows": [["示例收纳盒", "12"], ["示例文件夹", "0"], ["", "8"]], "records": []};
-const PAGES=[{"id": "upload", "name": "选择文件", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}, {"id": "validate", "name": "数据校验", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}]}, {"id": "result", "name": "导入结果", "states": [{"id": "normal", "name": "正常"}, {"id": "empty", "name": "空"}, {"id": "loading", "name": "加载中"}, {"id": "error", "name": "出错"}, {"id": "submitting", "name": "导入中"}, {"id": "success", "name": "导入成功"}, {"id": "failed", "name": "提交失败"}]}];
-const PROMPTS=[{"title": "从零生成这个原型", "when": "要从需求开始搭建可演示的页面时用", "text": "请用单文件 HTML 创建「批量导入与逐行校验」可点击原型。用途：适合商品、客户或库存资料批量导入评审，演示 CSV 模板、文件解析、逐行修正与一次提交。包含页面：选择文件、数据校验、导入结果。业务交互：选择本地 CSV，解析并进入校验；格式或体积不符留在当前页；就地修正名称与数量，即时更新错误行数，全部通过才可提交；校验通过后提交，显示导入中，然后结果页与记录联动；下载错误 CSV，包含原始行号和原因，公式前缀转为文本。每个主页面提供正常、空、骨架加载、出错和重试，表单提供校验、提交中、成功、失败。数据集中在 DATA；样式使用 CSS 变量；图标内联 SVG；示例数据标示例。不使用外部依赖，离线双击可开。顶部提供免费下载说明，右下角原型面板支持 URL 直达和 H 隐藏，弹窗支持 Esc 和焦点归还。交付 HTML、README 和交互说明表。"}, {"title": "改成我的业务", "when": "点击高亮变量填写，然后一键复制", "text": "附件是「批量导入与逐行校验」HTML 原型，请改成我的业务：产品名称为「{{产品名称}}」，目标用户「{{目标用户}}」，字段和示例数据「{{字段与示例数据}}」，业务规则「{{业务规则}}」。保留 选择文件、数据校验、导入结果 的完整链路与所有空、加载、出错状态。修改 DATA 和模板变量，不改共用 KIT 标记内代码。所有金额、数量、状态随操作联动；不能执行的操作写原因。交付可离线打开的完整 HTML 和更新后的交互表。"}, {"title": "加页面或状态", "when": "需要扩展当前链路时用", "text": "请在「批量导入与逐行校验」中增加「{{新增页面或状态}}」，入口为「{{入口位置}}」，成功结果为「{{成功反馈}}」，失败恢复方式为「{{失败恢复方式}}」。沿用当前 CSS 变量、DATA 与 Proto 页面面板；保留已有流程。为新增列表补正常、空、加载、出错；为新增表单补校验、提交中、成功、失败。离开页面应取消定时回调。更新 README 的状态表和交互表，保持单文件离线可用。"}];
 
-const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s)), e=Proto.esc;
-const btn=(label,action,primary=false,disabled=false)=>`<button type="button" class="btn ${primary?'btn-primary':''}" data-act="${action}" ${disabled?'disabled':''}>${label}</button>`;
-const field=(label,id,value='',type='text')=>`<label class="field">${label}<input id="${id}" type="${type}" value="${e(String(value))}"></label>`;
-const card=(title,body)=>`<section class="card"><h2>${title}</h2>${body}</section>`;
-const money=n=>Proto.money(n);
-const notice=t=>`<div class="notice" role="status">${t}</div>`;
-function download(name,text,type='text/plain'){const a=document.createElement('a'),u=URL.createObjectURL(new Blob(['\ufeff',text],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function modal(title,body){const m=document.createElement('div');m.className='modal';m.dataset.temp='1';m.setAttribute('aria-label',title);m.innerHTML=`<div class="layer-hd"><h2>${title}</h2></div><div class="layer-bd">${body}</div><div class="layer-ft"><button class="btn" data-close>关闭</button></div>`;Proto.open(m);m.querySelector('[data-close]').onclick=()=>Proto.close(m);return m}
-let timer=null, epoch=0;
-function go(page,state='normal'){Proto.go(page,state)}
-function later(fn,ms=500){clearTimeout(timer);const v=epoch;timer=setTimeout(()=>{if(v===epoch)fn()},ms)}
-function refresh(){render(Proto.state.page,Proto.state.state)}
-function fallback(page,state){if(state==='loading')return '<div class="loading-grid" aria-busy="true" aria-label="加载中"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>';
-if(state==='error')return `<div class="empty-box">${Proto.ic('alert')}<h2>暂时无法加载</h2><p>示例服务响应超时，本次修改仍保留。</p>${btn('重试','retry',true)}</div>`;
-if(state==='empty')return `<div class="empty-box">${Proto.ic('inbox')}<h2>这里还没有内容</h2><p>可以载入示例数据，继续演示完整流程。</p>${btn('载入示例','example',true)}</div>`;return null}
-function render(page,state){epoch++;clearTimeout(timer);$$('.modal.show').forEach(m=>Proto.close(m));$('#nav').innerHTML=PAGES.map(p=>`<button class="btn ${p.id===page?'on':''}" data-page="${p.id}">${p.name}</button>`).join('');$('#content').innerHTML=fallback(page,state)||view(page,state);if(typeof mount==='function')mount(page,state)}
-document.addEventListener('click',ev=>{const p=ev.target.closest('[data-page]');if(p){go(p.dataset.page);return}const b=ev.target.closest('[data-act]');if(!b||b.disabled)return;const a=b.dataset.act;if(a==='retry'){const page=Proto.state.page;go(page,'loading');later(()=>go(page));return}if(a==='example'){go(Proto.state.page);return}action(a,b)});
+const { $, $$, ic, esc, toast } = Proto;
+const PG = $('#page'), dw = $('#dw');
+const ST = { done: ['已完成', 'success'], partial: ['部分失败', 'warning'], failed: ['全部失败', 'danger'], running: ['写入中', 'info'], revoked: ['已撤销', 'neutral'], draft: ['未完成 · 停在映射', 'neutral'] };
+const STEPS = [['上传文件', '选择文件和导入设置'], ['字段映射', '文件列对应到系统字段'], ['校验与修正', '逐行检查，就地改错'], ['导入结果', '成功、失败与重试']];
+const n = v => Number(v).toLocaleString('zh-CN');
+const L = { q: '', obj: '', st: '', sel: new Set(), empty: false };
+let W, carry = false;
 
-
-let rows=DATA.rows.map(r=>r.slice()),fileName='示例商品.csv',imported=false;
-function invalid(r){return !String(r[0]||'').trim()?'名称必填':(!/^\d+$/.test(String(r[1]))||+r[1]<1?'数量须为正整数':'')}
-function view(p,s){
-if(p==='upload')return `<section class="hero"><div class="edition">01 / IMPORT</div><h1>把一批资料，稳妥地导进来</h1><p>先校验再提交，错误精确到行。示例仅支持 UTF-8 CSV，两列：名称、数量。</p></section><div class="two">${card('上传数据',`<label class="field">选择 CSV 文件<input type="file" id="csv-file" accept=".csv,text/csv"></label><p id="file-status" role="status">尚未选择文件</p>${btn('下载 CSV 模板','template')}${btn('使用错误示例','demo',true)}<p class="caption">最多 100 行 / 100 KB；不支持 XLSX；带引号或逗号字段暂不支持。</p>`)}${card('导入规则','<p>名称不能为空，数量必须为正整数。</p><p>所有行通过后才能提交；不会静默跳过错误。</p>')}</div>`;
-if(p==='validate'){const bad=rows.filter(r=>invalid(r)).length;return `<div class="steps"><span>1 选择文件</span><span class="active">2 校验与修正</span><span>3 完成</span></div>${card(e(fileName),`<div class="toolbar"><b>${rows.length} 行，${bad} 行错误</b>${btn('下载错误行','errors',false,!bad)}${btn('提交全部数据','commit',true,bad>0||!rows.length)}</div><div class="scroll-table"><table class="table"><thead><tr><th>行号</th><th>名称</th><th>数量</th><th>校验结果</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+2}</td><td><input aria-label="第 ${i+2} 行名称" data-cell="${i}:0" value="${e(r[0])}"></td><td><input aria-label="第 ${i+2} 行数量" data-cell="${i}:1" value="${e(r[1])}"></td><td>${invalid(r)?`<span class="error">${invalid(r)}</span>`:'通过'}</td></tr>`).join('')}</tbody></table></div><p>直接修改单元格，离开输入框后重新校验。</p>`)}`}
-if(s==='submitting')return card('正在导入',`<div class="sk" style="height:24px"></div><p>模拟提交中，请稍候。</p>`);
-if(s==='failed')return card('提交失败',notice('示例提交服务超时，校验通过的数据仍保留。')+btn('重新提交','commit',true));
-return card('导入完成',`<div class="stat">${imported?DATA.records.length:3} 行</div><p>${imported?'示例数据已导入本次会话；未写入真实系统。':'结果预览：尚未执行实际导入，3 行为面板示例。'}</p>${btn('查看导入记录','records')}${btn('继续导入','again',true)}`)
+function freshW() {
+  return {
+    file: null, sheet: '新品', up: 0,
+    opt: { obj: '商品资料', ver: 'v3（2026-10 版，14 列）', key: '商品编码', exist: '覆盖', hdr: '1', start: '2', date: 'YYYY-MM-DD', money: '元', onErr: '跳过错误行', shelf: false, notify: '周示例、林示例', note: '11 月冬季火锅新品第 3 批' },
+    map: DATA.src.map(s => s[2]), how: DATA.src.map(s => s[3]), saved: false,
+    filter: 'all', fixed: {}, ignoreW: false,
+    fails: DATA.writeFails.map(f => ({ row: f[0], sku: f[1], name: f[2], stage: f[3], why: f[4], retry: f[5], tip: f[6], tries: 1, val: '' })),
+    revoked: false, okExtra: 0
+  };
 }
-function mount(p,s){if(p==='upload'&&s==='normal')$('#csv-file').onchange=async ev=>{const f=ev.target.files[0],version=epoch;if(!f)return;if(f.size>102400||!f.name.toLowerCase().endsWith('.csv')){$('#file-status').textContent='请选择 100 KB 以内的 CSV';return}const raw=await f.text();if(version!==epoch)return;const text=raw.replace(/^\uFEFF/,'').trim(),lines=text.split(/\r?\n/);if(lines.shift()!=='名称,数量'||lines.length>100||!lines.length||lines.some(l=>l.includes('"')||l.split(',').length!==2)){$('#file-status').textContent='格式不符：表头应为 名称,数量；1–100 行且每行两列';return}rows=lines.map(l=>l.split(','));fileName=f.name;imported=false;go('validate')};$$('[data-cell]').forEach(el=>el.onchange=()=>{const [r,c]=el.dataset.cell.split(':');rows[r][c]=el.value.trim();refresh()})}
-function action(a){if(a==='template')download('示例导入模板.csv','名称,数量\n示例收纳盒,12','text/csv');if(a==='demo'){rows=DATA.rows.map(r=>r.slice());fileName='示例错误数据.csv';imported=false;go('validate')}if(a==='errors'){const safe=v=>{v=String(v);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return /[,\"\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};download('示例错误行.csv','行号,名称,数量,错误原因\n'+rows.map((r,i)=>invalid(r)?[i+2,...r.map(safe),invalid(r)].join(','):null).filter(Boolean).join('\n'),'text/csv')}if(a==='commit'){if(rows.some(invalid)||!rows.length){Proto.toast('请先修正所有错误行','err');go('validate');return}go('result','submitting');later(()=>{if(!imported){DATA.records=rows.map(r=>({name:r[0],quantity:+r[1]}));imported=true}go('result','success')},700)}if(a==='records')modal('本次导入记录',DATA.records.length?DATA.records.map(r=>`<p>${e(r.name)}：${r.quantity}</p>`).join(''):'<p>面板为结果示例，尚未实际执行导入。</p>');if(a==='again')go('upload')}
 
-Proto.init({pages:PAGES,render});Proto.prompts(PROMPTS);
-</script></body></html>
+/* ---------------- 框架：面包屑 / 页签 / 步骤条 ---------------- */
+function chrome(title) {
+  $('#crumb').innerHTML = `<button type="button" data-toast="商品中心首页（示例）">商品中心</button>${ic('chev-r')}<button type="button" data-go="list">批量导入</button>${title ? ic('chev-r') + `<b>${esc(title)}</b>` : ''}`;
+  const cur = P.state.page;
+  $('#tabs').innerHTML = [['list', '导入记录'], ['upload', '新建导入 · 商品资料']].map(t => `<span class="ptab ${(t[0] === 'list') === (cur === 'list') ? 'on' : ''}" role="tab" tabindex="0" aria-selected="${(t[0] === 'list') === (cur === 'list')}" data-go="${t[0] === 'list' ? 'list' : 'resume'}">${t[1]}</span>`).join('');
+}
+const P = Proto;
+function steps(i, bad) {
+  return `<ol class="steps" aria-label="导入步骤，第 ${i + 1} 步，共 4 步" style="list-style:none;padding:0">${STEPS.map((s, k) => `<li class="stp ${k < i ? 'done' : k === i ? (bad ? 'cur bad' : 'cur') : ''}" ${k === i ? 'aria-current="step"' : ''}><span class="n">${k < i ? ic('check', 'ic-sm') : k + 1}</span><span style="min-width:0"><b>${s[0]}</b><small>${s[1]}</small></span></li>`).join('')}</ol>`;
+}
+function head(t, sub, acts) { return `<div class="pg-hd"><div><h1>${t}</h1>${sub ? `<p>${sub}</p>` : ''}</div>${acts ? `<div class="acts">${acts}</div>` : ''}</div>`; }
+function noPerm(what) {
+  return `<section class="card"><div class="err-pg"><div class="code">403</div><h2>没有「${what}」权限</h2><p>你当前的角色是「商品运营」，批量写入商品资料需要「商品资料 · 批量导入」权限（防止一次改错上千个商品）。可以申请开通，审批人：商品负责人 梁示例，通常 1 个工作日内处理。</p><div class="acts"><button class="btn" type="button" data-go="list">返回导入记录</button><button class="btn btn-primary" type="button" data-apply>申请导入权限</button></div></div></section>`;
+}
+function errBlock(title, body, retry) {
+  return `<section class="card">${P.stateBlock({ error: true, title, body, acts: `<button class="btn" type="button" data-go="list">返回导入记录</button><button class="btn btn-primary" type="button" data-retry="${retry}">${ic('refresh')}重试</button>` })}</section>`;
+}
+function skel(rows) { return `<section class="card sk-blk" aria-busy="true" aria-label="正在加载"><div class="sk" style="height:18px;width:220px"></div><div class="sk" style="height:12px;width:420px"></div><table class="table" style="margin-top:12px"><tbody>${P.skRows(rows, 8)}</tbody></table></section>`; }
+
+/* ---------------- ① 导入记录 ---------------- */
+function listRows() {
+  return DATA.tasks.filter(t => (!L.obj || t[2] === L.obj) && (!L.st || t[6] === L.st) && (!L.q || (t[0] + t[1] + t[7]).toLowerCase().includes(L.q.toLowerCase())));
+}
+function progCell(t) {
+  if (t[6] === 'draft') return `<span class="muted" style="font-size:12px">未开始写入</span>`;
+  if (t[6] === 'running') { const p = Math.round(t[4] / t[3] * 100); return `<div class="prog"><div class="bar"><i class="run" style="width:${p}%"></i></div><span>${p}%</span></div>`; }
+  const ok = t[4] / t[3] * 100, bad = t[5] / t[3] * 100;
+  return `<div class="prog"><div class="bar"><i class="ok" style="width:${ok}%"></i><i class="bad" style="width:${bad}%"></i></div><span>${t[6] === 'failed' ? '0%' : Math.floor(ok) + '%'}</span></div>`;
+}
+function pList(state) {
+  chrome('导入记录');
+  const hd = head('批量导入', '用 Excel / CSV 一次导入商品、价格、库存、客户和供应商；导入后 24 小时内可整批撤销。', `<button class="btn" type="button" data-tpl>${ic('download')}下载模板</button><button class="btn btn-primary" type="button" data-new>${ic('upload')}新建导入</button>`);
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('批量导入')}</div>`; return; }
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${skel(8)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${errBlock('导入记录没加载出来', '服务响应超时（错误编号 IMP-503-7A2C，示例）。正在写入的批次不受影响，会继续执行。', 'list')}</div>`; return; }
+  if (state === 'empty') { PG.innerHTML = `<div class="pg">${hd}<section class="card">${P.stateBlock({ icon: 'upload', title: '还没有导入过', body: '先下载对应的模板，按模板填好再上传；也可以直接上传自己的表格，下一步对一下列名就行。', acts: `<button class="btn" type="button" data-tpl>下载商品资料模板</button><button class="btn btn-primary" type="button" data-new>${ic('upload')}新建导入</button>` })}</section></div>`; return; }
+  const rows = listRows(), objs = [...new Set(DATA.tasks.map(t => t[2]))];
+  const visSel = rows.filter(t => L.sel.has(t[0]));
+  PG.innerHTML = `<div class="pg">${hd}
+  <section class="card"><div class="flt"><div class="input-wrap">${ic('search')}<input class="input" id="lq" placeholder="批次号 / 文件名 / 发起人" aria-label="搜索导入记录" value="${esc(L.q)}"></div>
+    <select class="select" id="lobj" aria-label="导入对象"><option value="">全部导入对象</option>${objs.map(o => `<option ${L.obj === o ? 'selected' : ''}>${o}</option>`).join('')}</select>
+    <select class="select" id="lst" aria-label="状态"><option value="">全部状态</option>${Object.keys(ST).map(k => `<option value="${k}" ${L.st === k ? 'selected' : ''}>${ST[k][0]}</option>`).join('')}</select>
+    ${L.q || L.obj || L.st ? `<button class="btn btn-ghost" type="button" data-lreset>重置</button>` : ''}<span class="sp"></span><span class="muted" style="font-size:13px">共 ${rows.length} 批 · 近 30 天</span></div>
+    <div class="selbar"${visSel.length ? '' : ' style="background:var(--surface-2)"'}>${visSel.length ? `已选 <b>${visSel.length}</b> 批，含失败 ${n(visSel.reduce((s, t) => s + t[5], 0))} 行` : '勾选批次后可下载失败报告'}<span style="flex:1"></span><button class="btn" type="button" data-batchdl ${visSel.some(t => t[5] > 0) ? '' : 'disabled title="所选批次没有失败行"'}>${ic('download')}下载失败报告</button></div>
+    ${rows.length ? `<div class="tw"><table class="table"><thead><tr><th style="width:44px"><label class="cb"><span class="check"><input type="checkbox" id="lall" aria-label="全选当前结果" ${rows.length && rows.every(t => L.sel.has(t[0])) ? 'checked' : ''}></span></label></th><th>批次号</th><th>文件名</th><th>导入对象</th><th class="r">总行数</th><th>结果</th><th class="r">失败</th><th>状态</th><th>发起人</th><th>发起时间</th><th>耗时</th><th>操作</th></tr></thead><tbody>
+    ${rows.map(t => `<tr class="row-clk ${L.sel.has(t[0]) ? 'is-selected' : ''}" tabindex="0" data-task="${t[0]}"><td><label class="cb" data-stop><span class="check"><input type="checkbox" data-sel="${t[0]}" aria-label="选择 ${t[0]}" ${L.sel.has(t[0]) ? 'checked' : ''}></span></label></td><td class="mono" style="font-size:13px">${t[0]}</td><td style="max-width:220px;overflow:hidden;text-overflow:ellipsis" title="${esc(t[1])}">${esc(t[1])}</td><td>${t[2]}</td><td class="r num">${n(t[3])}</td><td>${progCell(t)}</td><td class="r num" style="${t[5] ? 'color:var(--danger);font-weight:600' : ''}">${t[6] === 'draft' || t[6] === 'running' ? '—' : n(t[5])}</td><td><span class="tag tag-${ST[t[6]][1]}">${ST[t[6]][0]}</span></td><td>${t[7]}</td><td class="num muted">${t[8]}</td><td class="muted">${t[9]}</td><td>${t[6] === 'draft' ? `<button class="btn-link" type="button" data-go="resume" data-stop>继续导入</button>` : t[5] ? `<button class="btn-link" type="button" data-dl="${t[0]}" data-stop>失败行</button>` : `<button class="btn-link" type="button" data-task-open="${t[0]}" data-stop>详情</button>`}</td></tr>`).join('')}</tbody></table></div>
+    <div class="foot"><span>失败行报告保留 30 天；撤销只对 24 小时内、状态为已完成或部分失败的批次可用</span><span class="sp"></span><span>第 1 页 / 共 1 页</span></div>`
+    : P.stateBlock({ icon: 'search', title: '没有符合条件的批次', body: '换个关键字，或清空筛选看全部。', acts: '<button class="btn" type="button" data-lreset>清空筛选</button>' })}</section></div>`;
+}
+function openTask(no) {
+  const t = DATA.tasks.find(x => x[0] === no), rs = DATA.reasons[no] || [];
+  const canRevoke = (t[6] === 'done' || t[6] === 'partial') && /^11-1[01]/.test(t[8]);
+  const canRetry = rs.some(r => r[2]);
+  const tl = t[6] === 'draft' ? [['上传文件', t[8], ''], ['字段映射', '未完成', 'bad']] : t[6] === 'running' ? [['上传文件', t[8], ''], ['字段映射', '使用方案「' + t[10] + '」', ''], ['校验通过', '0 行错误', ''], ['写入中', `${n(t[4])} / ${n(t[3])} 行`, '']] : t[6] === 'failed' ? [['上传文件', t[8], ''], ['校验失败', '表头不符，未写入任何数据', 'bad']] : [['上传文件', t[8], ''], ['字段映射', '使用方案「' + t[10] + '」', ''], ['校验', t[5] ? `${n(t[5])} 行有问题` : '全部通过', t[5] ? 'bad' : ''], ['写入完成', `成功 ${n(t[4])} 行 · 用时 ${t[9]}`, '']].concat(t[6] === 'revoked' ? [['已撤销', '林示例 · 11-09 16:30 · 原因：类目挂错，整批重导', 'bad']] : []);
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t"><span class="mono">${t[0]}</span></h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div>
+  <div class="layer-bd"><dl class="dsum"><dt>状态</dt><dd><span class="tag tag-${ST[t[6]][1]}">${ST[t[6]][0]}</span></dd><dt>文件</dt><dd>${esc(t[1])}</dd><dt>导入对象</dt><dd>${t[2]}</dd><dt>结果</dt><dd class="num">总 ${n(t[3])} 行 · 成功 ${n(t[4])} · 失败 ${n(t[5])}</dd><dt>发起人</dt><dd>${t[7]} · ${t[8]}</dd><dt>映射方案</dt><dd>${t[10]}</dd></dl>
+  <h3 class="dw-h3">处理过程</h3><ol class="tl">${tl.map(x => `<li><span class="d ${x[2]}"></span><span>${x[0]}</span><time>${x[1]}</time></li>`).join('')}</ol>
+  <h3 class="dw-h3">失败原因${rs.length ? `（共 ${n(rs.reduce((s, r) => s + r[1], 0))} 行）` : ''}</h3>${rs.length ? `<ul class="rsn">${rs.map(r => `<li><span class="tag ${r[2] ? 'tag-info' : 'tag-neutral'} plain">${r[2] ? '可重试' : '要改数据'}</span>${r[0]}<b>${n(r[1])} 行</b></li>`).join('')}</ul>` : `<p class="muted" style="font-size:13px">${t[6] === 'running' ? '写入中，完成后显示' : '没有失败行'}</p>`}</div>
+  <div class="layer-ft">${t[6] === 'draft' ? `<button class="btn btn-primary" type="button" data-go="resume">继续导入</button>` : `<button class="btn" type="button" ${canRevoke ? `data-revoke-task="${t[0]}"` : 'disabled'} title="${canRevoke ? '' : '只能撤销 24 小时内已完成 / 部分失败的批次'}">撤销本批</button>${rs.length ? `<button class="btn" type="button" data-dl="${t[0]}">${ic('download')}下载失败行</button>` : ''}<button class="btn btn-primary" type="button" ${canRetry ? `data-retry-task="${t[0]}"` : 'disabled'}>${canRetry ? `重试 ${rs.filter(r => r[2]).reduce((s, r) => s + r[1], 0)} 行` : '没有可直接重试的行'}</button>`}</div>`;
+  P.open(dw);
+}
+
+/* ---------------- ② 上传 ---------------- */
+function optForm() {
+  const o = W.opt, sel = (id, label, opts, req) => `<div class="field"><label class="label" for="${id}">${label}${req ? '<span class="req" style="color:var(--danger)"> *</span>' : ''}</label><select class="select" id="${id}" data-opt="${id}">${opts.map(x => `<option ${o[id] === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div>`;
+  const hdrBad = !(+o.hdr >= 1), startBad = !(+o.start > +o.hdr);
+  return `<section class="card sec"><h2>导入设置 <span class="muted">13 项，已按上次填好</span></h2><div class="fg">
+    ${sel('obj', '导入对象', ['商品资料', '商品价格', '期初库存', '客户', '供应商'], 1)}
+    ${sel('ver', '模板版本', ['v3（2026-10 版，14 列）', 'v2（2026-06 版，12 列）'], 1)}
+    ${sel('key', '匹配主键', ['商品编码', '条形码'], 1)}
+    ${sel('date', '日期格式', ['YYYY-MM-DD', 'YYYY/MM/DD', 'DD/MM/YYYY'])}
+    <div class="field full"><span class="label">已存在的商品<span class="req" style="color:var(--danger)"> *</span></span><div class="seg2" role="group" aria-label="已存在的商品">${[['跳过', '不改原资料'], ['覆盖', '用文件里的值'], ['只补空字段', '原来有值的不动']].map(x => `<button type="button" data-exist="${x[0]}" aria-pressed="${o.exist === x[0]}" title="${x[1]}">${x[0]}</button>`).join('')}</div><span class="field-hint">${o.exist === '覆盖' ? '文件里为空的单元格不会清空原值' : o.exist === '跳过' ? '编码已存在的行不导入，计入「跳过」' : '只填原资料里为空的字段'}</span></div>
+    <div class="field"><label class="label" for="hdr">表头所在行</label><input class="input num ${hdrBad ? 'is-error' : ''}" id="hdr" data-opt="hdr" inputmode="numeric" value="${esc(o.hdr)}" aria-invalid="${hdrBad}">${hdrBad ? '<span class="field-err">填 1 或更大的整数</span>' : ''}</div>
+    <div class="field"><label class="label" for="start">数据起始行</label><input class="input num ${startBad ? 'is-error' : ''}" id="start" data-opt="start" inputmode="numeric" value="${esc(o.start)}" aria-invalid="${startBad}">${startBad ? '<span class="field-err">要大于表头所在行</span>' : ''}</div>
+    ${sel('money', '金额单位', ['元', '分'])}
+    ${sel('onErr', '遇到错误时', ['跳过错误行', '整批不导入'])}
+    <div class="field full"><div class="swrow"><button class="sw" type="button" role="switch" id="shelf" aria-checked="${o.shelf}" aria-label="导入后自动上架"></button><span>导入后自动上架 <span class="muted">（关闭时新商品为「待上架」，由门店确认）</span></span></div></div>
+    <div class="field"><label class="label" for="notify">完成后通知</label><input class="input" id="notify" data-opt="notify" value="${esc(o.notify)}" placeholder="姓名，用顿号隔开"></div>
+    <div class="field"><label class="label" for="note">批次备注 <span class="muted" id="note-n" style="font-weight:400">${o.note.length}/60</span></label><input class="input" id="note" data-opt="note" maxlength="60" value="${esc(o.note)}"></div>
+  </div></section>`;
+}
+function pUpload(state) {
+  chrome('新建导入');
+  const hd = head('新建导入 · 商品资料', '一次最多 5,000 行、10 MB；超过请拆成多个文件。', `<button class="btn" type="button" data-go="list">取消</button>`);
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('商品资料 · 批量导入')}</div>`; return; }
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${steps(0)}${skel(6)}</div>`; return; }
+  const f = W.file, startBad = !(+W.opt.hdr >= 1) || !(+W.opt.start > +W.opt.hdr);
+  let left;
+  if (state === 'error') left = `<section class="card sec"><h2>上传文件</h2><div class="banner warn" role="alert">${ic('alert')}<span><b>这个文件导不了：</b>「商品资料_11月新品.numbers」是 Numbers 格式。请在 Numbers 里「导出为 → Excel」，或另存为 CSV（UTF-8）后再上传。</span></div>${dropHTML()}</section>`;
+  else if (state === 'empty' || !f) left = `<section class="card sec"><h2>上传文件 <span class="muted">.xlsx / .csv</span></h2>${dropHTML()}${tplTips()}</section>`;
+  else if (W.up < 100) left = `<section class="card sec"><h2>上传文件</h2><div class="fcard"><span class="fic">XLSX</span><span class="m"><b>${esc(f.name)}</b><small>${f.size} · 正在上传并读取表头…</small><div class="upbar"><i style="width:${W.up}%"></i></div></span><button class="btn" type="button" data-unfile>取消</button></div></section>`;
+  else left = `<section class="card sec"><h2>上传文件 <span class="muted">已读取</span></h2><div class="fcard"><span class="fic">XLSX</span><span class="m"><b>${esc(f.name)}</b><small>${f.size} · 工作表「${W.sheet}」 ${n(DATA.file.rows)} 行 × ${DATA.src.length} 列 · 表头在第 ${esc(W.opt.hdr)} 行</small></span><button class="btn" type="button" data-unfile>换一个文件</button></div>
+    <p style="font-size:13px;margin-top:14px">文件里有 ${f.sheets.length} 个工作表，选要导入的那一个：</p><div class="sheets" role="group" aria-label="选择工作表">${f.sheets.map((s, i) => `<button type="button" data-sheet="${s}" aria-pressed="${W.sheet === s}">${s}<span class="muted" style="margin-left:6px">${[286, 41, 0][i]} 行</span></button>`).join('')}</div>
+    ${W.sheet === '填写说明' ? '<p class="field-err" style="margin-top:10px">「填写说明」没有数据行，请选「新品」</p>' : ''}${tplTips()}</section>`;
+  const ready = f && W.up >= 100 && W.sheet !== '填写说明' && !startBad;
+  PG.innerHTML = `<div class="pg">${hd}${steps(0, state === 'error')}<div class="up-grid"><div>${left}</div><div>${optForm()}</div></div>
+  <div class="ft-bar"><span class="why ${ready ? '' : 'bad'}">${ready ? `下一步：把 ${DATA.src.length} 个文件列对应到系统字段，已自动识别 ${W.how.filter(h => h === 'exact').length} 列` : !f || state === 'error' ? '先上传文件' : W.up < 100 ? '正在读取文件…' : startBad ? '导入设置里有 1 处要改' : '请选有数据的工作表'}</span><button class="btn" type="button" data-go="list">取消</button><button class="btn btn-primary" type="button" data-next="map" ${ready ? '' : 'disabled'}>下一步：字段映射${ic('arrow', 'ic-sm')}</button></div></div>`;
+}
+function dropHTML() {
+  return `<label class="drop" id="drop"><input type="file" id="fin" accept=".xlsx,.csv" aria-label="选择要导入的文件"><span class="dic">${ic('upload')}</span><b>把文件拖到这里，或点击选择</b><p>支持 .xlsx、.csv（UTF-8），≤ ${DATA.limit.mb} MB、≤ ${n(DATA.limit.rows)} 行<br>原型演示：任何文件都按示例数据解析</p><span class="btn btn-primary" style="pointer-events:none">选择文件</span></label>
+  <p style="text-align:center;margin-top:12px"><button class="btn-link" type="button" data-sample>没有文件？用示例文件试一下</button></p>`;
+}
+function tplTips() {
+  return `<h3 class="dw-h3" style="margin-top:20px">填写须知</h3><ul class="rules"><li>${ic('check', 'ic-sm')}第 1 行是表头；列顺序随意，下一步会按列名对应</li><li>${ic('check', 'ic-sm')}商品编码、商品名称、单位、一级类目、零售价必填</li><li>${ic('check', 'ic-sm')}单位、类目必须和系统里的写法一致（可在模板「填写说明」页查看）</li><li>${ic('check', 'ic-sm')}金额最多 2 位小数；税率写成 9% / 13%</li></ul><p style="margin-top:8px"><button class="btn-link" type="button" data-tpl>${ic('download', 'ic-sm')}下载商品资料模板 v3</button></p>`;
+}
+
+/* ---------------- ③ 字段映射 ---------------- */
+function mapStats() {
+  const used = {}; W.map.forEach((k, i) => { if (k && k !== 'ignore') (used[k] = used[k] || []).push(i); });
+  const dup = Object.keys(used).filter(k => used[k].length > 1);
+  const reqMiss = Object.keys(DATA.tgt).filter(k => DATA.tgt[k][1] && !used[k]);
+  const unset = W.map.filter(k => !k).length;
+  const confirm = W.how.filter(h => h === 'fuzzy').length;
+  return { used, dup, reqMiss, unset, confirm };
+}
+function pMap(state) {
+  chrome('新建导入');
+  const hd = head('字段映射', `${esc(DATA.file.name)} · 工作表「新品」 · ${DATA.src.length} 列`, `<select class="select" id="scheme" aria-label="映射方案" style="width:220px"><option>自动识别（按列名）</option><option>方案：火锅新品（11-11）</option><option>方案：秋冬零食（11-09）</option></select>`);
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('商品资料 · 批量导入')}</div>`; return; }
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${steps(1)}${skel(10)}</div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${steps(1, true)}${errBlock('读取表头失败', '文件上传后在服务器上过期了（超过 2 小时未继续，示例）。重试会用你刚才的设置重新读取，不用重新选文件。', 'map')}</div>`; return; }
+  if (state === 'empty') { PG.innerHTML = `<div class="pg">${hd}${steps(1, true)}<section class="card">${P.stateBlock({ icon: 'file', title: '第 1 行没有表头', body: '工作表「新品」的第 1 行是空的。如果表头在第 3 行，回上一步把「表头所在行」改成 3。', acts: `<button class="btn btn-primary" type="button" data-next="upload">回上一步改设置</button>` })}</section></div>`; return; }
+  const s = mapStats(), opts = Object.keys(DATA.tgt);
+  const rowDup = i => W.map[i] && s.dup.includes(W.map[i]);
+  const blocked = s.dup.length || s.reqMiss.length;
+  PG.innerHTML = `<div class="pg">${hd}${steps(1, !!blocked)}
+  ${s.confirm ? `<div class="banner info" role="note">${ic('info')}<span>有 ${s.confirm} 列是按近似列名识别的（标「近似 · 需确认」），看一眼示例值对不对；选过一次就变成「手动」。</span></div>` : ''}
+  <div class="map-grid"><section class="card"><div class="tw" style="border-top:0"><table class="table"><thead><tr><th>#</th><th>文件里的列</th><th>前 3 行示例值</th><th>对应到系统字段</th><th>识别方式</th><th>必填</th><th>状态</th></tr></thead><tbody>
+  ${DATA.src.map((c, i) => { const k = W.map[i], t = DATA.tgt[k], d = rowDup(i); const other = d ? W.map.map((x, j) => x === k && j !== i ? j + 1 : 0).filter(Boolean) : [];
+    return `<tr class="${d ? 'dup' : ''}"><td class="muted num">${i + 1}</td><td><b style="font-weight:500">${esc(c[0])}</b></td><td><div class="samp">${c[1].map(v => `<span title="${esc(v)}">${esc(v)}</span>`).join('')}</div></td>
+    <td><label class="sr-only" for="m${i}">${esc(c[0])} 对应字段</label><select class="select ${d || !k ? 'is-error' : ''}" id="m${i}" data-map="${i}"><option value="" ${!k ? 'selected' : ''}>请选择</option>${opts.map(o => `<option value="${o}" ${k === o ? 'selected' : ''}>${DATA.tgt[o][0]}${DATA.tgt[o][1] ? ' *' : ''}</option>`).join('')}<option value="ignore" ${k === 'ignore' ? 'selected' : ''}>不导入此列</option></select></td>
+    <td class="mk">${W.how[i] === 'exact' ? '<span class="tag tag-success plain">完全匹配</span>' : W.how[i] === 'fuzzy' ? '<span class="tag tag-warning plain">近似 · 需确认</span>' : '<span class="tag tag-neutral plain">手动</span>'}</td>
+    <td>${t && t[1] ? '<span class="lvl-e">必填</span>' : '<span class="muted">—</span>'}</td>
+    <td class="mk">${d ? `<span style="color:var(--danger)">与第 ${other.join('、')} 列重复</span>` : !k ? '<span style="color:var(--danger)">未选择</span>' : k === 'ignore' ? '<span class="muted">不导入</span>' : `<span style="color:var(--success)">${ic('check', 'ic-sm')} 已对应</span>`}</td></tr>`; }).join('')}
+  </tbody></table></div></section>
+  <aside><section class="card sec"><h2>必填字段 <span class="muted">${5 - s.reqMiss.length}/5</span></h2><ul class="req-list">${opts.filter(k => DATA.tgt[k][1]).map(k => `<li class="${s.used[k] ? 'ok' : 'no'}">${ic(s.used[k] ? 'check-c' : 'x-c', 'ic-sm')}<span style="color:var(--ink-900)">${DATA.tgt[k][0]}</span><small>${s.used[k] ? '← ' + esc(DATA.src[s.used[k][0]][0]) : '没有列对应'}</small></li>`).join('')}</ul></section>
+  <section class="card sec" style="margin-top:12px"><h2>非必填 <span class="muted">${opts.filter(k => !DATA.tgt[k][1] && s.used[k]).length}/${opts.filter(k => !DATA.tgt[k][1]).length}</span></h2><p class="muted" style="font-size:13px;line-height:1.7">没对应的非必填字段（如「上架状态」）导入后留空，按导入设置里的「自动上架」处理。</p>
+  <div class="swrow" style="margin-top:10px"><button class="sw" type="button" role="switch" id="savescheme" aria-checked="${W.saved}" aria-label="保存为映射方案"></button><span>保存为映射方案「11 月新品」</span></div></section></aside></div>
+  <div class="ft-bar"><span class="why ${blocked ? 'bad' : ''}">${s.dup.length ? `「${DATA.tgt[s.dup[0]][0]}」被 ${s.used[s.dup[0]].length} 列同时对应，只能留一列` : s.reqMiss.length ? `还有 ${s.reqMiss.length} 个必填字段没对应：${s.reqMiss.map(k => DATA.tgt[k][0]).join('、')}` : `${DATA.src.length - W.map.filter(k => k === 'ignore').length} 列将导入，${W.map.filter(k => k === 'ignore').length} 列不导入`}</span><button class="btn" type="button" data-next="upload">${ic('chev-l', 'ic-sm')}上一步</button><button class="btn btn-primary" type="button" data-next="checking" ${blocked ? 'disabled' : ''}>开始校验 ${n(DATA.file.rows)} 行${ic('arrow', 'ic-sm')}</button></div></div>`;
+}
+
+/* ---------------- ④ 校验与修正 ---------------- */
+const RULE = {
+  barcode: v => /^\d{13}$/.test(v) ? '' : '要 13 位数字',
+  sku: (v, r) => !/^SP-\d{6}$/.test(v) ? '格式：SP- 加 6 位数字' : (v === 'SP-110232' && r[0] === 58) ? '还是和第 3 行重复' : DATA.issues.some(x => x[1] === v && x[0] !== r[0] && x[6] === 'e') ? '与其他行重复' : '',
+  unit: v => DATA.units.includes(v) ? '' : '只能填：' + DATA.units.join(' / '),
+  money: v => /^\d+(\.\d{1,2})?$/.test(v) && +v > 0 ? '' : '填大于 0 的数字',
+  cat: v => DATA.cats.includes(v) ? '' : '只能填：' + DATA.cats.join(' / '),
+  int: v => /^\d+$/.test(v) && +v >= 1 && +v <= 1095 ? '' : '1～1095 的整数',
+  tax: v => /^(9|13)%$/.test(v) ? '' : '填 9% 或 13%',
+  vendor: v => DATA.vendors.includes(v) ? '' : '只能填：' + DATA.vendors.join(' / ')
+};
+function cnt() {
+  const E = DATA.issues.filter(x => x[6] === 'e'), Wn = DATA.issues.filter(x => x[6] === 'w');
+  const fixed = E.filter(x => W.fixed[x[0]] && W.fixed[x[0]].ok).length;
+  const errLeft = E.length - fixed;
+  return { total: DATA.file.rows, err: E.length, warn: Wn.length, fixed, errLeft, ok: DATA.file.rows - errLeft };
+}
+function pCheck(state) {
+  chrome('新建导入');
+  const hd = head('校验与修正', `${esc(DATA.file.name)} · ${n(DATA.file.rows)} 行 · 校验于 11-11 10:47`, `<button class="btn" type="button" data-errdl>${ic('download')}下载问题行（Excel）</button>`);
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('商品资料 · 批量导入')}</div>`; return; }
+  if (state === 'loading') {
+    PG.innerHTML = `<div class="pg">${hd}${steps(2)}<section class="card checking" aria-busy="true"><b style="font-size:16px">正在逐行校验 ${n(DATA.file.rows)} 行…</b><div class="upbar"><i id="ckbar" style="width:62%"></i></div><span class="muted num" style="font-size:13px" id="ckn">已检查 177 / 286 行 · 约 4 秒</span>
+    <ol><li style="color:var(--success)">${ic('check-c', 'ic-sm')}必填与格式（编码、条码、金额、税率）</li><li style="color:var(--success)">${ic('check-c', 'ic-sm')}文件内重复（商品编码）</li><li>${ic('clock', 'ic-sm')}与系统对照（单位库、类目、供应商、已存在商品）</li><li class="muted">${ic('clock', 'ic-sm')}业务合理性（售价低于进价、保质期、进价偏离）</li></ol><button class="btn" type="button" data-next="map" style="margin-top:12px">取消校验，回到映射</button></section></div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${steps(2, true)}${errBlock('校验中断了', '与系统对照「类目」时服务没有响应（错误编号 CHK-504-1F09，示例）。已检查的 177 行结果保留，重试会从第 178 行继续。', 'check')}</div>`; return; }
+  const c = cnt(), allpass = state === 'empty';
+  if (allpass) {
+    PG.innerHTML = `<div class="pg">${hd}${steps(2)}<section class="card"><div class="sum"><div><span>总行数</span><b>${n(c.total)}</b></div><div><span>错误行</span><b>0</b></div><div><span>警告行</span><b>0</b></div><div><span>可导入</span><b class="s">${n(c.total)}</b></div></div>${P.stateBlock({ icon: 'check-c', title: `${n(c.total)} 行全部通过`, body: '没有错误也没有警告，可以直接导入。导入后 24 小时内可整批撤销。' })}</section>
+    <div class="ft-bar"><span class="why">将导入 ${n(c.total)} 行，已存在的商品按「${W.opt.exist}」处理</span><button class="btn" type="button" data-next="map">${ic('chev-l', 'ic-sm')}上一步</button><button class="btn btn-primary" type="button" data-import="all">导入 ${n(c.total)} 行</button></div></div>`; return; }
+  const types = {}; DATA.issues.forEach(x => { const k = x[5]; types[k] = types[k] || { n: 0, lv: x[6] }; if (!(x[6] === 'e' && W.fixed[x[0]] && W.fixed[x[0]].ok)) types[k].n++; });
+  const max = Math.max(...Object.values(types).map(t => t.n), 1);
+  const list = DATA.issues.filter(x => W.filter === 'all' || (W.filter === 'e' && x[6] === 'e') || (W.filter === 'w' && x[6] === 'w') || x[5] === W.filter).sort((a, b) => (a[6] === b[6] ? a[0] - b[0] : a[6] === 'e' ? -1 : 1));
+  PG.innerHTML = `<div class="pg">${hd}${steps(2, c.errLeft > 0)}
+  <section class="card"><div class="sum"><div><span>总行数</span><b>${n(c.total)}</b></div><div><span>错误行（会拦截）</span><b class="${c.errLeft ? 'e' : 's'}" id="c-err">${c.errLeft}</b>${c.fixed ? `<small class="muted" style="font-size:12px">已改好 ${c.fixed} 行</small>` : ''}</div><div><span>警告行（不拦截）</span><b class="w">${c.warn}</b></div><div><span>可导入</span><b class="s" id="c-ok">${n(c.ok)}</b></div></div>
+  <div class="ck-grid"><div>
+  <div class="chips" role="group" aria-label="按问题筛选"><button class="chip" type="button" data-flt="all" aria-pressed="${W.filter === 'all'}">全部 <b>${DATA.issues.length}</b></button><button class="chip e" type="button" data-flt="e" aria-pressed="${W.filter === 'e'}">错误 <b>${c.errLeft}</b></button><button class="chip w" type="button" data-flt="w" aria-pressed="${W.filter === 'w'}">警告 <b>${c.warn}</b></button>${Object.keys(types).filter(k => types[k].lv === 'e').map(k => `<button class="chip" type="button" data-flt="${k}" aria-pressed="${W.filter === k}">${k} <b>${types[k].n}</b></button>`).join('')}</div>
+  <p class="muted" style="font-size:12px;padding:8px 16px 0">错误会拦截这一行，改对了这行变绿；警告只是提醒，照常导入。改值只改这次导入的数据，不会改你电脑上的文件。</p>
+  <div class="tw" style="margin-top:12px"><table class="table"><thead><tr><th>行号</th><th>商品编码</th><th>商品名称</th><th>问题字段</th><th>当前值 / 改成</th><th>问题</th><th>级别</th><th>处理建议</th></tr></thead><tbody>
+  ${list.map(x => { const f = W.fixed[x[0]], ok = f && f.ok; return `<tr class="${ok ? 'fixed' : ''}"><td class="num">第 ${x[0]} 行</td><td class="mono" style="font-size:13px">${x[1] || '<span class="val-empty">（空）</span>'}</td><td>${esc(x[2])}</td><td>${x[3]}</td>
+    <td>${x[6] === 'e' ? `<div class="fix">${x[4] ? `<span class="val-old" title="原值">${esc(x[4])}</span>` : '<span class="val-empty">（空）</span>'}${ic('arrow', 'ic-sm')}<label class="sr-only" for="fx${x[0]}">第 ${x[0]} 行 ${x[3]} 改成</label><input class="input ${f && !f.ok && f.v ? 'is-error' : ''}" id="fx${x[0]}" data-fix="${x[0]}" value="${esc(f ? f.v : '')}" placeholder="${x[8] === 'unit' ? '如：盒' : x[8] === 'cat' ? '如：豆制品' : x[8] === 'sku' ? '如：SP-110499' : x[8] === 'barcode' ? '13 位数字' : x[8] === 'tax' ? '9%' : x[8] === 'vendor' ? 'V-0318' : '填正确的值'}" aria-describedby="fxe${x[0]}"></div><div class="field-err" id="fxe${x[0]}" style="font-size:12px" ${f && !f.ok && f.v ? '' : 'hidden'}>${f && !f.ok ? esc(f.msg) : ''}</div>` : `<span class="mono" style="font-size:13px">${x[4] ? esc(x[4]) : '<span class="val-empty">（空）</span>'}</span>`}</td>
+    <td>${ok ? `<span style="color:var(--success)">${ic('check', 'ic-sm')} 已改好</span>` : x[5]}</td><td>${x[6] === 'e' ? '<span class="lvl-e">错误</span>' : '<span class="lvl-w">警告</span>'}</td><td><div class="hint">${esc(x[7])}</div></td></tr>`; }).join('') || `<tr><td colspan="8" class="muted" style="text-align:center">这类问题都改好了</td></tr>`}
+  </tbody></table></div></div>
+</div></section>
+  <div class="ft-bar"><span class="why ${c.errLeft ? '' : ''}">${c.errLeft ? `还有 ${c.errLeft} 行错误：可以跳过它们先导入其余 ${n(c.ok)} 行，错误行稍后下载改好再导` : `错误都改好了，${n(c.ok)} 行全部可导入`}</span><button class="btn" type="button" data-next="map">${ic('chev-l', 'ic-sm')}上一步</button>${c.errLeft ? `<button class="btn" type="button" data-import="skip" ${W.opt.onErr === '整批不导入' ? 'disabled title="导入设置是「整批不导入」"' : ''}>跳过 ${c.errLeft} 行错误，导入 ${n(c.ok)} 行</button><button class="btn btn-primary" type="button" disabled title="还有错误没改">全部改好再导入</button>` : `<button class="btn btn-primary" type="button" data-import="all">导入 ${n(c.ok)} 行</button>`}</div></div>`;
+}
+
+/* ---------------- ⑤ 导入结果 ---------------- */
+function pResult(state) {
+  chrome('导入结果');
+  const no = 'IMP-20261111-0013';
+  const hd = head('导入结果', `<span class="mono">${no}</span> · ${esc(DATA.file.name)} · 完成于 11-11 10:49`, `<button class="btn" type="button" data-go="list">返回导入记录</button>`);
+  if (state === 'noperm') { PG.innerHTML = `<div class="pg">${hd}${noPerm('查看他人的导入结果')}</div>`; return; }
+  if (state === 'loading') { PG.innerHTML = `<div class="pg">${hd}${steps(3)}<section class="card checking" aria-busy="true"><b style="font-size:16px">正在写入 274 行…</b><div class="upbar"><i style="width:47%"></i></div><span class="muted num" style="font-size:13px">已写入 128 / 274 行 · 可以离开这个页面，完成后会通知你</span><br><button class="btn" type="button" data-go="list" style="margin-top:14px">去看其他批次</button></section></div>`; return; }
+  if (state === 'error') { PG.innerHTML = `<div class="pg">${hd}${steps(3, true)}${errBlock('结果没加载出来', '导入本身已经完成，只是结果页没打开（错误编号 RES-502-9B11，示例）。也可以在导入记录里找到这一批。', 'result')}</div>`; return; }
+  const c = cnt(), attempted = c.ok;
+  if (W.revoked) {
+    PG.innerHTML = `<div class="pg">${hd}${steps(3)}<section class="card"><div class="res-hd"><span class="res-ic rv">${ic('history')}</span><div><h2>本批已撤销</h2><p>周示例 于 刚刚 撤销了 ${no}：新建的 ${n(attempted - 2 - W.fails.length)} 个商品已删除，被覆盖的 2 个商品已恢复成导入前的资料。</p></div><div class="acts"><button class="btn btn-primary" type="button" data-new>重新导入</button></div></div></section></div>`; return; }
+  const allok = state === 'empty' || W.fails.length === 0;
+  const failN = allok ? 0 : W.fails.length, okN = attempted - failN;
+  const skipped = c.errLeft;
+  PG.innerHTML = `<div class="pg">${hd}${steps(3)}
+  ${W.opt.shelf ? '' : `<div class="banner neutral" role="note">${ic('info')}<span>导入设置里没开「自动上架」：新商品现在是「待上架」，门店确认后才会在前台售卖。</span><button class="btn" type="button" data-toast="已跳转到商品资料 · 待上架（示例）">去看待上架</button></div>`}
+  <section class="card"><div class="res-hd"><span class="res-ic ${failN ? 'warn' : 'ok'}">${ic(failN ? 'alert' : 'check-c')}</span><div><h2>${failN ? `导入完成，${failN} 行没写进去` : `${n(okN)} 行全部导入成功`}</h2><p>成功 <b class="num">${n(okN)}</b> 行（新建 ${n(okN - 2)}、覆盖 2）${failN ? ` · 失败 <b class="num" style="color:var(--danger)">${failN}</b> 行` : ''}${skipped ? ` · 校验时跳过错误行 ${skipped} 行` : ''} · 用时 1 分 48 秒。24 小时内（11-12 10:49 前）可整批撤销。</p></div>
+  <div class="acts"><button class="btn" type="button" data-undo>撤销本批</button>${skipped ? `<button class="btn" type="button" data-errdl>${ic('download')}下载跳过的 ${skipped} 行</button>` : ''}<button class="btn btn-primary" type="button" data-toast="已打开商品资料，筛选「批次 ${no}」（示例）">查看导入的商品</button></div></div>
+  <div class="sum" style="border-top:1px solid var(--line-soft);border-bottom:0"><div><span>文件总行数</span><b>${n(c.total)}</b></div><div><span>提交写入</span><b>${n(attempted)}</b></div><div><span>成功</span><b class="s">${n(okN)}</b></div><div><span>失败</span><b class="${failN ? 'e' : ''}">${failN}</b></div></div></section>
+  ${failN ? `<section class="card" style="margin-top:16px"><div class="sec" style="padding-bottom:0"><h2>写入失败的 ${failN} 行 <span class="muted">锁定 / 超时可以直接重试；条码、类目问题先改值再重试</span><span class="r" style="display:flex;gap:8px"><button class="btn" type="button" data-faildl>${ic('download')}下载失败行</button><button class="btn btn-primary" type="button" data-retryall ${W.fails.some(f => f.retry) ? '' : 'disabled title="剩下的要先改值"'}>${ic('refresh')}重试可重试的 ${W.fails.filter(f => f.retry).length} 行</button></span></h2></div>
+  <div class="tw"><table class="table"><thead><tr><th>行号</th><th>商品编码</th><th>商品名称</th><th>失败环节</th><th>原因</th><th>已尝试</th><th>改成</th><th>操作</th></tr></thead><tbody>
+  ${W.fails.map((f, i) => `<tr><td class="num">第 ${f.row} 行</td><td class="mono" style="font-size:13px">${f.sku}</td><td>${f.name}</td><td>${f.stage}</td><td><div class="hint" style="max-width:320px;color:var(--ink-700)">${esc(f.why)}</div></td><td class="num">${f.tries} 次</td>
+    <td>${f.retry ? '<span class="muted" style="font-size:12px">不用改</span>' : `<label class="sr-only" for="wf${i}">第 ${f.row} 行${f.tip}</label><div class="fix"><input class="input" id="wf${i}" data-wf="${i}" value="${esc(f.val)}" placeholder="${f.stage === '关联条码' ? '新条形码，13 位' : '如：粉丝'}"></div>`}</td>
+    <td><button class="btn" type="button" data-retry1="${i}" style="height:32px">${f.retry ? '重试' : '改好并重试'}</button></td></tr>`).join('')}
+  </tbody></table></div></section>` : ''}</div>`;
+}
+
+/* ---------------- 渲染 ---------------- */
+const PAGES = { list: pList, upload: pUpload, map: pMap, check: pCheck, result: pResult };
+function draw() { PAGES[P.state.page](P.state.state); }
+function go(page, state) { carry = true; P.go(page, state || 'normal'); window.scrollTo(0, 0); }
+
+/* ---------------- 事件 ---------------- */
+function fakeUpload(name) {
+  W.file = { name: name || DATA.file.name, size: DATA.file.size, sheets: DATA.file.sheets }; W.up = 8; draw();
+  const tick = () => { W.up = Math.min(100, W.up + 31); if (P.state.page !== 'upload' || !W.file) return; draw(); if (W.up < 100) setTimeout(tick, 220); else toast(`已读取「新品」${DATA.file.rows} 行 × ${DATA.src.length} 列`, 'ok'); };
+  setTimeout(tick, 220);
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button,[data-task],[data-go]');
+  if (!b || b.closest('.pp,.pq-drawer,.tplbar,.modal')) return;
+  if (b.dataset.stop != null && !b.matches('button')) e.stopPropagation();
+  if (b.dataset.toast) toast(b.dataset.toast);
+  if ('tpl' in b.dataset) toast('已下载「商品资料导入模板_v3.xlsx」（示例）', 'ok');
+  if (b.dataset.go) { if (dw.classList.contains('show')) P.close(dw); if (b.dataset.go === 'resume') { if (P.state.page !== 'list') return; if (!W.file) { W.file = { name: DATA.file.name, size: DATA.file.size, sheets: DATA.file.sheets }; W.up = 100; } go('map'); } else go(b.dataset.go); return; }
+  if ('new' in b.dataset) { W = freshW(); go('upload'); return; }
+  if (b.dataset.taskOpen) { openTask(b.dataset.taskOpen); return; }
+  if (b.dataset.task && !e.target.closest('[data-stop]')) { openTask(b.dataset.task); return; }
+  if ('x' in b.dataset) P.close(dw);
+  if ('lreset' in b.dataset) { L.q = ''; L.obj = ''; L.st = ''; draw(); }
+  if (b.dataset.dl) toast(`已下载 ${b.dataset.dl} 的失败行（示例）`, 'ok');
+  if ('batchdl' in b.dataset) toast(`已打包下载 ${L.sel.size} 批的失败报告（示例）`, 'ok');
+  if (b.dataset.retryTask) { P.close(dw); toast(`已重新提交 ${b.dataset.retryTask} 中可重试的行，完成后通知你`, 'ok'); }
+  if (b.dataset.revokeTask) { const ok = await P.confirm({ title: '撤销整批导入？', body: `${b.dataset.revokeTask} 新建的商品会删除，被覆盖的商品恢复成导入前的资料。撤销后不能恢复。`, ok: '确认撤销', danger: true }); if (ok) { const t = DATA.tasks.find(x => x[0] === b.dataset.revokeTask); t[6] = 'revoked'; P.close(dw); draw(); toast('已撤销 ' + t[0], 'ok'); } }
+  if ('sample' in b.dataset) fakeUpload();
+  if ('unfile' in b.dataset) { W.file = null; W.up = 0; draw(); }
+  if (b.dataset.sheet) { W.sheet = b.dataset.sheet; draw(); }
+  if (b.dataset.exist) { W.opt.exist = b.dataset.exist; draw(); }
+  if (b.id === 'shelf') { W.opt.shelf = !W.opt.shelf; b.setAttribute('aria-checked', W.opt.shelf); }
+  if (b.id === 'savescheme') { W.saved = !W.saved; b.setAttribute('aria-checked', W.saved); if (W.saved) toast('导入完成后保存为方案「11 月新品」', 'ok'); }
+  if (b.dataset.next) {
+    if (b.dataset.next === 'checking') { go('check', 'loading'); const bar = () => { const el = $('#ckbar'); if (!el) return; }; setTimeout(() => { if (P.state.page === 'check' && P.state.state === 'loading') { go('check'); toast(`校验完成：${cnt().err} 行错误、${cnt().warn} 行警告`, 'ok'); } }, 1400); bar(); }
+    else go(b.dataset.next);
+    return;
+  }
+  if (b.dataset.flt) { W.filter = b.dataset.flt; draw(); }
+  if ('errdl' in b.dataset) toast(`已下载问题行 Excel：${cnt().errLeft} 行错误 + ${cnt().warn} 行警告，原值旁附处理建议（示例）`, 'ok');
+  if (b.dataset.import) {
+    const c = cnt();
+    const ok = await P.confirm({ title: `导入 ${n(c.ok)} 行？`, body: `${c.errLeft ? `跳过 ${c.errLeft} 行错误；` : ''}${c.warn} 行警告照常导入；已存在的商品按「${W.opt.exist}」处理。导入后 24 小时内可整批撤销。`, ok: '开始导入' });
+    if (!ok) return; go('result', 'loading'); setTimeout(() => { if (P.state.page === 'result' && P.state.state === 'loading') { go('result'); toast(W.fails.length ? `导入完成，${W.fails.length} 行写入失败` : '全部导入成功', W.fails.length ? '' : 'ok'); } }, 1500); return;
+  }
+  if (b.dataset.retry1 != null) retryOne(+b.dataset.retry1);
+  if ('retryall' in b.dataset) { b.disabled = true; b.innerHTML = '<span class="spin"></span>重试中…'; setTimeout(() => { const n0 = W.fails.filter(f => f.retry).length; W.fails = W.fails.filter(f => !f.retry); draw(); toast(`${n0} 行重试成功`, 'ok'); }, 700); }
+  if ('faildl' in b.dataset) toast(`已下载失败的 ${W.fails.length} 行，原因写在最后一列（示例）`, 'ok');
+  if ('undo' in b.dataset) { const ok = await P.confirm({ title: '撤销整批导入？', body: `新建的 ${n(cnt().ok - W.fails.length - 2)} 个商品会被删除，被覆盖的 2 个商品恢复成导入前的资料。撤销后不能恢复。`, ok: '确认撤销', danger: true }); if (ok) { W.revoked = true; draw(); toast('已撤销本批', 'ok'); } }
+  if (b.dataset.retry) { const pg = b.dataset.retry; go(pg, 'loading'); setTimeout(() => { if (P.state.state === 'loading') go(pg); toast('已重新加载', 'ok'); }, 800); }
+  if ('apply' in b.dataset) { b.disabled = true; b.textContent = '已申请，等待梁示例审批'; toast('已提交权限申请', 'ok'); }
+});
+function retryOne(i) {
+  const f = W.fails[i];
+  if (!f.retry) {
+    const v = ($('#wf' + i) || {}).value || '';
+    const bad = f.stage === '关联条码' ? (!/^\d{13}$/.test(v) ? '条形码要 13 位数字' : v === '6901234501883' ? '这个条码还被占用着' : '') : (!DATA.cats2.includes(v) ? '可填：' + DATA.cats2.join(' / ') : '');
+    if (bad) { toast(`第 ${f.row} 行：${bad}`, 'err'); const el = $('#wf' + i); if (el) { el.classList.add('is-error'); el.focus(); } return; }
+  }
+  W.fails.splice(i, 1); draw(); toast(`第 ${f.row} 行已写入`, 'ok');
+}
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'lobj') { L.obj = t.value; draw(); }
+  if (t.id === 'lst') { L.st = t.value; draw(); }
+  if (t.id === 'lall') { listRows().forEach(r => t.checked ? L.sel.add(r[0]) : L.sel.delete(r[0])); draw(); }
+  if (t.dataset.sel) { t.checked ? L.sel.add(t.dataset.sel) : L.sel.delete(t.dataset.sel); draw(); }
+  if (t.dataset.map != null) { W.map[+t.dataset.map] = t.value; W.how[+t.dataset.map] = 'manual'; draw(); const el = $('#m' + t.dataset.map); if (el) el.focus(); }
+  if (t.dataset.opt && t.tagName === 'SELECT') { W.opt[t.dataset.opt] = t.value; draw(); }
+  if (t.id === 'scheme') { toast(t.value.startsWith('方案') ? `已套用${t.value}，14 列中 13 列命中` : '已按列名重新识别'); }
+  if (t.id === 'fin' && t.files && t.files[0]) { const f = t.files[0]; if (!/\.(xlsx|csv)$/i.test(f.name)) { toast(`「${f.name}」不是 .xlsx / .csv`, 'err'); return; } if (f.size > DATA.limit.mb * 1048576) { toast(`文件 ${(f.size / 1048576).toFixed(1)} MB，超过 ${DATA.limit.mb} MB`, 'err'); return; } fakeUpload(f.name); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'lq') { L.q = t.value; clearTimeout(t._d); t._d = setTimeout(() => { draw(); const q = $('#lq'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }, 250); }
+  if (t.dataset.opt && t.tagName === 'INPUT') { W.opt[t.dataset.opt] = t.value; if (t.id === 'note') $('#note-n').textContent = t.value.length + '/60'; }
+  if (t.dataset.wf != null) { W.fails[+t.dataset.wf].val = t.value; t.classList.remove('is-error'); }
+});
+document.addEventListener('focusout', e => {
+  const t = e.target;
+  if ((t.id === 'hdr' || t.id === 'start') && P.state.page === 'upload') draw();
+  if (t.dataset && t.dataset.fix) commitFix(t);
+});
+function commitFix(t) {
+  const r = DATA.issues.find(x => x[0] === +t.dataset.fix), v = t.value.trim();
+  if (!v) { delete W.fixed[r[0]]; return; }
+  const msg = RULE[r[8]](v, r);
+  const prev = W.fixed[r[0]]; W.fixed[r[0]] = { v, ok: !msg, msg };
+  if (!prev || prev.v !== v || prev.ok !== !msg) { draw(); if (!msg) toast(`第 ${r[0]} 行已改好，可导入 ${n(cnt().ok)} 行`, 'ok'); }
+}
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  if (t.dataset && t.dataset.fix && e.key === 'Enter') { e.preventDefault(); t.blur(); }
+  if (t.dataset && t.dataset.task && (e.key === 'Enter' || e.key === ' ') && t.tagName === 'TR') { e.preventDefault(); openTask(t.dataset.task); }
+  if (t.classList && t.classList.contains('ptab') && e.key === 'Enter') t.click();
+});
+['dragover', 'dragenter'].forEach(ev => document.addEventListener(ev, e => { const d = e.target.closest && e.target.closest('#drop'); if (d) { e.preventDefault(); d.classList.add('over'); } }));
+['dragleave', 'drop'].forEach(ev => document.addEventListener(ev, e => { const d = e.target.closest && e.target.closest('#drop'); if (d) { e.preventDefault(); d.classList.remove('over'); if (ev === 'drop') { const f = e.dataTransfer.files[0]; if (f && !/\.(xlsx|csv)$/i.test(f.name)) { toast(`「${f.name}」不是 .xlsx / .csv`, 'err'); return; } fakeUpload(f ? f.name : ''); } } }));
+
+W = freshW();
+Proto.init({
+  title: '批量导入',
+  pages: [
+    { id: 'list', name: '① 导入记录', states: [{ id: 'normal', name: '正常' }, { id: 'empty', name: '空（从没导入过）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限' }] },
+    { id: 'upload', name: '② 上传文件', states: [{ id: 'normal', name: '已读取文件' }, { id: 'empty', name: '空（未选文件）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '文件格式不对' }, { id: 'noperm', name: '无权限' }] },
+    { id: 'map', name: '③ 字段映射', states: [{ id: 'normal', name: '自动识别（5 列需确认）' }, { id: 'missing', name: '必填未映射 + 重复' }, { id: 'empty', name: '空（没有表头）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '读取失败' }, { id: 'noperm', name: '无权限' }] },
+    { id: 'check', name: '④ 校验与修正', states: [{ id: 'normal', name: '12 错误 7 警告' }, { id: 'fixing', name: '改了一部分' }, { id: 'empty', name: '全部通过' }, { id: 'loading', name: '校验中' }, { id: 'error', name: '校验中断' }, { id: 'noperm', name: '无权限' }] },
+    { id: 'result', name: '⑤ 导入结果', states: [{ id: 'normal', name: '部分失败（5 行）' }, { id: 'empty', name: '全部成功' }, { id: 'revoked', name: '已撤销' }, { id: 'loading', name: '写入中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限' }] }
+  ],
+  render(page, state) {
+    if (dw.classList.contains('show')) P.close(dw);
+    if (!carry) { W = freshW(); L.sel.clear(); L.q = ''; L.obj = ''; L.st = ''; }
+    const fromPanel = !carry; carry = false;
+    if (fromPanel && page === 'upload' && state === 'normal' && !W.file) { W.file = { name: DATA.file.name, size: DATA.file.size, sheets: DATA.file.sheets }; W.up = 100; }
+    if (page === 'upload' && state === 'empty') { W.file = null; }
+    if (page === 'map' && state === 'missing') { W.map[3] = ''; W.map[8] = 'cost'; W.how[3] = 'manual'; W.how[8] = 'manual'; }
+    if (page === 'check' && state === 'fixing') { W.fixed = { 17: { v: '6901234500475', ok: true }, 31: { v: '盒', ok: true }, 44: { v: '29', ok: true }, 76: { v: '豆制品冷冻', ok: false, msg: '只能填：' + DATA.cats.join(' / ') } }; }
+    if (page === 'result' && state === 'revoked') W.revoked = true;
+    PAGES[page](state === 'fixing' || state === 'missing' || state === 'revoked' ? 'normal' : state);
+  }
+});
+Proto.prompts(PROMPTS);
+</script>
+</body>
+</html>
