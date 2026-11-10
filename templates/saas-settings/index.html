@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>团队设置与安全 · 原型模板</title>
+<!--
+  原型模板 · 积木盒 | 老岳AI编辑部 · 原型组
+  改风格：改下面 :root 里的变量（--accent 换主色）
+  改数据：改 <script> 顶部 DATA
+  演示：右下角「原型面板」切页面和状态；按 H 隐藏面板；URL 可直达 #page=security&state=lockout
+-->
+<style>
+/*@KIT_CSS*/
+/* ==========================================================================
+   ① 改风格只改这一块：颜色 / 字体 / 圆角 / 间距 / 阴影
+   改 --accent 一处即可换主色；墨色 5 级控制全部文字和线条
+   ========================================================================== */
+:root{
+  /* 主色（按钮、选中、链接）。换品牌色只改这两行 */
+  --accent:#2F54D4;
+  --accent-soft:#EEF2FD;
+  --accent-ink:#FFFFFF;          /* 主色按钮上的文字色 */
+
+  /* 墨色：文字与线条 */
+  --ink-900:#16171A;             /* 标题、正文 */
+  --ink-700:#44464D;             /* 次要正文 */
+  --ink-500:#6B6D75;             /* 说明、元信息（白底对比度 ≥4.5） */
+  --ink-300:#C7C9CF;             /* 占位、禁用 */
+  --line:#E6E7EA;                /* 分隔线 */
+  --line-soft:#F0F1F3;
+
+  /* 背景 */
+  --bg:#F6F6F7;                  /* 页面底色 */
+  --surface:#FFFFFF;             /* 卡片 / 表格 */
+  --surface-2:#FAFAFB;           /* 表头、悬停 */
+
+  /* 语义色（只用于状态） */
+  --success:#0E7A4F;  --success-soft:#E8F5EE;
+  --warning:#9A5B00;  --warning-soft:#FFF4E0;
+  --danger:#C42B24;   --danger-soft:#FDECEB;
+  --info:#2F54D4;     --info-soft:#EEF2FD;
+
+  /* 字体 */
+  --font-sans:"PingFang SC","HarmonyOS Sans SC","Source Han Sans SC","Noto Sans SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --fs-12:12px; --fs-13:13px; --fs-14:14px; --fs-16:16px; --fs-20:20px; --fs-24:24px; --fs-32:32px;
+
+  /* 圆角 4 档 */
+  --r-sm:6px; --r-md:10px; --r-lg:16px; --r-full:999px;
+
+  /* 间距 */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px; --sp-10:40px;
+
+  /* 阴影：只用很淡的扩散阴影 */
+  --shadow-1:0 1px 2px rgba(22,23,26,.04),0 1px 1px rgba(22,23,26,.03);
+  --shadow-2:0 8px 24px -6px rgba(22,23,26,.10),0 2px 6px rgba(22,23,26,.04);
+  --shadow-3:0 24px 60px -12px rgba(22,23,26,.22),0 4px 12px rgba(22,23,26,.06);
+
+  /* 动效 */
+  --ease:cubic-bezier(.22,.8,.24,1);
+  --dur:220ms;
+
+  /* 尺寸 */
+  --ctl-h:36px;                  /* PC 输入框/按钮高 */
+  --ctl-h-lg:44px;               /* 移动端触控 ≥44 */
+  --bar-h:0px;                   /* 顶部「免费下载」条高度，由脚本控制 */
+}
+/* ============================ ② 基础 ============================ */
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:var(--fs-14);line-height:1.6;color:var(--ink-900);background:var(--bg);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,p{margin:0}
+h1,h2,h3{text-wrap:balance;font-weight:600;letter-spacing:-.01em}
+p{text-wrap:pretty}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent);text-decoration:none}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-size:.92em;letter-spacing:0}
+.muted{color:var(--ink-500)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-sm)}
+.ic{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ic-sm{width:16px;height:16px}
+.ic-lg{width:24px;height:24px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;transition-duration:1ms!important}}
+
+/* ============================ ③ 按钮 ============================ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:var(--ctl-h);padding:0 14px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface);color:var(--ink-900);font-size:var(--fs-14);font-weight:500;white-space:nowrap;transition:background var(--dur) var(--ease),border-color var(--dur) var(--ease),transform 80ms var(--ease),box-shadow var(--dur) var(--ease)}
+.btn:hover{border-color:var(--ink-300);background:var(--surface-2)}
+.btn:active{transform:scale(.98)}
+.btn[disabled],.btn.is-disabled{opacity:.45;pointer-events:none}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 1px 2px rgba(22,23,26,.12)}
+.btn-primary:hover{background:var(--accent);border-color:var(--accent);filter:brightness(1.07)}
+.btn-ghost{border-color:transparent;background:transparent;color:var(--ink-700)}
+.btn-ghost:hover{background:var(--line-soft);border-color:transparent}
+.btn-danger{color:var(--danger)}
+.btn-danger:hover{border-color:var(--danger);background:var(--danger-soft)}
+.btn-danger-solid{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn-danger-solid:hover{background:var(--danger);filter:brightness(1.07)}
+.btn-link{border:0;background:none;padding:0 4px;height:auto;color:var(--accent);font-weight:500}
+.btn-link:hover{background:none;text-decoration:underline;text-underline-offset:3px}
+.btn-icon{width:var(--ctl-h);padding:0}
+.btn-lg{height:48px;padding:0 22px;font-size:var(--fs-16);border-radius:var(--r-md)}
+.btn-block{width:100%}
+.btn .spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============================ ④ 表单控件 ============================ */
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>label,.label{font-size:var(--fs-13);color:var(--ink-700);font-weight:500}
+.label .req{color:var(--danger);margin-left:2px}
+.label .opt{color:var(--ink-500);font-weight:400;margin-left:4px}
+.input,.select,.textarea{height:var(--ctl-h);width:100%;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);outline:none;font-size:var(--fs-14)}
+.textarea{height:auto;min-height:88px;padding:10px 12px;resize:vertical;line-height:1.6}
+.input::placeholder,.textarea::placeholder{color:var(--ink-300)}
+.input:hover,.select:hover,.textarea:hover{border-color:var(--ink-300)}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.input.is-error,.textarea.is-error,.select.is-error{border-color:var(--danger);box-shadow:0 0 0 3px var(--danger-soft)}
+.field-hint{font-size:var(--fs-12);color:var(--ink-500)}
+.field-err{font-size:var(--fs-12);color:var(--danger)}
+.select{appearance:none;padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6D75' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.input-wrap{position:relative;display:flex;align-items:center}
+.input-wrap>.ic{position:absolute;left:10px;color:var(--ink-500);pointer-events:none}
+.input-wrap>.input{padding-left:34px}
+.input-wrap>.clear{position:absolute;right:4px;width:28px;height:28px;border:0;background:none;border-radius:var(--r-sm);color:var(--ink-500);display:grid;place-items:center}
+.input-wrap>.clear:hover{background:var(--line-soft)}
+.check{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.check input{appearance:none;width:16px;height:16px;margin:0;border:1.5px solid var(--ink-300);border-radius:4px;background:var(--surface);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none}
+.check input:checked,.check input:indeterminate{background:var(--accent);border-color:var(--accent)}
+.check input:checked::after{content:"";width:8px;height:4px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.check input:indeterminate::after{content:"";width:8px;height:2px;background:#fff;border-radius:1px}
+.seg{display:inline-flex;padding:3px;background:var(--line-soft);border-radius:var(--r-md);gap:2px}
+.seg button{height:30px;padding:0 12px;border:0;background:transparent;border-radius:calc(var(--r-md) - 3px);color:var(--ink-700);font-size:var(--fs-13);font-weight:500;transition:all var(--dur) var(--ease)}
+.seg button[aria-pressed="true"],.seg button.on{background:var(--surface);color:var(--ink-900);box-shadow:var(--shadow-1)}
+
+/* ============================ ⑤ 标签 / 徽标 ============================ */
+.tag{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border-radius:var(--r-full);font-size:var(--fs-12);font-weight:500;white-space:nowrap;background:var(--line-soft);color:var(--ink-700)}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.9}
+.tag.plain::before{display:none}
+.tag-success{background:var(--success-soft);color:var(--success)}
+.tag-warning{background:var(--warning-soft);color:var(--warning)}
+.tag-danger{background:var(--danger-soft);color:var(--danger)}
+.tag-info{background:var(--info-soft);color:var(--info)}
+.tag-neutral{background:var(--line-soft);color:var(--ink-500)}
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+.badge-accent{background:var(--accent);color:var(--accent-ink)}
+.badge-danger{background:var(--danger);color:#fff}
+.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+
+/* ============================ ⑥ 卡片 / 表格 ============================ */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
+.table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-14)}
+.table th{position:sticky;top:0;z-index:1;background:var(--surface-2);text-align:left;font-weight:500;font-size:var(--fs-13);color:var(--ink-500);height:40px;padding:0 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.table td{height:52px;padding:0 12px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.table tbody tr{transition:background 120ms var(--ease)}
+.table tbody tr:hover{background:var(--surface-2)}
+.table td .check,.table th .check{vertical-align:middle;display:inline-flex}
+.table tbody tr.is-selected{background:var(--accent-soft)}
+.table tbody tr.is-current td{background:var(--accent-soft)}
+.table tbody tr.is-current td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.table .r{text-align:right}
+.th-sort{display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:0;color:inherit;font-weight:inherit;font-size:inherit}
+.th-sort .ic{width:14px;height:14px;opacity:.5}
+.th-sort[aria-sort] .ic{opacity:1;color:var(--ink-900)}
+
+/* ============================ ⑦ 骨架 / 空态 / 出错 ============================ */
+.sk{position:relative;overflow:hidden;background:var(--line-soft);border-radius:var(--r-sm)}
+.sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:shimmer 1.4s var(--ease) infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:64px 24px;color:var(--ink-500)}
+.state .state-ic{width:56px;height:56px;border-radius:var(--r-lg);display:grid;place-items:center;background:var(--line-soft);color:var(--ink-500);margin-bottom:6px}
+.state .state-ic .ic{width:26px;height:26px}
+.state.is-error .state-ic{background:var(--danger-soft);color:var(--danger)}
+.state h3{font-size:var(--fs-16);color:var(--ink-900);font-weight:600}
+.state p{max-width:360px;font-size:var(--fs-13)}
+.state .acts{display:flex;gap:8px;margin-top:8px}
+
+/* ============================ ⑧ 弹层：遮罩 / 抽屉 / 弹窗 / 底部弹层 ============================ */
+.mask{position:fixed;inset:0;background:rgba(22,23,26,.36);opacity:0;transition:opacity var(--dur) var(--ease);z-index:40}
+.mask.show{opacity:1}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100vw);background:var(--surface);box-shadow:var(--shadow-3);z-index:41;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 320ms var(--ease)}
+.drawer:not(.show),.sheet:not(.show){visibility:hidden;box-shadow:none;transition:transform 320ms var(--ease),visibility 0s linear 320ms,box-shadow 0s linear 320ms}
+.drawer.show{transform:none}
+.drawer:focus,.modal:focus,.sheet:focus{outline:none}
+.layer-hd{display:flex;align-items:center;gap:12px;padding:18px 24px;border-bottom:1px solid var(--line)}
+.layer-hd h2{font-size:var(--fs-16);flex:1;min-width:0}
+.layer-bd{flex:1;overflow:auto;padding:20px 24px}
+.layer-ft{display:flex;justify-content:flex-end;gap:8px;padding:14px 24px;border-top:1px solid var(--line);background:var(--surface)}
+.modal{position:fixed;left:50%;top:50%;width:min(440px,calc(100vw - 32px));background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow-3);z-index:41;transform:translate(-50%,-48%) scale(.97);opacity:0;transition:transform var(--dur) var(--ease),opacity var(--dur) var(--ease);display:flex;flex-direction:column;max-height:calc(100vh - 64px)}
+.modal.show{transform:translate(-50%,-50%);opacity:1}
+.modal .layer-hd{border-bottom:0;padding-bottom:4px}
+.modal .layer-bd{padding-top:8px}
+.modal .layer-ft{border-top:0;padding-top:4px;padding-bottom:20px}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:var(--r-lg) var(--r-lg) 0 0;box-shadow:var(--shadow-3);z-index:41;transform:translateY(100%);transition:transform 320ms var(--ease);max-height:86%;display:flex;flex-direction:column}
+.sheet.show{transform:none}
+.sheet .grabber{width:36px;height:4px;border-radius:2px;background:var(--line);margin:8px auto 0}
+
+/* ============================ ⑨ Toast ============================ */
+.toast-host{position:fixed;left:50%;top:calc(var(--bar-h) + 12px);transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--r-md);background:var(--ink-900);color:#fff;font-size:var(--fs-14);box-shadow:var(--shadow-2);animation:toastIn 260ms var(--ease);pointer-events:auto}
+.toast .ic{width:16px;height:16px}
+.toast.ok .ic{color:#5BD39A}.toast.err .ic{color:#FF8A80}
+.toast .undo{border:0;background:none;color:#fff;font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:0 0 0 8px}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}}
+
+/* ============================ ⑩ 原型面板（演示用，按 H 隐藏） ============================ */
+.pp{position:fixed;right:20px;bottom:20px;z-index:90;font-size:12px;color:#E9E9EC;font-family:var(--font-sans)}
+.pp-toggle{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 12px;border-radius:var(--r-full);border:1px solid rgba(255,255,255,.08);background:rgba(22,23,26,.92);color:#fff;font-size:12px;font-weight:500;box-shadow:var(--shadow-2);backdrop-filter:blur(12px)}
+.pp-toggle .dot{width:6px;height:6px;border-radius:50%;background:#5BD39A}
+.pp-body{position:absolute;right:0;bottom:46px;width:280px;padding:14px;border-radius:14px;background:rgba(22,23,26,.95);border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow-3);backdrop-filter:blur(16px);display:none}
+.pp.open .pp-body{display:block;animation:toastIn 200ms var(--ease)}
+.pp h4{margin:0 0 8px;font-size:11px;font-weight:500;color:#9A9BA2;letter-spacing:.06em}
+.pp-group{margin-bottom:12px}
+.pp-list{display:flex;flex-wrap:wrap;gap:6px}
+.pp-list button{height:28px;padding:0 10px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.12);background:transparent;color:#D6D7DB;font-size:12px}
+.pp-list button:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.pp-list button.on{background:#fff;color:#16171A;border-color:#fff}
+.pp-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);color:#9A9BA2}
+.pp-foot kbd{font-family:var(--font-mono);font-size:11px;padding:1px 6px;border:1px solid rgba(255,255,255,.2);border-radius:4px;color:#D6D7DB}
+body.pp-hidden .pp,body.shot .pp{display:none}
+
+/* ============================ ⑪ 手机框（移动端模板用） ============================ */
+.stage{min-height:calc(100vh - var(--bar-h));display:flex;align-items:center;justify-content:center;gap:56px;padding:40px 24px;background:radial-gradient(1200px 600px at 70% 20%,#EDEEF2 0%,var(--bg) 60%)}
+.stage-note{max-width:300px;color:var(--ink-700)}
+.stage-note .eyebrow{display:inline-flex;height:24px;align-items:center;padding:0 10px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);font-size:11px;letter-spacing:.08em;color:var(--ink-500);margin-bottom:16px}
+.stage-note h1{font-size:var(--fs-24);color:var(--ink-900);margin-bottom:10px;line-height:1.3}
+.stage-note p{font-size:var(--fs-13);color:var(--ink-500);margin-bottom:16px}
+.stage-note ol{margin:0;padding-left:18px;font-size:var(--fs-13);color:var(--ink-700);line-height:2}
+.phone{position:relative;width:390px;height:844px;flex:none;border-radius:54px;padding:12px;background:#0E0F11;box-shadow:0 0 0 1px #2A2B2F inset,0 40px 80px -20px rgba(22,23,26,.35),0 12px 24px -8px rgba(22,23,26,.2)}
+.screen{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column;isolation:isolate}
+.statusbar{height:47px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;font-size:15px;font-weight:600;position:relative;z-index:5}
+.statusbar .island{position:absolute;left:50%;top:11px;width:120px;height:34px;border-radius:20px;background:#0E0F11;transform:translateX(-50%)}
+.statusbar .sys{display:flex;gap:6px;align-items:center}
+.statusbar .bat{width:25px;height:12px;border:1.5px solid currentColor;border-radius:4px;position:relative;opacity:.9}
+.statusbar .bat::after{content:"";position:absolute;inset:1.5px;right:5px;background:currentColor;border-radius:1.5px}
+.homebar{position:absolute;left:50%;bottom:8px;width:134px;height:5px;border-radius:3px;background:var(--ink-900);transform:translateX(-50%);z-index:50;opacity:.85}
+.navbar{height:48px;flex:none;display:flex;align-items:center;gap:4px;padding:0 8px;position:relative}
+.navbar h1{position:absolute;left:56px;right:56px;text-align:center;font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+.tap{min-width:44px;min-height:44px;display:inline-grid;place-items:center;border:0;background:none;border-radius:var(--r-md);color:var(--ink-900)}
+.tap:active{background:var(--line-soft)}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.bottombar{flex:none;padding:10px 16px 30px;border-top:1px solid var(--line);background:var(--surface);display:flex;align-items:center;gap:12px}
+.screen .toast-host{position:absolute;top:60px}
+.screen .mask{position:absolute}
+.screen .modal{position:absolute}
+
+@media (max-width:900px){.stage{flex-direction:column;gap:24px}.stage-note{max-width:390px}}
+@media (max-width:430px){.stage{padding:0}.phone{width:100vw;height:100dvh;border-radius:0;padding:0;box-shadow:none}.screen{border-radius:0}.stage-note{display:none}}
+
+/* ============================ ⑫ PC 后台框架（侧栏 + 顶栏） ============================ */
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:calc(100vh - var(--bar-h))}
+.side{position:sticky;top:var(--bar-h);height:calc(100vh - var(--bar-h));display:flex;flex-direction:column;gap:2px;padding:16px 12px;border-right:1px solid var(--line);background:var(--surface)}
+.brand{display:flex;align-items:center;gap:10px;height:40px;padding:0 8px;margin-bottom:14px;font-weight:600;font-size:15px}
+.brand-mark{width:28px;height:28px;border-radius:8px;background:var(--ink-900);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;letter-spacing:-.02em}
+.side-label{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:14px 10px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;height:38px;padding:0 10px;border-radius:var(--r-sm);color:var(--ink-700);font-size:var(--fs-14);border:0;background:none;width:100%;text-align:left;transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+.nav-item:hover{background:var(--line-soft);color:var(--ink-900)}
+.nav-item.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.nav-item .badge{margin-left:auto}
+.side-foot{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid var(--line)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--line-soft);color:var(--ink-700);display:grid;place-items:center;font-size:13px;font-weight:600;flex:none}
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:var(--bar-h);z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 32px;background:rgba(246,246,247,.86);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.crumb{display:flex;align-items:center;gap:6px;font-size:var(--fs-13);color:var(--ink-500)}
+.crumb .ic{width:14px;height:14px}
+.crumb b{color:var(--ink-900);font-weight:500}
+.topbar .sp{flex:1}
+.content{padding:24px 32px 64px;max-width:1360px;width:100%}
+.page-hd{display:flex;align-items:flex-end;gap:16px;margin-bottom:20px}
+.page-hd h1{font-size:var(--fs-24);line-height:1.25}
+.page-hd .sub{font-size:var(--fs-13);color:var(--ink-500);margin-top:4px}
+.page-hd .acts{margin-left:auto;display:flex;gap:8px}
+@media (max-width:1100px){.app{grid-template-columns:64px minmax(0,1fr)}.side .t,.side-label,.side .badge,.side-foot .t,.brand .t{display:none}.nav-item{justify-content:center;padding:0}.content{padding:20px}.topbar{padding:0 20px}}
+
+/* ============================ ⑬ 通用小件：数量加减 / 圆形勾选 ============================ */
+.stepper{display:inline-flex;align-items:center;height:32px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);overflow:hidden}
+.stepper button{width:32px;height:100%;border:0;background:none;display:grid;place-items:center;color:var(--ink-700)}
+.stepper button:hover{background:var(--line-soft)}
+.stepper button:disabled{color:var(--ink-300);pointer-events:none}
+.stepper input{width:44px;height:100%;border:0;border-left:1px solid var(--line);border-right:1px solid var(--line);text-align:center;outline:none;font-variant-numeric:tabular-nums;background:none}
+.stepper.lg{height:40px}.stepper.lg button{width:40px}
+.rck{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.rck input{appearance:none;width:20px;height:20px;margin:0;border-radius:50%;border:1.5px solid var(--ink-300);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none;background:var(--surface)}
+.rck input:checked{background:var(--accent);border-color:var(--accent)}
+.rck input:checked::after{content:"";width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.rck input:disabled{background:var(--line-soft);border-color:var(--line)}
+
+/* ============================ ⑭ AI 提示词面板（每个模板必有） ============================ */
+.pq-fab{position:fixed;right:20px;bottom:64px;z-index:89;display:flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 12px;border-radius:var(--r-full);border:1px solid var(--line);background:var(--surface);color:var(--ink-900);font-size:12px;font-weight:600;box-shadow:var(--shadow-2);font-family:var(--font-sans)}
+.pq-fab .ic{width:16px;height:16px;color:var(--accent)}
+.pq-fab:hover{border-color:var(--ink-300)}
+body.pp-hidden .pq-fab{display:none}
+.pq-drawer{width:min(520px,100vw)}
+.pq-drawer .layer-bd{background:var(--bg);padding:16px}
+.pq-intro{font-size:var(--fs-13);color:var(--ink-500);margin-bottom:12px}
+.pq-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;margin-bottom:12px}
+.pq-card h3{font-size:var(--fs-14);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.pq-card h3 .no{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--ink-900);color:#fff;font-size:11px;font-variant-numeric:tabular-nums}
+.pq-when{font-size:var(--fs-12);color:var(--ink-500);margin-bottom:10px}
+.pq-body{font-size:13px;line-height:1.75;color:var(--ink-700);white-space:pre-wrap;word-break:break-word;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-md);padding:12px 14px;max-height:220px;overflow:auto;font-family:var(--font-sans)}
+.pq-card.open .pq-body{max-height:none}
+.pv{display:inline;padding:1px 6px;margin:0 1px;border-radius:5px;background:var(--accent-soft);color:var(--accent);font-weight:600;cursor:pointer;border:1px dashed transparent;white-space:nowrap}
+.pv:hover,.pv:focus-visible{border-color:var(--accent);outline:none}
+.pv.filled{background:var(--success-soft);color:var(--success)}
+.pv-in{font:inherit;font-size:13px;border:1px solid var(--accent);border-radius:5px;padding:1px 6px;outline:none;box-shadow:0 0 0 3px var(--accent-soft);min-width:80px;max-width:100%;background:var(--surface);color:var(--ink-900)}
+.pq-acts{display:flex;align-items:center;gap:8px;margin-top:10px}
+.pq-acts .sp{flex:1}
+.pq-acts .hint{font-size:12px;color:var(--ink-500)}
+.pq-acts .btn.done{background:var(--success);border-color:var(--success);color:#fff}
+.pq-col{width:340px;flex:none;max-height:844px;display:flex;flex-direction:column;gap:10px}
+.pq-col .pq-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-900)}
+.pq-col .pq-head .ic{color:var(--accent);width:16px;height:16px}
+.pq-col .pq-scroll{overflow:auto;padding-right:4px}
+.pq-col .pq-card{padding:14px;margin-bottom:10px}
+.pq-col .pq-body{max-height:120px}
+@media (max-width:1200px){.pq-col{width:100%;max-width:390px;max-height:none}}
+
+/* ============================ ⑮ 暗色主题（组件库画廊切换用） ============================ */
+:root[data-theme="dark"]{
+  --ink-900:#ECECEF;--ink-700:#C4C5CB;--ink-500:#9A9CA4;--ink-300:#5A5C64;
+  --line:#2E3036;--line-soft:#24262B;--bg:#121316;--surface:#1A1B1F;--surface-2:#202226;
+  --accent-soft:rgba(110,140,255,.16);--info-soft:rgba(110,140,255,.16);
+  --success:#4CC38A;--success-soft:rgba(76,195,138,.14);--warning:#F0B44C;--warning-soft:rgba(240,180,76,.14);--danger:#FF7A72;--danger-soft:rgba(255,122,114,.14);
+  --shadow-1:0 1px 2px rgba(0,0,0,.3);--shadow-2:0 8px 24px -6px rgba(0,0,0,.5);--shadow-3:0 24px 60px -12px rgba(0,0,0,.6);
+}
+
+/* ============================ ⑯ 顶部条：免费下载 · 双击就能打开 · 复制提示词直接给 AI 用 ============================ */
+body.has-tplbar{--bar-h:44px;padding-top:44px}
+.tplbar{position:fixed;left:0;right:0;top:0;height:44px;z-index:88;display:flex;align-items:center;gap:12px;padding:0 16px 0 20px;background:#16171A;color:#E9E9EC;font-size:13px;font-family:var(--font-sans)}
+.tplbar .tb-name{font-weight:600;color:#fff;white-space:nowrap}
+.tplbar .tb-sep{width:1px;height:14px;background:rgba(255,255,255,.18)}
+.tplbar .tb-line{color:#B9BAC0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tplbar .tb-line b{color:#fff;font-weight:500}
+.tplbar .sp{flex:1}
+.tplbar .tb-btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.18);background:transparent;color:#fff;font-size:12px;font-weight:600;white-space:nowrap;text-decoration:none}
+.tplbar .tb-btn:hover{border-color:rgba(255,255,255,.4)}
+.tplbar .tb-btn.primary{background:#fff;color:#16171A;border-color:#fff}
+.tplbar .tb-btn.primary:hover{filter:brightness(.94)}
+.tplbar .tb-btn .ic{width:15px;height:15px}
+.tplbar .tb-hide{flex-shrink:0;width:30px;padding:0;justify-content:center;border-color:transparent;color:#9A9BA2}
+.drawer{top:var(--bar-h,0px)}
+body.pp-hidden .tplbar{display:none}
+body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
+@media (max-width:820px){.tplbar .tb-line{display:none}}
+:root[data-theme="dark"]{color-scheme:dark}
+:root[data-theme="dark"] .badge-danger{background:#C9372F;color:#fff}
+:root[data-theme="dark"] .toast{background:#2A2C31;color:#F2F2F4;box-shadow:0 0 0 1px #3A3C42,var(--shadow-2)}
+:root[data-theme="dark"] .brand-mark,:root[data-theme="dark"] .ai-mark{background:#ECECEF;color:#16171A}
+:root[data-theme="dark"] .tab.on{color:#16171A}
+/*@END_KIT_CSS*/
+/* ============================ 本模板样式 ============================ */
+:root{--accent:#4B3FC4;--accent-soft:#EFEDFC}
+/* ---- 后台框架（复用 b-shell：.sh 侧栏 + .tb 顶栏 + .crumb2 面包屑 + .tabsbar 页签） ---- */
+.sh{display:grid;grid-template-columns:var(--sw,224px) minmax(0,1fr);min-height:calc(100vh - var(--bar-h))}
+.sb{position:sticky;top:var(--bar-h);height:calc(100vh - var(--bar-h));display:flex;flex-direction:column;background:var(--surface);border-right:1px solid var(--line);overflow:hidden}
+.sb-brand{display:flex;align-items:center;gap:10px;height:56px;padding:0 16px;font-weight:600;font-size:15px;white-space:nowrap;border-bottom:1px solid var(--line-soft)}
+.sb-brand .brand-mark{flex:none}
+.sb-nav{flex:1;overflow-y:auto;padding:10px 8px;scrollbar-width:thin}
+.sb-sec{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:12px 10px 6px;white-space:nowrap}
+.ni{display:flex;align-items:center;gap:10px;width:100%;height:40px;padding:0 10px;border:0;background:none;border-radius:var(--r-sm);color:var(--ink-700);font-size:14px;text-align:left;cursor:pointer;white-space:nowrap;position:relative}
+.ni:hover{background:var(--line-soft);color:var(--ink-900)}
+.ni .ic{flex:none}
+.ni .t{flex:1;overflow:hidden;text-overflow:ellipsis}
+.ni.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.sb-foot{border-top:1px solid var(--line-soft);padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:13px;white-space:nowrap}
+.sb-foot small{display:block;font-size:12px;color:var(--ink-500)}
+.tb{position:sticky;top:var(--bar-h);z-index:20;height:56px;display:flex;align-items:center;gap:12px;padding:0 24px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tb .sp{flex:1}
+.crumb2{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-500);min-width:0;overflow:hidden}
+.crumb2 button{border:0;background:none;color:var(--ink-500);font-size:13px;padding:2px 4px;border-radius:4px;cursor:pointer;white-space:nowrap;min-height:24px}
+.crumb2 button:hover{color:var(--ink-900);background:var(--line-soft)}
+.crumb2 b{color:var(--ink-900);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb2 .ic{width:14px;height:14px;flex:none}
+.tabsbar{display:flex;gap:4px;padding:8px 24px 0;border-bottom:1px solid var(--line);background:var(--surface);overflow-x:auto;scrollbar-width:none}
+.ptab{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid var(--line);border-bottom:0;border-radius:var(--r-sm) var(--r-sm) 0 0;background:var(--surface-2);font-size:13px;color:var(--ink-700);cursor:pointer;white-space:nowrap}
+.ptab.on{background:var(--surface);color:var(--ink-900);font-weight:500;box-shadow:inset 0 2px 0 var(--accent)}
+.pg{padding:24px;max-width:1400px}
+.pg-hd{display:flex;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.pg-hd h1{font-size:22px;line-height:1.3}
+.pg-hd p{font-size:13px;color:var(--ink-500);margin-top:4px}
+.pg-hd .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.tw{position:relative;overflow-x:auto;border-top:1px solid var(--line-soft)}
+.cb{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:28px;cursor:pointer}
+.err-pg{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;min-height:460px}
+.err-pg .code{font-size:64px;font-weight:700;line-height:1;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.err-pg h2{font-size:20px;margin:14px 0 6px}
+.err-pg p{font-size:14px;color:var(--ink-500);max-width:460px;line-height:1.7}
+.err-pg .acts{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+@media (max-width:1000px){.sh{--sw:64px}.sb .t,.sb-sec,.sb-foot .t,.sb-brand .t,.ni .badge{display:none}.ni{justify-content:center;padding:0}.sb-brand{justify-content:center;padding:0}.sb-foot{justify-content:center;padding:10px 0}}
+@media (max-width:640px){.sh{grid-template-columns:minmax(0,1fr)}.sb{display:none}.tb{padding:0 12px;gap:8px}.tabsbar{padding:8px 12px 0}.pg{padding:16px 12px}.pg-hd h1{font-size:19px}.tb .hide-s{display:none}}
+
+.set{display:grid;grid-template-columns:200px minmax(0,1fr);gap:20px;align-items:start}
+.set>*{min-width:0}
+.snav{position:sticky;top:calc(var(--bar-h) + 112px);display:flex;flex-direction:column;gap:2px}
+.snav h3{font-size:11px;color:var(--ink-500);letter-spacing:.08em;padding:4px 10px;font-weight:500}
+.snav button{display:flex;align-items:center;gap:10px;height:38px;padding:0 10px;border:0;background:none;border-radius:var(--r-sm);font-size:14px;color:var(--ink-700);text-align:left;cursor:pointer}
+.snav button:hover{background:var(--line-soft)}
+.snav button[aria-current="page"]{background:var(--surface);color:var(--ink-900);font-weight:600;box-shadow:var(--shadow-1)}
+.snav button .badge{margin-left:auto}
+.sec{padding:18px 20px}
+.sec h2{font-size:15px;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sec h2 .r{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.sec>p.d{font-size:13px;color:var(--ink-500);margin-bottom:14px}
+.seats{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.seats .bar{flex:1;min-width:160px;height:8px;border-radius:4px;background:var(--line-soft);overflow:hidden;display:flex}
+.seats .bar i{display:block;height:100%}
+.seats b{font-size:20px;font-variant-numeric:tabular-nums}
+.inv{display:grid;grid-template-columns:minmax(0,1fr) 150px 150px auto;gap:10px;align-items:start}
+.inv .textarea{min-height:40px;height:40px;resize:vertical;padding-top:9px}
+.chk-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.em{display:inline-flex;align-items:center;gap:4px;height:26px;padding:0 4px 0 10px;border-radius:13px;font-size:12px;background:var(--accent-soft);color:var(--accent)}
+.em.bad{background:var(--danger-soft);color:var(--danger)}
+.em.warn{background:var(--warning-soft);color:var(--warning)}
+.em button{width:22px;height:22px;border:0;background:none;color:inherit;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer}
+.flt{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:14px 16px}
+.flt .input-wrap{width:240px}
+.flt .select{width:140px}
+.flt .sp{flex:1}
+.who{display:flex;align-items:center;gap:10px;min-width:0}
+.who .avatar{width:32px;height:32px;font-size:13px;flex:none}
+.who b{display:block;font-weight:500;font-size:14px}
+.who small{display:block;font-size:12px;color:var(--ink-500)}
+.table td .select{height:32px;width:110px;font-size:13px}
+.me{font-size:11px;padding:0 6px;border-radius:4px;background:var(--line-soft);color:var(--ink-700);margin-left:6px;font-weight:500}
+.tfa{display:inline-flex;align-items:center;gap:4px;font-size:13px}
+.tfa.on{color:var(--success)}.tfa.off{color:var(--warning)}
+.table tr.dis td{color:var(--ink-500)}
+.foot{display:flex;align-items:center;gap:12px;padding:12px 16px;font-size:13px;color:var(--ink-500);border-top:1px solid var(--line-soft);flex-wrap:wrap}
+.banner{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:var(--r-md);font-size:13px;line-height:1.7;margin-bottom:16px}
+.banner .ic{margin-top:3px;flex:none}
+.banner.warn{background:var(--warning-soft);color:var(--warning)}
+.banner.danger{background:var(--danger-soft);color:var(--danger)}
+.banner.info{background:var(--info-soft);color:var(--info)}
+.banner .btn{margin-left:auto;height:30px;flex:none}
+/* 权限矩阵 */
+.mx th,.mx td{text-align:center}
+.mx th:first-child,.mx td:first-child{text-align:left}
+.mx td small{display:block;font-size:12px;color:var(--ink-500);white-space:normal;max-width:280px}
+.mx th small{display:block;font-weight:400;font-size:11px}
+.pc{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--line);background:var(--surface);display:inline-grid;place-items:center;cursor:pointer;color:transparent;padding:0}
+.pc[aria-checked="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.pc:disabled{cursor:not-allowed;opacity:.55}
+.pc[aria-checked="true"]:disabled{opacity:.5}
+.pc.chg{box-shadow:0 0 0 3px #FFD27A}
+/* 安全策略 */
+.pol{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:16px;padding:16px 20px;border-top:1px solid var(--line-soft);align-items:start}
+.pol:first-of-type{border-top:0}
+.pol .k b{display:block;font-size:14px;font-weight:500}
+.pol .k small{display:block;font-size:12px;color:var(--ink-500);line-height:1.6;margin-top:2px}
+.pol .v{min-width:0}
+.pol .v .select,.pol .v .input{max-width:320px}
+.pol.chg{background:#FFFBF0}
+.pol .note{font-size:12px;margin-top:6px;line-height:1.6;color:var(--ink-500)}
+.pol .note.bad{color:var(--danger)}.pol .note.warn{color:var(--warning)}
+.sw{flex:none;width:40px;height:24px;border-radius:12px;border:0;background:var(--ink-300);position:relative;cursor:pointer;padding:0}
+.sw::after{content:"";position:absolute;left:2px;top:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform var(--dur) var(--ease)}
+.sw[aria-checked="true"]{background:var(--accent)}
+.sw[aria-checked="true"]::after{transform:translateX(16px)}
+.sw:disabled{opacity:.5;cursor:not-allowed}
+.swrow{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-700);min-height:36px;flex-wrap:wrap}
+.chks{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+.chks label{display:flex;align-items:center;gap:6px;font-size:13px;min-height:28px;cursor:pointer}
+.seg2{display:flex;gap:6px;flex-wrap:wrap}
+.seg2 button{height:34px;padding:0 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);font-size:13px;color:var(--ink-700);cursor:pointer}
+.seg2 button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:500}
+.ft-bar{position:sticky;bottom:0;z-index:5;display:flex;align-items:center;gap:10px;padding:12px 20px;margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--shadow-2);flex-wrap:wrap}
+.ft-bar .why{font-size:13px;color:var(--ink-500);margin-right:auto}
+.ft-bar .why.bad{color:var(--danger)}
+.code6{display:flex;gap:8px;justify-content:center;margin:10px 0 6px}
+.code6 input{width:44px;height:52px;text-align:center;font-size:22px;font-weight:600;border:1.5px solid var(--line);border-radius:var(--r-md);font-variant-numeric:tabular-nums}
+.code6 input:focus{border-color:var(--accent);outline:0;box-shadow:0 0 0 3px var(--accent-soft)}
+.code6.bad input{border-color:var(--danger)}
+/* 审计 */
+.res-ok{color:var(--success);font-size:13px}.res-bad{color:var(--danger);font-size:13px;font-weight:600}
+.table tr.row-clk{cursor:pointer}
+.table tr.row-clk:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.table tr.fail td{background:#FFF8F7}
+.dff{display:inline-flex;align-items:center;gap:4px;font-size:13px;white-space:nowrap}
+.aud td,.aud th{padding:0 10px;font-size:13px}
+.dff del{color:var(--ink-500)}.dff ins{text-decoration:none;font-weight:500}
+.dsum{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px 12px;font-size:14px;margin:0 0 16px}
+.dsum dt{color:var(--ink-500)}.dsum dd{margin:0;overflow-wrap:anywhere}
+.sk-blk{padding:20px}.sk-blk .sk{margin-bottom:12px}
+@media (max-width:1100px){.set{grid-template-columns:1fr}.snav{position:static;flex-direction:row;overflow-x:auto;scrollbar-width:none}.snav h3{display:none}.snav button{flex:none}.inv{grid-template-columns:1fr 1fr}.inv .grow{grid-column:1/-1}}
+@media (max-width:760px){.pol{grid-template-columns:1fr;gap:8px}.flt .input-wrap,.flt .select{width:100%}.inv{grid-template-columns:1fr}.ft-bar{position:static}.ft-bar .why{width:100%}}
+</style>
+</head>
+<body>
+<div class="sh">
+  <aside class="sb" aria-label="主导航"><div class="sb-brand"><span class="brand-mark">星</span><span class="t">星河设计 · 示例云</span></div>
+    <nav class="sb-nav"><div class="sb-sec">工作区</div><button class="ni" type="button" data-toast="项目（示例）"><svg class="ic"><use href="#i-grid"/></svg><span class="t">项目</span></button><button class="ni" type="button" data-toast="文件（示例）"><svg class="ic"><use href="#i-file"/></svg><span class="t">文件</span></button><button class="ni" type="button" data-toast="评审（示例）"><svg class="ic"><use href="#i-msg"/></svg><span class="t">评审</span></button><div class="sb-sec">管理</div><button class="ni on" type="button" aria-current="page"><svg class="ic"><use href="#i-settings"/></svg><span class="t">团队设置</span></button></nav>
+    <div class="sb-foot"><span class="avatar">林</span><span class="t">林示例<small>管理员 · 产品部</small></span></div>
+  </aside>
+  <main style="min-width:0;display:flex;flex-direction:column">
+    <div class="tb"><nav class="crumb2" id="crumb" aria-label="面包屑"></nav><span class="sp"></span><span class="muted hide-s" style="font-size:12px">当前 IP 203.0.113.24 · 示例市</span></div>
+    <div class="tabsbar" id="tabs" role="tablist" aria-label="已打开的页面"></div>
+    <div id="page" style="flex:1;min-width:0"></div>
+  </main>
+</div>
+<div class="drawer" id="dw" aria-labelledby="dw-t"></div>
+
+<script>
+/* ==========================================================================
+   ① 改数据只改这里（示例数据，全部虚构）
+   ========================================================================== */
+const DATA = {
+  org: { name: '星河设计工作室', plan: '团队版', seats: 15, domain: 'xinghe.example', myIp: '203.0.113.24', me: 'u2', code: '246810' },
+  roles: { owner: '所有者', admin: '管理员', member: '成员', guest: '访客' },
+  // 成员：id, 姓名, 邮箱, 角色, 部门, 两步验证, 最近活跃, 加入时间, 状态 active/disabled
+  members: [
+    ['u1', '周示例', 'zhou@xinghe.example', 'owner', '管理层', 1, '在线', '2023-03-02', 'active'],
+    ['u2', '林示例', 'lin@xinghe.example', 'admin', '产品部', 1, '在线', '2023-03-02', 'active'],
+    ['u3', '许示例', 'xu@xinghe.example', 'admin', '技术部', 1, '1 小时前', '2023-05-18', 'active'],
+    ['u4', '韩示例', 'han@xinghe.example', 'member', '设计部', 1, '今天 09:12', '2023-08-07', 'active'],
+    ['u5', '谢示例', 'xie@xinghe.example', 'member', '设计部', 0, '昨天 18:40', '2024-01-15', 'active'],
+    ['u6', '钱示例', 'qian@xinghe.example', 'member', '技术部', 1, '今天 10:31', '2024-02-20', 'active'],
+    ['u7', '孙示例', 'sun@xinghe.example', 'member', '技术部', 0, '11-08 16:20', '2024-04-02', 'active'],
+    ['u8', '吴示例', 'wu@xinghe.example', 'member', '市场部', 1, '今天 08:55', '2024-06-11', 'active'],
+    ['u9', '郑示例', 'zheng@xinghe.example', 'member', '产品部', 1, '11-10 21:03', '2024-09-03', 'active'],
+    ['u10', '冯示例', 'feng@xinghe.example', 'member', '市场部', 0, '10-21 17:45', '2024-11-28', 'disabled'],
+    ['u11', '陈示例', 'chen@xinghe.example', 'member', '设计部', 1, '今天 11:02', '2025-03-10', 'active'],
+    ['u12', '褚示例', 'chu@partner-studio.example', 'guest', '外部 · 合作方', 0, '11-09 14:30', '2025-07-01', 'active'],
+    ['u13', '卫示例', 'wei@xinghe.example', 'member', '技术部', 1, '今天 10:47', '2026-10-12', 'active']
+  ],
+  // 待接受的邀请：邮箱, 角色, 部门, 邀请人, 发出, 过期
+  invites: [['shen@xinghe.example', 'member', '设计部', '韩示例', '11-09', '11-16'], ['yang@xinghe.example', 'admin', '技术部', '林示例', '11-04', '今天 18:00'], ['jiang@agency.example', 'guest', '外部 · 代理商', '许示例', '11-10', '11-17']],
+  // 权限矩阵：权限, 说明, 所有者, 管理员, 成员, 访客（2 = 固定开，-1 = 固定关）
+  perms: [
+    ['查看项目', '只能看到被加入的项目', 2, 1, 1, 1], ['创建项目', '', 2, 1, 1, -1], ['删除项目', '删除后 30 天内可恢复', 2, 1, 0, -1], ['邀请成员', '访客只能被邀请，不能邀请别人', 2, 1, 0, -1],
+    ['修改成员角色', '不能改自己，不能改所有者', 2, 1, -1, -1], ['管理计费与发票', '', 2, 0, -1, -1], ['导出数据', '导出会记进审计日志', 2, 1, 0, -1], ['查看审计日志', '', 2, 1, -1, -1],
+    ['管理集成与 API 密钥', '', 2, 1, 0, -1], ['修改安全策略', '只有所有者和管理员可改，改动要二次验证', 2, 1, -1, -1]
+  ],
+  // 安全策略当前值
+  sec: { tfa: true, grace: 7, pwMin: 10, pwNeed: ['数字', '大小写字母'], pwExpire: '不过期', session: '7 天', idle: '2 小时', ipOn: true, ips: '203.0.113.0/24\n198.51.100.17', sso: false, ssoUrl: '', domains: 'xinghe.example', share: '需要密码', watermark: true },
+  // 审计日志：时间, 操作人, 类型, 操作, 对象, 修改前, 修改后, IP, 地点 · 设备, 结果
+  logs: [
+    ['11-11 11:06', '林示例', '安全', '修改空闲自动退出', '安全策略', '30 分钟', '2 小时', '203.0.113.24', '示例市 · Chrome / macOS', 'ok'],
+    ['11-11 10:52', '未知', '登录', '登录失败（密码错误 5 次）', 'sun@xinghe.example', '', '', '45.83.12.207', '境外 · 未知设备', 'fail'],
+    ['11-11 10:52', '系统', '安全', '锁定账号 15 分钟', '孙示例', '', '', '—', '—', 'ok'],
+    ['11-11 09:40', '许示例', '数据', '导出项目文件', '「春季品牌升级」 · 312 个文件', '', '', '203.0.113.51', '示例市 · Chrome / Windows', 'ok'],
+    ['11-10 18:22', '周示例', '权限', '修改角色权限', '管理员 · 导出数据', '关', '开', '198.51.100.17', '示例市 · Safari / macOS', 'ok'],
+    ['11-10 15:31', '许示例', '成员', '邀请成员', 'jiang@agency.example（访客）', '', '', '203.0.113.51', '示例市 · Chrome / Windows', 'ok'],
+    ['11-10 09:05', '林示例', '成员', '停用成员', '冯示例', '正常', '已停用', '203.0.113.24', '示例市 · Chrome / macOS', 'ok'],
+    ['11-09 20:14', '韩示例', '登录', '新设备登录', '韩示例', '', '', '203.0.113.88', '示例市 · iPad', 'ok'],
+    ['11-09 14:30', '褚示例', '数据', '下载文件（带水印）', '「品牌手册 v3.pdf」', '', '', '192.0.2.44', '另一示例市 · Chrome / Windows', 'ok'],
+    ['11-09 11:12', '韩示例', '成员', '邀请成员', 'shen@xinghe.example（成员）', '', '', '203.0.113.88', '示例市 · Chrome / macOS', 'ok'],
+    ['11-08 16:20', '孙示例', '登录', '登录成功', '孙示例', '', '', '203.0.113.60', '示例市 · Chrome / Linux', 'ok'],
+    ['11-07 10:03', '林示例', '安全', '修改密码最短长度', '安全策略', '8 位', '10 位', '203.0.113.24', '示例市 · Chrome / macOS', 'ok'],
+    ['11-06 17:48', '许示例', '集成', '新建 API 密钥', '「设计稿同步」· 只读', '', '', '203.0.113.51', '示例市 · Chrome / Windows', 'ok'],
+    ['11-04 09:30', '林示例', '成员', '邀请成员', 'yang@xinghe.example（管理员）', '', '', '203.0.113.24', '示例市 · Chrome / macOS', 'ok']
+  ]
+};
+
+/* ==========================================================================
+   ①-2 AI 提示词（页面顶部「AI 提示词」可一键复制；{{变量}} 点一下就能填）
+   ========================================================================== */
+const PROMPTS = [
+ { title: '从零生成这个原型', when: 'SaaS 产品要做「团队 / 工作区设置」，想把成员、角色权限、安全策略、审计日志一次定下来时用',
+   text: `请帮我做一个可点击的 PC SaaS 后台原型（1440 宽，500 宽不横滚）：设计团队协作工具的「团队设置」，当前登录人是管理员（不是所有者）。左侧栏 + 顶栏面包屑 + 页签，设置页内左侧二级导航。
+
+4 个页面：
+1. 成员与角色：席位用量条（团队版 15 席；正常成员 + 待接受邀请都占席位，访客和已停用的不占）；邀请区：一次粘贴多个邮箱（逗号 / 换行分隔），逐个识别成标签——格式错、已是成员、已邀请、非公司域名（只能邀请为访客）分别标颜色并写原因，超出剩余席位时拦住并给「升级套餐」；选角色和部门；待接受邀请列表（重发、撤销、今天过期标黄）；成员表列 = 成员（头像、姓名、邮箱）、角色（行内下拉）、部门、两步验证、最近活跃、加入时间、状态、操作（停用 / 恢复、移除）；规则：所有者只有 1 个、管理员不能改所有者和自己、移除成员要先把他负责的项目转给别人；
+2. 角色权限：权限 × 角色矩阵（所有者全部固定开，访客大多固定关并写原因），改动的格子高亮，底部「有 N 处修改」，保存要二次确认；
+3. 安全策略：强制两步验证（宽限期，列出还没开的人和截止日）、密码最短长度 8～32、必须包含（数字 / 大小写 / 符号）、密码有效期、登录保持、空闲自动退出、IP 白名单（校验 CIDR 格式；保存后当前 IP 不在名单里时直接拦住：「保存后你会被锁在外面」）、SSO（开启要填元数据地址）、允许的邮箱域名、外部分享链接、下载加水印；改动的行高亮，保存时弹 6 位验证码二次验证；
+4. 审计日志：列 = 时间、操作人、类型、操作、对象、修改前 → 修改后、IP、地点 · 设备、结果；按类型、操作人、只看失败筛选；失败行标红；点一行抽屉看详情；导出。
+
+状态（原型面板可切换）：每页 正常 / 空 / 加载中 / 出错 / 无权限；成员页加「席位已满」，安全页加「会把自己锁在外面」。
+数据要像真的：13 位成员每人邮箱、部门、最近活跃都不同；席位数由数据算出。
+硬性要求：单文件 HTML，不引用外部网址，双击离线可开；颜色写成 :root 变量；数据集中在脚本顶部 DATA。
+交付：① 完整 HTML；② 「角色 × 能做什么 × 不能做的原因」对照表；③ 状态清单。` },
+ { title: '改成我的业务', when: '手上有这个模板，要换成自己产品的角色体系和安全要求时用',
+   text: `附件是一个单文件 HTML 的团队设置原型。请改成「{{产品和团队，例如：连锁门店的收银 SaaS，总部管 30 家店}}」。
+
+1. 只改脚本顶部 DATA 和文案，不动 KIT 标记之间的共用样式和脚本；保留席位计算、批量邀请识别、角色限制、权限矩阵、安全策略二次验证、防自锁、审计日志；
+2. 角色换成：{{例如：总部管理员、区域经理、店长、收银员}}，每个角色固定开 / 固定关的权限写清原因；
+3. 套餐与席位：{{例如：标准版 50 席，收银员不占席位}}；
+4. 安全策略：{{例如：收银员只能在门店 IP 登录、店长必须两步验证}}；
+5. 审计日志的类型：{{例如：登录、改价、退款、权限}}，失败或高风险的要标出；
+6. 示例数据每行都不同，标「示例」，不出现真实公司名。
+交付：改好的完整 HTML + 角色对照表。` },
+ { title: '在此基础上加页面 / 状态', when: '评审追问「所有者离职怎么办」「能不能按部门批量管」时用',
+   text: `附件是一个单文件 HTML 的团队设置原型。请在它的基础上加：{{要加的页面或状态}}。
+
+常见例子（选一个或照着写）：
+- 「转让所有者」：所有者在成员页把所有权转给某位管理员，要输入团队名称确认 + 验证码，转让后自己变管理员，双方收到邮件；
+- 「离职交接」：停用成员时列出他负责的项目、文件、API 密钥，逐项指定接收人，全部交接完才能停用；
+- 「SCIM 自动同步」：从企业通讯录同步部门和成员，显示上次同步时间、新增 / 停用人数，冲突的成员列出来手动处理；
+- 「会话管理」：列出每位成员当前登录的设备，管理员可一键让某人所有设备下线。
+
+要求：新页面或状态加进「原型面板」；所有改动写进审计日志；沿用现有 CSS 变量和组件样式，只改必要的地方。
+交付：完整 HTML + 新增部分的「元素 | 交互 | 反馈」说明表。` }
+];
+
+/* ==========================================================================
+   ② 下面是交互逻辑，一般不用改
+   ========================================================================== */
+/*@KIT_JS*/
+/* ==========================================================================
+   原型工具包（不用改）：图标、页面/状态切换、弹层、Toast
+   用法：页面里写 <svg class="ic"><use href="#i-search"/></svg>
+   ========================================================================== */
+(function(){
+  /* ---- 线性图标（24 网格，1.6 描边）。要加图标：照格式加一行 ---- */
+  var ICONS={
+    search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    filter:'<path d="M4 5h16l-6 8v5l-4 2v-7z"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    minus:'<path d="M5 12h14"/>',
+    x:'<path d="M6 6l12 12M18 6 6 18"/>',
+    check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    'chev-d':'<path d="m6 9 6 6 6-6"/>',
+    'chev-u':'<path d="m6 15 6-6 6 6"/>',
+    'chev-r':'<path d="m9 6 6 6-6 6"/>',
+    'chev-l':'<path d="m15 6-6 6 6 6"/>',
+    sort:'<path d="m8 9 4-4 4 4M8 15l4 4 4-4"/>',
+    more:'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>',
+    download:'<path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14"/>',
+    upload:'<path d="M12 19V8m0 0-4 4m4-4 4 4M5 5h14"/>',
+    refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/>',
+    alert:'<path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.5M12 17.2v.1"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.1"/>',
+    'check-c':'<circle cx="12" cy="12" r="9"/><path d="m8 12.3 2.7 2.7L16 9.6"/>',
+    'x-c':'<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',
+    inbox:'<path d="M3 13h5l1.5 3h5L16 13h5"/><path d="M5.5 5h13L21 13v6H3v-6z"/>',
+    file:'<path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
+    home:'<path d="M4 10.5 12 4l8 6.5V20h-5.5v-6h-5v6H4z"/>',
+    grid:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+    chart:'<path d="M4 20V4M4 20h16"/><path d="m8 15 3.5-4 3 2.5L20 7"/>',
+    bars:'<path d="M5 20v-7M10 20V6M15 20v-9M20 20V9"/>',
+    pie:'<path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
+    settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
+    bell:'<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5h4"/>',
+    user:'<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+    users:'<circle cx="9" cy="9" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M15.5 6.2a3 3 0 0 1 0 5.6M17 14.2A5.5 5.5 0 0 1 20.5 19"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>',
+    calendar:'<rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+    cart:'<path d="M3 4h2.5l2 11h11l2-8H7"/><circle cx="9.5" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/>',
+    bag:'<path d="M5 8h14l-1 12H6z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/>',
+    heart:'<path d="M12 19.5s-7.5-4.4-7.5-9.7A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6c0 5.3-7.5 9.7-7.5 9.7z"/>',
+    trash:'<path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/>',
+    edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>',
+    send:'<path d="M12 19V5m0 0-6 6m6-6 6 6"/>',
+    spark:'<path d="M12 3.5 13.8 10.2 20.5 12 13.8 13.8 12 20.5 10.2 13.8 3.5 12 10.2 10.2z"/>',
+    copy:'<rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/>',
+    'thumb-u':'<path d="M7.5 10.5V20H4.5v-9.5zM7.5 10.5 11 4a2 2 0 0 1 2.6 1.9V9h4.7a2 2 0 0 1 2 2.4l-1.4 6.8a2 2 0 0 1-2 1.8H7.5"/>',
+    'thumb-d':'<path d="M7.5 13.5V4H4.5v9.5zM7.5 13.5 11 20a2 2 0 0 0 2.6-1.9V15h4.7a2 2 0 0 0 2-2.4l-1.4-6.8A2 2 0 0 0 16.9 4H7.5"/>',
+    stop:'<rect x="7" y="7" width="10" height="10" rx="2"/>',
+    lock:'<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+    phone:'<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 17.5h2"/>',
+    eye:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+    'eye-off':'<path d="M4 4l16 16M10.5 6a9.7 9.7 0 0 1 1.5-.1C18 5.9 21.5 12 21.5 12a16 16 0 0 1-2.6 3.3M6.6 7.2C4 9 2.5 12 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+    pin:'<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+    ticket:'<path d="M4 7.5h16v3a1.8 1.8 0 0 0 0 3.5v3H4v-3a1.8 1.8 0 0 0 0-3.5z"/><path d="M14.5 7.5v10" stroke-dasharray="2 2"/>',
+    wallet:'<rect x="3.5" y="6" width="17" height="13" rx="2"/><path d="M3.5 9.5h17M15.5 14h2"/>',
+    logout:'<path d="M14 4.5H6.5v15H14M10.5 12H20m0 0-3.5-3.5M20 12l-3.5 3.5"/>',
+    layers:'<path d="m12 4 8.5 4.5L12 13 3.5 8.5z"/><path d="m3.5 12.5 8.5 4.5 8.5-4.5"/>',
+    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    msg:'<path d="M4.5 5.5h15v10h-8l-4.5 3.5v-3.5H4.5z"/>',
+    link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    paperclip:'<path d="m19 11.5-7.2 7.2a4.5 4.5 0 0 1-6.4-6.4l7.6-7.6a3 3 0 0 1 4.2 4.2L9.6 16.5a1.5 1.5 0 0 1-2.1-2.1l6.7-6.7"/>',
+    flow:'<circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M6 8.2v3.3A2.5 2.5 0 0 0 8.5 14h7A2.5 2.5 0 0 1 18 16.5v-.1"/>',
+    approve:'<path d="M9 4.5h6l1 2.5h3v13H5V7h3z"/><path d="m9 14 2 2 4-4.5"/>',
+    arrow:'<path d="M5 12h14m0 0-5-5m5 5-5 5"/>',
+    'arrow-up':'<path d="M7 14 12 9l5 5"/>',
+    'arrow-dn':'<path d="M7 10l5 5 5-5"/>',
+    star:'<path d="m12 4 2.4 5 5.4.6-4 3.7 1.1 5.4L12 16l-4.9 2.7 1.1-5.4-4-3.7 5.4-.6z"/>',
+    headset:'<path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13.5" width="4" height="6" rx="1.5"/><rect x="16.5" y="13.5" width="4" height="6" rx="1.5"/><path d="M18.5 19.5c0 1-1.5 1.5-4 1.5"/>',
+    book:'<path d="M5 4.5h10.5A2.5 2.5 0 0 1 18 7v12.5H7.5A2.5 2.5 0 0 1 5 17z"/><path d="M5 17a2.5 2.5 0 0 1 2.5-2.5H18"/>',
+    history:'<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5"/><path d="M4 4v4.5h4.5M12 8v4l3 1.8"/>',
+    globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3z"/>',
+    shield:'<path d="M12 3.5 19 6v6c0 4.2-3 7.4-7 8.5-4-1.1-7-4.3-7-8.5V6z"/><path d="m9 12 2 2 4-4.2"/>',
+    play:'<path d="M8 5.5v13l10.5-6.5z"/>',
+    pause:'<path d="M8.5 5.5v13M15.5 5.5v13"/>',
+    share:'<path d="M14 5l6.5 6.5L14 18v-3.8c-4.6 0-7.6 1.4-10 4.8.8-4.9 3.5-9.4 10-10.3z"/>',
+    music:'<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
+    wifi:'<path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.2" r="1"/>',
+    flag:'<path d="M5.5 21V4.5M5.5 4.5h11l-2 4 2 4h-11"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+    moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+    code:'<path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5"/>',
+    keyboard:'<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7.5 14h9"/>',
+    gift:'<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M3.5 9h17M12 9v11M12 9S10.5 4.5 8 5s-1 4 4 4zM12 9s1.5-4.5 4-4 1 4-4 4z"/>'
+  };
+  var sp='<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">';
+  for(var k in ICONS) sp+='<symbol id="i-'+k+'" viewBox="0 0 24 24">'+ICONS[k]+'</symbol>';
+  sp+='</svg>';
+  document.addEventListener('DOMContentLoaded',function(){document.body.insertAdjacentHTML('afterbegin',sp)});
+
+  var P=window.Proto={};
+  P.ic=function(n,cls){return '<svg class="ic '+(cls||'')+'" aria-hidden="true"><use href="#i-'+n+'"/></svg>'};
+  P.esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  P.money=function(n,d){d=d==null?2:d;return Number(n).toLocaleString('zh-CN',{minimumFractionDigits:d,maximumFractionDigits:d})};
+  P.$=function(s,r){return (r||document).querySelector(s)};
+  P.$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  /* ---- Toast：Proto.toast('已保存','ok') ---- */
+  P.toast=function(msg,type,opt){
+    opt=opt||{};
+    var host=(opt.host||document.querySelector('.screen')||document.body).querySelector(':scope > .toast-host');
+    var root=opt.host||document.querySelector('.screen')||document.body;
+    if(!host){host=document.createElement('div');host.className='toast-host';host.setAttribute('role','status');host.setAttribute('aria-live','polite');root.appendChild(host)}
+    var t=document.createElement('div');t.className='toast '+(type||'');
+    var icn=type==='ok'?'check-c':type==='err'?'x-c':'info';
+    t.innerHTML=P.ic(icn)+'<span>'+P.esc(msg)+'</span>'+(opt.undo?'<button class="undo" type="button">撤销</button>':'');
+    if(opt.undo) t.querySelector('.undo').onclick=function(){opt.undo();t.remove()};
+    host.appendChild(t);
+    setTimeout(function(){t.style.transition='opacity .3s';t.style.opacity='0';setTimeout(function(){t.remove()},300)},opt.ms||2400);
+  };
+
+  /* ---- 弹层：Esc / 点遮罩关闭、焦点锁定、关闭后焦点回到触发处 ---- */
+  var stack=[];
+  P.open=function(el,opt){
+    opt=opt||{};
+    var host=opt.host||document.body;
+    var mask=document.createElement('div');mask.className='mask';host.appendChild(mask);
+    el.setAttribute('role',el.getAttribute('role')||'dialog');el.setAttribute('aria-modal','true');
+    if(el.parentNode!==host) host.appendChild(el);
+    var item={el:el,mask:mask,back:document.activeElement,onClose:opt.onClose};
+    stack.push(item);
+    void el.offsetWidth;void mask.offsetWidth;(function(){mask.classList.add('show');el.classList.add('show');
+      var f=el.querySelector('[autofocus]');if(f)f.focus({preventScroll:true});else{if(!el.hasAttribute('tabindex'))el.setAttribute('tabindex','-1');el.focus({preventScroll:true})}})();
+    mask.onclick=function(){if(!opt.locked)P.close(el)};
+    return el;
+  };
+  P.close=function(el){
+    var i=-1;for(var j=stack.length-1;j>=0;j--){if(!el||stack[j].el===el){i=j;break}}
+    if(i<0)return;var it=stack.splice(i,1)[0];
+    it.el.classList.remove('show');it.mask.classList.remove('show');
+    setTimeout(function(){it.mask.remove();if(it.el.dataset.temp)it.el.remove()},320);
+    if(it.back&&it.back.focus)it.back.focus({preventScroll:true});
+    if(it.onClose)it.onClose();
+  };
+  document.addEventListener('keydown',function(e){
+    var top=stack[stack.length-1];
+    if(e.key==='Escape'&&top){e.preventDefault();P.close(top.el);return}
+    if(e.key==='Tab'&&top){
+      var f=P.$$('a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])',top.el).filter(function(n){return n.offsetParent!==null});
+      if(!f.length)return;var a=f[0],b=f[f.length-1];
+      if(e.shiftKey&&document.activeElement===a){e.preventDefault();b.focus()}
+      else if(!e.shiftKey&&document.activeElement===b){e.preventDefault();a.focus()}
+      else if(!top.el.contains(document.activeElement)){e.preventDefault();a.focus()}
+    }
+  });
+
+  /* ---- 确认弹窗：Proto.confirm({title,body,ok,danger}).then(...) ---- */
+  P.confirm=function(o){
+    return new Promise(function(res){
+      var m=document.createElement('div');m.className='modal';m.dataset.temp=1;
+      m.setAttribute('aria-labelledby','cf-t');
+      m.innerHTML='<div class="layer-hd"><h2 id="cf-t">'+P.esc(o.title)+'</h2></div><div class="layer-bd"><p class="muted" style="font-size:14px">'+(o.html||P.esc(o.body||''))+'</p></div><div class="layer-ft"><button class="btn" data-k="0" type="button">'+(o.cancel||'取消')+'</button><button class="btn '+(o.danger?'btn-danger-solid':'btn-primary')+'" data-k="1" type="button">'+P.esc(o.ok||'确定')+'</button></div>';
+      var done=false;
+      m.addEventListener('click',function(e){var b=e.target.closest('[data-k]');if(!b)return;done=true;P.close(m);res(b.dataset.k==='1')});
+      P.open(m,{host:o.host,onClose:function(){if(!done)res(false)}});
+      setTimeout(function(){m.querySelector('[data-k="1"]').focus()},30);
+    });
+  };
+
+  /* ---- 页面 / 状态切换 + 原型面板 ----
+     Proto.init({pages:[{id,name}], states:[{id,name}], render:function(page,state){}})
+     URL 直达：#page=list&state=empty ；按 H 隐藏面板 */
+  P.state={};
+  function parse(){var o={};location.hash.replace(/^#/,'').split('&').forEach(function(kv){var p=kv.split('=');if(p[0])o[p[0]]=decodeURIComponent(p[1]||'')});return o}
+  P.go=function(page,state,silent){
+    var c=P.cfg;page=page||P.state.page;
+    if(state==null) state=(page!==P.state.page)?'normal':P.state.state;
+    P.state={page:page,state:state||'normal'};
+    var h='#page='+page+(P.state.state!=='normal'?'&state='+P.state.state:'');
+    if(location.hash!==h) history.replaceState(null,'',h);
+    c.render(P.state.page,P.state.state);
+    syncPanel();
+  };
+  function syncPanel(){
+    P.$$('.pp [data-pg]').forEach(function(b){b.classList.toggle('on',b.dataset.pg===P.state.page)});
+    var sts=stateList();
+    var box=P.$('.pp [data-states]');if(!box)return;
+    box.innerHTML=sts.map(function(s){return '<button type="button" data-st="'+s.id+'" class="'+(s.id===P.state.state?'on':'')+'">'+s.name+'</button>'}).join('');
+  }
+  function stateList(){var c=P.cfg,pg=c.pages.filter(function(p){return p.id===P.state.page})[0]||{};return pg.states||c.states||[{id:'normal',name:'正常'}]}
+  P.init=function(cfg){
+    P.cfg=cfg;
+    var h=parse();
+    var first=(cfg.pages.filter(function(p){return p.id===h.page})[0]||cfg.pages[0]).id;
+    var pp=document.createElement('div');pp.className='pp';
+    pp.innerHTML='<div class="pp-body" role="region" aria-label="原型面板"><div class="pp-group"><h4>页面</h4><div class="pp-list">'+cfg.pages.map(function(p){return '<button type="button" data-pg="'+p.id+'">'+p.name+'</button>'}).join('')+'</div></div><div class="pp-group"><h4>状态</h4><div class="pp-list" data-states></div></div><div class="pp-foot"><span>'+P.esc(cfg.title||'原型模板')+'</span><span><kbd>H</kbd> 隐藏</span></div></div><button class="pp-toggle" type="button" aria-expanded="false"><span class="dot"></span>原型面板</button>';
+    document.body.appendChild(pp);
+    pp.querySelector('.pp-toggle').onclick=function(){var o=pp.classList.toggle('open');this.setAttribute('aria-expanded',o)};
+    pp.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.dataset.pg)P.go(b.dataset.pg,'normal');if(b.dataset.st)P.go(null,b.dataset.st)});
+    document.addEventListener('keydown',function(e){if((e.key==='h'||e.key==='H')&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)&&!e.metaKey&&!e.ctrlKey)document.body.classList.toggle('pp-hidden')});
+    if(/(^|[?&])shot\b/.test(location.search))document.body.classList.add('shot');
+    P.go(first,h.state||'normal');
+  };
+
+
+  /* ---- AI 提示词面板（每个模板、组件库必有；build.py 会检查） ----
+     Proto.prompts([{title, when, text}])   text 里用 {{变量名}} 标变量，点击就地填写
+     PC：右下角「AI 提示词」按钮 → 右侧抽屉；页面有 .stage（手机框）时直接摆在手机框右侧 */
+  var PV={};
+  try{PV=JSON.parse(localStorage.getItem('tpl-pv:'+location.pathname)||'{}')}catch(e){}
+  function savePV(){try{localStorage.setItem('tpl-pv:'+location.pathname,JSON.stringify(PV))}catch(e){}}
+  P.fillPrompt=function(text){return text.replace(/\{\{([^}]+)\}\}/g,function(m,k){k=k.trim();return PV[k]?PV[k]:m})};
+  function bodyHTML(text){
+    return P.esc(text).replace(/\{\{([^}]+)\}\}/g,function(m,k){k=k.trim();var v=PV[k];return '<span class="pv'+(v?' filled':'')+'" role="button" tabindex="0" data-pv="'+P.esc(k)+'" title="点击填写">'+P.esc(v||k)+'</span>'});
+  }
+  P.promptCard=function(p,i){
+    var hasVar=/\{\{/.test(p.text);
+    return '<div class="pq-card" data-pq="'+i+'"><h3><span class="no">'+(i+1)+'</span>'+P.esc(p.title)+'</h3>'+(p.when?'<p class="pq-when">'+P.esc(p.when)+'</p>':'')+
+      '<div class="pq-body">'+bodyHTML(p.text)+'</div><div class="pq-acts"><span class="hint">'+(hasVar?'点高亮处填写，复制时自动替换':'复制后粘到任意 AI 对话里')+'</span><span class="sp"></span>'+
+      '<button class="btn btn-ghost" type="button" data-pq-more>展开</button><button class="btn btn-primary" type="button" data-pq-copy>'+P.ic('copy','ic-sm')+'复制</button></div></div>';
+  };
+  P.copyText=function(text,btn,msg){
+    var done=function(){if(btn){var h=btn.innerHTML;btn.classList.add('done');btn.innerHTML=P.ic('check','ic-sm')+'已复制';setTimeout(function(){btn.classList.remove('done');btn.innerHTML=h},2400)}P.toast(msg||'已复制，粘到 AI 对话里就能用','ok',{host:document.body})};
+    var fin=false,ok=function(){if(!fin){fin=true;done()}};
+    try{navigator.clipboard.writeText(text).then(ok,function(){if(!fin){fin=true;fallback()}});setTimeout(function(){if(!fin){fin=true;fallback()}},800)}catch(e){fin=true;fallback()}
+    function fallback(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove();done()}
+  };
+  function wirePrompts(root,list){
+    root.addEventListener('click',function(e){
+      var c=e.target.closest('[data-pq]');if(!c)return;var p=list[+c.dataset.pq];
+      if(e.target.closest('[data-pq-copy]'))P.copyText(P.fillPrompt(p.text),e.target.closest('[data-pq-copy]'));
+      if(e.target.closest('[data-pq-more]')){var o=c.classList.toggle('open');e.target.closest('[data-pq-more]').textContent=o?'收起':'展开'}
+      var v=e.target.closest('[data-pv]');if(v)editVar(v,root,list);
+    });
+    root.addEventListener('keydown',function(e){var v=e.target.closest&&e.target.closest('[data-pv]');if(v&&(e.key==='Enter'||e.key===' ')){e.preventDefault();editVar(v,root,list)}});
+  }
+  function editVar(span,root,list){
+    var k=span.dataset.pv,inp=document.createElement('input');inp.className='pv-in';inp.value=PV[k]||'';inp.placeholder=k;inp.setAttribute('aria-label','填写 '+k);
+    inp.style.width=Math.max(80,Math.min(260,(inp.value||k).length*14+20))+'px';
+    span.replaceWith(inp);inp.focus();
+    var commit=function(){PV[k]=inp.value.trim();if(!PV[k])delete PV[k];savePV();P.$$('[data-pq]',root).forEach(function(c){c.querySelector('.pq-body').innerHTML=bodyHTML(list[+c.dataset.pq].text)})};
+    inp.addEventListener('blur',commit);
+    inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();inp.blur()}if(e.key==='Escape'){e.stopPropagation();inp.value=PV[k]||'';inp.blur()}});
+  }
+  P.prompts=function(list){
+    P._prompts=list;
+    if(!list||list.length<3)console.error('[提示词面板] 至少 3 条：从零生成 / 改成我的业务 / 加页面或状态');
+    var id=(location.pathname.split('/').filter(Boolean).slice(-2,-1)[0])||'template';
+    var bar=document.createElement('div');bar.className='tplbar';bar.setAttribute('role','region');bar.setAttribute('aria-label','模板说明');
+    bar.innerHTML='<span class="tb-name">'+P.esc(document.title.split(' · ')[0])+'</span><span class="tb-sep"></span><span class="tb-line"><b>免费下载</b> · 双击就能打开 · 复制提示词直接给 AI 用</span><span class="sp"></span><span data-tb-slot></span><a class="tb-btn primary" href="./'+P.esc(decodeURIComponent(id))+'.zip" download>'+P.ic('download')+'免费下载</a><button class="tb-btn tb-hide" type="button" aria-label="隐藏顶部条和原型面板（H）" title="隐藏（H）">'+P.ic('x')+'</button>';
+    document.body.prepend(bar);document.body.classList.add('has-tplbar');P._bar=bar;
+    bar.querySelector('.tb-hide').onclick=function(){document.body.classList.add('pp-hidden')};
+    var intro='<p class="pq-intro">复制下面的提示词，粘到任意 AI 对话里，就能生成或改造这个原型。要求它输出单文件 HTML。</p>';
+    var stage=document.querySelector('.stage');
+    if(stage){
+      var col=document.createElement('aside');col.className='pq-col';col.setAttribute('aria-label','AI 提示词');
+      col.innerHTML='<div class="pq-head">'+P.ic('spark')+'AI 提示词 · 复制就能用</div><div class="pq-scroll">'+list.map(P.promptCard).join('')+'</div>';
+      stage.appendChild(col);wirePrompts(col,list);
+      var jb=document.createElement('button');jb.type='button';jb.className='tb-btn';jb.innerHTML=P.ic('spark')+'AI 提示词 · 一键复制';jb.onclick=function(){col.scrollIntoView({behavior:'smooth',block:'center'});var c=col.querySelector('.pq-card');if(c){c.style.boxShadow='0 0 0 3px var(--accent-soft)';setTimeout(function(){c.style.boxShadow=''},1400)}};bar.querySelector('[data-tb-slot]').appendChild(jb);return;
+    }
+    var fab=document.createElement('button');fab.type='button';fab.className='tb-btn';fab.innerHTML=P.ic('spark')+'AI 提示词 · 一键复制';
+    var dw=document.createElement('aside');dw.className='drawer pq-drawer';dw.setAttribute('aria-label','AI 提示词');
+    dw.innerHTML='<div class="layer-hd"><h2>AI 提示词</h2><button class="btn btn-ghost btn-icon" type="button" data-pq-x aria-label="关闭">'+P.ic('x')+'</button></div><div class="layer-bd">'+intro+list.map(P.promptCard).join('')+'</div>';
+    P._bar.querySelector('[data-tb-slot]').appendChild(fab);document.body.appendChild(dw);wirePrompts(dw,list);
+    fab.onclick=function(){P.open(dw)};
+    dw.querySelector('[data-pq-x]').onclick=function(){P.close(dw)};
+  };
+  /* ---- 骨架行 ---- */
+  P.skRows=function(n,cols){var s='';for(var i=0;i<n;i++){s+='<tr>';for(var j=0;j<cols;j++)s+='<td><div class="sk" style="height:12px;width:'+(40+((i*7+j*13)%50))+'%"></div></td>';s+='</tr>'}return s};
+  /* ---- 状态块 ---- */
+  P.stateBlock=function(o){return '<div class="state '+(o.error?'is-error':'')+'"><div class="state-ic">'+P.ic(o.icon||(o.error?'alert':'inbox'))+'</div><h3>'+P.esc(o.title)+'</h3>'+(o.body?'<p>'+P.esc(o.body)+'</p>':'')+(o.acts?'<div class="acts">'+o.acts+'</div>':'')+'</div>'};
+})();
+/*@END_KIT_JS*/
+
+const P = Proto, { $, $$, ic, esc, toast } = Proto;
+const PG = $('#page'), dw = $('#dw');
+const R = DATA.roles, O = DATA.org;
+let M, I, PM, SC, LG, MQ, INV, LQ, carry = false;
+const clone = o => JSON.parse(JSON.stringify(o));
+function fresh() {
+  M = clone(DATA.members); I = clone(DATA.invites); PM = clone(DATA.perms); SC = clone(DATA.sec); LG = clone(DATA.logs);
+  MQ = { q: '', role: '', st: '' }; INV = { raw: '', role: 'member', dept: '设计部', tried: false }; LQ = { type: '', who: '', fail: false };
+}
+const used = () => M.filter(m => m[8] === 'active' && m[3] !== 'guest').length + I.filter(i => i[1] !== 'guest').length;
+const meM = () => M.find(m => m[0] === O.me);
+
+function chrome(title, cur) {
+  $('#crumb').innerHTML = `<button type="button" data-toast="工作区首页（示例）">${esc(O.name)}</button>${ic('chev-r')}<button type="button" data-go="members">团队设置</button>${ic('chev-r')}<b>${title}</b>`;
+  $('#tabs').innerHTML = [['members', '成员与角色'], ['roles', '角色权限'], ['security', '安全策略'], ['audit', '审计日志']].map(t => `<span class="ptab ${t[0] === cur ? 'on' : ''}" role="tab" tabindex="0" aria-selected="${t[0] === cur}" data-go="${t[0]}">${t[1]}</span>`).join('');
+}
+function snav(cur) {
+  const off = M.filter(m => m[8] === 'active' && m[3] !== 'guest' && !m[5]).length;
+  return `<nav class="snav" aria-label="设置分类"><h3>团队</h3><button type="button" data-toast="基本信息（示例）">${ic('home', 'ic-sm')}基本信息</button><button type="button" data-go="members" ${cur === 'members' ? 'aria-current="page"' : ''}>${ic('users', 'ic-sm')}成员与角色</button><button type="button" data-go="roles" ${cur === 'roles' ? 'aria-current="page"' : ''}>${ic('shield', 'ic-sm')}角色权限</button><h3>安全</h3><button type="button" data-go="security" ${cur === 'security' ? 'aria-current="page"' : ''}>${ic('lock', 'ic-sm')}安全策略${off && SC.tfa ? `<span class="badge badge-danger">${off}</span>` : ''}</button><button type="button" data-go="audit" ${cur === 'audit' ? 'aria-current="page"' : ''}>${ic('history', 'ic-sm')}审计日志</button><h3>其他</h3><button type="button" data-toast="套餐与账单见 saas-pricing 模板">${ic('wallet', 'ic-sm')}套餐与账单</button><button type="button" data-toast="集成与 API（示例）">${ic('link', 'ic-sm')}集成与 API</button></nav>`;
+}
+function head(t, sub, acts) { return `<div class="pg-hd"><div><h1>${t}</h1>${sub ? `<p>${sub}</p>` : ''}</div>${acts ? `<div class="acts">${acts}</div>` : ''}</div>`; }
+function wrap(cur, inner) { return `<div class="pg"><div class="set">${snav(cur)}<div>${inner}</div></div></div>`; }
+function skel(n) { return `<section class="card sk-blk" aria-busy="true" aria-label="正在加载"><div class="sk" style="height:18px;width:220px"></div><div class="sk" style="height:12px;width:420px"></div><table class="table" style="margin-top:12px"><tbody>${P.skRows(n, 7)}</tbody></table></section>`; }
+function errCard(t, b, pg) { return `<section class="card">${P.stateBlock({ error: true, title: t, body: b, acts: `<button class="btn btn-primary" type="button" data-retry="${pg}">${ic('refresh')}重试</button>` })}</section>`; }
+function noPerm(t, b) { return `<section class="card"><div class="err-pg"><div class="code">403</div><h2>${t}</h2><p>${b}</p><div class="acts"><button class="btn btn-primary" type="button" data-apply>请所有者开通</button></div></div></section>`; }
+
+/* ---------------- ① 成员与角色 ---------------- */
+function parseEmails() {
+  const left = O.seats - used();
+  const list = INV.raw.split(/[\s,，;；]+/).map(s => s.trim()).filter(Boolean);
+  let seatLeft = left;
+  return list.map(e => {
+    if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(e)) return [e, 'bad', '格式不对'];
+    if (M.some(m => m[2] === e.toLowerCase())) return [e, 'bad', '已是成员'];
+    if (I.some(i => i[0] === e.toLowerCase())) return [e, 'warn', '已邀请过，可在下方重发'];
+    const ext = !e.toLowerCase().endsWith('@' + O.domain);
+    if (ext && INV.role !== 'guest') return [e, 'warn', '外部邮箱，只能邀请为访客'];
+    if (INV.role !== 'guest') { if (seatLeft <= 0) return [e, 'bad', '席位不够']; seatLeft--; }
+    return [e, 'ok', ext ? '访客' : ''];
+  });
+}
+function pMembers(state) {
+  chrome('成员与角色', 'members');
+  const hd = head('成员与角色', `${O.plan} · ${M.filter(m => m[8] === 'active').length} 位正常成员 · 你是管理员`, `<button class="btn" type="button" data-toast="已导出成员名单 CSV（示例），已记入审计日志">${ic('download')}导出名单</button>`);
+  if (state === 'loading') { PG.innerHTML = wrap('members', hd + skel(8)); return; }
+  if (state === 'error') { PG.innerHTML = wrap('members', hd + errCard('成员列表没加载出来', '目录服务响应超时（错误编号 DIR-504，示例）。成员登录不受影响。', 'members')); return; }
+  if (state === 'noperm') { PG.innerHTML = wrap('members', hd + noPerm('只有所有者和管理员能管理成员', '你当前是「成员」，可以看到同事名单，但不能邀请、改角色或移除。需要的话请所有者 周示例 在「角色权限」里开通。')); return; }
+  if (state === 'full') { while (used() < O.seats) I.push([`new${I.length}@${O.domain}`, 'member', '技术部', '林示例', '今天', '11-18']); }
+  const u = used(), left = O.seats - u, pe = parseEmails(), okN = pe.filter(x => x[1] === 'ok').length, badN = pe.filter(x => x[1] !== 'ok').length;
+  const act = M.filter(m => m[8] === 'active' && m[3] !== 'guest').length;
+  const rows = M.filter(m => (!MQ.q || (m[1] + m[2] + m[4]).includes(MQ.q)) && (!MQ.role || m[3] === MQ.role) && (!MQ.st || m[8] === MQ.st));
+  const me = meM();
+  PG.innerHTML = wrap('members', hd + `
+  <section class="card sec"><h2>席位 <span class="muted" style="font-weight:400;font-size:13px">正常成员和待接受邀请占席位；访客、已停用的不占</span><span class="r"><button class="btn" type="button" data-toast="已打开套餐升级（示例）：专业版 50 席">升级套餐</button></span></h2>
+   <div class="seats" style="margin-top:10px"><b>${u} / ${O.seats}</b><div class="bar" aria-hidden="true"><i style="width:${act / O.seats * 100}%;background:var(--accent)"></i><i style="width:${(u - act) / O.seats * 100}%;background:#A9A2EE"></i></div><span class="muted" style="font-size:13px">成员 ${act} · 待接受 ${u - act} · 剩 ${left}</span></div>
+   ${left <= 0 ? `<div class="banner danger" style="margin:14px 0 0">${ic('alert')}<span>席位已满：撤销没用的邀请、停用离职成员，或升级套餐后才能再邀请成员（邀请访客不受影响）。</span><button class="btn" type="button" data-toast="已打开套餐升级（示例）">升级套餐</button></div>` : ''}</section>
+  <section class="card sec" style="margin-top:16px"><h2>邀请成员</h2><p class="d">粘贴邮箱，多个用逗号或换行隔开；只能邀请 @${O.domain}，外部邮箱请选「访客」。邀请 7 天内有效。</p>
+   <div class="inv"><div class="grow"><label class="sr-only" for="ivraw">邮箱</label><textarea class="textarea" id="ivraw" placeholder="例：shen@${O.domain}, he@${O.domain}">${esc(INV.raw)}</textarea>${pe.length ? `<div class="chk-list" aria-live="polite">${pe.map((x, i) => `<span class="em ${x[1] === 'ok' ? '' : x[1]}">${esc(x[0])}${x[2] ? ` · ${x[2]}` : ''}<button type="button" data-unem="${i}" aria-label="移除 ${esc(x[0])}">${ic('x', 'ic-sm')}</button></span>`).join('')}</div>` : ''}</div>
+   <div><label class="sr-only" for="ivrole">角色</label><select class="select" id="ivrole">${['admin', 'member', 'guest'].map(r => `<option value="${r}" ${INV.role === r ? 'selected' : ''}>${R[r]}${r === 'guest' ? '（不占席位）' : ''}</option>`).join('')}</select></div>
+   <div><label class="sr-only" for="ivdept">部门</label><select class="select" id="ivdept">${['设计部', '产品部', '技术部', '市场部', '外部 · 合作方'].map(d => `<option ${INV.dept === d ? 'selected' : ''}>${d}</option>`).join('')}</select></div>
+   <button class="btn btn-primary" type="button" data-invite ${okN ? '' : 'disabled'}>${okN ? `发送 ${okN} 封邀请` : '发送邀请'}</button></div>
+   ${badN ? `<p style="font-size:12px;color:var(--warning);margin-top:8px">${badN} 个邮箱不会发送（标黄 / 红的），改好或移除即可。</p>` : ''}</section>
+  ${I.length ? `<section class="card" style="margin-top:16px"><div class="sec" style="padding-bottom:10px"><h2>待接受的邀请 <span class="muted" style="font-weight:400;font-size:13px">${I.length} 封</span></h2></div><div class="tw"><table class="table"><thead><tr><th>邮箱</th><th>角色</th><th>部门</th><th>邀请人</th><th>发出</th><th>过期</th><th>操作</th></tr></thead><tbody>${I.map((x, i) => `<tr><td>${esc(x[0])}</td><td>${R[x[1]]}</td><td>${x[2]}</td><td>${x[3]}</td><td class="muted num">${x[4]}</td><td class="num" style="${/今天/.test(x[5]) ? 'color:var(--warning);font-weight:600' : ''}">${x[5]}</td><td><button class="btn-link" type="button" data-resend="${i}">重发</button> · <button class="btn-link" type="button" data-revoke="${i}">撤销</button></td></tr>`).join('')}</tbody></table></div></section>` : ''}
+  <section class="card" style="margin-top:16px"><div class="flt"><div class="input-wrap">${ic('search')}<input class="input" id="mq" placeholder="姓名 / 邮箱 / 部门" aria-label="搜索成员" value="${esc(MQ.q)}"></div><select class="select" id="mrole" aria-label="角色"><option value="">全部角色</option>${Object.keys(R).map(r => `<option value="${r}" ${MQ.role === r ? 'selected' : ''}>${R[r]}</option>`).join('')}</select><select class="select" id="mst" aria-label="状态"><option value="">全部状态</option><option value="active" ${MQ.st === 'active' ? 'selected' : ''}>正常</option><option value="disabled" ${MQ.st === 'disabled' ? 'selected' : ''}>已停用</option></select><span class="sp"></span><span class="muted" style="font-size:13px">${rows.length} 人</span></div>
+  ${rows.length && state !== 'empty' ? `<div class="tw"><table class="table"><thead><tr><th>成员</th><th>角色</th><th>部门</th><th>两步验证</th><th>最近活跃</th><th>加入时间</th><th>状态</th><th>操作</th></tr></thead><tbody>
+  ${rows.map(m => { const self = m[0] === O.me, own = m[3] === 'owner', lock = self || own; return `<tr class="${m[8] === 'disabled' ? 'dis' : ''}"><td><div class="who"><span class="avatar">${m[1][0]}</span><span style="min-width:0"><b>${m[1]}${self ? '<span class="me">你</span>' : ''}</b><small>${esc(m[2])}</small></span></div></td>
+   <td>${lock ? `<span title="${own ? '所有者只能由本人转让' : '不能修改自己的角色'}">${R[m[3]]}</span>` : `<label class="sr-only" for="r-${m[0]}">${m[1]} 的角色</label><select class="select" id="r-${m[0]}" data-role="${m[0]}" ${m[8] === 'disabled' ? 'disabled' : ''}>${['admin', 'member', 'guest'].map(r => `<option value="${r}" ${m[3] === r ? 'selected' : ''}>${R[r]}</option>`).join('')}</select>`}</td>
+   <td>${m[4]}</td><td>${m[3] === 'guest' ? '<span class="muted" style="font-size:13px">访客不强制</span>' : m[5] ? `<span class="tfa on">${ic('check-c', 'ic-sm')}已开启</span>` : `<span class="tfa off">${ic('alert', 'ic-sm')}未开启</span>`}</td><td class="muted">${m[6]}</td><td class="muted num">${m[7]}</td>
+   <td>${m[8] === 'active' ? '<span class="tag tag-success">正常</span>' : '<span class="tag tag-neutral">已停用</span>'}</td>
+   <td>${lock ? '<span class="muted" style="font-size:13px">—</span>' : `${m[8] === 'active' ? `<button class="btn-link" type="button" data-disable="${m[0]}">停用</button>` : `<button class="btn-link" type="button" data-enable="${m[0]}">恢复</button>`} · <button class="btn-link" type="button" data-remove="${m[0]}" style="color:var(--danger)">移除</button>`}</td></tr>`; }).join('')}</tbody></table></div>
+  <div class="foot">所有者只能由本人转让；管理员不能修改自己和所有者；停用后立即下线，数据保留</div>`
+  : P.stateBlock({ icon: 'users', title: state === 'empty' ? '只有你一个人' : '没有符合条件的成员', body: state === 'empty' ? '在上面输入同事的公司邮箱就能邀请。' : '换个关键字或清空筛选。', acts: state === 'empty' ? '' : '<button class="btn" type="button" data-mreset>清空筛选</button>' })}</section>`);
+  if (state === 'empty') { /* 空：只保留自己 */ }
+}
+function openRemove(id) {
+  const m = M.find(x => x[0] === id), projs = { u4: ['春季品牌升级', '官网改版 2026'], u5: ['包装系列·冬季'], u7: ['设计稿同步插件'] }[id] || [];
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">移除 ${m[1]}</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div><div class="layer-bd">
+   <p style="font-size:14px;line-height:1.8">移除后 ${m[1]}（${esc(m[2])}）立即无法登录，席位释放。他上传的文件保留在项目里。</p>
+   ${projs.length ? `<div class="banner warn" style="margin-top:14px">${ic('alert')}<span>他是 ${projs.length} 个项目的负责人：${projs.map(p => `「${p}」`).join('')}。先指定新负责人才能移除。</span></div><div class="field"><label class="label" for="heir">项目转给</label><select class="select" id="heir"><option value="">请选择</option>${M.filter(x => x[8] === 'active' && x[0] !== id && x[3] !== 'guest').map(x => `<option value="${x[0]}">${x[1]} · ${x[4]}</option>`).join('')}</select><span class="field-err" id="heir-e" hidden>请选择接收项目的人</span></div>` : '<p class="muted" style="font-size:13px;margin-top:10px">他没有负责的项目，可以直接移除。</p>'}
+   <div class="field" style="margin-top:12px"><label class="label" for="rmconfirm">输入「${m[1]}」确认</label><input class="input" id="rmconfirm" autocomplete="off"><span class="field-err" id="rm-e" hidden>输入的名字不对</span></div></div>
+   <div class="layer-ft"><button class="btn" type="button" data-x>取消</button><button class="btn btn-danger-solid" type="button" data-rmok="${id}" data-need="${projs.length ? 1 : 0}">移除成员</button></div>`;
+  P.open(dw);
+}
+
+/* ---------------- ② 角色权限 ---------------- */
+function pRoles(state) {
+  chrome('角色权限', 'roles');
+  const hd = head('角色权限', '所有者的权限固定不能改；访客是外部协作者，大部分权限固定关闭', '');
+  if (state === 'loading') { PG.innerHTML = wrap('roles', hd + skel(10)); return; }
+  if (state === 'error') { PG.innerHTML = wrap('roles', hd + errCard('权限配置没加载出来', '权限服务暂时不可用（错误编号 RBAC-500，示例）。现有权限照常生效。', 'roles')); return; }
+  if (state === 'noperm') { PG.innerHTML = wrap('roles', hd + noPerm('只有所有者能改角色权限', '管理员可以查看但不能修改权限矩阵（防止管理员给自己加权限）。')); return; }
+  if (state === 'empty') { PG.innerHTML = wrap('roles', hd + `<section class="card">${P.stateBlock({ icon: 'shield', title: '还没有自定义角色', body: '团队版提供 4 个内置角色；专业版可以新建自定义角色（例如「财务」只能管账单）。', acts: '<button class="btn" type="button" data-toast="已打开套餐升级（示例）">了解专业版</button>' })}</section>`); return; }
+  const cnt = r => M.filter(m => m[3] === r && m[8] === 'active').length, keys = ['owner', 'admin', 'member', 'guest'];
+  const dirty = PM.reduce((s, p, i) => s + [2, 3, 4, 5].filter(k => p[k] !== DATA.perms[i][k]).length, 0);
+  PG.innerHTML = wrap('roles', hd + `<section class="card"><div class="tw" style="border-top:0"><table class="table mx"><thead><tr><th>权限</th>${keys.map(r => `<th>${R[r]}<small>${cnt(r)} 人</small></th>`).join('')}</tr></thead><tbody>
+  ${PM.map((p, i) => `<tr><td><b style="font-weight:500">${p[0]}</b>${p[1] ? `<small>${p[1]}</small>` : ''}</td>${[2, 3, 4, 5].map(k => { const v = p[k], fixed = v === 2 || v === -1, on = v > 0; return `<td><button class="pc ${!fixed && v !== DATA.perms[i][k] ? 'chg' : ''}" type="button" role="checkbox" data-pm="${i}-${k}" aria-checked="${on}" aria-label="${R[keys[k - 2]]} · ${p[0]}" ${fixed ? `disabled title="${v === 2 ? '所有者固定拥有' : keys[k - 2] === 'guest' ? '访客是外部协作者，不能开启' : '成员不能开启，需提升为管理员'}"` : ''}>${ic('check', 'ic-sm')}</button></td>`; }).join('')}</tr>`).join('')}</tbody></table></div>
+  <div class="foot">灰色格子为固定权限，悬停看原因；黄框是这次改动的格子</div></section>
+  <div class="ft-bar"><span class="why">${dirty ? `有 ${dirty} 处修改还没保存，保存后 ${M.filter(m => m[8] === 'active').length} 人的权限立即变化` : '没有未保存的修改'}</span><button class="btn" type="button" data-pmreset ${dirty ? '' : 'disabled'}>撤销修改</button><button class="btn btn-primary" type="button" data-pmsave ${dirty ? '' : 'disabled'}>保存</button></div>`);
+}
+
+/* ---------------- ③ 安全策略 ---------------- */
+function ipIn(ip, cidr) { const [b, bits] = cidr.split('/'); const n = s => s.split('.').reduce((a, x) => a * 256 + +x, 0); if (!bits) return ip === b; const m = +bits; return Math.floor(n(ip) / 2 ** (32 - m)) === Math.floor(n(b) / 2 ** (32 - m)); }
+function secCheck() {
+  const e = {}, lines = SC.ips.split('\n').map(s => s.trim()).filter(Boolean);
+  const bad = lines.filter(l => !/^(\d{1,3}\.){3}\d{1,3}(\/(\d|[12]\d|3[0-2]))?$/.test(l) || l.split('/')[0].split('.').some(x => +x > 255));
+  if (!(SC.pwMin >= 8 && SC.pwMin <= 32)) e.pwMin = '最短长度要在 8～32 位';
+  if (SC.ipOn && !lines.length) e.ips = '开启白名单至少填 1 条';
+  else if (SC.ipOn && bad.length) e.ips = `格式不对：${bad.join('、')}（例：203.0.113.0/24 或 198.51.100.17）`;
+  else if (SC.ipOn && !lines.some(l => ipIn(O.myIp, l))) e.lock = `你当前的 IP ${O.myIp} 不在白名单里，保存后你会被锁在外面。先把它加进去，或在白名单里的网络下操作。`;
+  if (SC.sso && !/^https:\/\/\S+/.test(SC.ssoUrl)) e.ssoUrl = '开启 SSO 要填 https 开头的元数据地址';
+  if (!SC.domains.trim()) e.domains = '至少保留 1 个公司域名';
+  return e;
+}
+const SECK = ['tfa', 'grace', 'pwMin', 'pwNeed', 'pwExpire', 'session', 'idle', 'ipOn', 'ips', 'sso', 'ssoUrl', 'domains', 'share', 'watermark'];
+const chg = k => JSON.stringify(SC[k]) !== JSON.stringify(DATA.sec[k]);
+function pSecurity(state) {
+  chrome('安全策略', 'security');
+  const hd = head('安全策略', '对团队所有成员生效；改动需要二次验证，并记入审计日志', '');
+  if (state === 'loading') { PG.innerHTML = wrap('security', hd + skel(8)); return; }
+  if (state === 'error') { PG.innerHTML = wrap('security', hd + errCard('安全策略没加载出来', '配置服务超时（错误编号 SEC-504，示例）。当前策略照常生效。', 'security')); return; }
+  if (state === 'noperm') { PG.innerHTML = wrap('security', hd + noPerm('没有修改安全策略的权限', '「修改安全策略」只开放给所有者和管理员。你是成员，可以在个人设置里开启自己的两步验证。')); return; }
+  if (state === 'empty') { PG.innerHTML = wrap('security', hd + `<section class="card">${P.stateBlock({ icon: 'shield', title: '还没有设置任何安全策略', body: '目前所有人用默认规则：密码至少 8 位、登录保持 30 天、不限制 IP。建议至少开启「强制两步验证」。', acts: '<button class="btn btn-primary" type="button" data-sec-init>按推荐值开始设置</button>' })}</section>`); return; }
+  const e = secCheck(), off = M.filter(m => m[8] === 'active' && m[3] !== 'guest' && !m[5]), dirty = SECK.filter(chg).length;
+  const row = (k, t, d, v, note) => `<div class="pol ${[].concat(k).some(chg) ? 'chg' : ''}"><div class="k"><b>${t}</b>${d ? `<small>${d}</small>` : ''}</div><div class="v">${v}${note || ''}</div></div>`;
+  PG.innerHTML = wrap('security', hd + `${e.lock ? `<div class="banner danger" role="alert">${ic('lock')}<span><b>不能保存：</b>${e.lock}</span><button class="btn" type="button" data-addmyip>把 ${O.myIp} 加进白名单</button></div>` : ''}
+  <section class="card"><div class="sec" style="padding-bottom:4px"><h2>登录与账号</h2></div>
+  ${row(['tfa', 'grace'], '强制两步验证', '成员登录时必须用验证器 App 或短信验证码', `<div class="swrow"><button class="sw" type="button" role="switch" data-sb="tfa" aria-checked="${SC.tfa}" aria-label="强制两步验证"></button>${SC.tfa ? `宽限期 <select class="select" data-sv="grace" aria-label="宽限期" style="width:96px;height:32px">${[3, 7, 14].map(x => `<option value="${x}" ${SC.grace == x ? 'selected' : ''}>${x} 天</option>`).join('')}</select>` : '关闭'}</div>`, SC.tfa && off.length ? `<p class="note warn">还有 ${off.length} 人没开启：${off.map(m => m[1]).join('、')}，宽限期到 11-${11 + +SC.grace} 后只能看、不能编辑。<button class="btn-link" type="button" data-toast="已给 ${off.map(m => m[1]).join('、')} 发提醒邮件" style="font-size:12px">提醒他们</button></p>` : '')}
+  ${row('pwMin', '密码最短长度', '8～32 位', `<input class="input num ${e.pwMin ? 'is-error' : ''}" data-sv="pwMin" value="${SC.pwMin}" inputmode="numeric" aria-label="密码最短长度" style="width:96px">`, e.pwMin ? `<p class="note bad">${e.pwMin}</p>` : '')}
+  ${row('pwNeed', '密码必须包含', '', `<div class="chks">${['数字', '大小写字母', '符号'].map(x => `<label><span class="check"><input type="checkbox" data-need="${x}" ${SC.pwNeed.includes(x) ? 'checked' : ''}></span>${x}</label>`).join('')}</div>`, '<p class="note">只对新设置的密码生效，已有密码下次修改时检查</p>')}
+  ${row('pwExpire', '密码有效期', '', `<select class="select" data-sv="pwExpire" aria-label="密码有效期">${['不过期', '90 天', '180 天'].map(x => `<option ${SC.pwExpire === x ? 'selected' : ''}>${x}</option>`).join('')}</select>`)}
+  ${row('session', '登录保持', '超过这个时间要重新登录', `<div class="seg2" role="group" aria-label="登录保持">${['8 小时', '1 天', '7 天', '30 天'].map(x => `<button type="button" data-ss="${x}" aria-pressed="${SC.session === x}">${x}</button>`).join('')}</div>`)}
+  ${row('idle', '空闲自动退出', '电脑没人操作多久后退出', `<select class="select" data-sv="idle" aria-label="空闲自动退出">${['不退出', '30 分钟', '2 小时', '8 小时'].map(x => `<option ${SC.idle === x ? 'selected' : ''}>${x}</option>`).join('')}</select>`)}</section>
+  <section class="card" style="margin-top:16px"><div class="sec" style="padding-bottom:4px"><h2>访问范围</h2></div>
+  ${row(['ipOn', 'ips'], 'IP 白名单', '只允许在这些网络登录；访客不受限制', `<div class="swrow"><button class="sw" type="button" role="switch" data-sb="ipOn" aria-checked="${SC.ipOn}" aria-label="IP 白名单"></button>${SC.ipOn ? '已开启' : '关闭（任何网络都能登录）'}</div>${SC.ipOn ? `<textarea class="textarea mono ${e.ips || e.lock ? 'is-error' : ''}" data-sv="ips" rows="3" aria-label="白名单" style="max-width:320px;margin-top:8px">${esc(SC.ips)}</textarea>` : ''}`, SC.ipOn ? (e.ips ? `<p class="note bad">${e.ips}</p>` : `<p class="note">每行一条，支持单个 IP 或网段；你当前 IP ${O.myIp} ${SC.ips.split('\n').some(l => l.trim() && /^[\d./]+$/.test(l.trim()) && ipIn(O.myIp, l.trim())) ? '在名单内' : '<b style="color:var(--danger)">不在名单内</b>'}</p>`) : '')}
+  ${row(['sso', 'ssoUrl'], '单点登录（SAML SSO）', '开启后成员用公司账号登录，不再用密码', `<div class="swrow"><button class="sw" type="button" role="switch" data-sb="sso" aria-checked="${SC.sso}" aria-label="单点登录"></button>${SC.sso ? '已开启' : '关闭'}</div>${SC.sso ? `<input class="input ${e.ssoUrl ? 'is-error' : ''}" data-sv="ssoUrl" value="${esc(SC.ssoUrl)}" placeholder="https://idp.${O.domain}/metadata.xml" aria-label="元数据地址" style="margin-top:8px">` : ''}`, e.ssoUrl ? `<p class="note bad">${e.ssoUrl}</p>` : SC.sso ? '<p class="note">保存后先用你自己的账号测试一次，成功后才对全员生效</p>' : '')}
+  ${row('domains', '允许的邮箱域名', '只有这些域名能被邀请为成员', `<input class="input ${e.domains ? 'is-error' : ''}" data-sv="domains" value="${esc(SC.domains)}" aria-label="允许的邮箱域名">`, e.domains ? `<p class="note bad">${e.domains}</p>` : '')}</section>
+  <section class="card" style="margin-top:16px"><div class="sec" style="padding-bottom:4px"><h2>数据外流</h2></div>
+  ${row('share', '外部分享链接', '项目文件生成给团队外的人看的链接', `<div class="seg2" role="group" aria-label="外部分享链接">${['禁止', '需要密码', '允许'].map(x => `<button type="button" data-sh="${x}" aria-pressed="${SC.share === x}">${x}</button>`).join('')}</div>`, SC.share === '禁止' ? '<p class="note warn">已存在的 23 个外部链接会立即失效</p>' : '')}
+  ${row('watermark', '下载加水印', '下载的图片和 PDF 带下载人姓名和时间', `<div class="swrow"><button class="sw" type="button" role="switch" data-sb="watermark" aria-checked="${SC.watermark}" aria-label="下载加水印"></button>${SC.watermark ? '已开启' : '关闭'}</div>`)}</section>
+  <div class="ft-bar"><span class="why ${Object.keys(e).length ? 'bad' : ''}">${Object.keys(e).length ? `有 ${Object.keys(e).length} 处要改` : dirty ? `改了 ${dirty} 项，保存时需要验证码` : '没有未保存的修改'}</span><button class="btn" type="button" data-secreset ${dirty ? '' : 'disabled'}>撤销修改</button><button class="btn btn-primary" type="button" data-secsave ${dirty && !Object.keys(e).length ? '' : 'disabled'}>保存</button></div>`);
+}
+function openVerify() {
+  const m = document.createElement('div'); m.className = 'modal'; m.dataset.temp = 1; m.setAttribute('aria-labelledby', 'vf-t');
+  m.innerHTML = `<div class="layer-hd"><h2 id="vf-t">验证身份</h2></div><div class="layer-bd"><p class="muted" style="font-size:14px;text-align:center">修改安全策略需要验证，验证码已发到 138****5521<br><span style="font-size:12px">（演示验证码 ${O.code}）</span></p><div class="code6" id="c6">${[0, 1, 2, 3, 4, 5].map(i => `<input inputmode="numeric" maxlength="1" data-c6="${i}" aria-label="第 ${i + 1} 位" ${i === 0 ? 'autofocus' : ''}>`).join('')}</div><p class="field-err" id="c6e" style="text-align:center" hidden>验证码不对，还能试 4 次</p></div><div class="layer-ft"><button class="btn" type="button" data-k="0">取消</button><button class="btn btn-primary" type="button" data-vok>验证并保存</button></div>`;
+  m.addEventListener('click', e => { if (e.target.closest('[data-k]')) P.close(m); if (e.target.closest('[data-vok]')) { const v = $$('[data-c6]', m).map(i => i.value).join(''); if (v !== O.code) { $('#c6').classList.add('bad'); $('#c6e').hidden = false; return; } P.close(m); const n = SECK.filter(chg); n.forEach(k => { LG.unshift([`11-11 11:${String(10 + LG.length).slice(-2)}`, '林示例', '安全', '修改安全策略', k, JSON.stringify(DATA.sec[k]).replace(/"/g, ''), JSON.stringify(SC[k]).replace(/"/g, ''), O.myIp, '示例市 · Chrome / macOS', 'ok']); }); DATA.sec = clone(SC); pSecurity('normal'); toast(`已保存 ${n.length} 项，已记入审计日志`, 'ok'); } });
+  m.addEventListener('input', e => { const i = e.target; if (i.dataset.c6 != null) { i.value = i.value.replace(/\D/g, '').slice(-1); $('#c6').classList.remove('bad'); $('#c6e').hidden = true; if (i.value && i.nextElementSibling) i.nextElementSibling.focus(); } });
+  m.addEventListener('keydown', e => { const i = e.target; if (i.dataset && i.dataset.c6 != null && e.key === 'Backspace' && !i.value && i.previousElementSibling) i.previousElementSibling.focus(); if (e.key === 'Enter') m.querySelector('[data-vok]').click(); });
+  P.open(m);
+}
+
+/* ---------------- ④ 审计日志 ---------------- */
+function pAudit(state) {
+  chrome('审计日志', 'audit');
+  const hd = head('审计日志', '保留 180 天；成员、权限、安全、数据导出和登录都会记录，任何人都不能删除', `<button class="btn" type="button" data-toast="已导出近 30 天审计日志 CSV（示例），导出本身也记入日志">${ic('download')}导出</button>`);
+  if (state === 'loading') { PG.innerHTML = wrap('audit', hd + skel(9)); return; }
+  if (state === 'error') { PG.innerHTML = wrap('audit', hd + errCard('日志没加载出来', '日志检索服务超时（错误编号 LOG-504，示例）。记录不会丢失。', 'audit')); return; }
+  if (state === 'noperm') { PG.innerHTML = wrap('audit', hd + noPerm('没有查看审计日志的权限', '「查看审计日志」只开放给所有者和管理员。')); return; }
+  const L = state === 'empty' ? [] : LG.map((l, i) => [l, i]).filter(([l]) => (!LQ.type || l[2] === LQ.type) && (!LQ.who || l[1] === LQ.who) && (!LQ.fail || l[9] === 'fail'));
+  const whos = [...new Set(LG.map(l => l[1]))];
+  PG.innerHTML = wrap('audit', hd + `<section class="card"><div class="flt"><select class="select" id="ltype" aria-label="类型"><option value="">全部类型</option>${['登录', '成员', '权限', '安全', '数据', '集成'].map(t => `<option ${LQ.type === t ? 'selected' : ''}>${t}</option>`).join('')}</select><select class="select" id="lwho" aria-label="操作人"><option value="">全部操作人</option>${whos.map(w => `<option ${LQ.who === w ? 'selected' : ''}>${w}</option>`).join('')}</select><label class="swrow" style="min-height:36px"><button class="sw" type="button" role="switch" id="lfail" aria-checked="${LQ.fail}" aria-label="只看失败"></button>只看失败</label><span class="sp"></span><span class="muted" style="font-size:13px">近 7 天 · ${L.length} 条</span></div>
+  ${L.length ? `<div class="tw"><table class="table aud"><thead><tr><th>时间</th><th>操作人</th><th>类型</th><th>操作</th><th>对象</th><th>修改前 → 修改后</th><th>IP</th><th>地点 · 设备</th><th>结果</th></tr></thead><tbody>
+  ${L.map(([l, i]) => `<tr class="row-clk ${l[9] === 'fail' ? 'fail' : ''}" tabindex="0" data-log="${i}"><td class="num muted">${l[0]}</td><td>${l[1]}</td><td><span class="qtype" style="font-size:12px;padding:1px 6px;border-radius:4px;background:var(--line-soft)">${l[2]}</span></td><td>${l[3]}</td><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis" title="${esc(l[4])}">${esc(l[4])}</td><td>${l[5] || l[6] ? `<span class="dff"><del>${esc(l[5] || '（空）')}</del>${ic('arrow', 'ic-sm')}<ins>${esc(l[6])}</ins></span>` : '<span class="muted">—</span>'}</td><td class="mono" style="font-size:12px">${l[7]}</td><td class="muted" style="max-width:118px;overflow:hidden;text-overflow:ellipsis" title="${esc(l[8])}">${l[8]}</td><td>${l[9] === 'ok' ? '<span class="res-ok">成功</span>' : '<span class="res-bad">失败</span>'}</td></tr>`).join('')}</tbody></table></div><div class="foot">失败的登录标红；同一 IP 15 分钟内失败 5 次会自动锁定该账号</div>`
+  : P.stateBlock({ icon: 'history', title: state === 'empty' ? '这段时间没有操作记录' : '没有符合条件的记录', body: state === 'empty' ? '团队刚创建，之后成员、权限、安全相关的操作都会记在这里。' : '换个类型或操作人试试。', acts: state === 'empty' ? '' : '<button class="btn" type="button" data-lreset>清空筛选</button>' })}</section>`);
+}
+function openLog(i) {
+  const l = LG[i];
+  dw.innerHTML = `<div class="layer-hd"><h2 id="dw-t">${l[3]}</h2><button class="btn btn-ghost btn-icon" type="button" data-x aria-label="关闭">${ic('x')}</button></div><div class="layer-bd"><dl class="dsum"><dt>时间</dt><dd>2026-${l[0]}:${String(17 + i).padStart(2, '0')}</dd><dt>操作人</dt><dd>${l[1]}</dd><dt>类型</dt><dd>${l[2]}</dd><dt>对象</dt><dd>${esc(l[4])}</dd>${l[5] || l[6] ? `<dt>改动</dt><dd><span class="dff"><del>${esc(l[5] || '（空）')}</del>${ic('arrow', 'ic-sm')}<ins>${esc(l[6])}</ins></span></dd>` : ''}<dt>IP</dt><dd class="mono">${l[7]}</dd><dt>地点 · 设备</dt><dd>${l[8]}</dd><dt>结果</dt><dd>${l[9] === 'ok' ? '<span class="res-ok">成功</span>' : '<span class="res-bad">失败</span>'}</dd><dt>请求编号</dt><dd class="mono">REQ-${(918273 + i * 7351).toString(16).toUpperCase()}</dd></dl>
+  ${l[9] === 'fail' ? `<div class="banner danger">${ic('alert')}<span>来自境外 IP 的连续失败登录，系统已锁定 孙示例 的账号 15 分钟。建议让他改密码并开启两步验证（他目前没开）。</span></div><button class="btn btn-primary" type="button" data-toast="已给孙示例发送「重置密码 + 开启两步验证」提醒">提醒孙示例改密码</button>` : '<p class="muted" style="font-size:13px">审计记录只读，任何角色都不能修改或删除。</p>'}</div>`;
+  P.open(dw);
+}
+
+/* ---------------- 事件 ---------------- */
+const PAGES = { members: pMembers, roles: pRoles, security: pSecurity, audit: pAudit };
+function draw() { PAGES[P.state.page](['full', 'lockout'].includes(P.state.state) ? (P.state.state === 'full' ? 'full' : 'normal') : P.state.state); }
+async function go(pg) {
+  if (dw.classList.contains('show')) P.close(dw);
+  const dirtyRoles = PM.some((p, i) => [2, 3, 4, 5].some(k => p[k] !== DATA.perms[i][k])), dirtySec = SECK.some(chg);
+  if ((P.state.page === 'roles' && dirtyRoles) || (P.state.page === 'security' && dirtySec)) { const ok = await P.confirm({ title: '有修改没保存，确定离开？', body: '离开后这次的修改会丢失。', ok: '不保存，离开' }); if (!ok) return; PM = clone(DATA.perms); SC = clone(DATA.sec); }
+  carry = true; P.go(pg, 'normal'); window.scrollTo(0, 0);
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('button,[data-go],[data-log]');
+  if (!b || b.closest('.pp,.pq-drawer,.tplbar,.modal')) return;
+  if (b.dataset.toast) toast(b.dataset.toast);
+  if (b.dataset.go) { if (b.dataset.go !== P.state.page) go(b.dataset.go); return; }
+  if ('x' in b.dataset) { P.close(dw); return; }
+  // 成员
+  if (b.dataset.unem != null) { const pe = parseEmails(); pe.splice(+b.dataset.unem, 1); INV.raw = pe.map(x => x[0]).join(', '); pMembers('normal'); return; }
+  if ('invite' in b.dataset) { const ok = parseEmails().filter(x => x[1] === 'ok'); ok.forEach(x => { I.unshift([x[0].toLowerCase(), INV.role, INV.dept, '林示例', '今天', '11-18']); LG.unshift(['11-11 11:12', '林示例', '成员', '邀请成员', `${x[0]}（${R[INV.role]}）`, '', '', O.myIp, '示例市 · Chrome / macOS', 'ok']); }); INV.raw = parseEmails().filter(x => x[1] !== 'ok').map(x => x[0]).join(', '); pMembers('normal'); toast(`已发送 ${ok.length} 封邀请，7 天内有效`, 'ok'); return; }
+  if (b.dataset.resend != null) { const x = I[+b.dataset.resend]; x[5] = '11-18'; x[4] = '今天'; pMembers('normal'); toast(`已重发给 ${x[0]}，有效期延到 11-18`, 'ok'); return; }
+  if (b.dataset.revoke != null) { const x = I.splice(+b.dataset.revoke, 1)[0]; pMembers(P.state.state === 'full' ? 'normal' : 'normal'); toast(`已撤销 ${x[0]} 的邀请${x[1] !== 'guest' ? '，释放 1 个席位' : ''}`, 'ok'); return; }
+  if (b.dataset.disable) { const m = M.find(x => x[0] === b.dataset.disable); const ok = await P.confirm({ title: `停用 ${m[1]}？`, body: '停用后立即退出所有设备、不能登录，数据保留，席位释放。可随时恢复。', ok: '停用', danger: true }); if (ok) { m[8] = 'disabled'; LG.unshift(['11-11 11:12', '林示例', '成员', '停用成员', m[1], '正常', '已停用', O.myIp, '示例市 · Chrome / macOS', 'ok']); pMembers('normal'); toast(`已停用 ${m[1]}，释放 1 个席位`, 'ok'); } return; }
+  if (b.dataset.enable) { const m = M.find(x => x[0] === b.dataset.enable); if (m[3] !== 'guest' && used() >= O.seats) { toast('席位已满，先撤销邀请或升级套餐', 'err'); return; } m[8] = 'active'; pMembers('normal'); toast(`已恢复 ${m[1]}`, 'ok'); return; }
+  if (b.dataset.remove) { openRemove(b.dataset.remove); return; }
+  if (b.dataset.rmok) { const id = b.dataset.rmok, m = M.find(x => x[0] === id); let bad = false; if (b.dataset.need === '1' && !$('#heir').value) { $('#heir-e').hidden = false; bad = true; } if ($('#rmconfirm').value.trim() !== m[1]) { $('#rm-e').hidden = false; bad = true; } if (bad) return; M = M.filter(x => x[0] !== id); LG.unshift(['11-11 11:13', '林示例', '成员', '移除成员', m[1], '', '', O.myIp, '示例市 · Chrome / macOS', 'ok']); P.close(dw); pMembers('normal'); toast(`已移除 ${m[1]}${b.dataset.need === '1' ? '，项目已转交' : ''}`, 'ok'); return; }
+  if ('mreset' in b.dataset) { MQ.q = MQ.role = MQ.st = ''; pMembers('normal'); return; }
+  // 权限
+  if (b.dataset.pm) { const [i, k] = b.dataset.pm.split('-').map(Number); PM[i][k] = PM[i][k] ? 0 : 1; pRoles('normal'); return; }
+  if ('pmreset' in b.dataset) { PM = clone(DATA.perms); pRoles('normal'); toast('已撤销修改'); return; }
+  if ('pmsave' in b.dataset) { const n = PM.reduce((s, p, i) => s + [2, 3, 4, 5].filter(k => p[k] !== DATA.perms[i][k]).length, 0); const ok = await P.confirm({ title: `保存 ${n} 处权限修改？`, body: '保存后立即生效，相关成员下次操作时按新权限判断。', ok: '保存' }); if (ok) { DATA.perms = clone(PM); LG.unshift(['11-11 11:14', '林示例', '权限', '修改角色权限', `${n} 处`, '', '', O.myIp, '示例市 · Chrome / macOS', 'ok']); pRoles('normal'); toast('权限已保存，已记入审计日志', 'ok'); } return; }
+  // 安全
+  if (b.dataset.sb) { SC[b.dataset.sb] = !SC[b.dataset.sb]; pSecurity('normal'); return; }
+  if (b.dataset.ss) { SC.session = b.dataset.ss; pSecurity('normal'); return; }
+  if (b.dataset.sh) { SC.share = b.dataset.sh; pSecurity('normal'); return; }
+  if ('addmyip' in b.dataset) { SC.ips = SC.ips.trim() + '\n' + O.myIp; pSecurity('normal'); toast(`已加入 ${O.myIp}`, 'ok'); return; }
+  if ('secreset' in b.dataset) { SC = clone(DATA.sec); pSecurity('normal'); toast('已撤销修改'); return; }
+  if ('secsave' in b.dataset) { openVerify(); return; }
+  if ('secInit' in b.dataset) { carry = true; P.go('security', 'normal'); return; }
+  // 审计
+  if (b.dataset.log != null && b.tagName === 'TR') { openLog(+b.dataset.log); return; }
+  if (b.id === 'lfail') { LQ.fail = !LQ.fail; pAudit('normal'); return; }
+  if ('lreset' in b.dataset) { LQ.type = LQ.who = ''; LQ.fail = false; pAudit('normal'); return; }
+  if (b.dataset.retry) { const pg = b.dataset.retry; carry = true; P.go(pg, 'loading'); setTimeout(() => { carry = true; P.go(pg, 'normal'); }, 700); return; }
+  if ('apply' in b.dataset) { b.disabled = true; b.textContent = '已发送请求给 周示例'; toast('已通知所有者 周示例', 'ok'); return; }
+});
+document.addEventListener('change', async e => {
+  const t = e.target;
+  if (t.id === 'ivrole') { INV.role = t.value; pMembers(P.state.state === 'full' ? 'normal' : 'normal'); }
+  if (t.id === 'ivdept') INV.dept = t.value;
+  if (t.id === 'mrole') { MQ.role = t.value; pMembers('normal'); }
+  if (t.id === 'mst') { MQ.st = t.value; pMembers('normal'); }
+  if (t.dataset.role) { const m = M.find(x => x[0] === t.dataset.role), to = t.value; if (m[3] === 'guest' && to !== 'guest' && used() >= O.seats) { toast('席位已满，不能把访客升为成员', 'err'); t.value = m[3]; return; } const ok = await P.confirm({ title: `把 ${m[1]} 改为${R[to]}？`, body: to === 'admin' ? '管理员可以邀请、停用成员，修改权限和安全策略。' : to === 'guest' ? '改为访客后只能看到被分享的项目，不占席位。' : '成员只能管理自己负责的项目。', ok: '确认修改' }); if (!ok) { t.value = m[3]; return; } LG.unshift(['11-11 11:12', '林示例', '成员', '修改角色', m[1], R[m[3]], R[to], O.myIp, '示例市 · Chrome / macOS', 'ok']); m[3] = to; pMembers('normal'); toast(`已把 ${m[1]} 改为${R[to]}`, 'ok'); }
+  if (t.dataset.sv && t.tagName === 'SELECT') { SC[t.dataset.sv] = t.dataset.sv === 'grace' ? +t.value : t.value; pSecurity('normal'); }
+  if (t.dataset.need) { SC.pwNeed = t.checked ? SC.pwNeed.concat(t.dataset.need) : SC.pwNeed.filter(x => x !== t.dataset.need); SC.pwNeed.sort((a, b) => ['数字', '大小写字母', '符号'].indexOf(a) - ['数字', '大小写字母', '符号'].indexOf(b)); pSecurity('normal'); }
+  if (t.id === 'ltype') { LQ.type = t.value; pAudit('normal'); }
+  if (t.id === 'lwho') { LQ.who = t.value; pAudit('normal'); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'ivraw') { INV.raw = t.value; clearTimeout(t._d); t._d = setTimeout(() => { pMembers('normal'); const x = $('#ivraw'); x.focus(); x.setSelectionRange(x.value.length, x.value.length); }, 400); }
+  if (t.id === 'mq') { MQ.q = t.value.trim(); clearTimeout(t._d); t._d = setTimeout(() => { pMembers('normal'); const x = $('#mq'); x.focus(); x.setSelectionRange(x.value.length, x.value.length); }, 250); }
+  if (t.dataset.sv && t.tagName !== 'SELECT') SC[t.dataset.sv] = t.dataset.sv === 'pwMin' ? (t.value === '' ? '' : +t.value) : t.value;
+});
+document.addEventListener('focusout', e => { const t = e.target; if (t.dataset && t.dataset.sv && t.tagName !== 'SELECT' && P.state.page === 'security') setTimeout(() => { if (t.isConnected) pSecurity('normal'); }, 0); });
+document.addEventListener('keydown', e => { const t = e.target; if (t.dataset && t.dataset.log != null && t.tagName === 'TR' && e.key === 'Enter') openLog(+t.dataset.log); if (t.classList && t.classList.contains('ptab') && e.key === 'Enter') t.click(); });
+
+fresh();
+Proto.init({
+  title: '团队设置与安全',
+  pages: [
+    { id: 'members', name: '① 成员与角色', states: [{ id: 'normal', name: '正常（13 人 · 13/15 席）' }, { id: 'full', name: '席位已满' }, { id: 'empty', name: '空（只有自己）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限（成员视角）' }] },
+    { id: 'roles', name: '② 角色权限', states: [{ id: 'normal', name: '正常' }, { id: 'empty', name: '空（无自定义角色）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限' }] },
+    { id: 'security', name: '③ 安全策略', states: [{ id: 'normal', name: '正常' }, { id: 'lockout', name: '会把自己锁在外面' }, { id: 'empty', name: '空（未设置）' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限' }] },
+    { id: 'audit', name: '④ 审计日志', states: [{ id: 'normal', name: '正常（14 条）' }, { id: 'empty', name: '空' }, { id: 'loading', name: '加载中' }, { id: 'error', name: '加载失败' }, { id: 'noperm', name: '无权限' }] }
+  ],
+  render(page, state) {
+    if (dw.classList.contains('show')) P.close(dw);
+    if (!carry) {
+      fresh();
+      if (page === 'members' && state === 'empty') M = M.filter(m => m[0] === O.me);
+      if (page === 'security' && state === 'lockout') SC.ips = '198.51.100.0/24\n198.51.100.17';
+    }
+    carry = false;
+    PAGES[page](state === 'lockout' ? 'normal' : state);
+  }
+});
+Proto.prompts(PROMPTS);
+</script>
+</body>
+</html>
