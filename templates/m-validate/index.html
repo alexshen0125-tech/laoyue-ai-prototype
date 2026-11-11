@@ -377,7 +377,7 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
+.g-sw button{min-width:24px;min-height:24px;width:24px;height:24px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
 .g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
@@ -467,6 +467,13 @@ body.gal{background:var(--bg)}
 .v-compare .col.yes h5{color:var(--success)}.v-compare .col.no h5{color:var(--danger)}
 .v-compare .col p{font-size:var(--fs-12);color:var(--ink-500);margin-top:8px;line-height:1.7}
 @media (max-width:700px){.v-grid.two,.v-compare{grid-template-columns:1fr}}
+
+/* Breakpoint repair: readable text and larger invisible pointer areas. */
+.g-toc a.on .n{color:var(--ink-700)}
+:root[data-theme="dark"] .g-toc a.on,:root[data-theme="dark"] .btn-link{color:var(--accent-text)}
+.g-sw button{position:relative}
+.g-sw button::after{content:"";position:absolute;inset:-3px;border-radius:50%}
+.g-theme input[type=range]{min-height:24px}
 </style>
 </head>
 <body>
@@ -804,6 +811,7 @@ const PROMPTS = [
   function applyTheme(){
     var s=document.documentElement.style;
     s.setProperty('--accent',TH.accent);
+    s.setProperty('--accent-text',TH.dark?'color-mix(in srgb, '+TH.accent+' 35%, white)':TH.accent);
     s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
     s.setProperty('--info',TH.accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
