@@ -116,7 +116,7 @@ a{color:var(--accent);text-decoration:none}
 .input-wrap>.clear{position:absolute;right:4px;width:28px;height:28px;border:0;background:none;border-radius:var(--r-sm);color:var(--ink-500);display:grid;place-items:center}
 .input-wrap>.clear:hover{background:var(--line-soft)}
 .check{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
-.check input{appearance:none;width:16px;height:16px;margin:0;border:1.5px solid var(--ink-300);border-radius:4px;background:var(--surface);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none}
+.check input{appearance:none;width:24px;height:24px;margin:0;border:1.5px solid var(--ink-300);border-radius:4px;background:var(--surface);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none}
 .check input:checked,.check input:indeterminate{background:var(--accent);border-color:var(--accent)}
 .check input:checked::after{content:"";width:8px;height:4px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
 .check input:indeterminate::after{content:"";width:8px;height:2px;background:#fff;border-radius:1px}
@@ -272,7 +272,7 @@ body.pp-hidden .pp,body.shot .pp{display:none}
 .stepper input{width:44px;height:100%;border:0;border-left:1px solid var(--line);border-right:1px solid var(--line);text-align:center;outline:none;font-variant-numeric:tabular-nums;background:none}
 .stepper.lg{height:40px}.stepper.lg button{width:40px}
 .rck{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
-.rck input{appearance:none;width:20px;height:20px;margin:0;border-radius:50%;border:1.5px solid var(--ink-300);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none;background:var(--surface)}
+.rck input{appearance:none;width:24px;height:24px;margin:0;border-radius:50%;border:1.5px solid var(--ink-300);display:grid;place-items:center;transition:all var(--dur) var(--ease);cursor:pointer;flex:none;background:var(--surface)}
 .rck input:checked{background:var(--accent);border-color:var(--accent)}
 .rck input:checked::after{content:"";width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
 .rck input:disabled{background:var(--line-soft);border-color:var(--line)}
@@ -410,8 +410,16 @@ body.gal{background:var(--bg)}
 .g-wrap,.g-main,.g-sec,.g-demo,.g-hero,.g-sec-hd,.g-sec-hd .tt{min-width:0}.g-states .seg{flex-wrap:wrap}.g-sec-hd .acts{flex-wrap:wrap}.pp-vars input{max-width:100%}
 @media(max-width:700px){.g-main{padding:16px 10px 64px}.g-stage{margin:10px;padding:12px}.g-sec-hd{display:block;padding:16px}.g-sec-hd .acts{margin-top:12px}.g-states{padding:12px 12px 0}.g-hero{display:block}.g-theme{margin-top:16px;max-width:100%;flex-wrap:wrap}.g-when{padding:0 16px}.m4-panel{padding:14px}.m4-paper{padding:10px}.m4-table td,.m4-table th{padding:9px 5px;font-size:12px}.tplbar{max-width:100%}.g-theme input[type=range]{max-width:100px}.g-states .seg button{white-space:normal;min-height:44px}.pp{max-width:calc(100vw - 20px)}.pp-head,.pp-tabs{flex-wrap:wrap}}
 
-.m5-panel{width:100%;max-width:850px;min-width:0;margin:auto;padding:24px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);overflow-wrap:anywhere}.m5-kicker{font-size:11px;letter-spacing:.12em;color:var(--ink-500);border-left:3px solid var(--accent);padding-left:10px}.m5-panel h4{font-family:"Songti SC","STSong",serif;font-size:27px;margin:14px 0}.m5-panel p{color:var(--ink-500);font-size:13px;line-height:1.8}.m5-ledger{margin:20px 0;border-top:1px solid var(--line)}.m5-record{display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid var(--line);min-width:0}.m5-record input{width:24px;height:24px;flex:none;accent-color:var(--accent)}.m5-record span{flex:1;min-width:0}.m5-record strong{font-size:14px;display:block}.m5-record small{display:block;color:var(--ink-500);margin-top:5px}.m5-record b{font-size:14px;font-variant-numeric:tabular-nums;max-width:32%;overflow-wrap:anywhere}.m5-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.m5-field{display:flex;flex-direction:column;gap:8px;margin:12px 0;font-size:13px;min-width:0}.m5-field input,.m5-field select{box-sizing:border-box;width:100%;max-width:100%;min-width:0;min-height:44px;padding:10px;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface);color:var(--ink-900)}.m5-check{display:flex;align-items:center;gap:10px;font-size:13px;min-height:44px}.m5-check input{width:24px;height:24px;flex:none;accent-color:var(--accent)}.m5-status{padding:15px;margin-top:16px;background:var(--accent-soft);border-left:3px solid var(--accent);white-space:pre-wrap;font-size:14px}.m5-status.is-error{background:var(--danger-soft);border-color:var(--danger)}.m5-summary{padding:14px;border:1px dashed var(--accent);margin-top:12px}.m5-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.m5-actions .btn{min-height:44px;height:auto;white-space:normal;max-width:100%;padding:10px 16px}.m5-foot{font-size:11px!important}.m5-empty{padding:30px 0}.g-demo,.g-stage{min-width:0;max-width:100%;box-sizing:border-box}.pp-vars input,.pv-in{min-width:0;max-width:100%}
-@media(max-width:700px){.m5-panel{padding:15px}.m5-fields{grid-template-columns:1fr;gap:0}.m5-record{gap:8px}.m5-record b{font-size:12px}.m5-panel h4{font-size:23px}.g-theme label{flex-wrap:wrap;max-width:100%}.g-states .seg{max-width:100%}.g-sec-hd .acts{max-width:100%}}
+/* REBUILD_STYLE */
+.rb-panel{width:100%;max-width:940px;padding:24px;color:var(--ink-900);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}
+.rb-panel h4{font-size:18px;margin:0 0 16px}.rb-panel p{margin:12px 0}.rb-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.rb-card{padding:20px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-md);margin:12px 0}.rb-field{display:flex;flex-direction:column;gap:6px;margin:12px 0}.rb-field input,.rb-field select,.rb-field textarea{width:100%;padding:10px 12px;min-height:44px;border:1px solid var(--ink-300);border-radius:var(--r-sm);background:var(--surface);color:var(--ink-900)}.rb-scroll{overflow-x:auto}.rb-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}.rb-table td,.rb-table th{text-align:left;padding:12px;border-bottom:1px solid var(--line);white-space:normal;min-width:100px}.rb-table th{background:var(--surface-2)}.rb-notice{padding:14px;border-left:4px solid var(--accent);background:var(--accent-soft)}.rb-bad{border-color:var(--danger);background:var(--danger-soft)}.rb-error{color:var(--danger);font-weight:600}.rb-steps{padding-left:28px}.rb-steps li{padding:10px 4px;border-bottom:1px solid var(--line)}.rb-reset{margin-top:24px;border-top:1px solid var(--line);padding-top:16px}.rb-panel .btn{margin:4px 8px 4px 0;min-height:40px;height:auto;white-space:normal;padding:8px 14px}.rb-paper{position:relative;min-height:260px;background:var(--surface-2);border:1px solid var(--line);padding:28px}.rb-stamp{margin:30px 0 0 auto;width:150px;min-height:68px;border:2px dashed var(--danger);color:var(--danger);padding:16px;text-align:center}.rb-metric{font-size:32px;font-variant-numeric:tabular-nums;color:var(--accent)}.rb-chat{padding:16px;background:var(--accent-soft);margin:12px 0;border-radius:var(--r-md)}.rb-bars{display:flex;align-items:end;gap:16px;height:150px}.rb-bar{width:56px;background:var(--accent);color:var(--accent-ink);text-align:center;min-height:30px}.rb-panel blockquote{margin:12px 0;padding:16px;border-left:3px solid var(--ink-300);background:var(--surface-2)}@media(max-width:700px){.rb-grid{grid-template-columns:1fr}.rb-panel{padding:14px}.rb-table td,.rb-table th{padding:8px}}
+
+.rb-panel input[type=radio]{width:24px;height:24px;accent-color:var(--accent);margin:0 6px 0 0}.rb-panel [role=group] label{display:inline-flex;align-items:center;min-width:64px;min-height:44px}.g-demo,.g-stage{min-width:0;max-width:100%;box-sizing:border-box}@media(max-width:700px){.g-states .seg,.g-sec-hd .acts{max-width:100%}.g-theme label{flex-wrap:wrap;max-width:100%}}
+
+/* END_REBUILD_STYLE */
+
+/* 深色指标沿用正文色；浅色保留原有主色。 */
+:root[data-theme="dark"] .rb-metric{color:var(--ink-900)}
 </style></head><body><script>
 /*@KIT_JS*/
 /* ==========================================================================
@@ -793,119 +801,45 @@ body.gal{background:var(--bg)}
   };
 })();
 /*@END_GAL_JS*/
-const MODULE={"id": "m-form-builder", "title": "表单搭建器", "methods": ["字段排序", "必填配置", "条件显示", "填写预览", "发布校验"], "uses": ["调整收集信息顺序", "逐项配置必填约束", "企业客户展示税号", "预览真实填写体验", "发布前检查完整性"], "rows": [["联系人姓名", 1, "文本 / 必填"], ["联系邮箱", 2, "邮箱 / 必填"], ["客户类型", 3, "单选 / 个人、企业"], ["企业税号", 4, "文本 / 企业时显示"], ["需求说明", 5, "长文本 / 选填"]], "actions": ["将所选字段上移", "保存所选必填字段", "配置企业字段条件", "校验本次填写", "发布当前表单版本"], "examples": [[[1], "联系邮箱", "将联系邮箱提前收集"], [[0, 1], "基本信息", "请补充客户联系信息"], [[3], "企业", "企业客户必须提供税号"], [[0], "叶澄", "yecheng@qinghe.invalid"], [[0, 1, 2, 3, 4], "企业咨询申请", "五个字段及条件已核对"]]};
+const MODULE={"id": "m-form-builder", "title": "表单搭建器", "intro": "从字段顺序到条件显示，预览实际填写再发布版本。", "fields": ["字段名称", "客户类型", "表单标题"], "sections": [{"id": "order", "name": "字段顺序与稳定键", "desc": "逐个移动字段而不改变字段键，右侧顺序即为填写顺序。", "use": "运营调整企业咨询的收集节奏。", "avoid": "已有答卷的字段键不能随显示位置变动。", "spec": "首项上移会阻止；其他字段上移一位；保存后锁定排序。", "states": ["字段排列草稿", "首项无法上移", "字段顺序已调整", "排列版本已保存"]}, {"id": "required", "name": "必填配置与错误文案", "desc": "字段属性面板同时设置必填状态和缺失提示，避免只显示红星。", "use": "需要解释联系人信息为何必须提供。", "avoid": "不要把选填营销偏好改为强制授权。", "spec": "必填字段必须有至少4字缺失提示；姓名示范为空时显示该文案。", "states": ["字段属性编辑", "必填提示缺失", "缺失错误预览", "必填约束已保存"]}, {"id": "conditions", "name": "按客户类型显示税号", "desc": "企业客户显示税号，个人客户隐藏该控件并跳过其必填检查。", "use": "同一入口接待个人和企业咨询。", "avoid": "隐藏条件不应被用作敏感数据授权。", "spec": "企业税号18位字母数字；个人不检查隐藏税号；显示逻辑即时切换。", "states": ["个人路线预览", "企业税号待补充", "企业信息已校验", "个人信息已校验"]}, {"id": "fill", "name": "真实填写预览", "desc": "预览使用实际姓名、邮箱和需求输入框，错误定位到用户正在填写的内容。", "use": "表单负责人检查客户侧填写体验。", "avoid": "设计态拖拽操作不应出现在填写界面。", "spec": "姓名非空；邮箱格式校验；提交后保留本次填写回执，不真实收集。", "states": ["客户填写中", "联系方式不完整", "提交前内容核对", "填写回执已生成"]}, {"id": "publish", "name": "表单发布前检查", "desc": "把标题、字段重名与草稿版本汇总到发布清单，避免空标题链接外发。", "use": "表单已完成填写侧预览准备交付。", "avoid": "此原型的发布仅生成本地版本记录。", "spec": "标题至少4字；新增字段名不能与已有5字段重复；先检查再发布。", "states": ["表单版本草稿", "发布检查未通过", "版本检查已通过", "表单版本已发布"]}]};
+const PROMPTS=[{"title": "字段编辑", "when": "创建表单", "text": "为{{收集目的}}编辑字段名称与顺序，首字段不能上移；保留稳定字段键以免历史数据错位。"}, {"title": "条件表单", "when": "企业咨询", "text": "为{{咨询表单}}按客户类型显示企业税号，隐藏字段不参与校验；必填字段必须对应可见控件。"}, {"title": "发布检查", "when": "版本交付", "text": "为{{表单标题}}检查字段名称重复、联系邮箱格式和发布版本；修改后原发布确认应失效。"}];
 const E=Proto.esc;
-function seed(){return {selected:[0],value:'',note:'',option:'',agree:false,fail:false,result:'',error:'',committed:false,rows:MODULE.rows.map(r=>[...r])}}
-function fields(sec){let m=MODULE.id,n=sec.n;
-if(m==='m-invoice')return n===1?['企业名称','统一社会信用代码（18位）']:n===2?['收件邮箱','交付备注']:n===3?['冲红金额（元）','冲红原因']:['开票抬头','申请说明'];
-if(m==='m-refund')return [['退款金额（元）','退款原因'],['退货运单号','退货物品与数量'],['换货规格','收件地址'],['联系邮箱','催办原因'],['证据文件名（演示文本）','证据说明']][n];
-if(m==='m-membership')return [['新增成长值','成长值来源'],['领取权益名称','领取说明'],['兑换礼品','配送地址'],['任务名称','完成依据'],['权益名称','查询说明']][n];
-if(m==='m-approval-mobile')return n===2?['转交人姓名','转交原因']:n===3?['补充材料名称','退回意见']:['审批人姓名','审批意见'];
-if(m==='m-form-builder')return [['字段名称','排序说明'],['字段名称','校验文案'],['触发值（企业）','条件说明'],['联系人姓名','联系邮箱'],['表单名称','发布说明']][n];
-if(m==='m-report-builder')return ['报表名称','统计口径说明'];
-if(m==='m-ai-feedback')return n===1?['修正后的事实','证据出处与版本']:n===3?['隐私类别','脱敏后的问题说明']:['反馈主题','具体说明与依据'];
-return n===2?['合并目标标签','合并说明']:n===3?['目标分组','移动原因']:['标签名称','标签说明'];
+const field=(key,label,value,type='text')=>`<label class="rb-field">${E(label)}<input data-field="${key}" type="${type}" value="${E(value??'')}"></label>`;
+const select=(key,label,values,value)=>`<label class="rb-field">${E(label)}<select data-field="${key}">${values.map(v=>`<option ${v===value?'selected':''}>${E(v)}</option>`).join('')}</select></label>`;
+const area=(key,label,value)=>`<label class="rb-field">${E(label)}<textarea data-field="${key}" rows="4">${E(value)}</textarea></label>`;
+const button=(act,label,disabled=false,primary=true)=>`<button class="btn ${primary?'btn-primary':''}" data-act="${act}" ${disabled?'disabled':''}>${E(label)}</button>`;
+const table=(heads,rows)=>`<div class="rb-scroll"><table class="rb-table"><thead><tr>${heads.map(h=>`<th>${E(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(c=>`<td>${E(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+const notice=(text,bad=false)=>`<p class="rb-notice ${bad?'rb-bad':''}" role="status">${E(text)}</p>`;
+const list=items=>`<ol class="rb-steps">${items.map(x=>`<li>${E(x)}</li>`).join('')}</ol>`;
+const card=(title,html)=>`<article class="rb-card"><h4>${E(title)}</h4>${html}</article>`;
+function attach(sec,el,state){
+ const d=sec.data;
+ const locked=sec.locked?sec.locked(+state):[];el.querySelectorAll('[data-field]').forEach(x=>{if(locked.includes(x.dataset.field))x.disabled=true;});
+ el.querySelectorAll('[data-field]').forEach(x=>x.addEventListener('input',()=>{d[x.dataset.field]=x.type==='checkbox'?x.checked:x.value;d.error='';const msg=el.querySelector('[data-error]');if(msg)msg.textContent='';if(sec.change){const next=sec.change(d,+state,x.dataset.field);if(next!==undefined){sec.go(next);return}}if(x.tagName==='SELECT')sec.go(state);}));
+ el.querySelectorAll('[data-act]').forEach(x=>x.onclick=()=>{if(x.dataset.act==='reset'){sec.data=sec.seed();Gallery.show(sec.id,'0');return}sec.act(x.dataset.act,d,+state,el);});
 }
-const input=(key,label,value)=>`<label class="m5-field">${E(label)}<input data-field="${key}" value="${E(value)}" ${/金额|成长值/.test(label)?'inputmode="decimal"':''}></label>`;
-function draw(sec,state){const d=sec.data,[a,b]=fields(sec),mid=MODULE.id,n=sec.n;let status=['选择业务项并填写信息；本地模拟，不连接业务服务。','待确认：请核对所选项目和输入，再确认执行。','请求失败，输入与选择已保留，可修正或重试。','已完成本地操作。','没有匹配业务记录，请恢复数据。'][+state];
-let rows=+state===4?[]:d.rows;
-let h=`<div class="m5-panel"><div class="m5-kicker">业务示例 / ${E(MODULE.title)} / 0${n+1}</div><h4>${E(sec.name)}</h4><p>${E(sec.spec)}</p><div class="m5-ledger">`;
-h+=rows.map((r,i)=>`<label class="m5-record"><input type="checkbox" data-row="${i}" ${d.selected.includes(i)?'checked':''} ${d.committed?'disabled':''}><span><strong>${E(r[0])}</strong><small>${E(r[2])}</small></span><b>${mid==='m-form-builder'?'顺序 ':mid==='m-membership'?(n===2?'可用积分 ':'成长值 '):mid==='m-ai-feedback'?'质量分 ':mid==='m-tag-manage'?'关联 ': '¥'}${E(String(r[1]))}</b></label>`).join('')||'<p class="m5-empty">当前无记录。恢复数据后重新操作。</p>';
-h+='</div>';
-if(rows.length){h+='<div class="m5-fields">'+input('value',a,d.value)+input('note',b,d.note)+'</div>';
-if(mid==='m-report-builder')h+='<label class="m5-field">渠道筛选<select data-field="option"><option value="">全部渠道</option><option '+(d.option==='线上'?'selected':'')+'>线上</option><option '+(d.option==='线下'?'selected':'')+'>线下</option></select></label>';
-if(mid==='m-form-builder'&&n===3)h+='<label class="m5-field">客户类型<select data-field="option"><option value="">个人</option><option '+(d.option==='企业'?'selected':'')+'>企业</option></select></label>'+(d.option==='企业'?input('tax','企业税号（18位）',d.tax||''):'');
-h+=`<label class="m5-check"><input type="checkbox" data-field="agree" ${d.agree?'checked':''}>已核对所选项目，确认按当前信息操作</label><label class="m5-check"><input type="checkbox" data-field="fail" ${d.fail?'checked':''}>模拟网络失败（不清空输入）</label>`;}
-h+=`<div class="m5-status ${d.error||+state===2?'is-error':''}" role="status">${E(d.error||d.result||status)}</div>`;
-if(+state===1)h+='<div class="m5-summary">待处理 '+d.selected.length+' 项 · '+E(d.value)+' · '+E(d.note)+'</div>';
-h+='<div class="m5-actions">'+(rows.length?`<button class="btn btn-primary" data-action="${+state===1?'confirm':'prepare'}" ${d.committed?'disabled':''}>${+state===1?'确认执行':E(MODULE.actions[n])}</button>`:'')+(!d.committed&&rows.length?'<button class="btn" data-action="fill">填入业务演示值</button>':'')+'<button class="btn" data-action="cancel">'+(+state===4||d.committed?'恢复演示数据':'取消并恢复原记录')+'</button>'+(+state===2?'<button class="btn" data-action="retry">保留输入重试</button>':'')+(mid==='m-report-builder'&&n===4&&d.committed?'<button class="btn" data-action="download">下载CSV</button>':'')+'</div><p class="m5-foot">记录只保存在当前页面内存。状态按钮载入独立预览；成功预览不代表执行真实业务。</p></div>';
-return h;
+function launch(implementations){
+ const sections=MODULE.sections.map((meta,i)=>{const impl=implementations[i];const sec={...meta,group:'业务做法',states:meta.states.map((name,i)=>({id:String(i),name})),...impl};sec.data=sec.seed();sec.render=s=>`<div class="rb-panel">${sec.draw(sec.data,+s)}<p class="rb-error" role="alert" data-error>${E(sec.data.error||'')}</p><div class="rb-reset">${button('reset','重置本做法',false,false)}</div></div>`;sec.mount=(el,s)=>impl.mount?impl.mount.call(sec,el,s):attach(sec,el,s);sec.go=s=>{document.querySelectorAll('#'+sec.id+' .g-states [data-st]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.st===String(s))));Gallery.show(sec.id,String(s));};return sec;});
+ document.addEventListener('click',e=>{const b=e.target.closest('.g-states [data-st]');if(b){const sec=sections.find(s=>s.id===b.closest('[data-sec]').dataset.sec);sec.data=sec.seed();if(sec.preview)sec.preview(sec.data,+b.dataset.st);}},true);
+ Gallery.init({kind:'交互模块',title:MODULE.title,intro:MODULE.intro,sections});
+ Proto.prompts(PROMPTS);
+ return sections;
 }
-function validate(sec){const d=sec.data,m=MODULE.id,n=sec.n,rows=d.selected.map(i=>d.rows[i]);
-if(!rows.length)return '至少选择一条业务记录。';
-if(!d.value.trim()||d.note.trim().length<5)return '请填写主要信息，说明至少5个字。';
-if(!d.agree)return '请勾选已核对项目后继续。';
-if(m==='m-invoice'){
-if(n===0&&rows.some(r=>r[2]!=='待开票'&&r[2]!=='可合并'))return '所选含已开票记录，只能合并待开票或可合并订单。';
-if(n===1&&!/^[0-9A-HJ-NPQRTUWXY]{18}$/.test(d.note))return '统一社会信用代码须为18位有效字符；示例仅做格式校验。';
-if(n===2&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.value))return '收件邮箱格式不正确，请检查邮箱。';
-if(n===2&&rows.some(r=>['待开票','可合并'].includes(r[2])))return '尚未开具的发票不能重发，请先开票。';
-if(n===3&&(!Number.isFinite(+d.value)||+d.value<=0||+d.value>rows.reduce((s,r)=>s+r[1],0)))return '冲红金额须大于0，且不能超过所选可冲红余额。';
-if(n===3&&rows.some(r=>!['已开票','部分冲红','交付失败'].includes(r[2])))return '仅已开具发票可申请红字。';
-}
-if(m==='m-refund'){
-if(n===0&&(!Number.isFinite(+d.value)||+d.value<=0||Math.abs(Math.round(+d.value*100)-(+d.value*100))>0.000001||+d.value>rows.reduce((s,r)=>s+r[1],0)))return '退款金额须为最多两位小数的正数，且不超过所选实付余额。';
-if(n===1&&!/^[A-Za-z0-9-]{8,30}$/.test(d.value))return '运单号须为8–30位字母、数字或连字符。';
-if(n===2&&rows.some(r=>r[2]!=='换货备货'))return '只可对换货备货记录确认规格。';
-if(n===3&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.value))return '请填写有效联系邮箱。';
-if(n===4&&!/\.(png|jpg|pdf)$/i.test(d.value))return '证据文件名仅支持PNG、JPG或PDF；这里只登记名称，不上传。';
-}
-if(m==='m-membership'){
-if(n===0&&(!/^\d+$/.test(d.value)||+d.value>10000))return '新增成长值须为0–10000的整数。';
-if(n===2&&rows.some(r=>r[1]<500))return '有会员积分不足500，不能兑换；请调整选择。';
-if(n===1&&rows.some(r=>r[2]==='权益已用'))return '所选会员本期权益已使用，不能重复领取。';
-}
-if(m==='m-approval-mobile'){
-if(n<4&&rows.some(r=>r[2]!=='待本人审批'))return '仅待本人审批申请可处理；已流转项目不会重复审批。';
-if(n===2&&!['许岚','林岳','周棠'].includes(d.value))return '有效代理人为许岚、林岳、周棠，请填写其中一人。';
-if(n===3&&d.note.length<10)return '退回意见至少10字，说明具体补充要求。';
-}
-if(m==='m-form-builder'){
-if(n===0&&d.selected.length!==1)return '排序请只选择一个字段。';
-if(n===0&&d.selected[0]===0)return '该字段已在首位，无需上移。';
-if(n===2&&d.value!=='企业')return '本做法仅支持客户类型等于企业时显示企业税号。';
-if(n===3&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.note))return '联系邮箱格式不正确。';
-if(n===3&&d.option==='企业'&&!/^[0-9A-HJ-NPQRTUWXY]{18}$/.test(d.tax||''))return '企业客户必须填写18位企业税号。';
-if(n===4&&d.selected.length<5)return '发布前必须核对全部5个字段及条件规则。';
-}
-if(m==='m-ai-feedback'){
-if(n===1&&d.note.length<10)return '事实纠错需至少10字出处与版本，便于复核。';
-if(n===3&&/1[3-9]\d{9}|[\w.+-]+@[\w.-]+\.[a-z]{2,}/i.test(d.note))return '说明中含未脱敏的电话或邮箱，请先删除或遮盖。';
-}
-if(m==='m-tag-manage'){
-if(n===0&&d.rows.some(r=>r[0]===d.value.trim()))return '标签名称已存在，请使用同组内唯一名称。';
-if(n===2&&d.selected.length<2)return '合并至少选择两个标签，关联数按演示互斥对象相加。';
-if(n===4&&rows.some(r=>r[2]!=='已归档'&&r[1]>0))return '活跃标签仍有对象引用，不可直接归档；已归档标签可恢复。';
-}
-return '';
-}
-function execute(sec){const d=sec.data,m=MODULE.id,n=sec.n,rs=d.selected.map(i=>d.rows[i]),sum=rs.reduce((s,r)=>s+r[1],0),names=rs.map(r=>r[0]).join('、');let result='';
-if(m==='m-invoice'){
-result=[`已创建开票申请 INV-261111-021，金额 ¥${sum.toFixed(2)}；抬头：${d.value}。`,`企业抬头已通过格式校验并保存：${d.value}；未进行税务实名核验。`,`已模拟重发${rs.length}份电子票到 ${d.value}，实际邮件未发送。`,`已申请红字 ¥${(+d.value).toFixed(2)}，余额 ¥${(sum-(+d.value)).toFixed(2)}，原票保留。`,`所选${rs.length}份发票合计 ¥${sum.toFixed(2)}；明细：${names}`][n];
-}
-if(m==='m-refund')result=[`退款申请已登记 ¥${(+d.value).toFixed(2)}；剩余可退 ¥${(sum-(+d.value)).toFixed(2)}，等待审核，尚未到账。`,`退货运单 ${d.value} 已登记，等待仓库验收。`,`换货规格 ${d.value} 已确认，待出库，不标记已收货。`,`已创建催办记录，保留原退款状态：${names}。`,`证据 ${d.value} 已登记；仅记录名称和说明，不上传文件。`][n];
-if(m==='m-membership'){
-result=n===0?rs.map(r=>{let v=r[1]+ +d.value,t=v<1000?1000:v<3000?3000:8000;return r[0]+'：成长值'+v+'，距'+t+'门槛差'+Math.max(0,t-v)}).join('；'):n===2?rs.map(r=>r[0]+'：扣除500积分，剩余'+(r[1]-500)).join('；'):n===1?'已领取本期权益 '+d.value+'；本次演示锁定，不能重复领取。':n===3?'保级任务已登记待核验，不直接增加成长值。':'权益记录：'+rs.map(r=>r[0]+' / '+r[2]).join('；');
-}
-if(m==='m-approval-mobile')result=n===4?'审批轨迹：申请提交 → 直属负责人 → 当前节点 '+names+'；原意见保留。':n===2?'已转交 '+d.value+'，当前用户不再持有待办。':n===3?'已退回申请人；补充要求：'+d.note:`已同意${rs.length}项，合计 ¥${sum.toFixed(2)}；审批意见：${d.note}`;
-if(m==='m-form-builder'){
-if(n===0){let i=d.selected[0];[d.rows[i-1],d.rows[i]]=[d.rows[i],d.rows[i-1]];d.rows.forEach((r,j)=>r[1]=j+1);d.selected=[i-1];result='字段已上移，新顺序：'+d.rows.map(r=>r[0]).join(' → ')}
-if(n===1){d.rows.forEach((r,i)=>{r[2]=d.selected.includes(i)?'必填 / '+d.note:'选填'});result='必填规则已保存；未选字段改为选填。'}
-if(n===2)result='条件已保存：客户类型=企业 → 显示并要求填写企业税号；个人客户隐藏该字段。';
-if(n===3)result='填写校验通过：'+d.value+' / '+d.note+' / '+(d.option||'个人')+'；此处仅预览，不提交客户资料。';
-if(n===4)result='已生成表单新版本 v2，5字段及企业条件已核对；旧版v1保留，未公开发布。';
-}
-if(m==='m-report-builder'){
-let filtered=d.rows.filter(r=>!d.option||r[2]===d.option);d.csv=filtered;
-result=n===0?'所选销售额 ¥'+sum.toFixed(2)+'；口径：'+d.note:n===1?'筛选'+(d.option||'全部渠道')+'：'+filtered.length+'条，合计 ¥'+filtered.reduce((s,r)=>s+r[1],0).toFixed(2):n===2?['线上','线下'].map(k=>k+' ¥'+filtered.filter(r=>r[2]===k).reduce((s,r)=>s+r[1],0).toFixed(2)).join('；'):n===3?[...filtered].sort((a,b)=>b[1]-a[1]).map((r,i)=>(i+1)+'. '+r[0]+' ¥'+r[1]).join('；'):'已生成当前范围'+filtered.length+'条CSV，点击下载；统计口径：'+d.note;
-}
-if(m==='m-ai-feedback')result=n===4?'反馈进度：'+rs.map(r=>r[0]+' / '+r[2]).join('；')+'。查询不会变更处理状态。':n===3?'隐私反馈已脱敏登记，等待安全复核，原回答待处理。':n===2?'引用核验已记录：'+d.note+'；本地离线未访问来源网站。':n===1?'事实修订已进入人工审核：'+d.value+'；依据：'+d.note+'。不会直接覆盖知识库。':'质量评价已登记：'+d.note+'；不视为模型已完成改进。';
-if(m==='m-tag-manage'){
-if(n===0){d.rows.push([d.value,0,'当前分组']);result='已新建标签 '+d.value+'，关联对象0个。'}
-if(n===1)result='已为'+rs.length+'个演示对象添加 '+d.value+'；同一对象重复关联需后端去重。';
-if(n===2){let selected=new Set(d.selected);d.rows=d.rows.filter((_,i)=>!selected.has(i));d.rows.push([d.value,sum,'合并结果']);d.selected=[];result='已合并为 '+d.value+'，关联'+sum+'个独立演示对象；原标签退出当前列表。'}
-if(n===3){rs.forEach(r=>r[2]=d.value);result='已移动'+rs.length+'个标签到 '+d.value+'，对象关联数保持不变。'}
-if(n===4){rs.forEach(r=>r[2]=r[2]==='已归档'?'已恢复':'已归档');result='已更新归档状态：'+rs.map(r=>r[0]+' / '+r[2]).join('；')}
-}
-d.result=result;d.error='';d.committed=true;
-}
-function mount(sec,el,state){let d=sec.data;const show=s=>Gallery.show(sec.id,String(s));
-el.querySelectorAll('[data-field]').forEach(x=>{if(d.committed)x.disabled=true;x.addEventListener('input',()=>{d[x.dataset.field]=x.type==='checkbox'?x.checked:x.value;d.error='';if(+state===1){d.result='';show(0)}else if(x.tagName==='SELECT')show(state)})});
-el.querySelectorAll('[data-row]').forEach(x=>x.addEventListener('change',()=>{let i=+x.dataset.row;d.selected=x.checked?[...new Set([...d.selected,i])]:d.selected.filter(j=>j!==i);d.error='';if(+state===1)show(0)}));
-el.querySelectorAll('[data-action]').forEach(x=>x.onclick=()=>{let a=x.dataset.action;if(a==='fill'){const [selected,value,note]=MODULE.examples[sec.n];Object.assign(d,{selected:[...selected],value,note,error:'',result:'',agree:false});show(0);return}if(a==='cancel'){sec.data=seed();show(0);return}if(a==='download'){let content='\ufeff区域渠道,销售额,类型\r\n'+d.csv.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\r\n'),url=URL.createObjectURL(new Blob([content],{type:'text/csv;charset=utf-8'})),link=document.createElement('a');link.href=url;link.download='经营报表-20261111.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);return}if(d.committed)return;d.error=validate(sec);if(d.error){show(2);return}if(a==='prepare'||a==='retry'){d.result='';show(1);return}if(d.fail){d.error='模拟网络失败，未变更原记录。关闭失败开关后重试。';show(2);return}execute(sec);show(3)});
-}
-const SECTIONS=MODULE.methods.map((name,n)=>{let sec={id:'method-'+(n+1),n,name,group:'业务做法',use:MODULE.uses[n]+'时使用，需要明确对象与责任。',avoid:'不要用于缺少权限、证据或服务端校验的真实自动处理。',spec:MODULE.actions[n]+'；提交前校验，修改后重新核对，失败保留输入，取消恢复演示原记录。',data:seed(),states:['默认','待确认','失败与重试','成功结果','空态'].map((name,i)=>({id:String(i),name}))};sec.render=s=>draw(sec,s);sec.mount=(el,s)=>mount(sec,el,s);return sec});
-document.addEventListener('click',e=>{let b=e.target.closest('.g-states [data-st]');if(!b)return;let sec=SECTIONS.find(s=>s.id===b.closest('[data-sec]').dataset.sec);sec.data=seed();if(['1','2','3'].includes(b.dataset.st)){const [selected,value,note]=MODULE.examples[sec.n];Object.assign(sec.data,{selected:[...selected],value,note,agree:true})}if(b.dataset.st==='3'){execute(sec);sec.data.result='成功状态预览 / '+sec.data.result}},true);
-Gallery.init({kind:'交互模块',title:MODULE.title,intro:'五种业务做法 · 独立数据与状态 · 中文离线交互原型',sections:SECTIONS});
-const PROMPTS=[{"title": "从零生成", "when": "建立具体业务模块", "text": "制作中文离线单文件「表单搭建器」。业务范围：字段排序、必填配置、条件显示、填写预览、发布校验。落实以下字段和约束：字段名称、联系邮箱、企业触发值、18位税号、发布版本；首字段不可上移，排序后重编号，发布前核对全部字段。每种做法放5条名称与数值不同的记录，提供默认、待确认、失败、成功、空态，确认后本地计算，禁止宣称服务端已执行。首个前进按钮为唯一主按钮，支持390/500宽、主题和复制HTML。"}, {"title": "改成我的业务", "when": "替换字段与业务口径", "text": "将现有表单搭建器适配到 {{业务名称}}，由 {{使用角色}} 操作。先逐项核对当前口径：字段名称、联系邮箱、企业触发值、18位税号、发布版本；首字段不可上移，排序后重编号，发布前核对全部字段。请列出这些口径与 {{业务字段}}、{{业务规则}} 的映射，再替换演示记录；保留失败输入、修改后重新确认及取消恢复。缺少业务依据时列出待补信息。"}, {"title": "扩展做法与状态", "when": "加入业务分支和验收场景", "text": "为表单搭建器增加 {{做法名称}}，并使用 {{状态清单}} 展示分支。回归以下现有约束：字段名称、联系邮箱、企业触发值、18位税号、发布版本；首字段不可上移，排序后重编号，发布前核对全部字段。为新增流程编写5条不同业务输入、边界失败原因和成功后的本地结果；说明与发布校验的关系，补充适用/别用、键盘恢复路径和 {{业务规则}} 的验证步骤。"}];Proto.prompts(PROMPTS);
+function fail(d,el,message){d.error=message;el.querySelector('[data-error]').textContent=message;}
+
+function saveText(name,text){const url=URL.createObjectURL(new Blob(['\ufeff'+text],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+
+function drawOrder(d,s){return list(d.keys.map((x,i)=>(i+1)+'. '+x+' / 稳定键 '+({'联系人姓名':'contact','联系邮箱':'email','客户类型':'type','企业税号':'tax','需求说明':'needs'}[x])))+select('chosen','移动字段',d.keys,d.chosen)+notice(['当前顺序未保存','首字段已经在顶端','字段上移完成，稳定键保留','排序版本FORM-12-r2已保存'][s],s===1)+button('up','将字段上移',s===3)+button('save','保存字段排列',s===3,false);}
+function drawRequired(d,s){return card('contact / 联系人姓名',select('required','字段约束',['必填','选填'],d.required)+field('message','缺失时错误文案',d.message))+field('value','填写预览：联系人姓名',d.value)+notice(['尚未验证配置','必填字段需要明确的缺失提示',d.message,'字段必填约束已保存'][s],s===1||s===2)+button('preview','测试缺失场景')+button('save','保存必填约束',false,false);}
+function drawConditions(d,s){return select('type','客户类型',['个人','企业'],d.type)+(d.type==='企业'?field('tax','企业税号（18位）',d.tax):card('个人路线','<p>税号字段不显示，也不提交隐藏旧值。</p>'))+notice(['客户类型=个人时仅收联系人信息','企业路线需要18位税号','企业税号格式通过，未联网核验主体','个人路线跳过税号约束'][s],s===1)+button('validate','测试条件校验');}
+function drawFill(d,s){return card('企业咨询 / 填写预览',field('name','联系人姓名',d.name)+field('email','联系邮箱',d.email,'email')+area('needs','需求说明',d.needs))+notice(['信息只在页面内存','请填写姓名和有效联系邮箱','请核对：'+d.name+' / '+d.email,'FORM-REC-271已生成；没有外部提交'][s],s===1)+button(s===2?'submit':'check',s===2?'确认模拟提交':'检查填写内容',s===3);}
+function drawPublish(d,s){return field('title','表单标题',d.title)+field('extra','新增字段名称',d.extra)+list(['联系人姓名 / 文本 / 必填','联系邮箱 / 邮箱 / 必填','客户类型 / 单选','企业税号 / 条件必填','需求说明 / 长文本 / 选填'])+notice(['草稿v3尚未发布','标题过短或新增字段与现有字段重名','发布检查通过，将生成v3快照','本地发布v3：'+d.title+'；后续修改需重检'][s],s===1)+button(s===2?'publish':'check',s===2?'发布本地表单版本':'执行发布检查',s===3);}
+
+const sections=launch([
+{seed:()=>({keys:["联系人姓名","联系邮箱","客户类型","企业税号","需求说明"],chosen:"联系邮箱"}),draw:drawOrder,preview(d,s){if(s===1)d.chosen='联系人姓名';if(s>=2){d.keys=['联系邮箱','联系人姓名','客户类型','企业税号','需求说明'];}},change(d,s,key){if(s!==0)return 0;},act(a,d,s,el){if(a==='save')return this.go(3);const i=d.keys.indexOf(d.chosen);if(i===0)return this.go(1);[d.keys[i-1],d.keys[i]]=[d.keys[i],d.keys[i-1]];this.go(2);}},
+{seed:()=>({required:"必填",message:"请填写可联系到的姓名",value:""}),draw:drawRequired,preview(d,s){if(s===1)d.message='';},change(d,s,key){if(s!==0)return 0;},act(a,d,s,el){if(d.required==='必填'&&d.message.trim().length<4)return this.go(1);if(a==='preview'&&d.required==='必填'&&!d.value.trim())return this.go(2);this.go(3);}},
+{seed:()=>({type:"个人",tax:""}),draw:drawConditions,preview(d,s){if(s===1||s===2)d.type='企业';if(s===2)d.tax='91330106MA2AYP8K3X';},change(d,s,key){if(s!==0)return 0;},act(a,d,s,el){this.go(d.type==='个人'?3:/^[A-Z0-9]{18}$/i.test(d.tax)?2:1);}},
+{seed:()=>({name:"叶澄",email:"",needs:"希望了解三家门店的冷链配送方案"}),draw:drawFill,preview(d,s){if(s>=2)d.email='yecheng@qinghe.invalid';},change(d,s,key){if(s!==0)return 0;},act(a,d,s,el){if(!d.name.trim()||!/^\S+@\S+\.\S+$/.test(d.email))return this.go(1);this.go(a==='submit'?3:2);}},
+{seed:()=>({title:"企业冷链咨询",extra:"服务城市"}),draw:drawPublish,preview(d,s){if(s===1)d.extra='联系邮箱';},change(d,s,key){if(s!==0)return 0;},act(a,d,s,el){if(d.title.trim().length<4||!d.extra.trim()||['联系人姓名','联系邮箱','客户类型','企业税号','需求说明'].includes(d.extra.trim()))return this.go(1);this.go(a==='publish'?3:2);}}
+]);
 </script></body></html>
