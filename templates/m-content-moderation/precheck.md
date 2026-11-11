@@ -1,25 +1,50 @@
-# m-content-moderation 预检与交互核验
+# 质量预审 20261111
 
-已实际运行原始 _kit/precheck.py；通过 --root 使用本批新增审计目录，避免覆盖已有 reports。目标页面为逐字副本，全部101个m-*参与跨目录业务比较。
-高项：0。
+离线静态扫描；相似度阈值 82%（去标点字符序列）。不执行 JS，不联网，不修改模板。
 
-- 低：一屏主按钮 / 首个前进按钮需复核；存在函数生成按钮或动态布局；无法仅由源码确定视口、互斥分支及最终主色
-- 中：组件状态矩阵无法逐项确认；未解析到逐组件 states；需检查工厂、运行时状态映射
-- 低：每种组件/做法数据项需人工确认；动态组件、表单和按钮未必有列表数据；须逐项判定≥5项是否适用
-- 中：触控目标疑似小于24px；CSS .check input {appearance:none;width:16px;height:16px;margin:0;border:1.5px solid #C7C9CF;border-radius:4px;background:#FFFFFF;display:grid;place-items:center;transition:all 220ms cubic-bezier(.22,.8,.24,1);cursor:p} · [('width', 16.0), ('height', 16.0)]；需核对级联、盒模型及父label命中区
-- 中：触控目标疑似小于24px；CSS .rck input {appearance:none;width:20px;height:20px;margin:0;border-radius:50%;border:1.5px solid #C7C9CF;display:grid;place-items:center;transition:all 220ms cubic-bezier(.22,.8,.24,1);cursor:pointer;flex:none;ba} · [('width', 20.0), ('height', 20.0)]；需核对级联、盒模型及父label命中区
+README 命中 0 个目录；实际扫描 1 个模板。无 index.html 的工具目录：无。
 
-中项复核：
-- 状态矩阵无法逐项确认：静态正则无法识别JSON键名；MODULE.sections与运行时states逐项可读，validation.json验证每个状态的独立渲染。组件额外包含四种真实控件交互矩阵、三档尺寸，实例互相独立。
-- .check input和.rck input：标准样式的16/20px规则未用于本页控件，实际DOM实例为0；业务输入至少24，按钮至少44。CSS证据见_batch11/layout-contracts.json。
+范围补充：按任务点名批次，从第5、6批进度表纳入 README 未打标的功能模块。
 
-低项复核：
-- 每种做法只有一个可用主按钮。矩阵和尺寸样例保留首例主色，其余使用次色避免主操作竞争。500宽、一屏布局仍需真实浏览器。
-- 所有业务表格至少五条不同记录。单客户合并、测温、裁剪、音频选段等单对象界面不凑表格行。
+| 目录 | 入选依据 |
+|---|---|
+| m-content-moderation | 全部m-*交互结构审计 |
 
-验证边界：
-validation.json为离线JSDOM验证，Canvas和AudioContext使用桩确认控件契约，不能证明真实音画输出。复制验证检查写入内容，不能证明系统剪贴板权限。
-三套组件共15组件、150状态；六模块共30做法、120状态。每个页面标准外壳四段内联资源与当前_kit源文件逐字一致。
-数学对比度见_batch11/contrast-tokens.json；本机浏览器启动失败，见_batch11/browser-launch.json，尚未验证500/1440真实布局、像素对比度或命中区。
+判定：高严重度为明确占位、复制数据或直接文案复用，建议直接打回；中为静态疑点；低为证据不足或浏览器检查项。有中/低项即需人工看；基本可过仅代表本脚本未发现问题。
 
-状态：待浏览器验收
+限制：不推断真实一屏布局；按钮按操作区检查；动态分支可能互斥。CSS仅检查可匹配可点节点的明确px宽高（含简单变量），不完整计算级联、媒体查询、继承、padding、min/max、父label或运行时尺寸。动态JS数据、状态和拼接提示词无法确认时列人工复核；单字姓名头像可能合理。共享框架注释和README历史打回内容不作为当前页面缺陷证据。
+
+| 目录 | 命中问题 | 证据片段 | 严重度 |
+|---|---|---|---|
+
+## 各功能模块主交互结构分布
+
+静态提取实际渲染代码；未识别/共享工厂项需人工复核，不能视为已验收。
+
+| 模块 | 结构分布 | 逐做法证据 |
+|---|---|---|
+| m-content-moderation | 表格×2、对比/差异视图×1、表单×2 | drawQueue：表格；drawEvidence：对比/差异视图；drawDecision：表单；drawAppeal：表单；drawQuality：表格 |
+
+## 问题明细
+
+| 目录 | 命中问题 | 证据片段 | 严重度 |
+|---|---|---|---|
+| m-content-moderation | 一屏主按钮 / 首个前进按钮需复核 | 存在函数生成按钮或动态布局；无法仅由源码确定视口、互斥分支及最终主色 | 低 |
+| m-content-moderation | 组件状态矩阵无法逐项确认 | 未解析到逐组件 states；需检查工厂、运行时状态映射 | 中 |
+| m-content-moderation | 每种组件/做法数据项需人工确认 | 动态组件、表单和按钮未必有列表数据；须逐项判定≥5项是否适用 | 低 |
+| m-content-moderation | 触控目标疑似小于24px | CSS .check input {appearance:none;width:16px;height:16px;margin:0;border:1.5px solid #C7C9CF;border-radius:4px;background:#FFFFFF;display:grid;place-items:center;transition:all 220ms cubic-bezier(.22,.8,.24,1);cursor:p} · [('width', 16.0), ('height', 16.0)]；需核对级联、盒模型及父label命中区 | 中 |
+| m-content-moderation | 触控目标疑似小于24px | CSS .rck input {appearance:none;width:20px;height:20px;margin:0;border-radius:50%;border:1.5px solid #C7C9CF;display:grid;place-items:center;transition:all 220ms cubic-bezier(.22,.8,.24,1);cursor:pointer;flex:none;ba} · [('width', 20.0), ('height', 20.0)]；需核对级联、盒模型及父label命中区 | 中 |
+
+## 建议直接打回（0）
+
+无
+
+## 需人工看（1）
+
+m-content-moderation
+
+## 基本可过（0）
+
+无
+
+只读核对：扫描前后 7 个模板文件 SHA-256 一致。

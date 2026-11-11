@@ -1,28 +1,50 @@
-# m-quality-check 预审复核
+# 质量预审 20261111
 
-命令：`python3 _kit/precheck.py --date 20261111`。完整跨目录扫描见 reports/预审_20261111.md。
+离线静态扫描；相似度阈值 82%（去标点字符序列）。不执行 JS，不联网，不修改模板。
 
-## 本模块命中项
+README 命中 0 个目录；实际扫描 1 个模板。无 index.html 的工具目录：无。
 
+范围补充：按任务点名批次，从第5、6批进度表纳入 README 未打标的功能模块。
+
+| 目录 | 入选依据 |
+|---|---|
+| m-quality-check | 全部m-*交互结构审计 |
+
+判定：高严重度为明确占位、复制数据或直接文案复用，建议直接打回；中为静态疑点；低为证据不足或浏览器检查项。有中/低项即需人工看；基本可过仅代表本脚本未发现问题。
+
+限制：不推断真实一屏布局；按钮按操作区检查；动态分支可能互斥。CSS仅检查可匹配可点节点的明确px宽高（含简单变量），不完整计算级联、媒体查询、继承、padding、min/max、父label或运行时尺寸。动态JS数据、状态和拼接提示词无法确认时列人工复核；单字姓名头像可能合理。共享框架注释和README历史打回内容不作为当前页面缺陷证据。
+
+| 目录 | 命中问题 | 证据片段 | 严重度 |
+|---|---|---|---|
+
+## 各功能模块主交互结构分布
+
+静态提取实际渲染代码；未识别/共享工厂项需人工复核，不能视为已验收。
+
+| 模块 | 结构分布 | 逐做法证据 |
+|---|---|---|
+| m-quality-check | 列表×1、表格×3、时间线×1 | drawSampling：列表；drawDefects：表格；drawMeasure：表格；drawReinspect：时间线；drawRelease：表格 |
+
+## 问题明细
+
+| 目录 | 命中问题 | 证据片段 | 严重度 |
+|---|---|---|---|
 | m-quality-check | 一屏主按钮 / 首个前进按钮需复核 | 存在函数生成按钮或动态布局；无法仅由源码确定视口、互斥分支及最终主色 | 低 |
 | m-quality-check | 组件状态矩阵无法逐项确认 | 未解析到逐组件 states；需检查工厂、运行时状态映射 | 中 |
 | m-quality-check | 每种组件/做法数据项需人工确认 | 动态组件、表单和按钮未必有列表数据；须逐项判定≥5项是否适用 | 低 |
 | m-quality-check | 触控目标疑似小于24px | CSS .check input {appearance:none;width:16px;height:16px;margin:0;border:1.5px solid #C7C9CF;border-radius:4px;background:#FFFFFF;display:grid;place-items:center;transition:all 220ms cubic-bezier(.22,.8,.24,1);cursor:p} · [('width', 16.0), ('height', 16.0)]；需核对级联、盒模型及父label命中区 | 中 |
 | m-quality-check | 触控目标疑似小于24px | CSS .rck input {appearance:none;width:20px;height:20px;margin:0;border-radius:50%;border:1.5px solid #C7C9CF;display:grid;place-items:center;transition:all 220ms cubic-bezier(.22,.8,.24,1);cursor:pointer;flex:none;ba} · [('width', 20.0), ('height', 20.0)]；需核对级联、盒模型及父label命中区 | 中 |
 
-## 中项复核
+## 建议直接打回（0）
 
-- 组件状态矩阵无法逐项确认：静态解析器只匹配JS对象的 states: 写法；本页使用可解析JSON的 "states"。MODULE.sections逐项为四个不同业务状态，validation.json记录20个状态全部渲染且视图不同，属于误报。
-- 触控目标 .check input / .rck input：来自完整标准kit.css。扫描器只使用选择器最后的input去匹配任意业务输入；DOM中这两种控件实例数均为0，属于误报。企业开通清单实际复选框24px且整行标签44px。
+无
 
-## 低项复核
+## 需人工看（1）
 
-- 数据量：列表各有至少五条不同业务记录；主体资料、审批意见、参数配置等单对象表单不适用五行列表要求。
-- 主按钮：DOM逐状态检查每个业务操作区最多一个可用主按钮，首个前进按钮使用btn-primary；重置、下载样本等辅助操作使用次按钮。实际一屏呈现仍待浏览器验收。
+m-quality-check
 
-## 外壳与验证范围
+## 基本可过（0）
 
-四个内联标准资源与_kit源文件逐字一致；顶部免费下载、AI提示词三条、主题色、圆角、明暗切换均通过离线DOM核验。预审规则新增后未删改任何原有规则。
-本地Playwright浏览器缺失，遵守不联网不安装。500宽布局、实际渲染对比度、系统剪贴板和触控须继续浏览器验收。
+无
 
-状态：待浏览器验收
+只读核对：扫描前后 7 个模板文件 SHA-256 一致。
