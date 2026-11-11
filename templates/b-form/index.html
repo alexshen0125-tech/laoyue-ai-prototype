@@ -439,6 +439,9 @@ label:has(>input[type="checkbox"]),label:has(>input[type="radio"]){min-width:24p
 :root[data-theme="dark"] .src-pop mark{background:var(--warning-soft);color:var(--warning)}
 :root[data-theme="dark"] tr.mis td{background:var(--warning-soft)}
 :root[data-theme="dark"] .stage{background:radial-gradient(1200px 600px at 70% 20%,var(--surface-2),var(--bg) 60%)}
+
+/* Breakpoint repair: the action bar must follow the compact content inset. */
+@media(max-width:1100px){.fbar{margin-left:0;margin-right:0;padding-left:20px;padding-right:20px;flex-wrap:wrap}}
 </style>
 </head>
 <body>

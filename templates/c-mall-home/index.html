@@ -916,8 +916,8 @@ function pageHome(state) {
     <div class="feed-tabs" role="tablist" aria-label="推荐分类">${['猜你喜欢', '水果', '蔬菜', '肉禽蛋', '海鲜'].map(t => `<button class="ft" role="tab" type="button" aria-selected="${feedTab === t}" data-ft="${t}">${t}</button>`).join('')}</div>
     <div id="feed">${feedHTML()}</div><div style="height:12px"></div></div>
     <button class="top-fab" type="button" id="topfab" aria-label="回到顶部">${ic('arrow')}</button>`;
-  const hs = $('#hs'), ban = $('#ban');
-  hs.addEventListener('scroll', () => { $('#topfab').classList.toggle('show', hs.scrollTop > 600); if (feedState === 'ok' && feedTab === '猜你喜欢' && feedPage < DATA.maxPages && hs.scrollTop + hs.clientHeight > hs.scrollHeight - 80 && !hs.dataset.busy) { hs.dataset.busy = 1; setTimeout(() => { feedPage++; $('#feed').innerHTML = feedHTML(); delete hs.dataset.busy; }, 700); } }, { passive: true });
+  const hs = $('#hs'), ban = $('#ban'), topfab = $('#topfab'), feed = $('#feed');
+  hs.addEventListener('scroll', () => { if (!hs.isConnected) return; topfab.classList.toggle('show', hs.scrollTop > 600); if (feedState === 'ok' && feedTab === '猜你喜欢' && feedPage < DATA.maxPages && hs.scrollTop + hs.clientHeight > hs.scrollHeight - 80 && !hs.dataset.busy) { hs.dataset.busy = 1; setTimeout(() => { if (!hs.isConnected) return; feedPage++; feed.innerHTML = feedHTML(); delete hs.dataset.busy; }, 700); } }, { passive: true });
   ban.addEventListener('scroll', () => { const i = Math.round(ban.scrollLeft / ban.clientWidth); if (i !== banI) { banI = i; $$('.ban .dots i').forEach((d, j) => d.classList.toggle('on', j === i)); } }, { passive: true });
 }
 
