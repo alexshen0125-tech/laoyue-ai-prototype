@@ -557,6 +557,12 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
 :root[data-theme="dark"]{--info-soft:var(--accent-soft)}
 :root[data-theme="dark"] .g-toc a.on,:root[data-theme="dark"] .btn-link,:root[data-theme="dark"] .ka-st.done,:root[data-theme="dark"] .ka-st.done i,:root[data-theme="dark"] .kai-cite:hover,:root[data-theme="dark"] .kai-notice.info a{color:var(--ink-900)}
 :root[data-theme="dark"] .btn-danger-solid,:root[data-theme="dark"] .ka-st.err i,:root[data-theme="dark"] .kai-step.done .dot{color:var(--surface)}
+
+/* Sweep 1: accessibility sizing and foreground tokens. */
+button,input:not([type="hidden"]),select,textarea,[role="button"],[role="tab"],[role="checkbox"],[role="switch"]{min-width:24px;min-height:24px}
+button,.tb-btn,input[type="checkbox"],input[type="radio"]{flex-shrink:0}
+a[href]:not(.btn-link){min-height:24px}
+label:has(>input[type="checkbox"]),label:has(>input[type="radio"]){min-width:24px;min-height:24px}
 </style>
 </head>
 <body>

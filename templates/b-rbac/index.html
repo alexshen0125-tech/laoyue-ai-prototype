@@ -434,6 +434,16 @@ body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
 .chipc:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
 .chipc input{accent-color:var(--accent)}
 @media (max-width:1280px){.split{grid-template-columns:220px minmax(0,1fr)}.tb-row .input-wrap{width:200px}}
+
+/* Sweep 1: accessibility sizing and foreground tokens. */
+button,input:not([type="hidden"]),select,textarea,[role="button"],[role="tab"],[role="checkbox"],[role="switch"]{min-width:24px;min-height:24px}
+button,.tb-btn,input[type="checkbox"],input[type="radio"]{flex-shrink:0}
+a[href]:not(.btn-link){min-height:24px}
+label:has(>input[type="checkbox"]),label:has(>input[type="radio"]){min-width:24px;min-height:24px}
+
+/* Sweep 1: local acceptance fixes. */
+@media(max-width:600px){.split{grid-template-columns:minmax(0,1fr)}.split>*,.pane{min-width:0}.selbar,.rhd,.rhd .acts,.savebar,.foot,.mhd{flex-wrap:wrap;height:auto;min-height:44px}.perm{display:block;overflow-x:auto}.scope .opt>label{min-width:0}.scope .opt small{overflow-wrap:anywhere}
+.content{min-width:0;overflow-wrap:anywhere}.topbar{flex-wrap:wrap;height:auto;min-height:56px}.topbar>*{min-width:0}}
 </style>
 </head>
 <body>

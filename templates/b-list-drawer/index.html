@@ -409,6 +409,16 @@ body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
 .tl li:first-child::before{background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 .tl .t{color:var(--ink-500);font-variant-numeric:tabular-nums}
 .drawer-status{display:flex;align-items:center;gap:10px;margin-top:2px}
+
+/* Sweep 1: accessibility sizing and foreground tokens. */
+button,input:not([type="hidden"]),select,textarea,[role="button"],[role="tab"],[role="checkbox"],[role="switch"]{min-width:24px;min-height:24px}
+button,.tb-btn,input[type="checkbox"],input[type="radio"]{flex-shrink:0}
+a[href]:not(.btn-link){min-height:24px}
+label:has(>input[type="checkbox"]),label:has(>input[type="radio"]){min-width:24px;min-height:24px}
+
+/* Sweep 1: local acceptance fixes. */
+@media(max-width:600px){.filters{grid-template-columns:minmax(0,1fr)}.filters>*{min-width:0}.list-tools,.tabs,.batchbar,.pager{flex-wrap:wrap}.listcard{min-width:0}.date-range>*{min-width:0}
+.content{min-width:0;overflow-wrap:anywhere}.topbar{flex-wrap:wrap;height:auto;min-height:56px}.topbar>*{min-width:0}}
 </style>
 </head>
 <body>

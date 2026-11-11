@@ -419,6 +419,12 @@ body.pp-hidden.has-tplbar{--bar-h:0px;padding-top:0}
 tr.mis td{background:#FFF8EC}
 .mis-tag{font-size:12px;color:var(--warning);display:block;margin-top:2px;white-space:normal}
 @media (max-width:1280px){.recsum{grid-template-columns:repeat(2,minmax(0,1fr))}.bar .input-wrap{width:200px}}
+
+/* Sweep 1: accessibility sizing and foreground tokens. */
+button,input:not([type="hidden"]),select,textarea,[role="button"],[role="tab"],[role="checkbox"],[role="switch"]{min-width:24px;min-height:24px}
+button,.tb-btn,input[type="checkbox"],input[type="radio"]{flex-shrink:0}
+a[href]:not(.btn-link){min-height:24px}
+label:has(>input[type="checkbox"]),label:has(>input[type="radio"]){min-width:24px;min-height:24px}
 </style>
 </head>
 <body>

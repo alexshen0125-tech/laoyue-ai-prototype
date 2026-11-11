@@ -1066,7 +1066,10 @@ const answered = i => (S.answers[i] || []).length > 0;
 function saveAns() { try { localStorage.setItem(SAVE, JSON.stringify(S.answers)); } catch (e) {} }
 function pageQuiz(state) {
   stopPlay();
-  const set = qSet(), n = set.length, qi = set[S.qi], q = DATA.quiz[qi], mine = S.answers[qi] || [];
+  const set = qSet(), n = set.length;
+  if (!n) { S.set = null; S.qi = 0; Proto.go('result', 'allright'); return; }
+  S.qi = Math.max(0, Math.min(n - 1, Number.isFinite(S.qi) ? S.qi : 0));
+  const qi = set[S.qi], q = DATA.quiz[qi], mine = S.answers[qi] || [];
   const done = set.filter(answered).length;
   const typeName = { single: '单选题', multi: '多选题', judge: '判断题' }[q.type];
   VIEW.innerHTML = `<div class="navbar">${`<button class="tap" type="button" data-quitquiz aria-label="退出测验">${ic('x')}</button>`}<h1>${S.set ? '重做错题' : '随堂测验'}</h1></div>
@@ -1094,13 +1097,17 @@ function qSheet() {
   el.addEventListener('click', e => { const t = e.target.closest('button'); if (!t) return; if ('x' in t.dataset) Proto.close(el); if (t.dataset.jump) { S.qi = +t.dataset.jump; Proto.close(el); pageQuiz('normal'); } if ('submit' in t.dataset) submitQuiz(); });
   Proto.open(el, { host: SCREEN });
 }
+let quizRenderVersion = 0;
 async function submitQuiz() {
+  const version = quizRenderVersion;
   const set = qSet(), left = set.filter(i => !answered(i)).length;
   if (left) {
     const go = await Proto.confirm({ title: `还有 ${left} 题没答`, html: '没答的题按 0 分算。要先去作答吗？', ok: '仍然交卷', cancel: '去作答', host: SCREEN });
-    if (!go) { S.qi = set.findIndex(i => !answered(i)); pageQuiz('normal'); return; }
+    if (version !== quizRenderVersion || Proto.state.page !== 'quiz') return;
+    if (!go) { S.qi = Math.max(0, set.findIndex(i => !answered(i))); pageQuiz('normal'); return; }
   } else {
     const go = await Proto.confirm({ title: '确认交卷？', html: '交卷后不能再改答案，可以在成绩页重做错题。', ok: '交卷', cancel: '再检查一下', host: SCREEN });
+    if (version !== quizRenderVersion || Proto.state.page !== 'quiz') return;
     if (!go) return;
   }
   if (S.failNext) { S.failNext = false; saveAns(); Proto.state.state = 'neterr'; history.replaceState(null, '', '#page=quiz&state=neterr'); pageQuiz('neterr'); return; }
@@ -1211,6 +1218,7 @@ Proto.init({
     { id: 'mine', name: '我的学习', states: [{ id: 'normal', name: '正常' }, { id: 'empty', name: '空' }] }
   ],
   render(page, state) {
+    quizRenderVersion++;
     $$('.sheet.show,.modal.show', SCREEN).forEach(el => Proto.close(el));
     if (page !== 'learn') stopPlay();
     if (page === 'home') pageHome(state);
