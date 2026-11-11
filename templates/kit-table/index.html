@@ -434,6 +434,22 @@ body.gal{background:var(--bg)}
 .k2-feedback{display:flex;gap:12px;padding:16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);box-shadow:var(--shadow-1)}.k2-feedback>.ic{color:var(--accent)}.k2-feedback.k2-bad>.ic{color:var(--danger)}.k2-feedback.k2-good>.ic{color:var(--success)}.k2-feedback .k2-content{flex:1;min-width:0}.k2-preview-layer{border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;background:var(--surface);display:grid;gap:16px}.k2-progress{height:10px;border-radius:var(--r-full);background:var(--line);overflow:hidden}.k2-progress span{display:block;height:100%;background:var(--accent);border-radius:inherit}.k2-empty{text-align:center;padding:28px;display:grid;justify-items:center;gap:12px}.k2-empty>.ic{width:40px;height:40px;color:var(--ink-500)}.k2-skeleton{height:14px;border-radius:var(--r-sm);background:var(--line);animation:k2-pulse 1.5s var(--ease) infinite alternate}.k2-skeleton:nth-child(2){width:75%}.k2-skeleton:nth-child(3){width:50%}@keyframes k2-pulse{to{opacity:.4}}
 @media(max-width:600px){.k2-card{padding:12px}.k2-row{gap:8px}.k2-box button,.k2-box input,.k2-box select{min-height:44px}.k2-sidebar{width:100%}}
 
+
+/* Sweep 1: accessibility sizing and foreground tokens. */
+button,input:not([type="hidden"]),select,textarea,[role="button"],[role="tab"],[role="checkbox"],[role="switch"]{min-width:24px;min-height:24px}
+button,.tb-btn,input[type="checkbox"],input[type="radio"]{flex-shrink:0}
+a[href]:not(.btn-link){min-height:24px}
+label:has(>input[type="checkbox"]),label:has(>input[type="radio"]){min-width:24px;min-height:24px}
+
+/* Sweep 2: intrinsic sizing belongs inside local scroll containers. */
+.g-wrap,.g-main,.g-sec,.g-stage,.g-demo,.k2-box,.k2-card,.main,.content,main{min-width:0;max-width:100%}
+.g-stage,.g-demo,.k2-box,.k2-card,.content{overflow-wrap:anywhere}
+.k2-scroll,.tblw,.table-wrap{min-width:0;max-width:100%;overflow:auto}
+@media(max-width:600px){.g-hero .t,.g-sec-hd .tt{min-width:0}.g-sec-hd{flex-wrap:wrap}.bar,.foot{min-width:0;flex-wrap:wrap}.topbar,.tb{min-width:0;flex-wrap:wrap;height:auto;min-height:56px}.bar>*{max-width:100%;min-width:0}.bar .input-wrap{max-width:100%}.foot{gap:12px}.content{min-width:0}.k2-box input,.k2-box select,.k2-box textarea{max-width:100%}}
+
+.g-states .seg{min-width:0;max-width:100%;overflow:auto}
+.k2-scroll{width:100%}.g-when>*,.g-demo>*,.k2-col{min-width:0}
+@media(max-width:600px){.g-theme,.g-sec-hd .acts{max-width:100%;flex-wrap:wrap}.g-demo .seg{max-width:100%;overflow:auto}}
 </style></head><body><script>const PROMPTS = [{"title": "从零生成这套组件库", "when": "搭建同类组件规范和画廊", "text": "请生成「表格组件库」：排序、筛选、固定列、合并单元格、展开行、行内编辑、批量选择与操作、虚拟滚动示意\n。每个组件包含默认、悬停、按下、聚焦、禁用、出错、加载等适用状态，以及小中大尺寸。使用 CSS 变量统一主题色、圆角、明暗；提供目录搜索、状态切换、复制 HTML 和复制提示词。交付完整单文件离线 HTML 与元素交互说明表，所有数据标示例，不引用外部资源，不编造业务事实。"}, {"title": "用这套组件拼出整页", "when": "把组件组合成自己的业务页面", "text": "我附上了「表格组件库」index.html，请只使用其中的组件和 CSS 变量，为 {{业务名称}} 制作 {{页面类型}}。包含正常、空、加载、出错状态和可操作流程，保留键盘访问和焦点反馈。未知内容用示例标注。交付完整单文件离线 HTML 和元素交互说明表。"}, {"title": "给组件库加一个组件", "when": "扩展组件或状态", "text": "请在附上的组件库中新增 {{组件名称}}，状态为 {{状态清单}}。沿用 Gallery section 结构，补齐 use、avoid、spec、render、mount、适用小中大尺寸和键盘操作。全部样式使用已有 CSS 变量，保留每项复制 HTML 与复制提示词、明暗切换。交付完整单文件离线 HTML 与元素交互说明表，不引入外部资源。"}];</script><script>
 /*@KIT_JS*/
 /* ==========================================================================
