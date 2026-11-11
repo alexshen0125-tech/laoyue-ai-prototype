@@ -137,7 +137,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -799,7 +799,7 @@ const field=(key,label,value='',type='text')=>`<label class="x-field">${label}<i
 const notice=(text,tone='info')=>`<div class="x-notice ${tone}" role="status">${text}</div>`;
 const actions=(...items)=>`<div class="x-actions">${items.join('')}</div>`;
 function draw(sec,s){
- const d=sec.data||(sec.data={title:'示例协作空间',note:'示例：建议支持按负责人筛选',score:null});
+ const d=sec.data||(sec.data={title:'栖木门店运营空间',note:'示例：建议支持按负责人筛选',score:null});
  const k=sec.id;let h='';
  if(MODULE.id==='m-wizard'){
   if(k==='linear'){
@@ -815,7 +815,7 @@ function draw(sec,s){
   }
   if(k==='optional')h=s===0?field('email','通知邮箱（选填）',d.email||'')+actions(button('跳过此步','skip'),button('保存设置','save')):notice(s===1?'已跳过通知设置，可在设置中心补填。':'通知设置已保存：'+E(d.email||'未设置邮箱'),'ok')+actions(button('返回补填','back'));
   if(k==='resume')h=s===1?notice('有未完成内容，是否保留示例草稿后离开？')+actions(button('继续编辑','back'),button('保留并离开','leave')):s===2?notice('发现刚才保存的示例草稿。此演示仅保存在本页内存。')+actions(button('恢复草稿','restore'),button('丢弃草稿','discard')):notice(s===3?'已恢复草稿，可继续填写。':'示例草稿仅在当前页面有效。')+field('title','流程名称',d.title)+actions(button('离开流程','leaveAsk'));
-  if(k==='review')h=s===1?field('title','修改申请名称',d.title)+actions(button('保存并返回核对','save')):s===3?notice('申请已提交，编号 DEMO-1024，预计一个工作日反馈。','ok'):notice(s===4?'提交失败，申请内容已保留。':'请确认申请信息：'+E(d.title),s===4?'error':'info')+actions(button('修改名称','edit',s===2),button(s===2?'提交中…':'确认提交','submit',s===2));
+  if(k==='review')h=s===1?field('title','修改申请名称',d.title)+actions(button('保存并返回核对','save')):s===3?notice('申请已提交，编号 SO-261110-1024，预计一个工作日反馈。','ok'):notice(s===4?'提交失败，申请内容已保留。':'请确认申请信息：'+E(d.title),s===4?'error':'info')+actions(button('修改名称','edit',s===2),button(s===2?'提交中…':'确认提交','submit',s===2));
  }
  if(MODULE.id==='m-compare'){
   if(k==='tray'){
@@ -830,16 +830,16 @@ function draw(sec,s){
    const base=s===1?'B':'A',a=s===2?20:35;h=`<p>席位容量越大越好；当前基准：方案 ${base}</p>`+actions(button('以 A 为基准','baseA'),button('以 B 为基准','baseB'))+`<table class="x-table"><tr><th>方案</th><th>席位</th><th>相对基准</th></tr><tr><td>A</td><td>20人</td><td>${base==='A'?'基准':(20-a)+'人'}</td></tr><tr><td>B</td><td>${a}人</td><td>${base==='B'?'基准':(a-20>=0?'+':'')+(a-20)+'人'}</td></tr></table>`;
   }
   if(k==='weight'){
-   const w=s===0?60:s===1?30:80;h=field('weight','性能权重（0–100）',w,'number')+field('other','成本权重（0–100）',s===2?40:100-w,'number')+notice('总分 = 性能分 × 性能权重 + 成本分 × 成本权重。示例 A：90/60；B：70/95。')+`<div data-result>${s===2?notice('合计120%，请调整为100%。','error'):`A：${(90*w/100+60*(100-w)/100).toFixed(1)}；B：${(70*w/100+95*(100-w)/100).toFixed(1)}。仅供辅助。`}</div>`+actions(button('重新计算','calculate'));
+   const w=s===0?60:s===1?30:80;h=field('weight','性能权重（0–100）',w,'number')+field('other','成本权重（0–100）',s===2?40:100-w,'number')+notice('总分 = 性能分 × 性能权重 + 成本分 × 成本权重。文三店补货：90/60；B：70/95。')+`<div data-result>${s===2?notice('合计120%，请调整为100%。','error'):`A：${(90*w/100+60*(100-w)/100).toFixed(1)}；B：${(70*w/100+95*(100-w)/100).toFixed(1)}。仅供辅助。`}</div>`+actions(button('重新计算','calculate'));
   }
   if(k==='missing')h=`<table class="x-table"><tr><th>方案</th><th>席位</th><th>资料状态</th></tr><tr><td>A</td><td>20人</td><td>已核实</td></tr><tr><td>B</td><td>${s===2?'35人':'待核实'}</td><td>${s===1?'已下架':s===2?'已核实':'等待提供方补充'}</td></tr></table>`+actions(button('模拟补齐资料','complete',s===1),button('选定 B','choose',s!==2))+`<div data-result></div>`;
  }
  if(MODULE.id==='m-timeline'){
-  if(k==='group')h=actions(button('全部事件','all'),button('只看我','mine'),button('清除筛选','all'))+`<p>示例时区 UTC+8 · ${s===2?'0':s===1?'1':'3'} 条</p>`+(s===2?notice('没有符合条件的事件，可清除筛选。'):`<h4>2026-11-10</h4><ol class="x-line"><li>10:30 我 · 更新示例任务</li>${s===0?'<li>09:10 示例成员乙 · 创建任务</li>':''}</ol>${s===0?'<h4>2026-11-09</h4><ol class="x-line"><li>16:20 示例成员丙 · 建立项目</li></ol>':''}`);
-  if(k==='detail')h=`<ol class="x-line"><li><b>10:30 更新负责人</b><p>操作人：示例成员甲 · 事件 EVT-01</p>${s?`<dl><dt>修改前</dt><dd>示例成员乙</dd><dt>修改后</dt><dd>示例成员丙</dd>${s===2?'<dt>联系手机号</dt><dd>138****0012（始终脱敏）</dd>':''}</dl>`:''}${button(s?'收起变更':'展开变更','toggle')}</li></ol>`;
+  if(k==='group')h=actions(button('全部事件','all'),button('只看我','mine'),button('清除筛选','all'))+`<p>示例时区 UTC+8 · ${s===2?'0':s===1?'1':'3'} 条</p>`+(s===2?notice('没有符合条件的事件，可清除筛选。'):`<h4>2026-11-10</h4><ol class="x-line"><li>10:30 我 · 更新冷藏柜温控巡检</li>${s===0?'<li>09:10 许澄 · 创建任务</li>':''}</ol>${s===0?'<h4>2026-11-09</h4><ol class="x-line"><li>16:20 周禾 · 建立项目</li></ol>':''}`);
+  if(k==='detail')h=`<ol class="x-line"><li><b>10:30 更新负责人</b><p>操作人：林沐 · 事件 EVT-01</p>${s?`<dl><dt>修改前</dt><dd>许澄</dd><dt>修改后</dt><dd>周禾</dd>${s===2?'<dt>联系手机号</dt><dd>138****0012（始终脱敏）</dd>':''}</dl>`:''}${button(s?'收起变更':'展开变更','toggle')}</li></ol>`;
   if(k==='parallel')h=`<div class="x-grid"><article class="x-tile"><h4>资料校验</h4><p>${s===1||s===2?'已完成':'进行中'}</p>${button('完成资料校验','finishA',s===1||s===2)}</article><article class="x-tile"><h4>物流准备</h4><p>${s===2||s===3?'已完成':'进行中'}</p>${button('完成物流准备','finishB',s===2||s===3)}</article></div>`+notice(s===2?'全部分支完成，可以发布。':'等待所有分支完成后再发布。')+actions(button('发布','publish',s!==2))+`<div data-result></div>`;
   if(k==='incident')h=`<ol class="x-line"><li>10:00 同步失败 · EVT-02<p>原因：目标服务超时。原始记录永久保留在本演示中。</p></li>${s>0?'<li>10:02 开始处理 · 关联 EVT-02</li>':''}${s===2?'<li>10:03 重试成功 · 关联 EVT-02</li>':''}</ol>`+actions(button(s===1?'处理中…':s===2?'已恢复':'处理此异常','recover',s>0));
-  if(k==='history')h=`<ol class="x-line"><li>11-10 10:00 创建示例单据</li><li>11-09 16:30 修改名称</li>${s===2?'<li>11-08 09:00 初始化项目</li><li>11-07 08:00 导入历史</li>':''}</ol>`+(s===1?notice('历史加载失败，当前2条记录仍在。','error'):'')+actions(button(s===2?'已加载全部4条':s===1?'重试加载':'加载更早记录','more',s===2));
+  if(k==='history')h=`<ol class="x-line"><li>11-10 10:00 创建门店补货单 SO-261110-086</li><li>11-09 16:30 修改名称</li>${s===2?'<li>11-08 09:00 初始化项目</li><li>11-07 08:00 导入历史</li>':''}</ol>`+(s===1?notice('历史加载失败，当前2条记录仍在。','error'):'')+actions(button(s===2?'已加载全部4条':s===1?'重试加载':'加载更早记录','more',s===2));
  }
  if(MODULE.id==='m-kanban'){
   if(k==='flow')h=`<div class="x-board"><article><h4>待办</h4></article><article><h4>进行中 ${s===2?'0':'1'}</h4>${s!==2?`<div class="x-tile">示例：需求评审<label class="check"><input type="checkbox" data-accept ${d.accept?'checked':''}> 已完成验收项</label>${button('移到完成','done')}</div>`:''}</article><article><h4>完成 ${s===2?'1':'0'}</h4>${s===2?'<div class="x-tile">示例：需求评审</div>':''}</article></div>`+(s===1?notice('未完成验收项，请先勾选后再移动。','error'):'');
@@ -848,7 +848,7 @@ function draw(sec,s){
   }
   if(k==='swim')h=actions(button('全部','all'),button('只看我','mine'),button('未分配','unassigned'))+`<table class="x-table"><tr><th>负责人</th><th>待办</th><th>进行中</th><th>完成</th></tr>${s!==2?'<tr><th>我（示例）</th><td>需求整理</td><td>接口联调</td><td>原型评审</td></tr>':''}${s!==1?'<tr><th>未分配</th><td>示例上线通知</td><td>—</td><td>—</td></tr>':''}</table>`;
   if(k==='edit')h=(s===1||s===2||s===3?field('title','任务标题（必填）',s===2?'':d.title)+field('note','描述（选填）',d.note)+(s===2?notice('请填写任务标题','error'):s===3?notice('保存失败，编辑内容保留，可再次保存。','error'):'')+`<label class="check"><input type="checkbox" data-fail> 模拟下次保存失败</label>`+actions(button('取消','cancel'),button('保存','save')):`<div class="x-tile"><h4>${E(d.title)}</h4><p>${E(d.note)}</p><p>示例负责人：我</p></div>${s===4?notice('已保存','ok'):''}`+actions(button('编辑任务','edit')));
-  if(k==='archive')h=notice(s===1?'示例任务已归档，活动看板中不再显示。':s===2?'已恢复到待办，原始完成时间仍保留。':'示例任务：完成用户访谈，当前状态已完成。')+actions(button(s===1?'恢复到待办':'归档已完成任务',s===1?'restore':'archive'));
+  if(k==='archive')h=notice(s===1?'冷藏柜温控巡检已归档，活动看板中不再显示。':s===2?'已恢复到待办，原始完成时间仍保留。':'冷藏柜温控巡检：完成用户访谈，当前状态已完成。')+actions(button(s===1?'恢复到待办':'归档已完成任务',s===1?'restore':'archive'));
  }
  if(MODULE.id==='m-feedback-collect'){
   if(k==='nps'||k==='csat'){
@@ -858,15 +858,15 @@ function draw(sec,s){
    if((nps&&s===4)||(!nps&&s===3))h=notice('感谢反馈，已记录。不会对外发送任何数据。','ok');
    else h=`<h4>${nps?'你有多大可能向同事推荐示例产品？':'你对刚才的示例服务满意吗？'}</h4><p>${nps?'0 完全不可能 — 10 非常可能':'1 很不满意 — 5 很满意'}</p><div class="x-scores" role="group" aria-label="评分">${Array.from({length:nps?11:5},(_,i)=>i+(nps?0:1)).map(i=>`<button class="btn" type="button" data-score="${i}" aria-pressed="${score===i}">${i}</button>`).join('')}</div>`+field('note',(score!==null&&score<=(nps?6:2)?'哪里需要改进？':'补充原因')+'（选填）',d.note==='示例：建议支持按负责人筛选'?'':d.note)+(nps&&s===3?notice('提交失败，评分与原因已保留。','error'):'')+(nps?'<label class="check"><input type="checkbox" data-fail> 模拟下一次失败</label>':'')+actions(button(nps&&s===2?'提交中…':'提交反馈','submit',score===null||(nps&&s===2)));
   }
-  if(k==='context')h=s===3?notice('反馈已提交，编号 FB-DEMO-01。可在反馈中心追踪处理进度。','ok'):field('note','问题描述（至少5字）',s===1?'卡住':d.note)+`<label class="check"><input type="checkbox" data-attach ${d.attach?'checked':''}> 自愿附带当前页面名称（示例项目页，不含账号信息）</label><label class="check"><input type="checkbox" data-fail> 模拟提交失败</label>`+(s===1?notice('请至少填写5个字，说明遇到的问题。','error'):s===2?notice('提交失败，内容未丢失，请重试。','error'):'')+actions(button('提交问题','submit'));
+  if(k==='context')h=s===3?notice('反馈已提交，编号 FB-QM-261110-028。可在反馈中心追踪处理进度。','ok'):field('note','问题描述（至少5字）',s===1?'卡住':d.note)+`<label class="check"><input type="checkbox" data-attach ${d.attach?'checked':''}> 自愿附带当前页面名称（示例项目页，不含账号信息）</label><label class="check"><input type="checkbox" data-fail> 模拟提交失败</label>`+(s===1?notice('请至少填写5个字，说明遇到的问题。','error'):s===2?notice('提交失败，内容未丢失，请重试。','error'):'')+actions(button('提交问题','submit'));
   if(k==='vote')h=`<div class="x-tile"><h4>示例建议：支持按负责人筛选</h4><p>状态：${s===2?'已计划 · 时间待评估':'收集中'}，票数仅作需求信号，不承诺交付。</p>${button(s===1?'撤回支持 · 13票':'支持建议 · 12票','vote')}</div>`;
   if(k==='frequency')h=notice(s===1?'已选择稍后：本次会话不再邀请。':s===2?'已设置不再邀请：保存在本机，可随时恢复。':s===3?'已恢复邀请偏好。':'愿意花1分钟评价示例产品体验吗？')+actions(...(s===0||s===3?[button('稍后再说','later'),button('不再邀请','never')]:[button('恢复邀请偏好','restore')]))+'<p class="muted">仅演示邀请偏好，不发送问卷或通知。</p>';
  }
  if(MODULE.id==='m-error-recovery'){
   if(k==='offline')h=field('title','示例记录标题',d.title)+notice(['当前在线，编辑可加入待同步队列。','网络已断开，1条编辑保留在当前页面内存。','正在同步1条修改…','同步失败，1条修改仍在队列中。','已同步，待同步0条。'][s],s===3?'error':s===4?'ok':'info')+actions(button('模拟断网并保存','disconnect',s===2),button(s===2?'同步中…':'恢复网络并同步','sync',s===0||s===2||s===4))+'<label class="check"><input type="checkbox" data-fail> 模拟同步失败</label>';
-  if(k==='retry')h=notice(['请求 DEMO-REQ-001 超时，结果未知，请先查询，勿重复提交。','正在查询 DEMO-REQ-001…','已确认此请求未处理，可沿用同一请求编号重试。','请求 DEMO-REQ-001 已成功，单据 DEMO-ORDER-01。'][s])+`<p>逻辑处理次数：${s===3?1:0}</p>`+actions(button('查询原请求结果','query',s===1||s===3),button('使用原编号重试','retry',s!==2))+'<label class="check"><input type="checkbox" data-exists> 模拟服务端其实已成功</label>';
-  if(k==='conflict')h=s===2?notice('已合并并保存：'+E(d.merged||'标题：示例远端标题；负责人：我'),'ok'):`<p>本地版本 v3，服务器版本 v4；请选择每个字段保留哪一份。</p><table class="x-table"><tr><th>字段</th><th>本地</th><th>服务器</th></tr>${[['title','标题','示例本地标题','示例远端标题'],['owner','负责人','我','示例成员乙']].map(([key,label,a,b])=>`<tr><th>${label}</th><td><label><input type="radio" name="${k}-${key}" value="${a}" data-merge="${key}">${a}</label></td><td><label><input type="radio" name="${k}-${key}" value="${b}" data-merge="${key}">${b}</label></td></tr>`).join('')}</table><div data-result></div>`+actions(button('确认合并','merge'));
-  if(k==='partial')h=`<table class="x-table"><tr><th>记录</th><th>状态</th><th>提交次数</th></tr><tr><td>示例 A</td><td>成功</td><td>1</td></tr><tr><td>示例 B</td><td>${s===2?'成功':s===1?'重试中':'失败：临时超时'}</td><td>${s===0?1:2}</td></tr><tr><td>示例 C</td><td>成功</td><td>1</td></tr></table>`+actions(button(s===1?'重试中…':s===2?'全部完成':'仅重试失败的1条','retry',s>0));
+  if(k==='retry')h=notice(['请求 REQ-261110-047 超时，结果未知，请先查询，勿重复提交。','正在查询 REQ-261110-047…','已确认此请求未处理，可沿用同一请求编号重试。','请求 REQ-261110-047 已成功，单据 SO-261110-086。'][s])+`<p>逻辑处理次数：${s===3?1:0}</p>`+actions(button('查询原请求结果','query',s===1||s===3),button('使用原编号重试','retry',s!==2))+'<label class="check"><input type="checkbox" data-exists> 模拟服务端其实已成功</label>';
+  if(k==='conflict')h=s===2?notice('已合并并保存：'+E(d.merged||'标题：文三店冷藏柜周检；负责人：我'),'ok'):`<p>本地版本 v3，服务器版本 v4；请选择每个字段保留哪一份。</p><table class="x-table"><tr><th>字段</th><th>本地</th><th>服务器</th></tr>${[['title','标题','文三店冷藏柜检修','文三店冷藏柜周检'],['owner','负责人','我','许澄']].map(([key,label,a,b])=>`<tr><th>${label}</th><td><label><input type="radio" name="${k}-${key}" value="${a}" data-merge="${key}">${a}</label></td><td><label><input type="radio" name="${k}-${key}" value="${b}" data-merge="${key}">${b}</label></td></tr>`).join('')}</table><div data-result></div>`+actions(button('确认合并','merge'));
+  if(k==='partial')h=`<table class="x-table"><tr><th>记录</th><th>状态</th><th>提交次数</th></tr><tr><td>文三店补货</td><td>成功</td><td>1</td></tr><tr><td>运河店调拨</td><td>${s===2?'成功':s===1?'重试中':'失败：临时超时'}</td><td>${s===0?1:2}</td></tr><tr><td>滨江店退货</td><td>成功</td><td>1</td></tr></table>`+actions(button(s===1?'重试中…':s===2?'全部完成':'仅重试失败的1条','retry',s>0));
   if(k==='session')h=field('note','未提交的非敏感编辑',d.note)+notice(['会话已过期，内容已保留在当前页面内存。','正在模拟重新验证…','验证失败，编辑仍保留，可再次验证。','验证完成，已回到原编辑位置，可继续保存。'][s],s===2?'error':s===3?'ok':'info')+actions(button(s===1?'验证中…':s===3?'保存原编辑':'模拟重新验证',s===3?'save':'auth',s===1))+'<label class="check"><input type="checkbox" data-fail> 模拟验证失败（无需真实密码）</label><div data-result></div>';
  }
  return `<div class="x-panel" ${['linear','review'].includes(k)&&[2,3].includes(s)?'':''}><p class="x-caption">示例演示 · ${E(sec.name)}</p>${h}</div>`;
@@ -899,7 +899,7 @@ function mount(sec,el,state){
   if(MODULE.id==='m-wizard'){
    if(k==='linear'){if(a==='next')go(d.title?2:1);if(a==='back')go(0);if(a==='submit')pending(3,4);if(a==='reset')go(0)}
    if(k==='branch'){if(a==='person'){d.company=false;go(0)}if(a==='company'){d.company=true;go(1)}if(a==='review'){d.company=s===1||s===2;if(!d.title){el.querySelector('[data-field=title]').focus();Proto.toast('请填写申请名称','err',{host:document.body});return}go(d.company&&!d.license?2:3)}if(a==='back')go(d.company?1:0)}
-   if(k==='optional'){if(a==='skip')go(1);if(a==='save'){if(d.email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)){Proto.toast('邮箱格式不正确，请填写如 demo@example.test','err',{host:document.body});return}go(2)}if(a==='back')go(0)}
+   if(k==='optional'){if(a==='skip')go(1);if(a==='save'){if(d.email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)){Proto.toast('邮箱格式不正确，请填写如 lin.mu@qimu.cn','err',{host:document.body});return}go(2)}if(a==='back')go(0)}
    if(k==='resume'){if(a==='leaveAsk')go(1);if(a==='back')go(0);if(a==='leave'){d.draft=d.title;go(2)}if(a==='restore'){d.title=d.draft||'示例恢复的流程';go(3)}if(a==='discard'){d.title='';delete d.draft;go(0)}}
    if(k==='review'){if(a==='edit')go(1);if(a==='save'){if(!d.title){Proto.toast('申请名称必填','err',{host:document.body});return}go(0)}if(a==='submit')pending(2,3)}
   }
@@ -911,11 +911,11 @@ function mount(sec,el,state){
   }
   if(MODULE.id==='m-timeline'){
    if(a==='all')go(0);if(a==='mine')go(1);if(a==='toggle')go(s?0:1);if(a==='finishA')go(s===3?2:1);if(a==='finishB')go(s===1?2:3);
-   if(a==='publish')result('示例任务已发布。');if(a==='recover')pending(1,2);if(a==='more'){b.disabled=true;b.textContent='加载中…';timer=setTimeout(()=>go(2),450)}
+   if(a==='publish')result('冷藏柜温控巡检已发布。');if(a==='recover')pending(1,2);if(a==='more'){b.disabled=true;b.textContent='加载中…';timer=setTimeout(()=>go(2),450)}
   }
   if(MODULE.id==='m-kanban'){
    if(a==='done')go(d.accept?2:1);if(a==='start'){d.incoming=true;go(1)}if(a==='release')go(2);if(a==='all')go(0);if(a==='mine')go(1);if(a==='unassigned')go(2);
-   if(a==='edit'){d.original={title:d.title,note:d.note};go(1)}if(a==='cancel'){Object.assign(d,d.original||{title:'示例协作空间',note:'示例：建议支持按负责人筛选'});go(0)}if(a==='save')go(!d.title?2:fail?3:4);if(a==='archive')go(1);if(a==='restore')go(2);
+   if(a==='edit'){d.original={title:d.title,note:d.note};go(1)}if(a==='cancel'){Object.assign(d,d.original||{title:'栖木门店运营空间',note:'示例：建议支持按负责人筛选'});go(0)}if(a==='save')go(!d.title?2:fail?3:4);if(a==='archive')go(1);if(a==='restore')go(2);
   }
   if(MODULE.id==='m-feedback-collect'){
    if(a==='submit'){
@@ -944,10 +944,22 @@ const SECTIONS=MODULE.sections.map(item=>{
 const invitation=SECTIONS.find(x=>MODULE.id==='m-feedback-collect'&&x.id==='frequency');
 if(invitation){try{if(localStorage.getItem('modules2-no-survey')){const first=invitation.states.splice(2,1)[0];invitation.states.unshift(first)}}catch{}}
 Gallery.init({kind:'交互模块',title:MODULE.title,intro:MODULE.intro,sections:SECTIONS});
-const PROMPTS=[
- {title:'从零生成整套「'+MODULE.title+'」模块',when:'需要同类规范与可点原型',text:'请用单文件离线HTML制作「'+MODULE.title+'」交互模块。左侧可搜索目录，右侧可操作演示，每种做法写什么时候用和别用，包含状态切换、复制HTML、主题和明暗。做法与状态：'+MODULE.sections.map(x=>x[1]+'：'+x[2]+'；交互：'+x[5]).join('\n')+'。示例数据标示例；所有输入保留、提交防重复，错误给出原因和恢复入口。请交付完整代码和交互说明。'},
- {title:'改成我的业务',when:'将演示换成自己的场景',text:'请基于附件「'+MODULE.title+'」模块，改成 {{业务名称}}，用户角色是 {{用户角色}}，数据字段为 {{字段列表}}，规则为 {{业务规则}}。保留每种做法的完整状态、返回与失败恢复、输入校验、键盘操作和离线运行能力。全部文案使用中文。请交付完整HTML和元素/交互/反馈表。'},
- {title:'增加做法或状态',when:'补足本模块没有的业务分支',text:'请在附件「'+MODULE.title+'」模块新增 {{做法名称}}，状态包含 {{状态清单}}，适用场景为 {{使用场景}}。沿用Gallery.init的sections结构和主题变量，写明什么时候用/别用，补齐错误、处理中、成功与恢复入口。每个状态须有可操作演示，更新README，并交付完整单文件HTML。'}
+const PROMPTS = [
+  {
+    "title": "从零构建业务时间线",
+    "when": "建立完整离线演示",
+    "text": "请制作「业务时间线」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n按日分组与筛选（全部事件,只看我,无结果）；筛选更新条数；无结果提供清除入口；标明示例时区。\n事件详情与变更前后（收起,展开,敏感字段）；展开看前后值，敏感字段始终脱敏，支持收起。\n并行分支与汇合（两支进行中,资料完成,全部完成,物流完成）；分支独立更新；全部完成才汇合；未完成不得提前发布。\n异常节点与处置（失败,处理中,恢复成功）；保留原始失败，追加处理事件；展示关联编号。\n历史加载与定位（首批,加载失败,全部历史）；追加不覆盖；失败保留已有记录；全部加载后禁用按钮。\n业务字段：事件编号、操作人、发生时间、修改前、修改后、处理状态。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换业务时间线业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「业务时间线」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n按日分组与筛选（全部事件,只看我,无结果）；筛选更新条数；无结果提供清除入口；标明示例时区。\n事件详情与变更前后（收起,展开,敏感字段）；展开看前后值，敏感字段始终脱敏，支持收起。\n并行分支与汇合（两支进行中,资料完成,全部完成,物流完成）；分支独立更新；全部完成才汇合；未完成不得提前发布。\n异常节点与处置（失败,处理中,恢复成功）；保留原始失败，追加处理事件；展示关联编号。\n历史加载与定位（首批,加载失败,全部历史）；追加不覆盖；失败保留已有记录；全部加载后禁用按钮。\n逐一核对事件编号、操作人、发生时间、修改前、修改后、处理状态的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对业务时间线交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「业务时间线」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n按日分组与筛选（全部事件,只看我,无结果）；筛选更新条数；无结果提供清除入口；标明示例时区。\n事件详情与变更前后（收起,展开,敏感字段）；展开看前后值，敏感字段始终脱敏，支持收起。\n并行分支与汇合（两支进行中,资料完成,全部完成,物流完成）；分支独立更新；全部完成才汇合；未完成不得提前发布。\n异常节点与处置（失败,处理中,恢复成功）；保留原始失败，追加处理事件；展示关联编号。\n历史加载与定位（首批,加载失败,全部历史）；追加不覆盖；失败保留已有记录；全部加载后禁用按钮。\n围绕业务字段事件编号、操作人、发生时间、修改前、修改后、处理状态检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 Proto.prompts(PROMPTS);
 </script></body></html>

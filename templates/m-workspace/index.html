@@ -136,7 +136,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -817,6 +817,7 @@ if(k==='export')rows[0][2]=['待生成','生成中','生成失败','可下载至
 if(k==='invite'&&s===3)rows.unshift(['新受邀人 / '+(d.email||'lu.shichuan@qimu-retail.cn'),d.role,'已创建 '+d.request]);
 if(k==='diff'&&s===2)rows=rows.filter(r=>r[1]!==r[2]);
 return '<h4 style="margin:20px 0 8px">'+E(k==='diff'?'权限快照字段':k==='trace'?'关联事件时间线':'业务明细')+'</h4>'+table(head,rows)}
+function memberRoster(d,s){return '<ul aria-label="已保存成员权限">'+BUSINESS_ROWS.role[1].map(r=>'<li><strong>'+E(r[0])+'</strong> · '+E(s===3&&r[0]===d.member?d.role:r[1])+' · '+E(r[2])+'</li>').join('')+'</ul>'}
 function draw(sec,s){let d=sec.data,k=sec.id,h='';
 if(MODULE.id==='m-schedule'){
  if(k==='slot')h='<p>2026-11-12 · UTC+8 · 栖木西湖店 · 阅读顾问咨询 · 每时段30分钟</p><div class="m3-picks">'+['09:00','09:30','10:00','10:30','11:00'].map((t,i)=>`<button class="btn" data-time="${t}" aria-pressed="${d.time===t}">${t} · ${i===1?'约满':s===2&&t===d.time?'刚被约满':(['剩1名','约满','剩2名','剩3名','剩1名'][i])}</button>`).join('')+'</div>'+note(s===2?'该时段刚被预约，请重新选择；未扣款。':s===3?'预约成功：QM261110-BOOK-01，'+(d.time||'09:00')+'。':d.time?'已选择 '+d.time:'请选择可预约时段',s===2?'error':s===3?'ok':'info')+(s!==3?fail()+actions(btn('确认预约','book',!d.time||s===2)):actions(btn('重新演示','reset')));
@@ -849,7 +850,7 @@ if(MODULE.id==='m-audit-log'){
 if(MODULE.id==='m-workspace'){
  if(k==='switch')h='<div class="m3-tile">当前：'+E(d.space)+'</div>'+note(s===1?'有未保存编辑。切换会丢弃当前页面草稿，是否继续？':s===2?'栖木零售 · 财务结算无访问权限，当前空间保持不变。':s===3?'已切换到栖木零售 · 门店运营。':'栖木零售 · 商品研发存在未保存草稿。')+actions(...(s===1?[btn('留在原空间','reset'),btn('丢弃草稿并切换','confirm')]:[btn('切换栖木零售 · 门店运营','ask'),btn('尝试受限空间','restricted')]));
  if(k==='invite')h=s===3?note('已创建模拟邀请 '+d.request+'，'+(d.email||'lu.shichuan@qimu-retail.cn')+'，角色：'+d.role+'，2026-11-17到期。未发送真实邮件。','ok'):field('email','邀请邮箱（必填）',d.email,'email')+select('role','初始权限',['观察者','编辑者'],d.role)+note(s===1?'请填写有效邮箱，例如 qinghe.xu@qimu-retail.cn。':s===2?'模拟发送失败，邮箱和权限保留，请重试。':'观察者只能查看；编辑者可以修改内容。',s===1||s===2?'error':'info')+fail()+actions(btn('创建模拟邀请','send'));
- if(k==='role')h=select('member','成员',['许清禾','周景行','陈雨桐','宋以安','我（唯一所有者）'],d.member)+select('role','目标角色',['观察者','编辑者'],d.role)+note(s===1?'变更后：'+d.member+'成为'+d.role+'；编辑者可修改内容，观察者只读。':s===2?'唯一所有者不能降级，先在所有权管理中完成转移。':s===3?'成员角色已更新为'+d.role+'。':('当前选择：'+d.member+'；下方成员表展示已保存角色。'),s===2?'error':s===3?'ok':'info')+actions(btn('核对变更','check'),btn('确认变更','confirm',s!==1));
+ if(k==='role')h=memberRoster(d,s)+select('member','成员',['许清禾','周景行','陈雨桐','宋以安','我（唯一所有者）'],d.member)+select('role','目标角色',['观察者','编辑者'],d.role)+note(s===1?'变更后：'+d.member+'成为'+d.role+'；编辑者可修改内容，观察者只读。':s===2?'唯一所有者不能降级，先在所有权管理中完成转移。':s===3?'成员角色已更新为'+d.role+'。':('当前选择：'+d.member+'；下方成员表展示已保存角色。'),s===2?'error':s===3?'ok':'info')+actions(btn('核对变更','check'),btn('确认变更','confirm',s!==1));
  if(k==='revoke')h='<p>许清禾 qinghe.xu@qimu-retail.cn · 邀请号 '+E(d.request)+'</p>'+note(s===1?'撤回后此邀请链接立即失效，收件人无法通过旧链接加入。':s===2?'邀请已撤回；旧邀请INV-261110-001失效。':s===3?'已创建新邀请INV-261110-002；旧链接失效，新链接7天有效。':'邀请待接受，2026-11-17到期。')+actions(...(s===1?[btn('保留邀请','reset'),btn('确认撤回','confirm')]:s===2?[btn('重新邀请','resend')]:[btn('撤回邀请','ask')]));
  if(k==='leave')h=note(s===2?'你是唯一所有者，请先将所有权转移给许清禾。':s===1?'确认离开栖木零售 · 商品研发？将失去访问权限，空间与其他成员数据保留。':s===3?'已离开栖木零售 · 商品研发；可联系所有者重新邀请。':d.owner?'我：唯一所有者。许清禾：编辑者。':'我：编辑者。许清禾：所有者。',s===2?'error':s===3?'ok':'info')+actions(...(s===3?[btn('重新演示','resetOwner')]:s===1?[btn('留在空间','reset'),btn('确认离开','confirm')]:[btn('离开空间','ask'),btn('转移给许清禾','transfer')]));
 }
@@ -967,10 +968,22 @@ function previewData(k,s){const v=initial(k);
 }
 document.addEventListener('click',e=>{const b=e.target.closest('.g-states [data-st]');if(!b)return;const sec=SECTIONS.find(x=>x.id===b.closest('[data-sec]').dataset.sec);sec.data=previewData(sec.id,+b.dataset.st)},true);
 Gallery.init({kind:'交互模块',title:MODULE.title,intro:MODULE.intro,sections:SECTIONS});
-const PROMPTS=[
-{title:'从零生成整套「'+MODULE.title+'」',when:'需要可点的离线原型和规范',text:'请制作单文件离线HTML「'+MODULE.title+'」模块，中文，左侧搜索目录，右侧操作演示。做法与状态：'+MODULE.sections.map(s=>s[1]+'：'+s[2]+'；规则：'+s[5]).join('\n')+'。每种做法提供什么时候用/别用、状态切换、复制HTML和做法提示词。主题变量、明暗、可见焦点、手机44px触控；错误明确可恢复；输入变化后必须重新核对；示例数据标示例。不连接真实服务。交付完整代码与交互表。'},
-{title:'改成我的业务',when:'将演示替换为实际业务规则',text:'请将附件「'+MODULE.title+'」改为 {{业务名称}}，角色 {{用户角色}}，字段 {{字段列表}}，规则 {{业务规则}}。保留完整状态、返回、错误重试、修改后重新核对和确认前校验。全部使用CSS变量、离线HTML。交付完整代码、适用边界与交互说明。'},
-{title:'增加做法或状态',when:'补齐特定业务分支',text:'请为附件「'+MODULE.title+'」增加 {{做法名称}}，状态 {{状态清单}}，场景 {{使用场景}}。沿用Gallery.init结构，写什么时候用/别用，加入真实操作、输入校验、取消与失败恢复。更新README并交付可离线运行的完整HTML。'}
+const PROMPTS = [
+  {
+    "title": "从零构建工作区与成员邀请",
+    "when": "建立完整离线演示",
+    "text": "请制作「工作区与成员邀请」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n空间切换与未保存（当前空间,离开确认,目标无权限,切换成功）；未保存先确认；取消留在原空间；无权限不切换。\n邮件邀请（填写,校验错误,发送失败,已邀请）；邮箱必填且校验格式；默认观察者；模拟失败保留邮箱，不发真实邮件。\n角色变更与自保（成员列表,变更核对,权限阻断,已更新）；变更前说明权限差异；唯一所有者不能被降级。\n撤回与重新邀请（待接受,撤回确认,已撤回,已重新邀请）；撤回使旧链接失效；重新邀请创建新编号，明确7天有效期。\n离开与所有权转移（成员身份,离开确认,所有者阻断,已离开）；唯一所有者先转移；转移后再确认离开，不删除空间或其他成员。\n业务字段：工作区、成员姓名、邀请邮箱、角色、邀请编号、所有者。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换工作区与成员邀请业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「工作区与成员邀请」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n空间切换与未保存（当前空间,离开确认,目标无权限,切换成功）；未保存先确认；取消留在原空间；无权限不切换。\n邮件邀请（填写,校验错误,发送失败,已邀请）；邮箱必填且校验格式；默认观察者；模拟失败保留邮箱，不发真实邮件。\n角色变更与自保（成员列表,变更核对,权限阻断,已更新）；变更前说明权限差异；唯一所有者不能被降级。\n撤回与重新邀请（待接受,撤回确认,已撤回,已重新邀请）；撤回使旧链接失效；重新邀请创建新编号，明确7天有效期。\n离开与所有权转移（成员身份,离开确认,所有者阻断,已离开）；唯一所有者先转移；转移后再确认离开，不删除空间或其他成员。\n逐一核对工作区、成员姓名、邀请邮箱、角色、邀请编号、所有者的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对工作区与成员邀请交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「工作区与成员邀请」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n空间切换与未保存（当前空间,离开确认,目标无权限,切换成功）；未保存先确认；取消留在原空间；无权限不切换。\n邮件邀请（填写,校验错误,发送失败,已邀请）；邮箱必填且校验格式；默认观察者；模拟失败保留邮箱，不发真实邮件。\n角色变更与自保（成员列表,变更核对,权限阻断,已更新）；变更前说明权限差异；唯一所有者不能被降级。\n撤回与重新邀请（待接受,撤回确认,已撤回,已重新邀请）；撤回使旧链接失效；重新邀请创建新编号，明确7天有效期。\n离开与所有权转移（成员身份,离开确认,所有者阻断,已离开）；唯一所有者先转移；转移后再确认离开，不删除空间或其他成员。\n围绕业务字段工作区、成员姓名、邀请邮箱、角色、邀请编号、所有者检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 Proto.prompts(PROMPTS);
 </script></body></html>

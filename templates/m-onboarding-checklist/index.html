@@ -136,7 +136,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -813,7 +813,7 @@ if(k==='stars'&&s===3){d.score=4;d.comment='送达及时，包装完整'}
 if(k==='dimensions'&&s===3)Object.assign(d,{response:'4',professional:'5',solution:'3'});
 if(k==='nps'&&s===3)d.nps=9;
 if(k==='followup'&&s===3)d.comment='调整路线后本次已准时送达';
-if(k==='message'&&s>0)d.messages=[{id:'MSG-DEMO-1',text:'请帮我确认配送进度。',status:s===1?'发送中':s===2?'发送失败':'已送达'}];
+if(k==='message'&&s>0)d.messages=[{id:'MSG-261110-1',text:'请帮我确认配送进度。',status:s===1?'发送中':s===2?'发送失败':'已送达'}];
 if(k==='attachment'&&[1,3].includes(s))d.file={name:'示例破损照片.png',size:184320,type:'image/png'};
 if(k==='occupancy'&&s===2)d.resource='冷链检测台';
 if(k==='conflict'&&s>=2){d.start='14:00';d.end='15:00'}
@@ -888,7 +888,7 @@ case 'stars':if(a==='submit'){if(!d.score||(d.score<=2&&d.comment.trim().length<
 case 'dimensions':if(a==='check'||a==='confirm')go([d.response,d.professional,d.solution].every(x=>/^[1-5]$/.test(x))?(a==='check'?1:3):2);break;
 case 'nps':if(a==='submit')go(d.nps!==null?3:2);break;
 case 'followup':if(a==='ask')go(1);if(a==='confirm')go(d.comment.trim().length>=5?3:2);break;
-case 'message':if(a==='send'){if(!d.text.trim()||d.text.length>200){tell('请填写1–200字消息。');break}d.messages.push({id:'MSG-DEMO-'+(d.messages.length+1),text:d.text,status:'发送中'});d.text='';d.willFail=d.failure;go(1)}if(a==='retry'){if(!d.messages.length){d.messages.push({id:'MSG-DEMO-1',text:'请帮我确认配送进度。',status:'发送中'})}d.messages.at(-1).status='发送中';d.willFail=d.failure;go(1)}break;
+case 'message':if(a==='send'){if(!d.text.trim()||d.text.length>200){tell('请填写1–200字消息。');break}d.messages.push({id:'MSG-261110-'+(d.messages.length+1),text:d.text,status:'发送中'});d.text='';d.willFail=d.failure;go(1)}if(a==='retry'){if(!d.messages.length){d.messages.push({id:'MSG-261110-1',text:'请帮我确认配送进度。',status:'发送中'})}d.messages.at(-1).status='发送中';d.willFail=d.failure;go(1)}break;
 case 'transfer':if(a==='queue')go(1);if(a==='busy')go(2);if(a==='connect')go(3);break;
 case 'attachment':if(a==='send'&&s===1&&d.file)go(3);break;
 case 'close':if(a==='ask')go(1);if(a==='unresolved')go(2);if(a==='confirm')go(3);break;
@@ -912,7 +912,7 @@ case 'merge':if(a==='check'||a==='confirm')go(d.choiceA!=='未选择'&&d.choiceB
 });
 if(s===1&&['export','connection','message'].includes(k))el.querySelectorAll('input,select').forEach(x=>x.disabled=true);
 if(s===1&&['export','connection'].includes(k))later(d.willFail?2:3);
-if(s===1&&k==='message'){if(!d.messages.length)d.messages.push({id:'MSG-DEMO-1',text:'请帮我确认配送进度。',status:'发送中'});timer=setTimeout(()=>{if(!active)return;d.messages.at(-1).status=d.willFail?'发送失败':'已送达';go(d.willFail?2:3)},650)}
+if(s===1&&k==='message'){if(!d.messages.length)d.messages.push({id:'MSG-261110-1',text:'请帮我确认配送进度。',status:'发送中'});timer=setTimeout(()=>{if(!active)return;d.messages.at(-1).status=d.willFail?'发送失败':'已送达';go(d.willFail?2:3)},650)}
 if(s===1&&k==='recovery')later(3);
 if(s===1&&k==='execution'){timer=setTimeout(()=>{if(!active)return;d.step++;go(d.step>=3?3:1)},1000)}
 if(k==='hand'){const canvas=el.querySelector('canvas'),ctx=canvas.getContext('2d');let drawing=false,path;
@@ -926,9 +926,22 @@ return ()=>{active=false;clearTimeout(timer)};
 const SECTIONS=MODULE.sections.map(([id,name,names,use,avoid,spec])=>{const sec={id,name,group:'做法目录',desc:spec,use,avoid,spec,data:initial(id),states:names.split(',').map((name,i)=>({id:String(i),name}))};sec.render=s=>draw(sec,+s);sec.mount=(el,s)=>mount(sec,el,s);return sec});
 document.addEventListener('click',e=>{const b=e.target.closest('.g-states [data-st]');if(!b)return;let sec=SECTIONS.find(x=>x.id===b.closest('[data-sec]').dataset.sec);sec.data=preview(sec.id,+b.dataset.st)},true);
 Gallery.init({kind:'交互模块',title:MODULE.title,intro:MODULE.intro,sections:SECTIONS});
-const PROMPTS=[
-{title:'从零生成整套「'+MODULE.title+'」',when:'制作可点原型与状态规范',text:'用单文件离线HTML制作「'+MODULE.title+'」，中文。做法：'+MODULE.sections.map(x=>x[1]+'；状态'+x[2]+'；规则'+x[5]).join('\n')+'。左目录右演示，每种做法有什么时候用/别用、状态切换、HTML复制。错误可恢复、取消保护原数据，390宽无横向溢出，数据逐行不同且符合业务。仅本地模拟，不执行真实外部动作。交付完整代码、README和交互说明。'},
-{title:'改成我的业务',when:'保留交互骨架，替换数据和规则',text:'将「'+MODULE.title+'」改为 {{业务名称}}，角色 {{使用角色}}，数据 {{业务字段}}，约束 {{业务规则}}。保留全部状态、真实校验、取消与失败恢复、修改后重新核对、明确模拟边界。使用CSS变量支持明暗，390宽无横向溢出。交付单文件HTML与README。'},
-{title:'增加做法或状态',when:'补齐特有业务分支',text:'为「'+MODULE.title+'」增加 {{做法名称}}，包含状态 {{状态清单}}，适用场景 {{业务场景}}。沿用Gallery结构与主题，保留什么时候用/别用、复制HTML、错误可恢复和可见焦点。示例数据逐行不同，更新README，交付完整离线HTML。'}];
+const PROMPTS = [
+  {
+    "title": "从零构建激活任务清单",
+    "when": "建立完整离线演示",
+    "text": "请制作「激活任务清单」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n任务依赖与解锁（未开始,基础已完成,依赖阻断,核心已激活）；先完成组织资料，再导入商品，最后发布目录；只计算真实完成项。\n连接验证与恢复（待验证,验证中,验证失败,连接成功）；仅演示连接名，不收集凭证；测试失败可重试，成功后才标记完成。\n可选任务跳过（待处理,跳过核对,已跳过,已完成）；跳过不计入完成数，可恢复再执行；必选任务无跳过入口。\n团队任务认领（待认领,已分配,无权限,已完成）；仅管理员可分配，成员按任务认领；未验收不能标为完成。\n业务字段：任务名称、必做标记、依赖任务、完成数量、截止日期。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换激活任务清单业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「激活任务清单」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n任务依赖与解锁（未开始,基础已完成,依赖阻断,核心已激活）；先完成组织资料，再导入商品，最后发布目录；只计算真实完成项。\n连接验证与恢复（待验证,验证中,验证失败,连接成功）；仅演示连接名，不收集凭证；测试失败可重试，成功后才标记完成。\n可选任务跳过（待处理,跳过核对,已跳过,已完成）；跳过不计入完成数，可恢复再执行；必选任务无跳过入口。\n团队任务认领（待认领,已分配,无权限,已完成）；仅管理员可分配，成员按任务认领；未验收不能标为完成。\n逐一核对任务名称、必做标记、依赖任务、完成数量、截止日期的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对激活任务清单交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「激活任务清单」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n任务依赖与解锁（未开始,基础已完成,依赖阻断,核心已激活）；先完成组织资料，再导入商品，最后发布目录；只计算真实完成项。\n连接验证与恢复（待验证,验证中,验证失败,连接成功）；仅演示连接名，不收集凭证；测试失败可重试，成功后才标记完成。\n可选任务跳过（待处理,跳过核对,已跳过,已完成）；跳过不计入完成数，可恢复再执行；必选任务无跳过入口。\n团队任务认领（待认领,已分配,无权限,已完成）；仅管理员可分配，成员按任务认领；未验收不能标为完成。\n围绕业务字段任务名称、必做标记、依赖任务、完成数量、截止日期检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
+];
 Proto.prompts(PROMPTS);
 </script></body></html>

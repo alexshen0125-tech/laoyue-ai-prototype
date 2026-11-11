@@ -136,7 +136,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -801,7 +801,7 @@ const table=(head,rows)=>'<div class="m3-table-wrap"><table class="m3-table"><th
 const fail=()=>'<label><input type="checkbox" data-fail> 模拟下一次操作失败</label>';
 function initial(k){return {time:'',start:'22:00',end:'06:00',until:'2026-12-31',days:['周一'],amount:'120',code:'QM2611100826',refundType:'全单退款',validity:'未过期',province:k==='region'?'浙江省':'',city:k==='region'?'杭州市':'',district:k==='region'?'西湖区':'',name:'沈若宁',phone:'13864192753',detail:'杭州市西湖区文三路218号2幢602室',defaultId:'A',edit:'杭州市西湖区文三路218号2幢602室',operator:'全部',result:'全部',purpose:'',space:'栖木零售 · 商品研发',email:'',role:'观察者',member:'许清禾',owner:true,threshold:'80',a:'4000',b:'3000',request:'INV-261110-001',pending:false,action:'',...{}}}
 const BUSINESS_ROWS={"region": [["省", "市", "区 / 常用配送站"], [["浙江省", "杭州市", "西湖区 · 文三站"], ["浙江省", "杭州市", "拱墅区 · 湖墅站"], ["浙江省", "杭州市", "滨江区 · 长河站"], ["江苏省", "南京市", "鼓楼区 · 湖南路站"], ["江苏省", "南京市", "秦淮区 · 夫子庙站"]]], "validate": [["联系人", "手机号（业务虚构）", "收货要求"], [["沈若宁", "13864192753", "工作日18点后送达"], ["许清禾", "13958261470", "前台签收"], ["贺嘉言", "13780492631", "送至一楼书店"], ["叶书瑶", "13671943825", "周末送达"], ["唐可欣", "13592604718", "到达前电话联系"]]], "book": [["收件人", "详细地址", "标签"], [["沈若宁", "杭州市西湖区文三路218号2幢602室", "家中"], ["许清禾", "杭州市拱墅区湖墅南路156号3幢901室", "办公室"], ["贺嘉言", "杭州市滨江区江南大道588号1楼", "门店"], ["叶书瑶", "南京市鼓楼区湖南路86号5幢302室", "父母家"], ["唐可欣", "南京市秦淮区建康路128号4幢705室", "周末住址"]]], "coverage": [["配送区", "费用", "时效 / 替代"], [["西湖区", "10元", "次日送达"], ["拱墅区", "12元", "次日送达"], ["滨江区", "15元", "后日送达"], ["上城区", "12元", "次日送达"], ["临安区", "不配送", "文三店自提"]]], "delete": [["收件人", "地址简称", "处理影响"], [["沈若宁", "文三路家中", "删除后办公室设为默认"], ["许清禾", "湖墅南路办公室", "保留"], ["贺嘉言", "江南大道门店", "保留"], ["叶书瑶", "湖南路父母家", "保留"], ["唐可欣", "建康路住址", "保留"]]]};
-function businessTable(k,d,s){const source=BUSINESS_ROWS[k];if(!source||k==='query')return '';let [head,rows]=source;rows=rows.map(r=>r.slice());
+function businessTable(k,d,s){const source=BUSINESS_ROWS[k];if(!source||k==='query'||k==='book')return '';let [head,rows]=source;rows=rows.map(r=>r.slice());
 if(k==='slot'&&s===2){const row=rows.find(r=>r[1].startsWith(d.time));if(row)row[2]='刚被约满'}
 if(k==='book'){head=['收件人','详细地址','默认'];rows[0][1]=d.detail;rows.forEach((r,i)=>r[2]=(d.defaultId==='A'?i===0:i===1)?'默认':'—')}
 if(k==='delete'){rows.push(['陆时川','钱江路备用地址','保留']);if(s===2)rows=rows.slice(1)}
@@ -817,6 +817,7 @@ if(k==='export')rows[0][2]=['待生成','生成中','生成失败','可下载至
 if(k==='invite'&&s===3)rows.unshift([d.email,d.role,'已创建 '+d.request]);
 if(k==='diff'&&s===2)rows=rows.filter(r=>r[1]!==r[2]);
 return '<h4 style="margin:20px 0 8px">'+E(k==='diff'?'权限快照字段':k==='trace'?'关联事件时间线':'业务明细')+'</h4>'+table(head,rows)}
+function addressBook(d,s){const rows=BUSINESS_ROWS.book[1];return '<ul aria-label="地址簿">'+rows.map((r,i)=>'<li><strong>'+E(r[0])+'</strong><p>'+E(i===0?d.detail:r[1])+'</p><span>'+((d.defaultId==='A'?i===0:i===1)?'默认地址':E(r[2]))+'</span></li>').join('')+'</ul>'}
 function draw(sec,s){let d=sec.data,k=sec.id,h='';
 if(MODULE.id==='m-schedule'){
  if(k==='slot')h='<p>2026-11-12 · UTC+8 · 栖木西湖店 · 阅读顾问咨询 · 每时段30分钟</p><div class="m3-picks">'+['09:00','09:30','10:00','10:30','11:00'].map((t,i)=>`<button class="btn" data-time="${t}" aria-pressed="${d.time===t}">${t} · ${i===1?'约满':s===2&&t===d.time?'刚被约满':(['剩1名','约满','剩2名','剩3名','剩1名'][i])}</button>`).join('')+'</div>'+note(s===2?'该时段刚被预约，请重新选择；未扣款。':s===3?'预约成功：QM261110-BOOK-01，'+(d.time||'09:00')+'。':d.time?'已选择 '+d.time:'请选择可预约时段',s===2?'error':s===3?'ok':'info')+(s!==3?fail()+actions(btn('确认预约','book',!d.time||s===2)):actions(btn('重新演示','reset')));
@@ -835,7 +836,7 @@ if(MODULE.id==='m-coupon'){
 if(MODULE.id==='m-address'){
  if(k==='region')h=select('province','省',['','浙江省','江苏省'],d.province)+select('city','市',d.province?['',d.province==='浙江省'?'杭州市':'南京市']:[''],d.city)+select('district','区',d.city?(d.city==='杭州市'?['','西湖区','拱墅区','滨江区','上城区','临安区']:['','鼓楼区','秦淮区','建邺区','玄武区','栖霞区']):[''],d.district)+note(s===2?'上级地区已更换，下级已清空，请重新选择。':s===3?'已确认：'+[d.province,d.city,d.district].join(' / '):'请选择完整省、市、区。',s===3?'ok':'info')+actions(btn('确认地区','confirm'));
  if(k==='validate')h=field('name','收件人（必填）',d.name)+field('phone','手机号（必填，演示11位）',d.phone,'tel')+field('detail','详细地址（至少5字）',d.detail)+(s===1?note(d.error||'手机号须为11位数字；详细地址至少5字。','error'):s===2?note('请核对：'+[d.name,d.phone,d.detail].join(' · ')):s===3?note('地址已保存到当前页面内存。','ok'):'')+actions(btn('核对地址','check'),btn('保存地址','save',s!==2));
- if(k==='book')h=s===2?field('edit','沈若宁家中的详细地址',d.edit)+actions(btn('取消编辑','cancel'),btn('保存修改','save')):''+note(s===1?'默认地址已切换为许清禾办公室。':s===3?'已保存修改。':'当前默认地址仅有一条。')+actions(btn('设办公室为默认','default'),btn('编辑沈若宁家中','edit'));
+ if(k==='book')h=addressBook(d,s)+(s===2?field('edit','沈若宁家中的详细地址',d.edit)+actions(btn('取消编辑','cancel'),btn('保存修改','save')):''+note(s===1?'默认地址已切换为许清禾办公室。':s===3?'已保存修改。':'当前默认地址仅有一条。')+actions(btn('设办公室为默认','default'),btn('编辑沈若宁家中','edit')));
  if(k==='coverage')h=select('district','配送地区',['','西湖区','拱墅区','滨江区','上城区','临安区'],d.district)+note(s===1?(d.district+'可配送：配送费'+({'西湖区':10,'拱墅区':12,'滨江区':15,'上城区':12}[d.district]||10)+'元，预计'+(d.district==='滨江区'?'后日':'次日')+'送达。'):s===2?'临安区超出配送范围，可选择栖木书屋文三店自提。':s===3?'已选择栖木书屋文三店自提，杭州市西湖区文三路218号，营业09:00–18:00。':'请选择地区后判断范围。',s===2?'error':s===3?'ok':'info')+actions(btn('判断配送范围','check'),btn('改为门店自提','pickup',s!==2));
  if(k==='delete')h=note(s===2?'沈若宁家中已删除；默认地址改为许清禾办公室，可撤销。':s===3?'已恢复沈若宁家中及其默认身份。':s===1?'确认删除默认沈若宁家中？许清禾办公室将成为默认；历史订单地址不变。':'沈若宁家中：默认 · 杭州市西湖区文三路218号2幢602室。')+actions(...(s===1?[btn('保留地址','reset'),btn('确认删除','confirm')]:s===2?[btn('撤销删除','undo')]:[btn('删除沈若宁家中','ask')]));
 }
@@ -967,10 +968,22 @@ function previewData(k,s){const v=initial(k);
 }
 document.addEventListener('click',e=>{const b=e.target.closest('.g-states [data-st]');if(!b)return;const sec=SECTIONS.find(x=>x.id===b.closest('[data-sec]').dataset.sec);sec.data=previewData(sec.id,+b.dataset.st)},true);
 Gallery.init({kind:'交互模块',title:MODULE.title,intro:MODULE.intro,sections:SECTIONS});
-const PROMPTS=[
-{title:'从零生成整套「'+MODULE.title+'」',when:'需要可点的离线原型和规范',text:'请制作单文件离线HTML「'+MODULE.title+'」模块，中文，左侧搜索目录，右侧操作演示。做法与状态：'+MODULE.sections.map(s=>s[1]+'：'+s[2]+'；规则：'+s[5]).join('\n')+'。每种做法提供什么时候用/别用、状态切换、复制HTML和做法提示词。主题变量、明暗、可见焦点、手机44px触控；错误明确可恢复；输入变化后必须重新核对；示例数据标示例。不连接真实服务。交付完整代码与交互表。'},
-{title:'改成我的业务',when:'将演示替换为实际业务规则',text:'请将附件「'+MODULE.title+'」改为 {{业务名称}}，角色 {{用户角色}}，字段 {{字段列表}}，规则 {{业务规则}}。保留完整状态、返回、错误重试、修改后重新核对和确认前校验。全部使用CSS变量、离线HTML。交付完整代码、适用边界与交互说明。'},
-{title:'增加做法或状态',when:'补齐特定业务分支',text:'请为附件「'+MODULE.title+'」增加 {{做法名称}}，状态 {{状态清单}}，场景 {{使用场景}}。沿用Gallery.init结构，写什么时候用/别用，加入真实操作、输入校验、取消与失败恢复。更新README并交付可离线运行的完整HTML。'}
+const PROMPTS = [
+  {
+    "title": "从零构建地址与地区选择",
+    "when": "建立完整离线演示",
+    "text": "请制作「地址与地区选择」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n地区级联（未选择,已选地区,下级重置,已确认）；省变化清空市区；市变化清空区；未完成层级不可确认。\n联系人与详细地址（填写,校验错误,核对,保存成功）；中文姓名、11位演示手机号和详细地址必填；错误指向字段。\n地址簿与默认项（地址列表,新默认,编辑,已保存）；单一默认地址；编辑取消恢复原值，默认切换不删除其他项。\n配送范围判断（待判断,可配送,超出范围,已选择自提）；示例仅支持西湖区配送；临安区提供自提替代，不能强行下单。\n删除与恢复（地址列表,删除确认,已删除,已恢复）；删除前明确默认影响；删除后可撤销，恢复原默认身份。\n业务字段：收件人、手机号、省、市、区、详细地址、默认地址、配送费。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换地址与地区选择业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「地址与地区选择」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n地区级联（未选择,已选地区,下级重置,已确认）；省变化清空市区；市变化清空区；未完成层级不可确认。\n联系人与详细地址（填写,校验错误,核对,保存成功）；中文姓名、11位演示手机号和详细地址必填；错误指向字段。\n地址簿与默认项（地址列表,新默认,编辑,已保存）；单一默认地址；编辑取消恢复原值，默认切换不删除其他项。\n配送范围判断（待判断,可配送,超出范围,已选择自提）；示例仅支持西湖区配送；临安区提供自提替代，不能强行下单。\n删除与恢复（地址列表,删除确认,已删除,已恢复）；删除前明确默认影响；删除后可撤销，恢复原默认身份。\n逐一核对收件人、手机号、省、市、区、详细地址、默认地址、配送费的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对地址与地区选择交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「地址与地区选择」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n地区级联（未选择,已选地区,下级重置,已确认）；省变化清空市区；市变化清空区；未完成层级不可确认。\n联系人与详细地址（填写,校验错误,核对,保存成功）；中文姓名、11位演示手机号和详细地址必填；错误指向字段。\n地址簿与默认项（地址列表,新默认,编辑,已保存）；单一默认地址；编辑取消恢复原值，默认切换不删除其他项。\n配送范围判断（待判断,可配送,超出范围,已选择自提）；示例仅支持西湖区配送；临安区提供自提替代，不能强行下单。\n删除与恢复（地址列表,删除确认,已删除,已恢复）；删除前明确默认影响；删除后可撤销，恢复原默认身份。\n围绕业务字段收件人、手机号、省、市、区、详细地址、默认地址、配送费检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 Proto.prompts(PROMPTS);
 </script></body></html>
