@@ -146,7 +146,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -365,7 +365,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -376,8 +376,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -490,59 +491,43 @@ body.gal{background:var(--bg)}
 .fb-pop b{display:block;color:var(--ink-900);font-size:var(--fs-14);margin-bottom:4px}
 .fb-pop .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
 .fb-pop .acts .btn{height:30px;font-size:12px}
-.fb-help{width:22px;height:22px;border-radius:50%;border:0;background:none;color:var(--ink-500);display:grid;place-items:center;padding:0}
+.fb-help{width:32px;height:32px;border-radius:50%;border:0;background:none;color:var(--ink-500);display:grid;place-items:center;padding:0}
 .fb-help:hover{color:var(--ink-900);background:var(--line-soft)}
 @media (max-width:760px){.fb-cmp{grid-template-columns:1fr}.fb-notes{width:calc(100% - 28px)}}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.fb-help,.fb-undo{min-width:32px;min-height:32px} .btn[disabled],.btn.is-disabled{opacity:1;background:var(--surface-2);color:var(--ink-700)}
 </style>
 </head>
 <body>
 <script>
 const PROMPTS = [
-  { title: '从零生成整套「提示与反馈」交互模块',
-    when: '想要一份反馈类交互规范 + 可点演示时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「提示与反馈交互模块」演示页。
-
-页面结构：左侧目录（可搜索），右侧每种做法一张卡片：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、能真实操作的演示、「复制 HTML」按钮。
-
-要做的 8 种做法和状态：
-1. Toast 轻提示：成功 / 失败 / 带「撤销」/ 多条堆叠（最新的在下、旧的变淡缩小）。2.4 秒自动消失，带撤销的延长到 4 秒；失败提示写清原因。
-2. 通知卡片（右上角）：普通 / 带操作按钮 / 已关闭。可手动关闭，不自动消失的重要通知要有「查看」。
-3. 普通确认弹窗：标题是一个问句，正文写清后果，按钮写具体动作（如「确认 3 张」而不是「确定」）。Esc / 点遮罩关闭，焦点锁在弹窗里。
-4. 危险操作二次确认：列出会被删除的内容，要求输入名称才能点红色「永久删除」；删除中按钮转圈。
-5. 撤销 vs 先确认：同一列表对比「归档 → 立即执行 + 可撤销」和「永久删除 → 先确认」，写清各自适用场景。
-6. 进度：确定进度（百分比）/ 不确定进度（来回滑动）/ 分步骤长任务（可「放到后台」）/ 失败可重试。
-7. 横幅公告：信息 / 警告 / 已关闭（「不再提示」记在本机）。
-8. 气泡提示：悬停或聚焦出现的文字提示（Tooltip），以及点击出现、带操作按钮的气泡卡（Popover），Esc 关闭。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；语义色只用于成功 / 警告 / 失败；PC 可点元素 ≥32px；文字对比度 ≥4.5:1；动效只动 transform 和 opacity；图标用内联线性 SVG。示例文案标「示例」，不出现真实公司名。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把提示文案改成我的业务',
-    when: '已经下载了这个模块，想换成自己的场景时用',
-    text: `附件是一个单文件 HTML 的「提示与反馈交互模块」（index.html）。请把里面的示例文案改成我的业务：
-- 业务：{{业务名称，例如：门店排班系统}}
-- 用的人：{{角色，例如：店长}}
-- 最常见的 3 个操作和它们的后果：{{操作与后果，例如：发布排班（会通知全部店员）、删除班次（不可恢复）、复制上周排班}}
-- 最常见的出错原因：{{出错原因}}
-
-要求：
-1. 每个操作选对反馈方式：可撤销的用「立即执行 + 撤销」，不可恢复的用二次确认，影响多人的写明影响多少人；
-2. 弹窗按钮写具体动作，不写「确定 / 取消」；
-3. 出错文案写「出了什么事 + 你的内容保住了没 + 下一步怎么办」；
-4. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出你改了哪几处。` },
-  { title: '在此基础上加一种反馈 / 状态',
-    when: '模块里没有你要的反馈做法时用',
-    text: `附件是一个单文件 HTML 的「提示与反馈交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：离开页面前的未保存提醒}}」。
-
-要求：
-1. 照现有写法加一项 section：name、desc、use（什么时候用）、avoid（什么时候别用）、states、spec（交互要点）、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：无改动直接离开 / 有改动弹提醒 / 选择保存后离开}}；
-3. 反馈要在 100 毫秒内出现，文案写清后果和出路；
-4. 样式类名用 fb- 开头，颜色圆角只用已有的 CSS 变量；
-5. 加完后页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建提示与反馈",
+    "when": "建立完整离线演示",
+    "text": "请制作「提示与反馈」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\nToast 轻提示（成功、失败、带撤销、多条堆叠）；出现在顶部居中；成功 2.4 秒、带撤销 4 秒自动消失；失败写原因不写「操作失败」；同时多条时最新的在下，旧的变淡缩小，最多 3 条；读屏用 role=status 播报。\n通知卡片（右上角）（普通、带操作、已关闭）；从右侧滑入，叠在右上角；有关闭按钮；带操作的通知不自动消失，普通通知 6 秒后收起；点操作按钮后通知自动关闭并跳转；关闭后可在消息中心找回。\n普通确认弹窗（默认）；标题用问句写清要做什么和数量；正文写后果；主按钮写具体动作（「发布并通知 12 人」）不写「确定」；取消按钮写「再想想」；Esc、点遮罩关闭；打开时焦点在主按钮，Tab 只在弹窗里循环，关闭后焦点回到原按钮。\n危险操作二次确认（未输入、已输入名称、删除中）；标题带红色警示图标；列出会被一起删除的东西和数量；输入框要求输入完整名称，不一致时红色按钮置灰；删除中转圈并禁用；默认焦点在输入框而不是删除按钮；成功后 Toast 告诉结果。\n撤销 vs 先确认（对比）；撤销模式：点击立刻从列表消失，Toast「已归档 · 撤销」停留 4 秒，撤销后回到原位置；确认模式：点击先弹确认，确认后才删除。两边用同一份示例数据方便对比。\n进度（确定进度、不确定进度、分步骤长任务、失败可重试）；确定进度显示百分比和剩余数量；不确定进度用来回滑动条 + 说明在做什么；超过 10 秒的任务给「放到后台」，完成后用通知告诉你；失败时保留已完成部分，只重试失败的。\n横幅公告（信息、警告、已关闭）；信息用主色浅底、警告用琥珀浅底；写清时间和影响，给一个链接看详情；可关闭的横幅勾「不再提示」后记在本机，下次不出现；影响使用的警告不给关闭按钮。\n气泡提示（默认、Tooltip 显示、Popover 展开）；Tooltip 在悬停和键盘聚焦时都出现，延迟约 0.1 秒，不放可点内容；Popover 点击打开、再点或 Esc 或点外面关闭，打开时焦点进入卡片；图标按钮必须同时有 aria-label。\n业务字段：提示内容、反馈类型、持续时间、操作结果。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换提示与反馈业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「提示与反馈」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\nToast 轻提示（成功、失败、带撤销、多条堆叠）；出现在顶部居中；成功 2.4 秒、带撤销 4 秒自动消失；失败写原因不写「操作失败」；同时多条时最新的在下，旧的变淡缩小，最多 3 条；读屏用 role=status 播报。\n通知卡片（右上角）（普通、带操作、已关闭）；从右侧滑入，叠在右上角；有关闭按钮；带操作的通知不自动消失，普通通知 6 秒后收起；点操作按钮后通知自动关闭并跳转；关闭后可在消息中心找回。\n普通确认弹窗（默认）；标题用问句写清要做什么和数量；正文写后果；主按钮写具体动作（「发布并通知 12 人」）不写「确定」；取消按钮写「再想想」；Esc、点遮罩关闭；打开时焦点在主按钮，Tab 只在弹窗里循环，关闭后焦点回到原按钮。\n危险操作二次确认（未输入、已输入名称、删除中）；标题带红色警示图标；列出会被一起删除的东西和数量；输入框要求输入完整名称，不一致时红色按钮置灰；删除中转圈并禁用；默认焦点在输入框而不是删除按钮；成功后 Toast 告诉结果。\n撤销 vs 先确认（对比）；撤销模式：点击立刻从列表消失，Toast「已归档 · 撤销」停留 4 秒，撤销后回到原位置；确认模式：点击先弹确认，确认后才删除。两边用同一份示例数据方便对比。\n进度（确定进度、不确定进度、分步骤长任务、失败可重试）；确定进度显示百分比和剩余数量；不确定进度用来回滑动条 + 说明在做什么；超过 10 秒的任务给「放到后台」，完成后用通知告诉你；失败时保留已完成部分，只重试失败的。\n横幅公告（信息、警告、已关闭）；信息用主色浅底、警告用琥珀浅底；写清时间和影响，给一个链接看详情；可关闭的横幅勾「不再提示」后记在本机，下次不出现；影响使用的警告不给关闭按钮。\n气泡提示（默认、Tooltip 显示、Popover 展开）；Tooltip 在悬停和键盘聚焦时都出现，延迟约 0.1 秒，不放可点内容；Popover 点击打开、再点或 Esc 或点外面关闭，打开时焦点进入卡片；图标按钮必须同时有 aria-label。\n逐一核对提示内容、反馈类型、持续时间、操作结果的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对提示与反馈交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「提示与反馈」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\nToast 轻提示（成功、失败、带撤销、多条堆叠）；出现在顶部居中；成功 2.4 秒、带撤销 4 秒自动消失；失败写原因不写「操作失败」；同时多条时最新的在下，旧的变淡缩小，最多 3 条；读屏用 role=status 播报。\n通知卡片（右上角）（普通、带操作、已关闭）；从右侧滑入，叠在右上角；有关闭按钮；带操作的通知不自动消失，普通通知 6 秒后收起；点操作按钮后通知自动关闭并跳转；关闭后可在消息中心找回。\n普通确认弹窗（默认）；标题用问句写清要做什么和数量；正文写后果；主按钮写具体动作（「发布并通知 12 人」）不写「确定」；取消按钮写「再想想」；Esc、点遮罩关闭；打开时焦点在主按钮，Tab 只在弹窗里循环，关闭后焦点回到原按钮。\n危险操作二次确认（未输入、已输入名称、删除中）；标题带红色警示图标；列出会被一起删除的东西和数量；输入框要求输入完整名称，不一致时红色按钮置灰；删除中转圈并禁用；默认焦点在输入框而不是删除按钮；成功后 Toast 告诉结果。\n撤销 vs 先确认（对比）；撤销模式：点击立刻从列表消失，Toast「已归档 · 撤销」停留 4 秒，撤销后回到原位置；确认模式：点击先弹确认，确认后才删除。两边用同一份示例数据方便对比。\n进度（确定进度、不确定进度、分步骤长任务、失败可重试）；确定进度显示百分比和剩余数量；不确定进度用来回滑动条 + 说明在做什么；超过 10 秒的任务给「放到后台」，完成后用通知告诉你；失败时保留已完成部分，只重试失败的。\n横幅公告（信息、警告、已关闭）；信息用主色浅底、警告用琥珀浅底；写清时间和影响，给一个链接看详情；可关闭的横幅勾「不再提示」后记在本机，下次不出现；影响使用的警告不给关闭按钮。\n气泡提示（默认、Tooltip 显示、Popover 展开）；Tooltip 在悬停和键盘聚焦时都出现，延迟约 0.1 秒，不放可点内容；Popover 点击打开、再点或 Esc 或点外面关闭，打开时焦点进入卡片；图标按钮必须同时有 aria-label。\n围绕业务字段提示内容、反馈类型、持续时间、操作结果检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -823,11 +808,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -886,7 +887,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -934,7 +935,7 @@ const tst = (type, text, undo) => `<div class="fb-toast ${type}" role="status">$
 const try_ = btns => `<div class="fb-try">${btns}</div>`;
 const BKEY = 'fb-banner-dismissed';
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '提示与反馈',
   intro: '8 种常见反馈做法：轻提示、通知、确认、危险操作、撤销、进度、横幅、气泡。每种都能点，写清什么时候用、什么时候别用。',
@@ -975,7 +976,7 @@ Gallery.init({
     { id: 'confirm', group: '确认', name: '普通确认弹窗', desc: '做之前停一下：会影响别人、会花钱、会批量改东西时用。',
       use: '批量确认、发布、提交审批、发通知给客户 —— 能撤回但代价不小的操作。',
       avoid: '随手可撤销的操作（收藏、归档）—— 直接做 + 给撤销；每一步都弹确认，用户会养成不看就点的习惯。',
-      states: [{ id: 'default', name: '默认' }],
+      states: [{ id: 'default', name: '提示与反馈待操作' }],
       spec: '标题用问句写清要做什么和数量；正文写后果；主按钮写具体动作（「发布并通知 12 人」）不写「确定」；取消按钮写「再想想」；Esc、点遮罩关闭；打开时焦点在主按钮，Tab 只在弹窗里循环，关闭后焦点回到原按钮。',
       layout: 'center',
       render() { return `<div class="fb-col"><div class="fb-dialog" role="dialog" aria-label="示意"><h4>发布本周排班？</h4><p>发布后会通知 12 位店员（示例），他们会在手机上看到自己的班次。发布后仍可修改，修改会再次通知。</p><div class="fb-acts"><button class="btn" type="button">再想想</button><button class="btn btn-primary" type="button">发布并通知 12 人</button></div></div>${try_('<button class="btn btn-primary" type="button" data-try>试一下：打开真弹窗</button>')}</div>`; },
@@ -1003,7 +1004,7 @@ Gallery.init({
       avoid: '给不可恢复的操作配「撤销」—— 撤销失败比没撤销更糟；给高频小操作配确认弹窗 —— 烦。',
       states: [{ id: 'both', name: '对比' }],
       spec: '撤销模式：点击立刻从列表消失，Toast「已归档 · 撤销」停留 4 秒，撤销后回到原位置；确认模式：点击先弹确认，确认后才删除。两边用同一份示例数据方便对比。',
-      render() { this.a = ['示例任务 A', '示例任务 B', '示例任务 C']; this.b = ['示例任务 D', '示例任务 E', '示例任务 F']; return `<div class="fb-cmp"><div class="fb-pane"><h5>先执行，再给撤销</h5><p class="muted">归档能找回，所以不拦</p><div data-a></div></div><div class="fb-pane"><h5>先确认，再执行</h5><p class="muted">永久删除找不回，所以先问</p><div data-b></div></div></div>`; },
+      render() { this.a = ['冷藏柜温控巡检 A', '冷藏柜温控巡检 B', '冷藏柜温控巡检 C']; this.b = ['冷藏柜温控巡检 D', '冷藏柜温控巡检 E', '冷藏柜温控巡检 F']; return `<div class="fb-cmp"><div class="fb-pane"><h5>先执行，再给撤销</h5><p class="muted">归档能找回，所以不拦</p><div data-a></div></div><div class="fb-pane"><h5>先确认，再执行</h5><p class="muted">永久删除找不回，所以先问</p><div data-b></div></div></div>`; },
       mount(el) {
         const S = Gallery.cfg.sections.find(x => x.id === 'undo');
         const draw = () => { el.querySelector('[data-a]').innerHTML = S.a.map((t, i) => `<div class="fb-item"><span>${t}</span><button class="btn" type="button" data-arc="${i}">${ic('inbox', 'ic-sm')}归档</button></div>`).join('') || '<p class="muted" style="font-size:13px">都归档了</p>'; el.querySelector('[data-b]').innerHTML = S.b.map((t, i) => `<div class="fb-item"><span>${t}</span><button class="btn btn-danger" type="button" data-delb="${i}">${ic('trash', 'ic-sm')}永久删除</button></div>`).join('') || '<p class="muted" style="font-size:13px">都删了</p>'; };
@@ -1053,7 +1054,7 @@ Gallery.init({
     { id: 'tip', group: '公告', name: '气泡提示', desc: '悬停看一句解释；点击弹出一张带按钮的小卡。',
       use: 'Tooltip：图标按钮的名字、字段口径的一句话解释。Popover：需要多说几句或带一个操作（如「如何计算」「快速改状态」）。',
       avoid: '关键信息藏在气泡里 —— 手机上没有悬停，用户看不到；气泡里再套表单。',
-      states: [{ id: 'default', name: '默认' }, { id: 'tip', name: 'Tooltip 显示' }, { id: 'pop', name: 'Popover 展开' }],
+      states: [{ id: 'default', name: '提示与反馈待操作' }, { id: 'tip', name: 'Tooltip 显示' }, { id: 'pop', name: 'Popover 展开' }],
       spec: 'Tooltip 在悬停和键盘聚焦时都出现，延迟约 0.1 秒，不放可点内容；Popover 点击打开、再点或 Esc 或点外面关闭，打开时焦点进入卡片；图标按钮必须同时有 aria-label。',
       layout: 'center',
       render(s) {
@@ -1073,7 +1074,8 @@ Gallery.init({
         document.addEventListener('click', e => { if (!el.contains(e.target)) close(); });
       } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 function popHTML() { return `<div class="fb-pop" role="dialog" aria-label="快速改状态"><b>把这单改为「已完成」？</b>改完会通知下单人（示例），可以在详情里改回。<div class="acts"><button class="btn" type="button" data-popx>取消</button><button class="btn btn-primary" type="button" data-popok>改为已完成</button></div></div>`; }
 Proto.prompts(PROMPTS);
 </script>

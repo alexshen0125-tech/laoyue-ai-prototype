@@ -146,7 +146,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -365,7 +365,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -376,8 +376,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -503,6 +504,20 @@ body.gal{background:var(--bg)}
 .co-empty{text-align:center;padding:36px 20px}
 .co-empty .ic{width:40px;height:40px;color:var(--ink-300);margin-bottom:10px}
 .co-empty p{font-size:13px;color:var(--ink-500);margin-bottom:14px}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.co-item.dead .co-name,.co-item.dead .co-price{color:var(--ink-700)} .co-last{color:var(--ink-900)}
 </style>
 </head>
 <body>
@@ -511,51 +526,21 @@ body.gal{background:var(--bg)}
    AI 提示词（页面顶部「AI 提示词」打开；{{变量}} 点一下就能填）
    ========================================================================== */
 const PROMPTS = [
-  { title: '从零生成整套「支付与结算」交互模块',
-    when: '想要一份自己的下单支付交互规范 + 可点演示时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「支付与结算交互模块」演示页。
-
-页面结构：左侧目录（可搜索），右侧每种做法一张卡片。每张卡片包含：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可以真实操作的演示（手机宽度 420px 的卡片）、「复制 HTML」按钮。
-
-要做的 8 种做法和状态：
-1. 购物车：正常 / 有失效商品 / 空购物车。勾选、全选、数量加减（到库存上限置灰）、删除可撤销；合计、件数、「再买 ¥X 免运费」提示随勾选和数量实时变化；失效商品置灰并可一键清空。
-2. 确认订单：有默认地址 / 没有地址 / 商品清单展开。默认带出上次地址；没有地址时提交按钮旁提示先填地址；商品多时只显示缩略图和「共 N 件」，点开看全部。
-3. 优惠券：自动选最优 / 手动换券 / 没有可用券。进页面就选好减得最多的一张；不够门槛的券写「还差 ¥N 可用」；换券后应付金额立刻变。
-4. 支付方式：记住上次 / 首次购买。默认选上次用过的并标「上次使用」，记在本机。
-5. 价格明细：收起 / 展开公式。应付 = 商品金额 − 优惠 + 运费，展开后每一项都有数，用户不用自己算。
-6. 支付结果：支付中 / 成功 / 失败。失败页写明「这次没有扣款」，给「重新支付」和「换个方式」。
-7. 待支付与超时：待支付 / 已超时取消。写清「请在 11月10日 18:30 前支付」这样的截止时间，不做跳秒倒计时；超时后给「重新下单」。
-8. 退款进度：审核中 / 退款中 / 已到账 / 被驳回。时间线写每一步的时间；驳回写原因并给「重新申请」「联系客服」。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；金额用等宽数字；手机触控目标 ≥44px；文字对比度 ≥4.5:1；动效只动 transform 和 opacity；图标用内联线性 SVG。所有金额标「示例」，不出现真实公司名和品牌。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把支付与结算改成我的业务',
-    when: '已经下载了这个模块，想换成自己的商品和规则时用',
-    text: `附件是一个单文件 HTML 的「支付与结算交互模块」（index.html）。请把里面「{{要用的做法，例如：优惠券自动选最优}}」改成我的业务：
-- 卖什么：{{业务名称，例如：生鲜到家}}
-- 谁在买：{{角色，例如：餐厅采购}}
-- 计价规则：{{规则，例如：满 99 免运费，运费 8 元；优惠券不可叠加}}
-- 支付方式：{{支付方式清单}}
-
-要求：
-1. 只改这一种做法的数据和文案，保留它所有状态和交互；
-2. 所有金额由系统算，界面上展示公式，用户不用心算；
-3. 失败、超时、不可用都要说清原因和下一步；
-4. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出你改了哪几处。` },
-  { title: '在此基础上加一种做法 / 状态',
-    when: '模块里没有你要的结算做法时用',
-    text: `附件是一个单文件 HTML 的「支付与结算交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：分次支付（定金 + 尾款）}}」。
-
-要求：
-1. 照现有写法加一项 section：写清 name、desc、use、avoid、states、spec、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：待付定金 / 待付尾款 / 尾款超时 / 已完成}}；
-3. 截止时间写具体时刻，不做跳秒倒计时；金额都由系统算好；
-4. 样式类名用 co- 开头，颜色圆角只用已有 CSS 变量；
-5. 加完后页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建支付与结算",
+    "when": "建立完整离线演示",
+    "text": "请制作「支付与结算」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n购物车（正常、有失效商品、空购物车）；勾选、数量、全选任何一项改动，合计、件数、凑单提示同时更新；数量到库存上限「+」置灰；删除 Toast 4 秒内可撤销；失效商品不能勾选，集中放底部可一键清空；未勾选任何商品时结算按钮置灰。\n确认订单（有默认地址、没有地址、商品清单展开）；默认带出上次使用的地址并标「默认」，整块可点去换；没有地址时这块变成「+ 添加收货地址」，点提交时滚到这里并提示；商品超过 3 件只显示缩略图 +「共 N 件」，点开看明细，再点收起。\n优惠券自动选最优（自动选最优、手动换券、没有可用券）；按当前商品金额筛出可用券，默认选减得最多的并标「已为你选最优」；不够门槛的券置灰并写「还差 ¥N 可用」；换券后应付金额立刻变；也可以选「不使用优惠券」。\n支付方式记住上次（记住上次、首次购买）；上次用过的方式排第一、默认选中、标「上次使用」；首次购买默认选第一个最常用的；选择保存在本机，下次进来自动选好。\n价格明细与公式（收起、展开公式）；默认显示四行：商品金额、优惠、运费、应付；点「应付」右侧箭头展开计算公式，每个数都写出来；优惠用红色负号；金额等宽数字右对齐。\n支付中 / 成功 / 失败（支付中、成功、失败）；支付中：转圈 + 「请不要关闭页面」，按钮全部不可点；成功：金额、订单号、预计送达，主按钮「查看订单」；失败：第一句写「这次没有扣款」，给原因、「重新支付」和「换个方式」，订单保留到截止时间。\n待支付与超时取消（待支付、已超时取消）；待支付：顶部写「请在 11月10日 18:30 前支付，超时订单自动取消」（具体时刻，不跳秒）；已超时：说明已取消、没有扣款、库存已释放，给「重新下单」一键带回原商品。\n退款进度时间线（审核中、退款中、已到账、被驳回）；时间线写每一步的时间；当前步高亮并写「预计 X 前完成」；已到账写退到哪里；驳回写具体原因，给「重新申请」「联系客服」两个出路。\n业务字段：商品名称、单价、数量、库存、优惠金额、应付金额、支付状态。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换支付与结算业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「支付与结算」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n购物车（正常、有失效商品、空购物车）；勾选、数量、全选任何一项改动，合计、件数、凑单提示同时更新；数量到库存上限「+」置灰；删除 Toast 4 秒内可撤销；失效商品不能勾选，集中放底部可一键清空；未勾选任何商品时结算按钮置灰。\n确认订单（有默认地址、没有地址、商品清单展开）；默认带出上次使用的地址并标「默认」，整块可点去换；没有地址时这块变成「+ 添加收货地址」，点提交时滚到这里并提示；商品超过 3 件只显示缩略图 +「共 N 件」，点开看明细，再点收起。\n优惠券自动选最优（自动选最优、手动换券、没有可用券）；按当前商品金额筛出可用券，默认选减得最多的并标「已为你选最优」；不够门槛的券置灰并写「还差 ¥N 可用」；换券后应付金额立刻变；也可以选「不使用优惠券」。\n支付方式记住上次（记住上次、首次购买）；上次用过的方式排第一、默认选中、标「上次使用」；首次购买默认选第一个最常用的；选择保存在本机，下次进来自动选好。\n价格明细与公式（收起、展开公式）；默认显示四行：商品金额、优惠、运费、应付；点「应付」右侧箭头展开计算公式，每个数都写出来；优惠用红色负号；金额等宽数字右对齐。\n支付中 / 成功 / 失败（支付中、成功、失败）；支付中：转圈 + 「请不要关闭页面」，按钮全部不可点；成功：金额、订单号、预计送达，主按钮「查看订单」；失败：第一句写「这次没有扣款」，给原因、「重新支付」和「换个方式」，订单保留到截止时间。\n待支付与超时取消（待支付、已超时取消）；待支付：顶部写「请在 11月10日 18:30 前支付，超时订单自动取消」（具体时刻，不跳秒）；已超时：说明已取消、没有扣款、库存已释放，给「重新下单」一键带回原商品。\n退款进度时间线（审核中、退款中、已到账、被驳回）；时间线写每一步的时间；当前步高亮并写「预计 X 前完成」；已到账写退到哪里；驳回写具体原因，给「重新申请」「联系客服」两个出路。\n逐一核对商品名称、单价、数量、库存、优惠金额、应付金额、支付状态的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对支付与结算交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「支付与结算」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n购物车（正常、有失效商品、空购物车）；勾选、数量、全选任何一项改动，合计、件数、凑单提示同时更新；数量到库存上限「+」置灰；删除 Toast 4 秒内可撤销；失效商品不能勾选，集中放底部可一键清空；未勾选任何商品时结算按钮置灰。\n确认订单（有默认地址、没有地址、商品清单展开）；默认带出上次使用的地址并标「默认」，整块可点去换；没有地址时这块变成「+ 添加收货地址」，点提交时滚到这里并提示；商品超过 3 件只显示缩略图 +「共 N 件」，点开看明细，再点收起。\n优惠券自动选最优（自动选最优、手动换券、没有可用券）；按当前商品金额筛出可用券，默认选减得最多的并标「已为你选最优」；不够门槛的券置灰并写「还差 ¥N 可用」；换券后应付金额立刻变；也可以选「不使用优惠券」。\n支付方式记住上次（记住上次、首次购买）；上次用过的方式排第一、默认选中、标「上次使用」；首次购买默认选第一个最常用的；选择保存在本机，下次进来自动选好。\n价格明细与公式（收起、展开公式）；默认显示四行：商品金额、优惠、运费、应付；点「应付」右侧箭头展开计算公式，每个数都写出来；优惠用红色负号；金额等宽数字右对齐。\n支付中 / 成功 / 失败（支付中、成功、失败）；支付中：转圈 + 「请不要关闭页面」，按钮全部不可点；成功：金额、订单号、预计送达，主按钮「查看订单」；失败：第一句写「这次没有扣款」，给原因、「重新支付」和「换个方式」，订单保留到截止时间。\n待支付与超时取消（待支付、已超时取消）；待支付：顶部写「请在 11月10日 18:30 前支付，超时订单自动取消」（具体时刻，不跳秒）；已超时：说明已取消、没有扣款、库存已释放，给「重新下单」一键带回原商品。\n退款进度时间线（审核中、退款中、已到账、被驳回）；时间线写每一步的时间；当前步高亮并写「预计 X 前完成」；已到账写退到哪里；驳回写具体原因，给「重新申请」「联系客服」两个出路。\n围绕业务字段商品名称、单价、数量、库存、优惠金额、应付金额、支付状态检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -836,11 +821,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -899,7 +900,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -949,7 +950,7 @@ const FREE = 99, SHIP = 8;
 const stepper = (i, q, max) => `<div class="stepper" role="group" aria-label="数量"><button type="button" data-dec="${i}" aria-label="减少" ${q <= 1 ? 'disabled' : ''}>${ic('minus', 'ic-sm')}</button><input value="${q}" inputmode="numeric" aria-label="数量" data-q="${i}"><button type="button" data-inc="${i}" aria-label="增加" ${q >= max ? 'disabled' : ''}>${ic('plus', 'ic-sm')}</button></div>`;
 const COUPONS = [{ id: 'c1', off: 10, min: 99, name: '满 99 减 10' }, { id: 'c2', off: 20, min: 199, name: '满 199 减 20' }, { id: 'c3', off: 5, min: 30, name: '满 30 减 5' }];
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '支付与结算',
   intro: '从购物车到退款到账的 8 种做法：金额全部系统算好、失败说清扣没扣钱、超时写截止时刻。示例金额均为示例。',
@@ -1004,7 +1005,7 @@ Gallery.init({
         const goods = [['示例 · 有机燕麦片', 39.9, 1], ['示例 · 鲜牛奶 1L', 12.5, 2], ['示例 · 全麦吐司', 15, 1], ['示例 · 土鸡蛋 30 枚', 32, 1], ['示例 · 番茄 1kg', 9.8, 2]];
         const sum = goods.reduce((a, g) => a + g[1] * g[2], 0), n = goods.reduce((a, g) => a + g[2], 0);
         const addr = s === 'none' ? `<button class="co-addr empty" type="button" data-addaddr>${ic('plus')}添加收货地址<span style="margin-left:auto;font-size:12px;color:var(--ink-500);font-weight:400">下单前必须填</span></button>`
-          : `<button class="co-addr" type="button" data-chg>${ic('pin')}<div style="flex:1"><b>王小明 138****5678</b><span class="def">默认</span><p>示例市示例区青石路 88 号 3 栋 1201</p></div>${ic('chev-r', 'ic-sm')}</button>`;
+          : `<button class="co-addr" type="button" data-chg>${ic('pin')}<div style="flex:1"><b>王小明 138****5678</b><span class="def">默认</span><p>杭州市西湖区青石路 88 号 3 栋 1201</p></div>${ic('chev-r', 'ic-sm')}</button>`;
         const list = s === 'open' ? goods.map(g => `<div class="co-item"><div class="co-thumb">示例</div><div class="co-info"><div class="co-name">${g[0]}</div><div class="co-row"><span class="co-price">${M(g[1])}</span><span class="co-spec">× ${g[2]}</span></div></div></div>`).join('') + `<div class="co-thumbs"><button class="more" type="button" data-fold>收起 ${ic('chev-u', 'ic-sm')}</button></div>`
           : `<div class="co-thumbs">${goods.slice(0, 4).map(() => '<div class="co-thumb">示例</div>').join('')}<button class="more" type="button" data-unfold>共 ${n} 件 ${ic('chev-d', 'ic-sm')}</button></div>`;
         return `<div class="co-card"><div class="co-hd">确认订单</div>${addr}<div class="co-bd">${list}</div><div class="co-bar"><span class="sp co-total">应付 <b>${M(sum)}</b></span><button class="btn btn-primary" type="button" data-submit>提交订单</button></div></div>`;
@@ -1124,15 +1125,16 @@ Gallery.init({
       render(s) {
         const steps = [['提交申请', '11-10 09:12'], ['商家审核', s === 'review' ? '预计 11-11 09:12 前处理' : '11-10 10:30'], ['原路退款', s === 'paying' ? '预计 1–3 个工作日到账' : s === 'done' ? '11-10 10:31' : ''], ['到账', s === 'done' ? '11-11 14:05 · 已退回尾号 8821 银行卡' : '']];
         const idx = { review: 1, paying: 2, done: 4, reject: 1 }[s];
-        const li = steps.map((x, i) => { if (s === 'reject') { if (i === 0) return `<li class="done"><b>${x[0]}</b><span>${x[1]}</span></li>`; if (i === 1) return `<li class="bad"><b>审核未通过</b><span>11-10 10:30</span><div class="why">原因：商品已拆封且超过 7 天（示例）</div></li>`; return ''; }
-          const c = i < idx ? 'done' : i === idx ? 'cur' : 'todo'; return `<li class="${c}"><b>${x[0]}</b><span>${x[1] || '—'}</span></li>`; }).join('');
+        const timeline = '<ul class="co-tl" aria-label="退款进度">'+steps.map((x, i) => { if (s === 'reject') { if (i === 0) return `<li class="done"><b>${x[0]}</b><span>${x[1]}</span></li>`; if (i === 1) return `<li class="bad"><b>审核未通过</b><span>11-10 10:30</span><div class="why">原因：商品已拆封且超过 7 天（示例）</div></li>`; return ''; }
+          const c = i < idx ? 'done' : i === idx ? 'cur' : 'todo'; return `<li class="${c}"><b>${x[0]}</b><span>${x[1] || '—'}</span></li>`; }).join('')+'</ul>';
         const tag = { review: ['tag-warning', '审核中'], paying: ['tag-info', '退款中'], done: ['tag-success', '已到账'], reject: ['tag-danger', '被驳回'] }[s];
-        return `<div class="co-card"><div class="co-hd">退款 ¥39.90<span class="sp"></span><span class="tag ${tag[0]}">${tag[1]}</span></div><div class="co-bd"><ul class="co-tl">${li}</ul></div>
+        return `<div class="co-card"><div class="co-hd">退款 ¥39.90<span class="sp"></span><span class="tag ${tag[0]}">${tag[1]}</span></div><div class="co-bd">${timeline}</div>
           ${s === 'reject' ? '<div class="co-bar"><span class="sp"></span><button class="btn" type="button" data-toast="这里接在线客服">联系客服</button><button class="btn btn-primary" type="button" data-toast="这里接退款申请表（带上次填的内容）">重新申请</button></div>' : ''}</div>`;
       },
       mount(el) { el.addEventListener('click', e => { const b = e.target.closest('[data-toast]'); if (b) toast(b.dataset.toast, '', T); }); } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 </script>
 </body>

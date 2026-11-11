@@ -146,7 +146,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -365,7 +365,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -376,8 +376,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -493,6 +494,20 @@ body.gal{background:var(--bg)}
 .cm-sk{background:linear-gradient(90deg,var(--line-soft),var(--surface-2),var(--line-soft));background-size:200% 100%;animation:cmSk 1.2s linear infinite;border-radius:var(--r-sm)}
 @keyframes cmSk{to{background-position:-200% 0}}
 
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+
 </style>
 </head>
 <body>
@@ -501,49 +516,21 @@ body.gal{background:var(--bg)}
    AI 提示词（页面顶部「AI 提示词」打开；{{变量}} 点一下就能填）
    ========================================================================== */
 const PROMPTS = [
-  { title: '从零生成整套「评论与互动」交互模块',
-    when: '产品要做评论区、评价，想先把各种状态定下来时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「评论与互动交互模块」演示页。
-
-页面结构：左侧目录（可搜索），右侧每种做法一张卡片。每张卡片包含：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可以真实操作的演示、「复制 HTML」按钮。
-
-要做的 7 种做法和状态：
-1. 评论列表：有评论 / 加载中（骨架）/ 没有评论 / 加载失败。可按「最热 / 最新」切换；没有评论时引导写第一条；失败给重试。
-2. 回复楼中楼：折叠 / 展开 / 回复中。只显示前 2 条回复，「展开 N 条回复」；回复时输入框上方写「回复 @某某」，可取消。
-3. 点赞：未赞 / 已赞 / 点赞失败回滚。点了立刻变色加一（乐观更新），失败自动退回并提示。
-4. 发评论（@ 提及与表情）：空 / @ 联想中 / 发送中 / 发送失败。输入 @ 弹出成员联想，可键盘上下选择；字数实时显示，超了标红禁用发送；失败保留输入内容可重发。
-5. 举报与删除：默认 / 选择举报原因 / 已举报。举报后该评论对自己隐藏并可「仍要查看」；删除自己的评论先确认。
-6. 评分与评价：未评分 / 已评分填写中 / 已提交。点星即评分并显示文字含义；给常用标签可直接点选；内容选填。
-7. 评价汇总与筛选：汇总 / 筛选「有图」/ 筛选无结果。平均分与各星级占比由数据算出；筛选无结果给「清除筛选」。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；可点区域 ≥32px；文字对比度 ≥4.5:1；动效只动 transform 和 opacity；图标用内联线性 SVG；示例人名全部虚构，不出现真实公司名和品牌。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把评论区改成我的产品',
-    when: '已经下载了这个模块，想换成自己的评论对象和规则时用',
-    text: `附件是一个单文件 HTML 的「评论与互动交互模块」（index.html）。请改成我的产品：
-- 产品：{{产品名称，例如：社区团购小程序}}
-- 被评论 / 评价的东西：{{对象，例如：商品、团长服务}}
-- 评价标签：{{标签清单，例如：新鲜 / 分量足 / 包装好 / 送得快}}
-- 举报原因：{{举报原因清单}}
-- 规则：{{规则，例如：评论最多 300 字，确认收货后 15 天内可评价}}
-
-要求：
-1. 改 COMMENTS、REVIEWS 等数据和文案，保留所有做法的状态和交互；
-2. 平均分、星级占比由数据算出，不写死；
-3. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出你改了哪几处。` },
-  { title: '在此基础上加一种做法 / 状态',
-    when: '模块里没有你要的互动形式时用',
-    text: `附件是一个单文件 HTML 的「评论与互动交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：商家回复评价（追评与商家回复）}}」。
-
-要求：
-1. 照现有写法加一项 section：写清 name、desc、use、avoid、states、spec、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：未回复 / 回复中 / 已回复 / 买家追评}}；
-3. 样式类名用 cm- 开头，颜色圆角只用已有 CSS 变量；
-4. 加完后页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建评论与互动",
+    "when": "建立完整离线演示",
+    "text": "请制作「评论与互动」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n评论列表（有评论、加载中、没有评论、加载失败）；标题写「评论 N」；右侧「最热 / 最新」分段切换，默认最热；加载中显示 3 条骨架；没有评论时写「还没有人评论，说说你的看法」并聚焦输入框；失败写原因 +「重试」，不影响正文阅读。\n回复楼中楼（折叠、展开、回复中）；回复只嵌一层，回复回复用「@某某」写在正文前；默认露前 2 条 +「展开 N 条回复」；展开后可「收起」；点「回复」后底部输入框上方写「回复 @某某」并聚焦，带 × 取消；作者的回复标「作者」。\n点赞（先变后报）（未赞、已赞、点赞失败回滚）；点击立刻变红、数字加一、图标轻弹一下（只动 transform）；后台请求失败 → 自动退回原状态并 Toast 说明；再点一次取消赞，数字减一；按钮 aria-pressed 跟着变，读屏能听到。「点赞失败回滚」状态下第一次点击演示失败。\n发评论（@ 提及与表情）（空、@ 联想中、发送中、发送失败）；输入 @ 弹出成员联想，继续输入按名字过滤，↑↓ 选择、回车确认、Esc 关闭；选中后插入「@名字 」；表情面板点一下插入光标处；右下角「N / 300」实时显示，超出标红且发送禁用；空内容发送按钮禁用；发送中禁用输入；失败保留内容，写原因 +「重新发送」。\n举报与删除（默认、选择举报原因、已举报）；每条评论右侧「更多」：别人的评论显示「举报」，自己的显示「删除」；举报原因单选（垃圾广告 / 人身攻击 / 违法违规 / 其他），选「其他」才出现补充说明；提交后该评论对自己折叠成「你已举报这条评论，处理前对你隐藏」+「仍要查看」；删除先确认并说明回复一起删除。\n评分与评价（未评分、已评分填写中、已提交）；5 颗星，悬停 / 点击即显示含义（很差 → 非常满意）；没评分时提交禁用；评分后出现常用标签（4–5 星给正面标签，1–3 星给问题标签），点选即可；文字和图片选填；提交后写清「已评价，可在 30 天内追评一次」。\n评价汇总与筛选（汇总、筛选「有图」、筛选无结果）；左侧平均分（保留 1 位小数）+ 评价数，右侧 5→1 星占比条，全部由 REVIEWS 算出；筛选标签写条数「有图 2」「差评 1」，点选即筛，再点取消；无结果写「没有符合条件的评价」+「清除筛选」。\n业务字段：评论编号、作者、评论内容、回复对象、审核原因。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换评论与互动业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「评论与互动」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n评论列表（有评论、加载中、没有评论、加载失败）；标题写「评论 N」；右侧「最热 / 最新」分段切换，默认最热；加载中显示 3 条骨架；没有评论时写「还没有人评论，说说你的看法」并聚焦输入框；失败写原因 +「重试」，不影响正文阅读。\n回复楼中楼（折叠、展开、回复中）；回复只嵌一层，回复回复用「@某某」写在正文前；默认露前 2 条 +「展开 N 条回复」；展开后可「收起」；点「回复」后底部输入框上方写「回复 @某某」并聚焦，带 × 取消；作者的回复标「作者」。\n点赞（先变后报）（未赞、已赞、点赞失败回滚）；点击立刻变红、数字加一、图标轻弹一下（只动 transform）；后台请求失败 → 自动退回原状态并 Toast 说明；再点一次取消赞，数字减一；按钮 aria-pressed 跟着变，读屏能听到。「点赞失败回滚」状态下第一次点击演示失败。\n发评论（@ 提及与表情）（空、@ 联想中、发送中、发送失败）；输入 @ 弹出成员联想，继续输入按名字过滤，↑↓ 选择、回车确认、Esc 关闭；选中后插入「@名字 」；表情面板点一下插入光标处；右下角「N / 300」实时显示，超出标红且发送禁用；空内容发送按钮禁用；发送中禁用输入；失败保留内容，写原因 +「重新发送」。\n举报与删除（默认、选择举报原因、已举报）；每条评论右侧「更多」：别人的评论显示「举报」，自己的显示「删除」；举报原因单选（垃圾广告 / 人身攻击 / 违法违规 / 其他），选「其他」才出现补充说明；提交后该评论对自己折叠成「你已举报这条评论，处理前对你隐藏」+「仍要查看」；删除先确认并说明回复一起删除。\n评分与评价（未评分、已评分填写中、已提交）；5 颗星，悬停 / 点击即显示含义（很差 → 非常满意）；没评分时提交禁用；评分后出现常用标签（4–5 星给正面标签，1–3 星给问题标签），点选即可；文字和图片选填；提交后写清「已评价，可在 30 天内追评一次」。\n评价汇总与筛选（汇总、筛选「有图」、筛选无结果）；左侧平均分（保留 1 位小数）+ 评价数，右侧 5→1 星占比条，全部由 REVIEWS 算出；筛选标签写条数「有图 2」「差评 1」，点选即筛，再点取消；无结果写「没有符合条件的评价」+「清除筛选」。\n逐一核对评论编号、作者、评论内容、回复对象、审核原因的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对评论与互动交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「评论与互动」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n评论列表（有评论、加载中、没有评论、加载失败）；标题写「评论 N」；右侧「最热 / 最新」分段切换，默认最热；加载中显示 3 条骨架；没有评论时写「还没有人评论，说说你的看法」并聚焦输入框；失败写原因 +「重试」，不影响正文阅读。\n回复楼中楼（折叠、展开、回复中）；回复只嵌一层，回复回复用「@某某」写在正文前；默认露前 2 条 +「展开 N 条回复」；展开后可「收起」；点「回复」后底部输入框上方写「回复 @某某」并聚焦，带 × 取消；作者的回复标「作者」。\n点赞（先变后报）（未赞、已赞、点赞失败回滚）；点击立刻变红、数字加一、图标轻弹一下（只动 transform）；后台请求失败 → 自动退回原状态并 Toast 说明；再点一次取消赞，数字减一；按钮 aria-pressed 跟着变，读屏能听到。「点赞失败回滚」状态下第一次点击演示失败。\n发评论（@ 提及与表情）（空、@ 联想中、发送中、发送失败）；输入 @ 弹出成员联想，继续输入按名字过滤，↑↓ 选择、回车确认、Esc 关闭；选中后插入「@名字 」；表情面板点一下插入光标处；右下角「N / 300」实时显示，超出标红且发送禁用；空内容发送按钮禁用；发送中禁用输入；失败保留内容，写原因 +「重新发送」。\n举报与删除（默认、选择举报原因、已举报）；每条评论右侧「更多」：别人的评论显示「举报」，自己的显示「删除」；举报原因单选（垃圾广告 / 人身攻击 / 违法违规 / 其他），选「其他」才出现补充说明；提交后该评论对自己折叠成「你已举报这条评论，处理前对你隐藏」+「仍要查看」；删除先确认并说明回复一起删除。\n评分与评价（未评分、已评分填写中、已提交）；5 颗星，悬停 / 点击即显示含义（很差 → 非常满意）；没评分时提交禁用；评分后出现常用标签（4–5 星给正面标签，1–3 星给问题标签），点选即可；文字和图片选填；提交后写清「已评价，可在 30 天内追评一次」。\n评价汇总与筛选（汇总、筛选「有图」、筛选无结果）；左侧平均分（保留 1 位小数）+ 评价数，右侧 5→1 星占比条，全部由 REVIEWS 算出；筛选标签写条数「有图 2」「差评 1」，点选即筛，再点取消；无结果写「没有符合条件的评价」+「清除筛选」。\n围绕业务字段评论编号、作者、评论内容、回复对象、审核原因检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -824,11 +811,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -887,7 +890,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -933,29 +936,29 @@ const T = { host: document.body };
 const setSt = (id, st) => { $$('#' + id + ' .g-states [data-st]').forEach(b => b.setAttribute('aria-pressed', b.dataset.st === st)); Gallery.show(id, st); };
 // 示例数据：改这里，所有做法跟着变
 const COMMENTS = [
-  { n: '李示例', t: '备货表那张模板太实用了，我们店照着改了一版，盘点快了一半。', time: '2 小时前', like: 128, au: false, replies: [['王示例', '谢谢！模板第二页还有到货周期的算法，可以一起用', true], ['赵示例', '请问冻品的周期你们按几天算？', false], ['李示例', '@赵示例 我们按 3 天，供应商每周一三五送', false], ['孙示例', '收藏了', false]] },
-  { n: '周示例', t: '能不能出一期讲损耗怎么记的？', time: '5 小时前', like: 36, au: false, replies: [] },
-  { n: '钱示例', t: '第三步和我们实际流程不一样，我们是先验收再入库。', time: '昨天', like: 9, au: false, replies: [] }
+  { n: '李嘉禾', t: '备货表那张模板太实用了，我们店照着改了一版，盘点快了一半。', time: '2 小时前', like: 128, au: false, replies: [['王知行', '谢谢！模板第二页还有到货周期的算法，可以一起用', true], ['赵清越', '请问冻品的周期你们按几天算？', false], ['李嘉禾', '@赵清越 我们按 3 天，供应商每周一三五送', false], ['孙沐阳', '收藏了', false]] },
+  { n: '周雨宁', t: '能不能出一期讲损耗怎么记的？', time: '5 小时前', like: 36, au: false, replies: [] },
+  { n: '钱安和', t: '第三步和我们实际流程不一样，我们是先验收再入库。', time: '昨天', like: 9, au: false, replies: [] }
 ];
-const PEOPLE = [['李示例', '店长'], ['赵示例', '采购'], ['孙示例', '仓管'], ['周示例', '财务']];
+const PEOPLE = [['李嘉禾', '店长'], ['赵清越', '采购'], ['孙沐阳', '仓管'], ['周雨宁', '财务']];
 const REVIEWS = [
-  { n: '陈示例', s: 5, t: '菜很新鲜，送得也准时。', tags: ['新鲜', '送得快'], img: 2, time: '11月9日' },
-  { n: '吴示例', s: 4, t: '分量足，就是包装有点压扁。', tags: ['分量足'], img: 0, time: '11月8日' },
-  { n: '郑示例', s: 5, t: '第三次买了，稳定。', tags: ['新鲜'], img: 1, time: '11月6日' },
-  { n: '冯示例', s: 2, t: '到货晚了一个小时。', tags: [], img: 0, time: '11月5日' },
-  { n: '褚示例', s: 5, t: '', tags: ['包装好'], img: 0, time: '11月3日' }
+  { n: '陈星禾', s: 5, t: '菜很新鲜，送得也准时。', tags: ['新鲜', '送得快'], img: 2, time: '11月9日' },
+  { n: '吴嘉宁', s: 4, t: '分量足，就是包装有点压扁。', tags: ['分量足'], img: 0, time: '11月8日' },
+  { n: '郑书言', s: 5, t: '第三次买了，稳定。', tags: ['新鲜'], img: 1, time: '11月6日' },
+  { n: '冯景初', s: 2, t: '到货晚了一个小时。', tags: [], img: 0, time: '11月5日' },
+  { n: '褚云舒', s: 5, t: '', tags: ['包装好'], img: 0, time: '11月3日' }
 ];
 const STAR_TXT = ['', '很差', '较差', '一般', '满意', '非常满意'];
 const MAX = 300;
 const likeBtn = (n, on) => `<button class="cm-act ${on ? 'on' : ''}" type="button" data-like aria-pressed="${!!on}" aria-label="点赞">${ic('heart')}<span class="n">${n}</span></button>`;
-const item = (c, i, extra = '') => `<div class="cm-item"><span class="cm-av">${c.n[0]}</span><div class="cm-main"><div class="cm-name">${c.n}${c.au ? '<span class="au">作者</span>' : ''}</div><p class="cm-text">${esc(c.t)}</p><div class="cm-meta"><span>${c.time}</span>${likeBtn(c.like)}<button class="cm-act" type="button" data-reply="${c.n}">${ic('msg')}回复</button></div>${extra}</div></div>`;
+const item = (c, i, extra = '') => `<div class="cm-item" data-speaker="评论作者" role="article" aria-label="评论与回复"><span class="cm-av">${c.n[0]}</span><div class="cm-main"><div class="cm-name">${c.n}${c.au ? '<span class="au">作者</span>' : ''}</div><p class="cm-text">${esc(c.t)}</p><div class="cm-meta"><span>${c.time}</span>${likeBtn(c.like)}<button class="cm-act" type="button" data-reply="${c.n}">${ic('msg')}回复</button></div>${extra}</div></div>`;
 const bindLikes = (el, failOnce) => { let failed = !failOnce; el.addEventListener('click', e => { const b = e.target.closest('[data-like]'); if (!b) return; const on = b.getAttribute('aria-pressed') !== 'true', n = $('.n', b);
   const apply = v => { b.classList.toggle('on', v); b.setAttribute('aria-pressed', v); n.textContent = +n.textContent + (v ? 1 : -1); };
   apply(on); b.classList.remove('pop'); void b.offsetWidth; if (on) b.classList.add('pop');
   if (!failed) { failed = true; setTimeout(() => { if (!b.isConnected) return; apply(!on); toast('网络不太好，没赞上，已恢复原样', 'err', T); }, 700); } }); };
 const mini = s => `<span class="cm-mini" aria-label="${s} 星">${Array.from({ length: 5 }, (_, i) => i < s ? ic('star') : '').join('')}</span>`;
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '评论与互动',
   intro: '7 种评论与评价做法：点赞先变后报、回复只露 2 条、@ 有联想、举报后先对自己隐藏、评分由数据算。人名内容均为示例。',
@@ -968,7 +971,7 @@ Gallery.init({
       spec: '标题写「评论 N」；右侧「最热 / 最新」分段切换，默认最热；加载中显示 3 条骨架；没有评论时写「还没有人评论，说说你的看法」并聚焦输入框；失败写原因 +「重试」，不影响正文阅读。',
       render(s) {
         const hd = n => `<div class="cm-hd">评论 ${n}<span class="sp"></span><div class="seg" role="group" aria-label="排序"><button type="button" aria-pressed="true" data-sort="hot">最热</button><button type="button" aria-pressed="false" data-sort="new">最新</button></div></div>`;
-        if (s === 'loading') return `<div class="cm-card">${hd('')}<div class="cm-bd" aria-busy="true">${[1, 2, 3].map(() => `<div class="cm-item"><span class="cm-av cm-sk"></span><div class="cm-main"><div class="cm-sk" style="height:12px;width:30%;margin-bottom:8px"></div><div class="cm-sk" style="height:12px;width:90%;margin-bottom:6px"></div><div class="cm-sk" style="height:12px;width:60%"></div></div></div>`).join('')}</div></div>`;
+        if (s === 'loading') return `<div class="cm-card">${hd('')}<div class="cm-bd" aria-busy="true">${[1, 2, 3].map(() => `<div class="cm-item" data-speaker="评论作者" role="article" aria-label="评论与回复"><span class="cm-av cm-sk"></span><div class="cm-main"><div class="cm-sk" style="height:12px;width:30%;margin-bottom:8px"></div><div class="cm-sk" style="height:12px;width:90%;margin-bottom:6px"></div><div class="cm-sk" style="height:12px;width:60%"></div></div></div>`).join('')}</div></div>`;
         if (s === 'none') return `<div class="cm-card">${hd(0)}<div class="cm-bd"><div class="cm-empty">${ic('msg')}<p>还没有人评论，说说你的看法</p></div></div><div class="cm-box"><textarea class="textarea" placeholder="写下第一条评论" aria-label="评论内容"></textarea><div class="cm-tools"><span class="sp"></span><button class="btn btn-primary" type="button" data-send>发布</button></div></div></div>`;
         if (s === 'err') return `<div class="cm-card">${hd('')}<div class="cm-bd"><div class="cm-note err">${ic('alert')}<span>评论没加载出来（网络超时），正文不受影响。</span></div><button class="btn" type="button" data-retry>${ic('refresh')}重试</button><div style="height:12px"></div></div></div>`;
         return `<div class="cm-card">${hd(COMMENTS.length)}<div class="cm-bd" data-list>${COMMENTS.map((c, i) => item(c, i)).join('')}</div></div>`;
@@ -990,10 +993,10 @@ Gallery.init({
       spec: '回复只嵌一层，回复回复用「@某某」写在正文前；默认露前 2 条 +「展开 N 条回复」；展开后可「收起」；点「回复」后底部输入框上方写「回复 @某某」并聚焦，带 × 取消；作者的回复标「作者」。',
       render(s) {
         const c = COMMENTS[0], show = s === 'open' ? c.replies : c.replies.slice(0, 2);
-        const sub = `<div class="cm-sub">${show.map(r => `<div class="cm-item"><span class="cm-av sm">${r[0][0]}</span><div class="cm-main"><div class="cm-name">${r[0]}${r[2] ? '<span class="au">作者</span>' : ''}</div><p class="cm-text" style="margin-bottom:0">${esc(r[1]).replace(/@(\S+?示例)/, '<span class="at">@$1</span>')}</p><div class="cm-meta"><button class="cm-act" type="button" data-reply="${r[0]}">回复</button></div></div></div>`).join('')}
+        const sub = `<div class="cm-sub">${show.map(r => `<div class="cm-item" data-speaker="评论作者" role="article" aria-label="评论与回复"><span class="cm-av sm">${r[0][0]}</span><div class="cm-main"><div class="cm-name">${r[0]}${r[2] ? '<span class="au">作者</span>' : ''}</div><p class="cm-text" style="margin-bottom:0">${esc(r[1]).replace(/@([\u4e00-\u9fff]{2,4})/, '<span class="at">@$1</span>')}</p><div class="cm-meta"><button class="cm-act" type="button" data-reply="${r[0]}">回复</button></div></div></div>`).join('')}
           ${c.replies.length > 2 ? `<button class="cm-more" type="button" data-toggle>${s === 'open' ? '收起' : `展开 ${c.replies.length - 2} 条回复`}</button>` : ''}</div>`;
         return `<div class="cm-card"><div class="cm-hd">评论</div><div class="cm-bd">${item(c, 0, sub)}</div>
-          <div class="cm-box">${s === 'replying' ? `<div class="reply-to">回复 <b style="color:var(--accent)">@赵示例</b><button type="button" data-cancel aria-label="取消回复">${ic('x', 'ic-sm')}</button></div>` : ''}<textarea class="textarea" placeholder="${s === 'replying' ? '回复 @赵示例' : '写评论'}" aria-label="评论内容"></textarea><div class="cm-tools"><span class="sp"></span><button class="btn btn-primary" type="button" data-send>发送</button></div></div></div>`;
+          <div class="cm-box">${s === 'replying' ? `<div class="reply-to">回复 <b style="color:var(--accent)">@赵清越</b><button type="button" data-cancel aria-label="取消回复">${ic('x', 'ic-sm')}</button></div>` : ''}<textarea class="textarea" placeholder="${s === 'replying' ? '回复 @赵清越' : '写评论'}" aria-label="评论内容"></textarea><div class="cm-tools"><span class="sp"></span><button class="btn btn-primary" type="button" data-send>发送</button></div></div></div>`;
       },
       mount(el, s) {
         bindLikes(el);
@@ -1024,7 +1027,7 @@ Gallery.init({
       states: [{ id: 'empty', name: '空' }, { id: 'at', name: '@ 联想中' }, { id: 'sending', name: '发送中' }, { id: 'fail', name: '发送失败' }],
       spec: '输入 @ 弹出成员联想，继续输入按名字过滤，↑↓ 选择、回车确认、Esc 关闭；选中后插入「@名字 」；表情面板点一下插入光标处；右下角「N / 300」实时显示，超出标红且发送禁用；空内容发送按钮禁用；发送中禁用输入；失败保留内容，写原因 +「重新发送」。',
       render(s) {
-        const val = { empty: '', at: '模板第二页的周期算法可以看下 @', sending: '模板第二页的周期算法可以看下 @赵示例 ', fail: '模板第二页的周期算法可以看下 @赵示例 ' }[s];
+        const val = { empty: '', at: '模板第二页的周期算法可以看下 @', sending: '模板第二页的周期算法可以看下 @赵清越 ', fail: '模板第二页的周期算法可以看下 @赵清越 ' }[s];
         return `<div class="cm-card"><div class="cm-hd">发表评论</div>${s === 'fail' ? `<div style="padding:0 18px"><div class="cm-note err">${ic('alert')}<span>没发出去（网络超时），内容已保留，可以直接重新发送。</span></div></div>` : ''}
           <div class="cm-box" style="border-top:0"><textarea class="textarea" aria-label="评论内容" placeholder="写评论，输入 @ 提到同事" ${s === 'sending' ? 'disabled' : ''}>${esc(val)}</textarea>
           <div class="cm-tools"><button class="btn btn-ghost" type="button" data-attool aria-label="提到某人" ${s === 'sending' ? 'disabled' : ''}>@</button><button class="btn btn-ghost" type="button" data-emo aria-label="表情" aria-expanded="false" ${s === 'sending' ? 'disabled' : ''}>表情</button><span class="sp"></span><span class="cnt" data-cnt></span><button class="btn btn-primary" type="button" data-send>${s === 'sending' ? '<span class="spin"></span>发送中' : s === 'fail' ? '重新发送' : '发送'}</button></div></div></div>`;
@@ -1049,19 +1052,19 @@ Gallery.init({
           if ('emo' in b.dataset) { if (pop) return close(); pop = document.createElement('div'); pop.className = 'cm-pop'; pop.innerHTML = `<div class="cm-emo">${['😀', '😂', '👍', '🙏', '👏', '🎉', '🤔', '😅', '❤️', '🔥', '👌', '😮', '😢', '💪', '✅', '📌'].map(x => `<button type="button" data-e="${x}" aria-label="插入 ${x}">${x}</button>`).join('')}</div>`; box.appendChild(pop); b.setAttribute('aria-expanded', 'true'); }
           if ('send' in b.dataset && !b.disabled) setSt('compose', 'sending'); });
         upd(); if (s === 'at') { ta.focus({ preventScroll: true }); ta.selectionStart = ta.selectionEnd = ta.value.length; showAt(); }
-        if (s === 'sending') { ta.disabled = true; t = setTimeout(() => { setSt('compose', 'empty'); toast('已发送，并通知了 @赵示例', 'ok', T); }, 1200); }
+        if (s === 'sending') { ta.disabled = true; t = setTimeout(() => { setSt('compose', 'empty'); toast('已发送，并通知了 @赵清越', 'ok', T); }, 1200); }
         return () => clearTimeout(t); } },
 
     /* ---------------- 5. 举报与删除 ---------------- */
     { id: 'report', group: '互动', name: '举报与删除', desc: '举报后先对自己隐藏；删自己的评论先确认。',
       use: '任何有用户内容的评论区、社区。',
       avoid: '举报要填一大段说明；举报后那条评论还在眼前；删除自己的评论不确认、也不说回复会怎样。',
-      states: [{ id: 'menu', name: '默认' }, { id: 'reason', name: '选择举报原因' }, { id: 'done', name: '已举报' }],
+      states: [{ id: 'menu', name: '评论与互动待操作' }, { id: 'reason', name: '选择举报原因' }, { id: 'done', name: '已举报' }],
       spec: '每条评论右侧「更多」：别人的评论显示「举报」，自己的显示「删除」；举报原因单选（垃圾广告 / 人身攻击 / 违法违规 / 其他），选「其他」才出现补充说明；提交后该评论对自己折叠成「你已举报这条评论，处理前对你隐藏」+「仍要查看」；删除先确认并说明回复一起删除。',
       render(s) {
         const other = COMMENTS[2], mine = { n: '我', t: '我们店也遇到过，先验收再入库更稳。', time: '刚刚', like: 0 };
         const more = who => `<button class="btn btn-ghost btn-icon" type="button" data-more="${who}" aria-label="更多操作" style="margin-left:auto">${ic('more')}</button>`;
-        const otherBody = s === 'done' ? `<div class="cm-item"><span class="cm-av">${other.n[0]}</span><div class="cm-main"><div class="cm-name">${other.n}</div><div class="cm-hidden">你已举报这条评论，处理前对你隐藏。<button class="btn-link" type="button" data-peek>仍要查看</button></div></div></div>` : item(other, 0).replace('<div class="cm-name">', '<div class="cm-name" style="display:flex;align-items:center">').replace(`${other.n}</div>`, `${other.n}${more('other')}</div>`);
+        const otherBody = s === 'done' ? `<div class="cm-item" data-speaker="评论作者" role="article" aria-label="评论与回复"><span class="cm-av">${other.n[0]}</span><div class="cm-main"><div class="cm-name">${other.n}</div><div class="cm-hidden">你已举报这条评论，处理前对你隐藏。<button class="btn-link" type="button" data-peek>仍要查看</button></div></div></div>` : item(other, 0).replace('<div class="cm-name">', '<div class="cm-name" style="display:flex;align-items:center">').replace(`${other.n}</div>`, `${other.n}${more('other')}</div>`);
         const mineBody = item(mine, 0).replace('<div class="cm-name">', '<div class="cm-name" style="display:flex;align-items:center">').replace('我</div>', `我${more('mine')}</div>`);
         const reason = s === 'reason' ? `<div class="cm-box"><b style="font-size:14px">举报这条评论</b><div class="cm-reasons" role="radiogroup" aria-label="举报原因">${['垃圾广告', '人身攻击', '违法违规', '其他'].map((r, i) => `<label><input type="radio" name="cm-r" value="${r}" ${i === 0 ? 'checked' : ''}>${r}</label>`).join('')}</div><textarea class="textarea" data-other placeholder="补充说明（选填）" style="display:none" aria-label="补充说明"></textarea><div class="cm-tools"><span class="sp"></span><button class="btn" type="button" data-back>取消</button><button class="btn btn-primary" type="button" data-submit>提交举报</button></div></div>` : '';
         return `<div class="cm-card"><div class="cm-hd">评论</div><div class="cm-bd">${otherBody}${mineBody}</div>${reason}${s === 'done' ? `<div style="padding:0 18px 14px"><div class="cm-note ok" style="margin:0">${ic('check-c')}<span>已收到举报，处理结果会在消息里告诉你。</span></div></div>` : ''}</div>`;
@@ -1119,13 +1122,14 @@ Gallery.init({
         return `<div class="cm-card"><div class="cm-hd">评价 ${n}<span class="sp"></span><span style="font-size:12px;color:var(--ink-500);font-weight:400">示例数据</span></div><div class="cm-bd">
           <div class="cm-sum"><div class="big"><b>${avg}</b>${mini(Math.round(avg))}<br><span>${n} 条评价</span></div><div class="cm-bars">${[5, 4, 3, 2, 1].map(k => { const c = REVIEWS.filter(r => r.s === k).length; return `<div class="cm-bar"><span>${k} 星</span><i style="--w:${c / n * 100}%"></i><span>${Math.round(c / n * 100)}%</span></div>`; }).join('')}</div></div>
           <div class="cm-chips" style="margin:12px 0 4px">${chips.map(c => `<button type="button" data-f="${c[0]}" aria-pressed="${c[0] === cur}">${c[1]} ${c[2]}</button>`).join('')}</div>
-          ${list.length ? list.map(r => `<div class="cm-item"><span class="cm-av">${r.n[0]}</span><div class="cm-main"><div class="cm-name">${r.n} ${mini(r.s)}</div>${r.t ? `<p class="cm-text">${esc(r.t)}</p>` : '<p class="cm-text" style="color:var(--ink-500)">用户没有写文字评价</p>'}${r.img ? `<div class="cm-imgs">${Array.from({ length: r.img }, () => '<span>示例图</span>').join('')}</div>` : ''}<div class="cm-meta"><span>${r.time}</span>${r.tags.map(t => `<span class="tag plain">${t}</span>`).join('')}</div></div></div>`).join('') : `<div class="cm-empty">${ic('filter')}<p>没有符合条件的评价</p><button class="btn" type="button" data-f="all" style="margin-top:10px">清除筛选</button></div>`}</div></div>`;
+          ${list.length ? list.map(r => `<div class="cm-item" data-speaker="评论作者" role="article" aria-label="评论与回复"><span class="cm-av">${r.n[0]}</span><div class="cm-main"><div class="cm-name">${r.n} ${mini(r.s)}</div>${r.t ? `<p class="cm-text">${esc(r.t)}</p>` : '<p class="cm-text" style="color:var(--ink-500)">用户没有写文字评价</p>'}${r.img ? `<div class="cm-imgs">${Array.from({ length: r.img }, () => '<span>示例图</span>').join('')}</div>` : ''}<div class="cm-meta"><span>${r.time}</span>${r.tags.map(t => `<span class="tag plain">${t}</span>`).join('')}</div></div></div>`).join('') : `<div class="cm-empty">${ic('filter')}<p>没有符合条件的评价</p><button class="btn" type="button" data-f="all" style="margin-top:10px">清除筛选</button></div>`}</div></div>`;
       },
       mount(el, s) { el.addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (!b) return; const f = b.dataset.f;
         const cur = s === 'none' ? 'txt' : s === 'img' ? 'img' : 'all';
         if (f === 'img') setSt('summary', cur === 'img' ? 'all' : 'img'); else if (f === 'txt') setSt('summary', cur === 'txt' ? 'all' : 'none'); else if (f === 'all') setSt('summary', 'all'); else toast('「差评 1」：示例只演示「有图」和「中评（无结果）」两种筛选', '', T); }); } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 
 </script>

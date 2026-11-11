@@ -146,7 +146,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -365,7 +365,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -376,8 +376,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -509,55 +510,42 @@ body.gal{background:var(--bg)}
 .ob-limit{font-size:12px;color:var(--ink-500);min-height:18px}
 .ob-limit.warn{color:var(--warning)}
 @media (max-width:700px){.ob-body{grid-template-columns:1fr}.ob-empty .steps{grid-template-columns:1fr}.ob-opts{grid-template-columns:1fr}}
+.ob-dots{list-style:none;padding:0}.ob-dots li{display:flex}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.ob-empty .st b i{background:#16171A;color:#FFFFFF} .ob-dots button,.ob-dots button.on{position:relative;width:32px;height:32px;min-width:32px;min-height:32px;background:transparent;border-radius:0} .ob-dots button::before{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:8px;height:8px;margin:0;border-radius:4px;background:var(--line)} .ob-dots button.on::before{width:22px;background:var(--ink-900)}
+@media(max-width:700px),(pointer:coarse){.ob-dots button,.ob-dots button.on{width:44px;height:44px;min-width:44px;min-height:44px}}
 </style>
 </head>
 <body>
 <script>
 const PROMPTS = [
-  { title: '从零生成整套「引导与新手」交互模块',
-    when: '想要一份自己的新手引导规范 + 可点演示时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「引导与新手」交互模块演示页。
-
-页面结构：左侧目录（可搜索），右侧每种做法一张卡片：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可真实操作的演示、「复制 HTML」按钮。
-
-要做的 7 种做法和状态：
-1. 欢迎页（3 屏）：第 1 / 2 / 3 屏。每屏一句价值 + 一句说明；右上角「跳过」；圆点可点；最后一屏按钮变「开始使用」。
-2. 功能聚光灯：第 1–4 步 / 已完成。遮罩只露出要介绍的按钮（挖洞高亮），旁边气泡写清这里能做什么；有「上一步 / 下一步 / 跳过」和进度「2/4」；Esc 可跳过。
-3. 新手任务清单：刚开始 0/4 / 进行中 2/4 / 全部完成 / 已收起。进度条跟着完成数走；每项有「去完成」；全部完成显示一次简短祝贺，不放烟花，可关闭。
-4. 空态即引导：空 / 已建第一条。空页面直接写 3 步怎么开始，只放一个主按钮「新建第一个」；建好后列表出现第一条并高亮。
-5. 新功能气泡：未看过 / 已看过。新功能按钮上小红点，点开气泡说明，「知道了」后红点和气泡都不再出现（记在本机）；提供「重置演示」。
-6. 随时重看引导：默认 / 帮助菜单展开。右上角帮助图标里有「重看新手引导」「快捷键」「帮助中心」。
-7. 个性化问卷：未选 / 已选 2 项 / 已选满 3 项 / 已提交。选 1–3 项；选满后其他选项置灰并说明；可「跳过」；提交后告诉用户首页会怎么变。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；中性配色、留白充足；PC 可点元素 ≥32px，手机 ≥44px；文字对比度 ≥4.5:1；动效只动 transform 和 opacity，用 cubic-bezier 缓动；图标用内联线性 SVG。引导永远能跳过、能重看，不强迫。示例数据标「示例」，不出现真实公司名。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把引导改成我的产品',
-    when: '已下载这个模块，想换成自己产品的引导内容时用',
-    text: `附件是一个单文件 HTML 的「引导与新手」交互模块（index.html）。请把「{{要用的做法，例如：功能聚光灯}}」改成我的产品：
-- 产品：{{产品名称与一句话用途}}
-- 第一次使用的人：{{角色，例如：刚开通账号的门店店长}}
-- 新手最该先做的 3–4 件事：{{关键动作清单}}
-- 用户完成引导后应该看到什么：{{完成后的结果}}
-
-要求：
-1. 只改这一种做法的文案和步骤，保留它所有状态和交互（跳过、上一步下一步、进度、完成态）；
-2. 每一步只讲一件事，一句话说清「这里能做什么」，不写功能介绍长文；
-3. 引导必须能跳过、能重看；
-4. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出你改了哪几处。` },
-  { title: '在此基础上加一种引导做法 / 状态',
-    when: '模块里没有你要的引导方式时用',
-    text: `附件是一个单文件 HTML 的「引导与新手」交互模块（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：示例数据一键体验（先用演示数据看效果，再一键清空换成自己的）}}」。
-
-要求：
-1. 照现有做法的写法加一项 section：name、desc、use、avoid、states、spec、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：未体验 / 体验中（顶部提示这是示例数据）/ 已清空}}；
-3. 用户随时能退出，退出后不留下示例数据；
-4. 样式类名用 ob- 开头，颜色圆角只用已有的 CSS 变量；
-5. 加完后页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建引导与新手",
+    "when": "建立完整离线演示",
+    "text": "请制作「引导与新手」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n欢迎页（3 屏）（第 1 屏、第 2 屏、第 3 屏）；每屏只讲一个价值（标题一句 + 说明一句）；右上角「跳过」始终在；圆点可点、可左右滑；最后一屏按钮变「开始使用」；跳过和开始都进首页，以后不再出现。\n功能聚光灯（第 1 步、第 2 步、第 3 步、第 4 步、已完成）；高亮框平滑移动到下一个目标；气泡写「这里能做什么」和进度 2/4；「上一步 / 下一步 / 跳过」，Esc 等于跳过；完成后遮罩消失，提示可在帮助里重看。\n新手任务清单（刚开始 0/4、进行中 2/4、全部完成、已收起）；进度条和「2/4」跟着完成数实时变；每项右侧「去完成」；已完成的打勾划线、排在原位不跳动；可收起成一条细条；全部完成显示一次简短祝贺 + 「关闭清单」，不放烟花。\n空态即引导（空、已建第一条）；空态写清 3 步怎么开始，只放一个主按钮「新建第一个」，次要出路（导入、看示例）用文字链；建好后第一条高亮出现，并提示下一步可以做什么。\n新功能小红点 + 气泡（未看过、已看过）；红点只标一个入口；点入口或点红点弹出气泡（一句话 + 「知道了」）；点「知道了」或用过这个功能后，红点和气泡都不再出现，记在本机；Esc 关闭气泡。\n随时重看引导（默认、帮助菜单展开）；右上角固定一个帮助图标；菜单里第一项是「重看新手引导」，还有快捷键、帮助中心、联系客服；菜单可用键盘上下选，Esc 关闭并回到图标。\n个性化问卷（未选、已选 2 项、已选满 3 项、已提交）；最多选 3 项；选满后其他选项置灰并写「最多选 3 项，取消一个再选」；没选时「完成」置灰但「跳过」一直可点；提交后说清首页会怎么变。\n业务字段：欢迎页标题、引导步骤、任务名称、完成数量、帮助入口。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换引导与新手业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「引导与新手」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n欢迎页（3 屏）（第 1 屏、第 2 屏、第 3 屏）；每屏只讲一个价值（标题一句 + 说明一句）；右上角「跳过」始终在；圆点可点、可左右滑；最后一屏按钮变「开始使用」；跳过和开始都进首页，以后不再出现。\n功能聚光灯（第 1 步、第 2 步、第 3 步、第 4 步、已完成）；高亮框平滑移动到下一个目标；气泡写「这里能做什么」和进度 2/4；「上一步 / 下一步 / 跳过」，Esc 等于跳过；完成后遮罩消失，提示可在帮助里重看。\n新手任务清单（刚开始 0/4、进行中 2/4、全部完成、已收起）；进度条和「2/4」跟着完成数实时变；每项右侧「去完成」；已完成的打勾划线、排在原位不跳动；可收起成一条细条；全部完成显示一次简短祝贺 + 「关闭清单」，不放烟花。\n空态即引导（空、已建第一条）；空态写清 3 步怎么开始，只放一个主按钮「新建第一个」，次要出路（导入、看示例）用文字链；建好后第一条高亮出现，并提示下一步可以做什么。\n新功能小红点 + 气泡（未看过、已看过）；红点只标一个入口；点入口或点红点弹出气泡（一句话 + 「知道了」）；点「知道了」或用过这个功能后，红点和气泡都不再出现，记在本机；Esc 关闭气泡。\n随时重看引导（默认、帮助菜单展开）；右上角固定一个帮助图标；菜单里第一项是「重看新手引导」，还有快捷键、帮助中心、联系客服；菜单可用键盘上下选，Esc 关闭并回到图标。\n个性化问卷（未选、已选 2 项、已选满 3 项、已提交）；最多选 3 项；选满后其他选项置灰并写「最多选 3 项，取消一个再选」；没选时「完成」置灰但「跳过」一直可点；提交后说清首页会怎么变。\n逐一核对欢迎页标题、引导步骤、任务名称、完成数量、帮助入口的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对引导与新手交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「引导与新手」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n欢迎页（3 屏）（第 1 屏、第 2 屏、第 3 屏）；每屏只讲一个价值（标题一句 + 说明一句）；右上角「跳过」始终在；圆点可点、可左右滑；最后一屏按钮变「开始使用」；跳过和开始都进首页，以后不再出现。\n功能聚光灯（第 1 步、第 2 步、第 3 步、第 4 步、已完成）；高亮框平滑移动到下一个目标；气泡写「这里能做什么」和进度 2/4；「上一步 / 下一步 / 跳过」，Esc 等于跳过；完成后遮罩消失，提示可在帮助里重看。\n新手任务清单（刚开始 0/4、进行中 2/4、全部完成、已收起）；进度条和「2/4」跟着完成数实时变；每项右侧「去完成」；已完成的打勾划线、排在原位不跳动；可收起成一条细条；全部完成显示一次简短祝贺 + 「关闭清单」，不放烟花。\n空态即引导（空、已建第一条）；空态写清 3 步怎么开始，只放一个主按钮「新建第一个」，次要出路（导入、看示例）用文字链；建好后第一条高亮出现，并提示下一步可以做什么。\n新功能小红点 + 气泡（未看过、已看过）；红点只标一个入口；点入口或点红点弹出气泡（一句话 + 「知道了」）；点「知道了」或用过这个功能后，红点和气泡都不再出现，记在本机；Esc 关闭气泡。\n随时重看引导（默认、帮助菜单展开）；右上角固定一个帮助图标；菜单里第一项是「重看新手引导」，还有快捷键、帮助中心、联系客服；菜单可用键盘上下选，Esc 关闭并回到图标。\n个性化问卷（未选、已选 2 项、已选满 3 项、已提交）；最多选 3 项；选满后其他选项置灰并写「最多选 3 项，取消一个再选」；没选时「完成」置灰但「跳过」一直可点；提交后说清首页会怎么变。\n围绕业务字段欢迎页标题、引导步骤、任务名称、完成数量、帮助入口检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -838,11 +826,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -901,7 +905,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -946,7 +950,7 @@ const { $, $$, ic, esc, toast } = Proto;
 const T = { host: document.body };
 const setSt = (id, st) => { $$('#' + id + ' .g-states [data-st]').forEach(b => b.setAttribute('aria-pressed', b.dataset.st === String(st))); Gallery.show(id, String(st)); };
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '引导与新手',
   intro: '7 种新手引导做法：从欢迎页、聚光灯、任务清单到新功能气泡。每种都能点、能跳过、能重看。复制 HTML 粘进原型，或复制提示词交给 AI 换成你的产品。',
@@ -963,7 +967,7 @@ Gallery.init({
         return `<div class="ob-phone"><div class="ob-top">${i < 2 ? '<button class="ob-skip" type="button" data-skip>跳过</button>' : ''}</div>
           <div class="ob-art"><div class="ob-shape">${ic(d[0])}</div></div>
           <div class="ob-copy"><h4>${d[1]}</h4><p>${d[2]}</p></div>
-          <div class="ob-dots" role="tablist" aria-label="第几屏">${this.data.map((_, k) => `<button type="button" class="${k === i ? 'on' : ''}" data-dot="${k}" aria-label="第 ${k + 1} 屏" ${k === i ? 'aria-current="true"' : ''}></button>`).join('')}</div>
+          <ol class="ob-dots" aria-label="欢迎页步骤">${this.data.map((_, k) => `<li><button type="button" class="${k === i ? 'on' : ''}" data-dot="${k}" aria-label="第 ${k + 1} 屏" ${k === i ? 'aria-current="true"' : ''}></button></li>`).join('')}</ol>
           <div class="ob-foot"><button class="btn btn-primary" type="button" data-next>${i < 2 ? '下一步' : '开始使用'}</button></div></div>`; },
       mount(el, s) { const i = +s; let x0 = null;
         el.addEventListener('click', e => {
@@ -1019,11 +1023,11 @@ Gallery.init({
         if (s === 'min') return `<button class="ob-mini" type="button" data-expand>${ic('check-c', 'ic-sm')}<span>新手任务 ${n}/4</span><span class="ob-prog"><i style="width:${n * 25}%"></i></span>${ic('chev-u', 'ic-sm')}</button>`;
         if (n === 4) return `<div class="ob-card"><div class="ob-done"><div class="ob-ok">${ic('check')}</div><h4>4 件事都做完了</h4><p>门店已经能正常开单了。清单关闭后可在「帮助」里找回。</p><button class="btn btn-primary" type="button" data-close>关闭清单</button></div></div>`;
         return `<div class="ob-card"><div class="ob-card-hd"><h4>开始使用前，先做这 4 件事</h4><span class="num" data-num>${n}/4</span><button class="btn btn-ghost btn-icon" type="button" data-min aria-label="收起">${ic('chev-d')}</button></div>
-          <div class="ob-prog"><i data-bar style="width:${n * 25}%"></i></div>
+          <div class="ob-prog" role="progressbar" aria-label="新手任务完成数" aria-valuemin="0" aria-valuemax="4" aria-valuenow="${n}"><i data-bar style="width:${n * 25}%"></i></div>
           <ul class="ob-tasks">${T4.map((t, k) => `<li class="ob-task ${k < n ? 'done' : ''}" data-k="${k}"><span class="ck">${k < n ? ic('check') : ''}</span><span class="tx"><span>${t[0]}</span><small>${t[1]}</small></span>${k < n ? '' : `<button class="btn" type="button" data-do="${k}">去完成</button>`}</li>`).join('')}</ul></div>`; },
       mount(el, s) { const sec = Gallery.cfg.sections.find(x => x.id === 'check');
         el.addEventListener('click', e => {
-          const d = e.target.closest('[data-do]'); if (d) { const li = d.closest('.ob-task'); li.classList.add('done'); li.querySelector('.ck').innerHTML = ic('check'); d.remove(); const n = $$('.ob-task.done', el).length; sec.n = n; el.querySelector('[data-num]').textContent = n + '/4'; el.querySelector('[data-bar]').style.width = n * 25 + '%'; toast(`已完成「${sec.tasks[+d.dataset.do][0]}」`, 'ok', T); if (n === 4) setTimeout(() => setSt('check', 4), 500); }
+          const d = e.target.closest('[data-do]'); if (d) { const li = d.closest('.ob-task'); li.classList.add('done'); li.querySelector('.ck').innerHTML = ic('check'); d.remove(); const n = $$('.ob-task.done', el).length; sec.n = n; el.querySelector('[data-num]').textContent = n + '/4'; el.querySelector('[data-bar]').style.width = n * 25 + '%'; el.querySelector('[role=progressbar]').setAttribute('aria-valuenow',n); toast(`已完成「${sec.tasks[+d.dataset.do][0]}」`, 'ok', T); if (n === 4) setTimeout(() => setSt('check', 4), 500); }
           if (e.target.closest('[data-min]')) setSt('check', 'min');
           if (e.target.closest('[data-expand]')) setSt('check', 2);
           if (e.target.closest('[data-close]')) toast('清单已关闭，可在「帮助」里找回', '', T);
@@ -1066,7 +1070,7 @@ Gallery.init({
     { id: 'replay', group: '持续使用', name: '随时重看引导', desc: '引导看过就没了？在帮助菜单里留一个「重看」入口。',
       use: '所有做了引导的产品都要有；尤其是跳过了引导、过几天回来忘了的用户。',
       avoid: '不要把「重看引导」藏在设置的三级菜单里；也不要每次登录都自动弹。',
-      states: [{ id: 'closed', name: '默认' }, { id: 'open', name: '帮助菜单展开' }],
+      states: [{ id: 'closed', name: '引导与新手待操作' }, { id: 'open', name: '帮助菜单展开' }],
       layout: 'center',
       spec: '右上角固定一个帮助图标；菜单里第一项是「重看新手引导」，还有快捷键、帮助中心、联系客服；菜单可用键盘上下选，Esc 关闭并回到图标。',
       render(s) { return `<div class="ob-app" style="width:520px;overflow:visible"><div class="ob-bar"><b style="font-size:14px">示例工作台</b><span class="sp"></span><span class="ob-help"><button class="btn btn-ghost btn-icon" type="button" data-help aria-haspopup="menu" aria-expanded="${s === 'open'}" aria-label="帮助">${ic('info')}</button>
@@ -1101,7 +1105,8 @@ Gallery.init({
         el.addEventListener('click', e => { const o = e.target.closest('[data-opt]'); if (o) { const v = o.dataset.opt; sel = sel.includes(v) ? sel.filter(x => x !== v) : [...sel, v]; sync(); }
           if (e.target.closest('[data-ok]')) setSt('survey', 'done'); if (e.target.closest('[data-skip]')) toast('已跳过，首页按默认排列', '', T); }); } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 </script>
 </body>

@@ -147,7 +147,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -366,7 +366,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -377,8 +377,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -497,6 +498,20 @@ body.gal{background:var(--bg)}
 .fi-sheet-ft .btn-primary{flex:1}
 .fi-empty{text-align:center;padding:28px 0;color:var(--ink-500);font-size:13px}
 @media (max-width:760px){.fi-more{grid-template-columns:1fr}.fi-split{grid-template-columns:1fr}.fi-side{border-right:0;border-bottom:1px solid var(--line)}}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.fi-opts .check.zero{color:var(--ink-700)} .fi-sv{height:auto;min-height:32px;padding-left:4px} .fi-sv>.fi-use{width:auto;height:auto;border:0;border-radius:var(--r-full);background:none;color:inherit;padding:4px 8px}
 </style>
 </head>
 <body>
@@ -505,52 +520,21 @@ body.gal{background:var(--bg)}
    AI 提示词（页面顶部「AI 提示词」打开；{{变量}} 点一下就能填）
    ========================================================================== */
 const PROMPTS = [
-  { title: '从零生成整套「筛选」交互模块',
-    when: '想要一份自己的筛选交互规范 + 可点演示时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「筛选交互模块」演示页。
-
-页面结构：左侧目录（可搜索），右侧每种做法一张卡片。每张卡片包含：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可以真实操作的演示、「复制 HTML」按钮。所有做法共用一份示例订单数据（约 60 条，字段：状态、负责人、城市、金额、下单日期），筛选后条数实时变化。
-
-要做的 9 种做法和状态：
-1. 横向筛选栏：默认 / 已筛选。关键词 + 3 个常用条件常驻一行，改条件立即生效，下方写「找到 N 条」和「清除筛选」。
-2. 更多筛选折叠：收起 / 展开。不常用条件收在「更多筛选」里；收起时如果里面有已选条件，按钮上写「更多筛选 · 已用 2 个」。
-3. 侧边筛选面板：默认 / 已勾选 / 区间填错。多组多选，每个选项后面写选中后会有几条，0 条的选项变浅但可点；金额区间最小值大于最大值时就地提示。
-4. 手机底部筛选弹层：关闭 / 打开 / 已选。底部弹出，选项用大按钮（≥44px），底部「重置」+「确定（将找到 N 条）」，条数随选择实时变；点遮罩或下滑关闭不生效。
-5. 已选条件标签：有条件 / 无条件。每个条件一个标签，可单独删；「全部清除」后 Toast 可撤销。
-6. 快捷筛选 Tab 带计数：默认 / 某个为 0。常用状态做成 Tab，写条数；0 条的 Tab 照样可点，点进去给空态和出路。
-7. 保存为常用筛选：没有常用 / 已有常用 / 保存中。当前条件可起个名字保存，一键套用、可删除，名字重复时提示。
-8. 记住上次筛选：首次打开 / 已恢复。下次打开自动带上上次的条件，并提示「已按你上次的条件筛好」+「清除」，不能静默恢复。
-9. 日期区间快捷选：今天 / 近 7 天 / 本月 / 自定义 / 自定义填错。快捷按钮一键选；自定义时开始日期不能晚于结束日期，就地提示怎么改。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；中性配色、留白充足；PC 可点元素 ≥32px、手机 ≥44px；文字对比度 ≥4.5:1；动效只动 transform 和 opacity，用 cubic-bezier 缓动；图标用内联线性 SVG。示例数据标「示例」，不出现真实公司名。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把筛选改成我的业务',
-    when: '已经下载了这个模块，想换成自己的筛选条件时用',
-    text: `附件是一个单文件 HTML 的「筛选交互模块」（index.html）。请把其中「{{要用的做法，例如：侧边筛选面板}}」改成我的业务：
-- 列表是什么：{{业务名称，例如：供应商列表}}
-- 谁在用：{{角色，例如：采购经理}}
-- 筛选条件（名称 / 类型：单选、多选、区间、日期 / 选项）：{{筛选条件清单}}
-- 最常用的 3 个条件：{{常用条件}}
-
-要求：
-1. 保留这种做法的所有状态和交互（实时条数、清除、0 条的处理、填错提示）；
-2. 示例数据换成我的业务（约 60 条，标「示例」），条数要能真实算出来，不要写死；
-3. 常用条件放外面，其余收进「更多」；
-4. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出你改了哪几处。` },
-  { title: '在此基础上加一种做法 / 状态',
-    when: '模块里没有你要的筛选做法时用',
-    text: `附件是一个单文件 HTML 的「筛选交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：级联筛选（先选省再选市，市的选项跟着省变）}}」。
-
-要求：
-1. 照现有做法的写法加一项 section：写清 name、desc、use（什么时候用）、avoid（什么时候别用）、states、spec（交互要点）、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：未选 / 已选省未选市 / 都已选 / 某个选项 0 条}}；
-3. 结果条数用示例数据实时算，改条件后立即更新；
-4. 样式类名用 fi- 开头，颜色圆角只用已有的 CSS 变量；
-5. 加完后页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建筛选",
+    "when": "建立完整离线演示",
+    "text": "请制作「筛选」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n横向筛选栏（默认、已筛选）；选完立即生效，不用再点「查询」；关键词输入停 0.25 秒再筛；下方实时写「找到 N 条」；有条件时出现「清除筛选」，没有时不显示。\n更多筛选折叠（收起、展开、收起 · 里面有已选）；展开有下滑动画，展开状态记在本机；收起时如果里面用了条件，按钮写「更多筛选 · 已用 N 个」，避免「条数对不上但看不到条件」。\n侧边筛选面板（默认、已勾选、区间填错）；每个选项后面的数字 = 勾上它之后会有几条；0 条的选项变浅但可以点；每组有「清除」；金额区间失焦时校验最小 ≤ 最大，填错就地提示怎么改，不清空用户的数。\n手机底部筛选弹层（关闭、打开、已选）；选项用 ≥44px 的大按钮；「确定」按钮上实时写「将找到 N 条」，0 条时写「没有结果」并保持可点；「重置」只清弹层里的选择；点遮罩或「×」关闭 = 不生效；生效后「筛选」按钮上出现已选数量。\n已选条件标签（有条件、无条件）；标签写「条件名：值」；删一个立刻重新筛；「全部清除」后 Toast 4 秒内可撤销；没有条件时整行不显示。\n快捷筛选 Tab（带计数）（默认、某个 Tab 为 0）；Tab 上的数字跟着其他筛选条件变；0 条的 Tab 颜色变浅但照样可点，点进去给空态 + 出路（如「去掉城市条件可看到 N 条」）；切 Tab 不清空其他条件。\n保存为常用筛选（还没有常用、已有常用、起名保存）；「保存为常用」后就地出一个起名框（默认名按条件自动生成，可改）；重名时提示；常用条件显示在筛选栏上方，点一下套用并高亮；可删除，删除可撤销；最多 8 个。\n记住上次筛选（首次打开、再次打开 · 已恢复）；只记常用的「人、地、状态」类条件，不记关键词和日期；存在本机；恢复时顶部一行提示 + 「清除」，清除后提示条消失、条件回到默认。\n日期区间快捷选（今天、近 7 天、本月、自定义、自定义填错）；快捷按钮选中即生效，下方写出具体日期和条数；「自定义」展开两个日期框；开始晚于结束时就地提示并给「对调」；区间最长 90 天，超出时提示。\n业务字段：关键词、门店、负责人、金额范围、筛选条件。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换筛选业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「筛选」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n横向筛选栏（默认、已筛选）；选完立即生效，不用再点「查询」；关键词输入停 0.25 秒再筛；下方实时写「找到 N 条」；有条件时出现「清除筛选」，没有时不显示。\n更多筛选折叠（收起、展开、收起 · 里面有已选）；展开有下滑动画，展开状态记在本机；收起时如果里面用了条件，按钮写「更多筛选 · 已用 N 个」，避免「条数对不上但看不到条件」。\n侧边筛选面板（默认、已勾选、区间填错）；每个选项后面的数字 = 勾上它之后会有几条；0 条的选项变浅但可以点；每组有「清除」；金额区间失焦时校验最小 ≤ 最大，填错就地提示怎么改，不清空用户的数。\n手机底部筛选弹层（关闭、打开、已选）；选项用 ≥44px 的大按钮；「确定」按钮上实时写「将找到 N 条」，0 条时写「没有结果」并保持可点；「重置」只清弹层里的选择；点遮罩或「×」关闭 = 不生效；生效后「筛选」按钮上出现已选数量。\n已选条件标签（有条件、无条件）；标签写「条件名：值」；删一个立刻重新筛；「全部清除」后 Toast 4 秒内可撤销；没有条件时整行不显示。\n快捷筛选 Tab（带计数）（默认、某个 Tab 为 0）；Tab 上的数字跟着其他筛选条件变；0 条的 Tab 颜色变浅但照样可点，点进去给空态 + 出路（如「去掉城市条件可看到 N 条」）；切 Tab 不清空其他条件。\n保存为常用筛选（还没有常用、已有常用、起名保存）；「保存为常用」后就地出一个起名框（默认名按条件自动生成，可改）；重名时提示；常用条件显示在筛选栏上方，点一下套用并高亮；可删除，删除可撤销；最多 8 个。\n记住上次筛选（首次打开、再次打开 · 已恢复）；只记常用的「人、地、状态」类条件，不记关键词和日期；存在本机；恢复时顶部一行提示 + 「清除」，清除后提示条消失、条件回到默认。\n日期区间快捷选（今天、近 7 天、本月、自定义、自定义填错）；快捷按钮选中即生效，下方写出具体日期和条数；「自定义」展开两个日期框；开始晚于结束时就地提示并给「对调」；区间最长 90 天，超出时提示。\n逐一核对关键词、门店、负责人、金额范围、筛选条件的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对筛选交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「筛选」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n横向筛选栏（默认、已筛选）；选完立即生效，不用再点「查询」；关键词输入停 0.25 秒再筛；下方实时写「找到 N 条」；有条件时出现「清除筛选」，没有时不显示。\n更多筛选折叠（收起、展开、收起 · 里面有已选）；展开有下滑动画，展开状态记在本机；收起时如果里面用了条件，按钮写「更多筛选 · 已用 N 个」，避免「条数对不上但看不到条件」。\n侧边筛选面板（默认、已勾选、区间填错）；每个选项后面的数字 = 勾上它之后会有几条；0 条的选项变浅但可以点；每组有「清除」；金额区间失焦时校验最小 ≤ 最大，填错就地提示怎么改，不清空用户的数。\n手机底部筛选弹层（关闭、打开、已选）；选项用 ≥44px 的大按钮；「确定」按钮上实时写「将找到 N 条」，0 条时写「没有结果」并保持可点；「重置」只清弹层里的选择；点遮罩或「×」关闭 = 不生效；生效后「筛选」按钮上出现已选数量。\n已选条件标签（有条件、无条件）；标签写「条件名：值」；删一个立刻重新筛；「全部清除」后 Toast 4 秒内可撤销；没有条件时整行不显示。\n快捷筛选 Tab（带计数）（默认、某个 Tab 为 0）；Tab 上的数字跟着其他筛选条件变；0 条的 Tab 颜色变浅但照样可点，点进去给空态 + 出路（如「去掉城市条件可看到 N 条」）；切 Tab 不清空其他条件。\n保存为常用筛选（还没有常用、已有常用、起名保存）；「保存为常用」后就地出一个起名框（默认名按条件自动生成，可改）；重名时提示；常用条件显示在筛选栏上方，点一下套用并高亮；可删除，删除可撤销；最多 8 个。\n记住上次筛选（首次打开、再次打开 · 已恢复）；只记常用的「人、地、状态」类条件，不记关键词和日期；存在本机；恢复时顶部一行提示 + 「清除」，清除后提示条消失、条件回到默认。\n日期区间快捷选（今天、近 7 天、本月、自定义、自定义填错）；快捷按钮选中即生效，下方写出具体日期和条数；「自定义」展开两个日期框；开始晚于结束时就地提示并给「对调」；区间最长 90 天，超出时提示。\n围绕业务字段关键词、门店、负责人、金额范围、筛选条件检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -831,11 +815,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -894,7 +894,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -939,12 +939,613 @@ const { $, $$, ic, esc, toast, money } = Proto;
 const host = { host: document.body };
 
 /* ---- 示例数据（固定种子，全部虚构） ---- */
-const STATUS = ['待确认', '待发货', '已完成', '已取消'], OWNERS = ['王小明', '李晓雨', '陈一舟', '赵可'], CITIES = ['示例市', '样例市', '演示市'], PAYS = ['在线支付', '月结', '货到付款'];
+const STATUS = ['待确认', '待发货', '已完成', '已取消'], OWNERS = ['王小明', '李晓雨', '陈一舟', '赵可'], CITIES = ['杭州市', '宁波市', '绍兴市'], PAYS = ['在线支付', '月结', '货到付款'];
 const CUST = ['青禾小馆', '南岸咖啡', '山野面馆', '拾味轻食', '橙子烘焙', '北街火锅', '晴天茶饮', '海边寿司'];
 let seed = 11; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
 const TODAY = new Date(2026, 10, 10);
 const pad = n => String(n).padStart(2, '0'); const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const ROWS = Array.from({ length: 60 }, (_, i) => { const d = new Date(TODAY); d.setDate(d.getDate() - Math.floor(rnd() * 40)); return { id: 'SO' + (1100 + i), cust: CUST[Math.floor(rnd() * CUST.length)], status: STATUS[Math.min(3, Math.floor(rnd() * 4.4))], owner: OWNERS[Math.floor(rnd() * 4)], city: CITIES[Math.floor(rnd() * 3)], pay: PAYS[Math.floor(rnd() * 3)], amount: Math.round(80 + rnd() * 1900), date: ymd(d) }; });
+const ROWS = [
+  {
+    "id": "SO1100",
+    "cust": "海边寿司",
+    "status": "待发货",
+    "owner": "王小明",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 450,
+    "date": "2026-10-16"
+  },
+  {
+    "id": "SO1101",
+    "cust": "晴天茶饮",
+    "status": "待发货",
+    "owner": "陈一舟",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 1066,
+    "date": "2026-10-28"
+  },
+  {
+    "id": "SO1102",
+    "cust": "拾味轻食",
+    "status": "待发货",
+    "owner": "陈一舟",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 303,
+    "date": "2026-10-30"
+  },
+  {
+    "id": "SO1103",
+    "cust": "青禾小馆",
+    "status": "待发货",
+    "owner": "李晓雨",
+    "city": "宁波市",
+    "pay": "月结",
+    "amount": 1323,
+    "date": "2026-10-10"
+  },
+  {
+    "id": "SO1104",
+    "cust": "山野面馆",
+    "status": "已取消",
+    "owner": "王小明",
+    "city": "杭州市",
+    "pay": "月结",
+    "amount": 1726,
+    "date": "2026-10-12"
+  },
+  {
+    "id": "SO1105",
+    "cust": "晴天茶饮",
+    "status": "已完成",
+    "owner": "赵可",
+    "city": "宁波市",
+    "pay": "货到付款",
+    "amount": 1578,
+    "date": "2026-11-07"
+  },
+  {
+    "id": "SO1106",
+    "cust": "北街火锅",
+    "status": "待发货",
+    "owner": "赵可",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 1294,
+    "date": "2026-10-17"
+  },
+  {
+    "id": "SO1107",
+    "cust": "北街火锅",
+    "status": "待发货",
+    "owner": "王小明",
+    "city": "宁波市",
+    "pay": "在线支付",
+    "amount": 799,
+    "date": "2026-10-23"
+  },
+  {
+    "id": "SO1108",
+    "cust": "海边寿司",
+    "status": "待发货",
+    "owner": "王小明",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 1845,
+    "date": "2026-10-21"
+  },
+  {
+    "id": "SO1109",
+    "cust": "北街火锅",
+    "status": "待确认",
+    "owner": "李晓雨",
+    "city": "绍兴市",
+    "pay": "月结",
+    "amount": 205,
+    "date": "2026-11-09"
+  },
+  {
+    "id": "SO1110",
+    "cust": "晴天茶饮",
+    "status": "已完成",
+    "owner": "王小明",
+    "city": "杭州市",
+    "pay": "在线支付",
+    "amount": 1925,
+    "date": "2026-10-23"
+  },
+  {
+    "id": "SO1111",
+    "cust": "北街火锅",
+    "status": "已完成",
+    "owner": "李晓雨",
+    "city": "杭州市",
+    "pay": "月结",
+    "amount": 947,
+    "date": "2026-10-22"
+  },
+  {
+    "id": "SO1112",
+    "cust": "青禾小馆",
+    "status": "已取消",
+    "owner": "赵可",
+    "city": "宁波市",
+    "pay": "在线支付",
+    "amount": 1698,
+    "date": "2026-10-02"
+  },
+  {
+    "id": "SO1113",
+    "cust": "橙子烘焙",
+    "status": "已完成",
+    "owner": "李晓雨",
+    "city": "绍兴市",
+    "pay": "月结",
+    "amount": 1147,
+    "date": "2026-10-17"
+  },
+  {
+    "id": "SO1114",
+    "cust": "青禾小馆",
+    "status": "待发货",
+    "owner": "陈一舟",
+    "city": "宁波市",
+    "pay": "在线支付",
+    "amount": 625,
+    "date": "2026-10-04"
+  },
+  {
+    "id": "SO1115",
+    "cust": "北街火锅",
+    "status": "待发货",
+    "owner": "王小明",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 1814,
+    "date": "2026-10-26"
+  },
+  {
+    "id": "SO1116",
+    "cust": "晴天茶饮",
+    "status": "待发货",
+    "owner": "李晓雨",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 206,
+    "date": "2026-10-08"
+  },
+  {
+    "id": "SO1117",
+    "cust": "青禾小馆",
+    "status": "待发货",
+    "owner": "陈一舟",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 721,
+    "date": "2026-10-11"
+  },
+  {
+    "id": "SO1118",
+    "cust": "橙子烘焙",
+    "status": "待发货",
+    "owner": "王小明",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 396,
+    "date": "2026-11-05"
+  },
+  {
+    "id": "SO1119",
+    "cust": "橙子烘焙",
+    "status": "已取消",
+    "owner": "陈一舟",
+    "city": "绍兴市",
+    "pay": "月结",
+    "amount": 845,
+    "date": "2026-11-08"
+  },
+  {
+    "id": "SO1120",
+    "cust": "拾味轻食",
+    "status": "已完成",
+    "owner": "李晓雨",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 1076,
+    "date": "2026-10-06"
+  },
+  {
+    "id": "SO1121",
+    "cust": "拾味轻食",
+    "status": "已取消",
+    "owner": "赵可",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 1084,
+    "date": "2026-11-03"
+  },
+  {
+    "id": "SO1122",
+    "cust": "北街火锅",
+    "status": "已取消",
+    "owner": "李晓雨",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 1003,
+    "date": "2026-11-02"
+  },
+  {
+    "id": "SO1123",
+    "cust": "青禾小馆",
+    "status": "待确认",
+    "owner": "陈一舟",
+    "city": "杭州市",
+    "pay": "月结",
+    "amount": 1532,
+    "date": "2026-10-31"
+  },
+  {
+    "id": "SO1124",
+    "cust": "南岸咖啡",
+    "status": "已取消",
+    "owner": "王小明",
+    "city": "宁波市",
+    "pay": "月结",
+    "amount": 1820,
+    "date": "2026-10-25"
+  },
+  {
+    "id": "SO1125",
+    "cust": "南岸咖啡",
+    "status": "待确认",
+    "owner": "王小明",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 524,
+    "date": "2026-11-03"
+  },
+  {
+    "id": "SO1126",
+    "cust": "青禾小馆",
+    "status": "已完成",
+    "owner": "陈一舟",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 1931,
+    "date": "2026-10-12"
+  },
+  {
+    "id": "SO1127",
+    "cust": "青禾小馆",
+    "status": "待发货",
+    "owner": "王小明",
+    "city": "绍兴市",
+    "pay": "在线支付",
+    "amount": 547,
+    "date": "2026-10-12"
+  },
+  {
+    "id": "SO1128",
+    "cust": "晴天茶饮",
+    "status": "已取消",
+    "owner": "李晓雨",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 1149,
+    "date": "2026-10-05"
+  },
+  {
+    "id": "SO1129",
+    "cust": "山野面馆",
+    "status": "待确认",
+    "owner": "赵可",
+    "city": "杭州市",
+    "pay": "在线支付",
+    "amount": 215,
+    "date": "2026-10-30"
+  },
+  {
+    "id": "SO1130",
+    "cust": "北街火锅",
+    "status": "待确认",
+    "owner": "李晓雨",
+    "city": "宁波市",
+    "pay": "月结",
+    "amount": 905,
+    "date": "2026-11-06"
+  },
+  {
+    "id": "SO1131",
+    "cust": "北街火锅",
+    "status": "已取消",
+    "owner": "李晓雨",
+    "city": "绍兴市",
+    "pay": "月结",
+    "amount": 820,
+    "date": "2026-10-30"
+  },
+  {
+    "id": "SO1132",
+    "cust": "橙子烘焙",
+    "status": "已完成",
+    "owner": "陈一舟",
+    "city": "杭州市",
+    "pay": "在线支付",
+    "amount": 1925,
+    "date": "2026-10-09"
+  },
+  {
+    "id": "SO1133",
+    "cust": "青禾小馆",
+    "status": "待确认",
+    "owner": "王小明",
+    "city": "杭州市",
+    "pay": "月结",
+    "amount": 836,
+    "date": "2026-10-25"
+  },
+  {
+    "id": "SO1134",
+    "cust": "拾味轻食",
+    "status": "已取消",
+    "owner": "陈一舟",
+    "city": "宁波市",
+    "pay": "货到付款",
+    "amount": 1278,
+    "date": "2026-10-31"
+  },
+  {
+    "id": "SO1135",
+    "cust": "海边寿司",
+    "status": "已取消",
+    "owner": "陈一舟",
+    "city": "宁波市",
+    "pay": "月结",
+    "amount": 1203,
+    "date": "2026-11-02"
+  },
+  {
+    "id": "SO1136",
+    "cust": "青禾小馆",
+    "status": "待确认",
+    "owner": "赵可",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 183,
+    "date": "2026-10-19"
+  },
+  {
+    "id": "SO1137",
+    "cust": "山野面馆",
+    "status": "待确认",
+    "owner": "陈一舟",
+    "city": "宁波市",
+    "pay": "货到付款",
+    "amount": 465,
+    "date": "2026-10-12"
+  },
+  {
+    "id": "SO1138",
+    "cust": "南岸咖啡",
+    "status": "已取消",
+    "owner": "王小明",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 1690,
+    "date": "2026-10-25"
+  },
+  {
+    "id": "SO1139",
+    "cust": "北街火锅",
+    "status": "待发货",
+    "owner": "王小明",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 686,
+    "date": "2026-10-21"
+  },
+  {
+    "id": "SO1140",
+    "cust": "青禾小馆",
+    "status": "已完成",
+    "owner": "陈一舟",
+    "city": "杭州市",
+    "pay": "在线支付",
+    "amount": 122,
+    "date": "2026-10-17"
+  },
+  {
+    "id": "SO1141",
+    "cust": "山野面馆",
+    "status": "待发货",
+    "owner": "李晓雨",
+    "city": "绍兴市",
+    "pay": "在线支付",
+    "amount": 1328,
+    "date": "2026-10-28"
+  },
+  {
+    "id": "SO1142",
+    "cust": "北街火锅",
+    "status": "已完成",
+    "owner": "李晓雨",
+    "city": "宁波市",
+    "pay": "在线支付",
+    "amount": 288,
+    "date": "2026-11-05"
+  },
+  {
+    "id": "SO1143",
+    "cust": "橙子烘焙",
+    "status": "已取消",
+    "owner": "王小明",
+    "city": "宁波市",
+    "pay": "月结",
+    "amount": 92,
+    "date": "2026-10-09"
+  },
+  {
+    "id": "SO1144",
+    "cust": "山野面馆",
+    "status": "已完成",
+    "owner": "赵可",
+    "city": "杭州市",
+    "pay": "月结",
+    "amount": 1860,
+    "date": "2026-10-05"
+  },
+  {
+    "id": "SO1145",
+    "cust": "山野面馆",
+    "status": "已完成",
+    "owner": "陈一舟",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 730,
+    "date": "2026-10-27"
+  },
+  {
+    "id": "SO1146",
+    "cust": "晴天茶饮",
+    "status": "已取消",
+    "owner": "李晓雨",
+    "city": "杭州市",
+    "pay": "月结",
+    "amount": 215,
+    "date": "2026-10-30"
+  },
+  {
+    "id": "SO1147",
+    "cust": "晴天茶饮",
+    "status": "待发货",
+    "owner": "李晓雨",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 1225,
+    "date": "2026-11-10"
+  },
+  {
+    "id": "SO1148",
+    "cust": "青禾小馆",
+    "status": "待发货",
+    "owner": "赵可",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 1853,
+    "date": "2026-11-05"
+  },
+  {
+    "id": "SO1149",
+    "cust": "北街火锅",
+    "status": "已取消",
+    "owner": "李晓雨",
+    "city": "杭州市",
+    "pay": "月结",
+    "amount": 335,
+    "date": "2026-10-05"
+  },
+  {
+    "id": "SO1150",
+    "cust": "青禾小馆",
+    "status": "已完成",
+    "owner": "陈一舟",
+    "city": "宁波市",
+    "pay": "在线支付",
+    "amount": 1167,
+    "date": "2026-10-17"
+  },
+  {
+    "id": "SO1151",
+    "cust": "南岸咖啡",
+    "status": "已取消",
+    "owner": "赵可",
+    "city": "杭州市",
+    "pay": "货到付款",
+    "amount": 1600,
+    "date": "2026-10-28"
+  },
+  {
+    "id": "SO1152",
+    "cust": "青禾小馆",
+    "status": "待发货",
+    "owner": "赵可",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 291,
+    "date": "2026-10-17"
+  },
+  {
+    "id": "SO1153",
+    "cust": "晴天茶饮",
+    "status": "待确认",
+    "owner": "赵可",
+    "city": "绍兴市",
+    "pay": "在线支付",
+    "amount": 1527,
+    "date": "2026-10-18"
+  },
+  {
+    "id": "SO1154",
+    "cust": "拾味轻食",
+    "status": "待确认",
+    "owner": "赵可",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 1712,
+    "date": "2026-10-06"
+  },
+  {
+    "id": "SO1155",
+    "cust": "海边寿司",
+    "status": "已完成",
+    "owner": "陈一舟",
+    "city": "宁波市",
+    "pay": "在线支付",
+    "amount": 1827,
+    "date": "2026-10-29"
+  },
+  {
+    "id": "SO1156",
+    "cust": "海边寿司",
+    "status": "已取消",
+    "owner": "陈一舟",
+    "city": "绍兴市",
+    "pay": "月结",
+    "amount": 246,
+    "date": "2026-10-07"
+  },
+  {
+    "id": "SO1157",
+    "cust": "晴天茶饮",
+    "status": "已取消",
+    "owner": "李晓雨",
+    "city": "绍兴市",
+    "pay": "货到付款",
+    "amount": 131,
+    "date": "2026-10-12"
+  },
+  {
+    "id": "SO1158",
+    "cust": "南岸咖啡",
+    "status": "待确认",
+    "owner": "陈一舟",
+    "city": "绍兴市",
+    "pay": "在线支付",
+    "amount": 983,
+    "date": "2026-10-04"
+  },
+  {
+    "id": "SO1159",
+    "cust": "橙子烘焙",
+    "status": "已取消",
+    "owner": "王小明",
+    "city": "宁波市",
+    "pay": "货到付款",
+    "amount": 966,
+    "date": "2026-10-28"
+  }
+];
 /* F = { kw, status:[], owner:[], city:[], pay:[], min, max, from, to } */
 const pass = (r, F) => (!F.kw || (r.id + r.cust).toLowerCase().includes(F.kw.trim().toLowerCase())) && (!F.status || !F.status.length || F.status.includes(r.status)) && (!F.owner || !F.owner.length || F.owner.includes(r.owner)) && (!F.city || !F.city.length || F.city.includes(r.city)) && (!F.pay || !F.pay.length || F.pay.includes(r.pay)) && (F.min == null || F.min === '' || r.amount >= +F.min) && (F.max == null || F.max === '' || r.amount <= +F.max) && (!F.from || r.date >= F.from) && (!F.to || r.date <= F.to);
 const count = F => ROWS.filter(r => pass(r, F)).length;
@@ -952,7 +1553,7 @@ const go = (id, st) => { $$('#' + id + ' .g-states [data-st]').forEach(b => b.se
 const sel = (id, label, opts, val) => `<div class="field"><label class="label" for="${id}">${label}</label><select class="select" id="${id}"><option value="">全部</option>${opts.map(o => `<option ${o === val ? 'selected' : ''}>${o}</option>`).join('')}</select></div>`;
 const rowsTable = (F, n = 5) => { const list = ROWS.filter(r => pass(r, F)); return list.length ? `<table class="table"><thead><tr><th>单号</th><th>客户</th><th>状态</th><th>城市</th><th class="r">金额</th></tr></thead><tbody>${list.slice(0, n).map(r => `<tr><td class="mono">${r.id}</td><td>${r.cust}</td><td>${r.status}</td><td>${r.city}</td><td class="r num">${money(r.amount, 0)}</td></tr>`).join('')}</tbody></table>${list.length > n ? `<p class="fi-count" style="margin-top:8px">只显示前 ${n} 条示例</p>` : ''}` : `<div class="fi-empty">没有符合条件的订单，试试去掉一个条件</div>`; };
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '筛选',
   intro: '9 种常见筛选做法，共用一份 60 条的示例数据，改条件条数就跟着变。挑一种复制 HTML，或复制提示词交给 AI 换成你的筛选条件。',
@@ -961,12 +1562,12 @@ Gallery.init({
     { id: 'bar', group: '摆放', name: '横向筛选栏', desc: '关键词 + 最常用的 3 个条件放一行，改了就生效。',
       use: 'PC 列表页的默认做法；条件 ≤ 5 个、每个都常用。',
       avoid: '条件超过 6 个全摆出来会挤成两三行，改用「常用 + 更多筛选」；手机端改用底部筛选弹层。',
-      states: [{ id: 'default', name: '默认' }, { id: 'filtered', name: '已筛选' }],
+      states: [{ id: 'default', name: '筛选待操作' }, { id: 'filtered', name: '已筛选' }],
       spec: '选完立即生效，不用再点「查询」；关键词输入停 0.25 秒再筛；下方实时写「找到 N 条」；有条件时出现「清除筛选」，没有时不显示。',
       render(s) { const F = this.F = s === 'filtered' ? { kw: '', status: ['待发货'], owner: ['王小明'] } : {}; return `<div class="fi-card"><div class="fi-bar"><div class="field kw"><label class="label" for="b-kw">关键词</label><div class="input-wrap">${ic('search')}<input class="input" id="b-kw" placeholder="单号 / 客户名" autocomplete="off"></div></div>${sel('b-st', '状态', STATUS, (F.status || [])[0])}${sel('b-ow', '负责人', OWNERS, (F.owner || [])[0])}${sel('b-ci', '城市', CITIES)}</div><div class="fi-count" data-cnt></div><div data-tb style="margin-top:8px"></div></div>`; },
       mount(el) {
         const F = this.F; let t;
-        const upd = () => { const n = count(F), has = F.kw || (F.status || []).length || (F.owner || []).length || (F.city || []).length; el.querySelector('[data-cnt]').innerHTML = `${has ? '找到' : '共'} <b>${n}</b> 条 <span class="demo-mark">示例</span>${has ? ' <button class="btn-link" type="button" data-clr>清除筛选</button>' : ''}`; el.querySelector('[data-tb]').innerHTML = rowsTable(F, 4); };
+        const upd = () => { const n = count(F), has = F.kw || (F.status || []).length || (F.owner || []).length || (F.city || []).length; el.querySelector('[data-cnt]').innerHTML = `${has ? '找到' : '共'} <b>${n}</b> 条 <span class="sample-badge">示例</span>${has ? ' <button class="btn-link" type="button" data-clr>清除筛选</button>' : ''}`; el.querySelector('[data-tb]').innerHTML = rowsTable(F, 4); };
         upd();
         el.addEventListener('change', e => { const k = { 'b-st': 'status', 'b-ow': 'owner', 'b-ci': 'city' }[e.target.id]; if (k) { F[k] = e.target.value ? [e.target.value] : []; upd(); } });
         el.addEventListener('input', e => { if (e.target.id === 'b-kw') { clearTimeout(t); t = setTimeout(() => { F.kw = e.target.value; upd(); }, 250); } });
@@ -981,7 +1582,7 @@ Gallery.init({
       states: [{ id: 'closed', name: '收起' }, { id: 'open', name: '展开' }, { id: 'closedUsed', name: '收起 · 里面有已选' }],
       spec: '展开有下滑动画，展开状态记在本机；收起时如果里面用了条件，按钮写「更多筛选 · 已用 N 个」，避免「条数对不上但看不到条件」。',
       render(s) {
-        const F = this.F = this.keep ? this.F : (s === 'closedUsed' ? { pay: ['月结'], city: ['样例市'] } : {}); this.keep = false;
+        const F = this.F = this.keep ? this.F : (s === 'closedUsed' ? { pay: ['月结'], city: ['宁波市'] } : {}); this.keep = false;
         const used = (F.pay || []).length + (F.city || []).length, open = s === 'open';
         return `<div class="fi-card"><div class="fi-bar"><div class="field kw"><label class="label" for="m-kw">关键词</label><div class="input-wrap">${ic('search')}<input class="input" id="m-kw" placeholder="单号 / 客户名"></div></div>${sel('m-st', '状态', STATUS)}<div class="acts"><button class="btn fi-toggle" type="button" data-tg aria-expanded="${open}">${ic('filter', 'ic-sm')}更多筛选${used && !open ? ` · 已用 ${used} 个` : ''}${ic('chev-d', 'ic-sm')}</button></div></div>
           ${open ? `<div class="fi-more">${sel('m-ow', '负责人', OWNERS)}${sel('m-ci', '城市', CITIES, (F.city || [])[0])}${sel('m-pa', '支付方式', PAYS, (F.pay || [])[0])}</div>` : ''}<div class="fi-count">找到 <b data-n>${count(F)}</b> 条</div></div>`;
@@ -996,11 +1597,11 @@ Gallery.init({
     { id: 'side', group: '摆放', name: '侧边筛选面板', desc: '左边一列多组多选，右边结果，每个选项后面写会有几条。',
       use: '条件多、以多选为主的浏览型列表（商品、素材、简历库）；用户边看结果边调条件。',
       avoid: '屏幕窄（< 1024）或条件少于 3 组时，占一整列不划算；手机端改用底部弹层。',
-      states: [{ id: 'default', name: '默认' }, { id: 'checked', name: '已勾选' }, { id: 'rangeErr', name: '区间填错' }],
+      states: [{ id: 'default', name: '筛选待操作' }, { id: 'checked', name: '已勾选' }, { id: 'rangeErr', name: '区间填错' }],
       spec: '每个选项后面的数字 = 勾上它之后会有几条；0 条的选项变浅但可以点；每组有「清除」；金额区间失焦时校验最小 ≤ 最大，填错就地提示怎么改，不清空用户的数。',
       layout: 'flush',
       render(s) {
-        const F = this.F = s === 'checked' ? { status: ['待发货', '已完成'], city: ['示例市'] } : s === 'rangeErr' ? { min: '800', max: '300' } : {};
+        const F = this.F = s === 'checked' ? { status: ['待发货', '已完成'], city: ['杭州市'] } : s === 'rangeErr' ? { min: '800', max: '300' } : {};
         return `<div class="fi-split" style="max-width:none;border:0;border-radius:0;box-shadow:none"><aside class="fi-side" data-side></aside><div class="fi-list"><div class="fi-count" style="margin:0 0 10px" data-cnt></div><div data-tb></div></div></div>`;
       },
       mount(el) {
@@ -1010,7 +1611,7 @@ Gallery.init({
           const bad = F.min && F.max && +F.min > +F.max;
           el.querySelector('[data-side]').innerHTML = grp('status', '状态', STATUS) + grp('city', '城市', CITIES) + `<div><div class="fi-grp-t">金额（元）</div><div class="fi-range"><input class="input num ${bad ? 'is-error' : ''}" inputmode="numeric" placeholder="最低" aria-label="最低金额" value="${esc(F.min || '')}" data-r="min"><span class="muted">–</span><input class="input num ${bad ? 'is-error' : ''}" inputmode="numeric" placeholder="最高" aria-label="最高金额" value="${esc(F.max || '')}" data-r="max"></div>${bad ? `<p class="field-err" style="margin-top:6px">最低 ${esc(F.min)} 比最高 ${esc(F.max)} 还大，两个数对调一下？ <button class="btn-link" type="button" data-swap style="font-size:12px">对调</button></p>` : ''}</div>`;
           const G = bad ? { ...F, min: '', max: '' } : F;
-          el.querySelector('[data-cnt]').innerHTML = `找到 <b>${count(G)}</b> 条 <span class="demo-mark">示例</span>`;
+          el.querySelector('[data-cnt]').innerHTML = `找到 <b>${count(G)}</b> 条 <span class="sample-badge">示例</span>`;
           el.querySelector('[data-tb]').innerHTML = rowsTable(G, 6);
         };
         draw();
@@ -1026,7 +1627,7 @@ Gallery.init({
       spec: '选项用 ≥44px 的大按钮；「确定」按钮上实时写「将找到 N 条」，0 条时写「没有结果」并保持可点；「重置」只清弹层里的选择；点遮罩或「×」关闭 = 不生效；生效后「筛选」按钮上出现已选数量。',
       layout: 'center',
       render(s) {
-        const A = this.A = this.applying ? this.A : {}; this.applying = false; const T = this.T = s === 'picked' ? { status: ['待发货'], city: ['样例市', '示例市'] } : JSON.parse(JSON.stringify(A));
+        const A = this.A = this.applying ? this.A : {}; this.applying = false; const T = this.T = s === 'picked' ? { status: ['待发货'], city: ['宁波市', '杭州市'] } : JSON.parse(JSON.stringify(A));
         const used = Object.values(A).reduce((n, v) => n + (v || []).length, 0);
         const list = ROWS.filter(r => pass(r, A)).slice(0, 8);
         return `<div class="fi-phone"><div class="fi-m-top"><h5>订单</h5><button class="btn" type="button" data-open>${ic('filter', 'ic-sm')}筛选${used ? `<span class="badge badge-accent">${used}</span>` : ''}</button></div><div class="fi-m-list">${list.map(r => `<div class="fi-m-item"><div>${r.cust}<div class="d">${r.status} · ${r.city}</div></div><div class="num">${money(r.amount, 0)}</div></div>`).join('') || '<div class="fi-empty">没有符合条件的订单</div>'}</div>
@@ -1062,7 +1663,7 @@ Gallery.init({
         const draw = () => {
           const tags = []; Object.keys(NAME).forEach(k => (F[k] || []).forEach(v => tags.push([k, v, `<span class="k">${NAME[k]}：</span>${v}`]))); if (F.min) tags.push(['min', F.min, `<span class="k">金额 ≥</span>${F.min}`]);
           el.querySelector('[data-tags]').innerHTML = tags.length ? tags.map(([k, v, h]) => `<span class="fi-tag">${h}<button type="button" data-rm="${k}" data-v="${esc(v)}" aria-label="删除条件 ${esc(v)}">${ic('x', 'ic-sm')}</button></span>`).join('') + '<button class="btn-link" type="button" data-all style="font-size:13px">全部清除</button>' : '';
-          el.querySelector('[data-cnt]').innerHTML = `${tags.length ? '找到' : '共'} <b>${count(F)}</b> 条 <span class="demo-mark">示例</span>`;
+          el.querySelector('[data-cnt]').innerHTML = `${tags.length ? '找到' : '共'} <b>${count(F)}</b> 条 <span class="sample-badge">示例</span>`;
           el.querySelector('[data-tb]').innerHTML = rowsTable(F, 4);
         };
         draw();
@@ -1076,9 +1677,9 @@ Gallery.init({
     { id: 'tabs', group: '摆放', name: '快捷筛选 Tab（带计数）', desc: '最常切的一个维度（通常是状态）做成 Tab，写上条数。',
       use: '列表有一个主维度，用户按它分批处理（待处理 / 处理中 / 已完成）。',
       avoid: '维度选项超过 7 个，或者用户要同时看好几种状态时，用多选筛选。',
-      states: [{ id: 'default', name: '默认' }, { id: 'zero', name: '某个 Tab 为 0' }],
+      states: [{ id: 'default', name: '筛选待操作' }, { id: 'zero', name: '某个 Tab 为 0' }],
       spec: 'Tab 上的数字跟着其他筛选条件变；0 条的 Tab 颜色变浅但照样可点，点进去给空态 + 出路（如「去掉城市条件可看到 N 条」）；切 Tab 不清空其他条件。',
-      render(s) { this.city = s === 'zero' ? '演示市' : ''; this.cur = this.cur || '全部'; return `<div class="fi-card"><div class="fi-bar" style="margin-bottom:12px">${sel('t-ci', '城市', CITIES, this.city)}<div class="field"><label class="label" for="t-mn">金额 ≥</label><input class="input num" id="t-mn" inputmode="numeric" value="${s === 'zero' ? '1800' : ''}" placeholder="不限"></div></div><div class="fi-tabs" role="tablist" data-tabs></div><div data-tb style="margin-top:12px"></div></div>`; },
+      render(s) { this.city = s === 'zero' ? '绍兴市' : ''; this.cur = this.cur || '全部'; return `<div class="fi-card"><div class="fi-bar" style="margin-bottom:12px">${sel('t-ci', '城市', CITIES, this.city)}<div class="field"><label class="label" for="t-mn">金额 ≥</label><input class="input num" id="t-mn" inputmode="numeric" value="${s === 'zero' ? '1800' : ''}" placeholder="不限"></div></div><div class="fi-tabs" role="tablist" data-tabs></div><div data-tb style="margin-top:12px"></div></div>`; },
       mount(el) {
         const sec = this;
         const base = () => ({ city: el.querySelector('#t-ci').value ? [el.querySelector('#t-ci').value] : [], min: el.querySelector('#t-mn').value });
@@ -1100,16 +1701,16 @@ Gallery.init({
       states: [{ id: 'none', name: '还没有常用' }, { id: 'has', name: '已有常用' }, { id: 'saving', name: '起名保存' }],
       spec: '「保存为常用」后就地出一个起名框（默认名按条件自动生成，可改）；重名时提示；常用条件显示在筛选栏上方，点一下套用并高亮；可删除，删除可撤销；最多 8 个。',
       render(s) {
-        if (!this.list || s === 'none') this.list = s === 'none' ? [] : [{ n: '我负责的待发货', F: { status: ['待发货'], owner: ['王小明'] } }, { n: '样例市大单', F: { city: ['样例市'], min: '1000' } }];
+        if (!this.list || s === 'none') this.list = s === 'none' ? [] : [{ n: '我负责的待发货', F: { status: ['待发货'], owner: ['王小明'] } }, { n: '宁波市大单', F: { city: ['宁波市'], min: '1000' } }];
         if (s === 'has' && this.list.length === 0) this.list = [{ n: '我负责的待发货', F: { status: ['待发货'], owner: ['王小明'] } }];
-        this.F = this.F || { status: ['已完成'], city: ['示例市'] }; this.on = null;
+        this.F = this.F || { status: ['已完成'], city: ['杭州市'] }; this.on = null;
         return `<div class="fi-card"><div class="fi-saved" data-saved></div><div class="fi-bar">${sel('sv-st', '状态', STATUS, (this.F.status || [])[0])}${sel('sv-ci', '城市', CITIES, (this.F.city || [])[0])}${sel('sv-ow', '负责人', OWNERS, (this.F.owner || [])[0])}<div class="acts"><button class="btn" type="button" data-save>${ic('star', 'ic-sm')}保存为常用</button></div></div><div data-pop>${s === 'saving' ? '1' : ''}</div><div class="fi-count" data-cnt></div></div>`;
       },
       mount(el, s) {
         const sec = this, F = this.F;
         const NAME = () => [(F.owner || [])[0], (F.city || [])[0], (F.status || [])[0]].filter(Boolean).join(' · ') || '全部订单';
-        const drawSaved = () => { el.querySelector('[data-saved]').innerHTML = `<span class="lb">常用：</span>` + (sec.list.length ? sec.list.map((x, i) => `<span class="fi-sv ${sec.on === i ? 'on' : ''}"><span role="button" tabindex="0" data-use="${i}">${esc(x.n)}</span><button type="button" data-del="${i}" aria-label="删除常用 ${esc(x.n)}">${ic('x', 'ic-sm')}</button></span>`).join('') : '<span class="lb">还没有。选好条件后点右边「保存为常用」</span>'); };
-        const cnt = () => { el.querySelector('[data-cnt]').innerHTML = `找到 <b>${count(F)}</b> 条 <span class="demo-mark">示例</span>`; };
+        const drawSaved = () => { el.querySelector('[data-saved]').innerHTML = `<span class="lb">常用：</span>` + (sec.list.length ? sec.list.map((x, i) => `<span class="fi-sv ${sec.on === i ? 'on' : ''}"><button class="fi-use" type="button" data-use="${i}">${esc(x.n)}</button><button type="button" data-del="${i}" aria-label="删除常用 ${esc(x.n)}">${ic('x', 'ic-sm')}</button></span>`).join('') : '<span class="lb">还没有。选好条件后点右边「保存为常用」</span>'); };
+        const cnt = () => { el.querySelector('[data-cnt]').innerHTML = `找到 <b>${count(F)}</b> 条 <span class="sample-badge">示例</span>`; };
         const setSel = () => { el.querySelector('#sv-st').value = (F.status || [])[0] || ''; el.querySelector('#sv-ci').value = (F.city || [])[0] || ''; el.querySelector('#sv-ow').value = (F.owner || [])[0] || ''; };
         const pop = () => { el.querySelector('[data-pop]').innerHTML = `<div class="fi-pop"><div class="field"><label class="label" for="sv-name">给这组条件起个名字</label><input class="input" id="sv-name" value="${esc(NAME())}" maxlength="12"><span class="field-hint">最多 12 个字</span></div><button class="btn" type="button" data-cancel style="margin-top:26px">取消</button><button class="btn btn-primary" type="button" data-ok style="margin-top:26px">保存</button></div>`; const i = el.querySelector('#sv-name'); i.focus(); i.select(); };
         drawSaved(); cnt(); if (s === 'saving') pop(); else el.querySelector('[data-pop]').innerHTML = '';
@@ -1131,13 +1732,13 @@ Gallery.init({
       states: [{ id: 'first', name: '首次打开' }, { id: 'restored', name: '再次打开 · 已恢复' }],
       spec: '只记常用的「人、地、状态」类条件，不记关键词和日期；存在本机；恢复时顶部一行提示 + 「清除」，清除后提示条消失、条件回到默认。',
       render(s) {
-        let M = null; if (s === 'restored') { try { M = JSON.parse(localStorage.getItem('fi-remember') || 'null'); } catch (e) {} M = M && (M.owner || M.city) ? M : { owner: '陈一舟', city: '样例市' }; }
+        let M = null; if (s === 'restored') { try { M = JSON.parse(localStorage.getItem('fi-remember') || 'null'); } catch (e) {} M = M && (M.owner || M.city) ? M : { owner: '陈一舟', city: '宁波市' }; }
         this.F = M ? { owner: [M.owner].filter(Boolean), city: [M.city].filter(Boolean) } : {};
         return `<div class="fi-card">${M ? `<div class="fi-restore" data-rs>${ic('info', 'ic-sm')}已按你上次的条件筛好：${esc([M.owner, M.city].filter(Boolean).join(' · '))}<button class="btn-link" type="button" data-clr>清除</button></div>` : ''}<div class="fi-bar">${sel('r-ow', '负责人', OWNERS, M && M.owner)}${sel('r-ci', '城市', CITIES, M && M.city)}</div><div class="fi-count" data-cnt></div>${s === 'first' ? '<p class="fi-count" style="margin-top:4px">选几个条件，再点上方「再次打开 · 已恢复」看效果</p>' : ''}</div>`;
       },
       mount(el) {
         const F = this.F;
-        const cnt = () => { el.querySelector('[data-cnt]').innerHTML = `找到 <b>${count(F)}</b> 条 <span class="demo-mark">示例</span>`; };
+        const cnt = () => { el.querySelector('[data-cnt]').innerHTML = `找到 <b>${count(F)}</b> 条 <span class="sample-badge">示例</span>`; };
         const save = () => { try { localStorage.setItem('fi-remember', JSON.stringify({ owner: el.querySelector('#r-ow').value, city: el.querySelector('#r-ci').value })); } catch (e) {} };
         cnt();
         el.addEventListener('change', e => { const k = { 'r-ow': 'owner', 'r-ci': 'city' }[e.target.id]; if (k) { F[k] = e.target.value ? [e.target.value] : []; save(); cnt(); } });
@@ -1165,14 +1766,15 @@ Gallery.init({
           if (s === 'custom' || s === 'customErr') { f = el.querySelector('#dt-f').value; t = el.querySelector('#dt-t').value; if (f && t && f > t) err = `开始 ${f} 晚于结束 ${t}`; else if (f && t && (new Date(t) - new Date(f)) / 864e5 > 90) err = '一次最多查 90 天，缩短一下区间'; }
           const E = el.querySelector('[data-err]'); if (E) E.innerHTML = err ? `<p class="field-err" style="margin-top:6px">${err}${err.startsWith('开始') ? ' <button class="btn-link" type="button" data-swap style="font-size:12px">对调两个日期</button>' : ''}</p>` : '';
           $$('#dt-f,#dt-t', el).forEach(i => i.classList.toggle('is-error', !!err));
-          el.querySelector('[data-out]').innerHTML = err ? '改好日期后自动筛选' : `<b>${f}</b> 至 <b>${t}</b>，找到 <b>${count({ from: f, to: t })}</b> 条 <span class="demo-mark">示例</span>`;
+          el.querySelector('[data-out]').innerHTML = err ? '改好日期后自动筛选' : `<b>${f}</b> 至 <b>${t}</b>，找到 <b>${count({ from: f, to: t })}</b> 条 <span class="sample-badge">示例</span>`;
         };
         out();
         el.addEventListener('click', e => { const q = e.target.closest('[data-q]'); if (q) go('date', q.dataset.q); if (e.target.closest('[data-swap]')) { const a = el.querySelector('#dt-f'), b = el.querySelector('#dt-t'); [a.value, b.value] = [b.value, a.value]; out(); } });
         el.addEventListener('change', out);
       } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 </script>
 </body>

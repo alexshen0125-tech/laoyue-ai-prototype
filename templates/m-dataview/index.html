@@ -146,7 +146,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -365,7 +365,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -376,8 +376,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -491,6 +492,21 @@ body.gal{background:var(--bg)}
 .dv-nw{white-space:nowrap;font-variant-numeric:tabular-nums}
 .dv-warn{display:flex;align-items:center;gap:8px;padding:8px 18px;background:var(--warning-soft);color:var(--warning);font-size:12px}
 @media (max-width:860px){.dv-cards{grid-template-columns:1fr 1fr}.dv-kpis{grid-template-columns:1fr 1fr}.dv-dl{grid-template-columns:96px 1fr}.dv-dl .full{grid-column:2}}
+ .dv-bar meter{width:100%;height:24px;accent-color:var(--accent)}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.dv-empty{color:var(--ink-700)}
 </style>
 </head>
 <body>
@@ -499,53 +515,21 @@ body.gal{background:var(--bg)}
    AI 提示词（页面顶部「AI 提示词」打开；{{变量}} 点一下就能填）
    ========================================================================== */
 const PROMPTS = [
-  { title: '从零生成整套「数据展示」模块',
-    when: '要给后台 / 看板定一套数据展示规范 + 可点演示时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「数据展示交互模块」演示页。
-
-页面结构：左侧目录（可搜索），右侧每种做法一张卡片。每张卡片包含：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可以真实操作的演示、「复制 HTML」按钮。
-
-要做的 9 种做法和状态：
-1. 视图切换：表格 / 卡片 / 列表三种视图切换同一批数据，记住用户上次的选择（存本机），下次打开时提示「已按你上次的视图显示」。
-2. 密度切换：标准 / 紧凑，紧凑行高 36px，标准 52px。
-3. 指标卡：数值 + 单位 + 较上期变化；变化按「越高越好 / 越低越好」判好坏（退款率下降是绿色）；无对比数据时显示「—」；加载骨架。
-4. 描述列表：两列 / 单列；空值显示「—」；长文本超过 2 行折叠，点「展开」看全文。
-5. 对比：本期 vs 上期（两根条并排，图例写清）；A vs B（表格逐项对比，胜出项加粗）。
-6. 下钻：全国 → 区域 → 门店，点行进入下一层，面包屑可返回任一层。
-7. 列设置：勾选显示 / 隐藏列，上移下移调整顺序，「恢复默认」，至少保留 1 列。
-8. 大数字格式：万 / 亿换算、千分位、小数位统一、负数、百分比、单位和数字不拆行；给出错误写法与正确写法对照。
-9. 数据为空 / 部分缺失：部分字段缺失显示「—」并说明原因 / 整体无数据给出路 / 加载失败可重试。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；中性配色；数字用等宽数字（font-variant-numeric: tabular-nums）右对齐；可点元素 ≥32px；文字对比度 ≥4.5:1；图标用内联线性 SVG。示例数据标「示例」，不出现真实公司名。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把数据展示改成我的业务',
-    when: '已经下载了这个模块，想换成自己的指标和字段时用',
-    text: `附件是一个单文件 HTML 的「数据展示交互模块」（index.html）。请把示例换成我的业务：
-- 业务：{{业务名称，例如：门店经营日报}}
-- 看数据的人：{{角色，例如：区域经理}}
-- 指标清单（名称 / 单位 / 越高越好还是越低越好）：{{指标列表}}
-- 明细字段：{{字段列表}}
-- 下钻层级：{{层级，例如：大区 → 城市 → 门店}}
-
-要求：
-1. 只改示例数据和文案，保留每种做法的所有状态和交互；
-2. 所有数字由同一份数据算出来，汇总必须等于明细之和，不要编造对不上的数；
-3. 指标好坏颜色按我给的「越高越好 / 越低越好」判断；
-4. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出改了哪几处。` },
-  { title: '在此基础上加一种数据展示做法',
-    when: '模块里没有你要的展示方式时用',
-    text: `附件是一个单文件 HTML 的「数据展示交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：透视表（行维度、列维度可选，自动小计合计）}}」。
-
-要求：
-1. 照现有写法加一项 section：name、desc、use（什么时候用）、avoid（什么时候别用）、states、spec（交互要点）、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：默认 / 维度切换后 / 无数据 / 加载中}}；
-3. 计算交给系统（小计、合计、占比自动算），数字右对齐、等宽；
-4. 样式类名用 dv- 开头，颜色圆角只用已有的 CSS 变量；
-5. 加完页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建数据展示",
+    "when": "建立完整离线演示",
+    "text": "请制作「数据展示」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n表格 / 卡片 / 列表视图切换（表格、卡片、列表）；右上角分段切换，当前视图高亮；切换后存本机，下次打开自动用上次的视图并提示一句「已按你上次的视图显示」，可点「改回表格」；切换不改变筛选和排序。\n密度切换（标准、紧凑）；标准行高 52px，紧凑 36px；切换只改间距不改字号；选择记在本机。\n指标卡（正常、无对比数据、加载）；数值大、单位小、不拆行；环比带方向箭头 + 好坏颜色：销售额上升是好（绿），退款率下降也是好（绿）；没有上期数据显示「—」并写原因；加载用骨架保持卡片尺寸不跳。\n描述列表（两列、单列、空值与长文本）；标签灰色、值黑色；空值统一显示「—」，不显示「null」「暂无」混用；长文本超过 2 行折叠，「展开 / 收起」；窄屏自动变单列。\n对比（本期 vs 上期、A vs B）；本期主色、上期灰色，图例写清；每行右侧写变化百分比；A vs B 用表格逐项对比，胜出项绿色加粗，并写明「越高越好 / 越低越好」。\n下钻（全部城市、某个城市、某家门店）；可下钻的行首列主色 + 悬停手型；进入下一层面包屑多一级，点任何一级回到那一层；每层合计等于上一层这一行的数。\n列设置（默认、设置面板）；右上角「列设置」打开面板：勾选显示 / 隐藏，上移 / 下移调整顺序（拖拽的键盘替代），表格实时变化；至少保留 1 列，最后一列的勾选置灰；「恢复默认」一键还原；设置记在本机。\n大数字格式（对照表）；看板概览用万 / 亿保留 1 位；明细和对账用千分位精确到分；同一列小数位统一；数字右对齐等宽；单位跟数字不拆行；负数用「−」并配色；百分比保留 1 位。\n数据为空 / 部分缺失（部分缺失、整体无数据、加载失败）；缺失显示灰色「—」，表头上方一行说明原因和预计补齐时间；真实为 0 显示「0」；整体无数据给出路（换时间范围）；加载失败保留表头和筛选，可重试。\n业务字段：门店、城市、店长、销售额、订单数、退款率。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换数据展示业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「数据展示」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n表格 / 卡片 / 列表视图切换（表格、卡片、列表）；右上角分段切换，当前视图高亮；切换后存本机，下次打开自动用上次的视图并提示一句「已按你上次的视图显示」，可点「改回表格」；切换不改变筛选和排序。\n密度切换（标准、紧凑）；标准行高 52px，紧凑 36px；切换只改间距不改字号；选择记在本机。\n指标卡（正常、无对比数据、加载）；数值大、单位小、不拆行；环比带方向箭头 + 好坏颜色：销售额上升是好（绿），退款率下降也是好（绿）；没有上期数据显示「—」并写原因；加载用骨架保持卡片尺寸不跳。\n描述列表（两列、单列、空值与长文本）；标签灰色、值黑色；空值统一显示「—」，不显示「null」「暂无」混用；长文本超过 2 行折叠，「展开 / 收起」；窄屏自动变单列。\n对比（本期 vs 上期、A vs B）；本期主色、上期灰色，图例写清；每行右侧写变化百分比；A vs B 用表格逐项对比，胜出项绿色加粗，并写明「越高越好 / 越低越好」。\n下钻（全部城市、某个城市、某家门店）；可下钻的行首列主色 + 悬停手型；进入下一层面包屑多一级，点任何一级回到那一层；每层合计等于上一层这一行的数。\n列设置（默认、设置面板）；右上角「列设置」打开面板：勾选显示 / 隐藏，上移 / 下移调整顺序（拖拽的键盘替代），表格实时变化；至少保留 1 列，最后一列的勾选置灰；「恢复默认」一键还原；设置记在本机。\n大数字格式（对照表）；看板概览用万 / 亿保留 1 位；明细和对账用千分位精确到分；同一列小数位统一；数字右对齐等宽；单位跟数字不拆行；负数用「−」并配色；百分比保留 1 位。\n数据为空 / 部分缺失（部分缺失、整体无数据、加载失败）；缺失显示灰色「—」，表头上方一行说明原因和预计补齐时间；真实为 0 显示「0」；整体无数据给出路（换时间范围）；加载失败保留表头和筛选，可重试。\n逐一核对门店、城市、店长、销售额、订单数、退款率的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对数据展示交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「数据展示」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n表格 / 卡片 / 列表视图切换（表格、卡片、列表）；右上角分段切换，当前视图高亮；切换后存本机，下次打开自动用上次的视图并提示一句「已按你上次的视图显示」，可点「改回表格」；切换不改变筛选和排序。\n密度切换（标准、紧凑）；标准行高 52px，紧凑 36px；切换只改间距不改字号；选择记在本机。\n指标卡（正常、无对比数据、加载）；数值大、单位小、不拆行；环比带方向箭头 + 好坏颜色：销售额上升是好（绿），退款率下降也是好（绿）；没有上期数据显示「—」并写原因；加载用骨架保持卡片尺寸不跳。\n描述列表（两列、单列、空值与长文本）；标签灰色、值黑色；空值统一显示「—」，不显示「null」「暂无」混用；长文本超过 2 行折叠，「展开 / 收起」；窄屏自动变单列。\n对比（本期 vs 上期、A vs B）；本期主色、上期灰色，图例写清；每行右侧写变化百分比；A vs B 用表格逐项对比，胜出项绿色加粗，并写明「越高越好 / 越低越好」。\n下钻（全部城市、某个城市、某家门店）；可下钻的行首列主色 + 悬停手型；进入下一层面包屑多一级，点任何一级回到那一层；每层合计等于上一层这一行的数。\n列设置（默认、设置面板）；右上角「列设置」打开面板：勾选显示 / 隐藏，上移 / 下移调整顺序（拖拽的键盘替代），表格实时变化；至少保留 1 列，最后一列的勾选置灰；「恢复默认」一键还原；设置记在本机。\n大数字格式（对照表）；看板概览用万 / 亿保留 1 位；明细和对账用千分位精确到分；同一列小数位统一；数字右对齐等宽；单位跟数字不拆行；负数用「−」并配色；百分比保留 1 位。\n数据为空 / 部分缺失（部分缺失、整体无数据、加载失败）；缺失显示灰色「—」，表头上方一行说明原因和预计补齐时间；真实为 0 显示「0」；整体无数据给出路（换时间范围）；加载失败保留表头和筛选，可重试。\n围绕业务字段门店、城市、店长、销售额、订单数、退款率检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -826,11 +810,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -889,7 +889,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -939,16 +939,16 @@ const fmt = n => n.toLocaleString('zh-CN');
 const wan = n => n >= 1e8 ? (n / 1e8).toFixed(2) + '<small>亿</small>' : n >= 1e4 ? (n / 1e4).toFixed(1) + '<small>万</small>' : fmt(n);
 // 示例数据：门店（全部虚构）
 const STORES = [
-  { id: 'S01', name: '示例一号店', city: '示例市', mgr: '王小明', sales: 73445, orders: 398, refund: 1.8 },
-  { id: 'S02', name: '示例二号店', city: '示例市', mgr: '李晓雨', sales: 61208, orders: 344, refund: 2.6 },
-  { id: 'S03', name: '示例三号店', city: '样例市', mgr: '陈一舟', sales: 52890, orders: 301, refund: 1.2 },
-  { id: 'S04', name: '示例四号店', city: '样例市', mgr: '赵可', sales: 48113, orders: 275, refund: 3.1 },
+  { id: 'S01', name: '示例一号店', city: '杭州市', mgr: '王小明', sales: 73445, orders: 398, refund: 1.8 },
+  { id: 'S02', name: '示例二号店', city: '杭州市', mgr: '李晓雨', sales: 61208, orders: 344, refund: 2.6 },
+  { id: 'S03', name: '示例三号店', city: '宁波市', mgr: '陈一舟', sales: 52890, orders: 301, refund: 1.2 },
+  { id: 'S04', name: '示例四号店', city: '宁波市', mgr: '赵可', sales: 48113, orders: 275, refund: 3.1 },
   { id: 'S05', name: '示例五号店', city: '范例市', mgr: '周敏', sales: 35602, orders: 189, refund: 2.2 },
   { id: 'S06', name: '示例六号店', city: '范例市', mgr: '林小禾', sales: 23835, orders: 92, refund: 0.9 }
 ];
 const VKEY = 'dv-view';
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '数据展示',
   intro: '9 种数据展示的常见做法：同一批数据怎么摆、数字怎么写、缺数据怎么办。所有数字由同一份示例数据算出，汇总等于明细之和。',
@@ -1006,7 +1006,7 @@ Gallery.init({
       spec: '标签灰色、值黑色；空值统一显示「—」，不显示「null」「暂无」混用；长文本超过 2 行折叠，「展开 / 收起」；窄屏自动变单列。',
       render(s) {
         const x = STORES[0], L = s === 'long';
-        const note = '门店位于示例商圈一层，周末客流集中在 11:00–13:00 和 17:30–19:30，建议高峰前一小时补货；冷柜在 11-09 维修过一次，压缩机已更换（示例）。';
+        const note = '门店位于文三商圈一层，周末客流集中在 11:00–13:00 和 17:30–19:30，建议高峰前一小时补货；冷柜在 11-09 维修过一次，压缩机已更换（示例）。';
         return `<div class="dv-box ${s === 'one' ? 'narrow' : ''}"><div class="dv-hd"><h4>${x.name}</h4><span class="tag tag-success">营业中</span></div><div class="dv-pad"><dl class="dv-dl ${s === 'one' ? 'one' : ''}">
           <dt>门店编号</dt><dd class="mono">${x.id}</dd><dt>所在城市</dt><dd>${x.city}</dd>
           <dt>店长</dt><dd>${x.mgr}</dd><dt>联系电话</dt><dd>${L ? '<span class="dv-empty">—</span>' : '138 0000 0010'}</dd>
@@ -1030,7 +1030,7 @@ Gallery.init({
         const prev = [70120, 63400, 48010, 50200, 30100, 22050];
         const max = Math.max(...STORES.map(x => x.sales), ...prev);
         return `<div class="dv-box"><div class="dv-hd"><h4>门店销售额 · 本周 vs 上周（示例）</h4><div class="dv-legend"><span><i style="background:var(--accent)"></i>本周</span><span><i style="background:var(--ink-300)"></i>上周</span></div></div><div class="dv-pad">
-          ${STORES.map((x, i) => { const d = (x.sales - prev[i]) / prev[i] * 100; return `<div class="dv-cmp-row"><span>${x.name.replace('示例', '')}</span><div class="bars"><div class="dv-bar"><i style="transform:scaleX(${x.sales / max})"></i></div><div class="dv-bar prev"><i style="transform:scaleX(${prev[i] / max})"></i></div></div><span class="n">${fmt(x.sales)}</span><span class="n"><span class="dv-delta ${d >= 0 ? 'good' : 'bad'}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(1)}%</span></span></div>`; }).join('')}</div></div>`;
+          ${STORES.map((x, i) => { const d = (x.sales - prev[i]) / prev[i] * 100; return `<div class="dv-cmp-row"><span>${x.name.replace('示例', '')}</span><div class="bars"><div class="dv-bar"><meter min="0" max="${max}" value="${x.sales}" aria-label="${x.name}本期销售额">${x.sales}</meter></div><div class="dv-bar prev"><meter min="0" max="${max}" value="${prev[i]}" aria-label="${x.name}上期销售额">${prev[i]}</meter></div></div><span class="n">${fmt(x.sales)}</span><span class="n"><span class="dv-delta ${d >= 0 ? 'good' : 'bad'}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(1)}%</span></span></div>`; }).join('')}</div></div>`;
       } },
 
     /* 6 下钻 */
@@ -1040,7 +1040,7 @@ Gallery.init({
       states: [{ id: 'all', name: '全部城市' }, { id: 'city', name: '某个城市' }, { id: 'store', name: '某家门店' }],
       spec: '可下钻的行首列主色 + 悬停手型；进入下一层面包屑多一级，点任何一级回到那一层；每层合计等于上一层这一行的数。',
       render(s) {
-        const D = this.d || (this.d = { city: '示例市', store: 'S01' });
+        const D = this.d || (this.d = { city: '杭州市', store: 'S01' });
         const cities = [...new Set(STORES.map(x => x.city))].map(c => { const l = STORES.filter(x => x.city === c); return { c, n: l.length, sales: l.reduce((a, b) => a + b.sales, 0), orders: l.reduce((a, b) => a + b.orders, 0) }; });
         const crumb = [`<button type="button" data-lv="all">全部城市</button>`];
         if (s !== 'all') crumb.push(s === 'city' ? `<b>${D.city}</b>` : `<button type="button" data-lv="city">${D.city}</button>`);
@@ -1063,7 +1063,7 @@ Gallery.init({
     { id: 'cols', group: '布局', name: '列设置', desc: '让用户自己决定看哪些列、按什么顺序。',
       use: '字段多（> 8 列）、不同角色关心的列不同的后台表格。',
       avoid: '列少于 5 个不需要；别把「操作」列和主键列也放进可隐藏范围。',
-      states: [{ id: 'closed', name: '默认' }, { id: 'open', name: '设置面板' }],
+      states: [{ id: 'closed', name: '数据展示待操作' }, { id: 'open', name: '设置面板' }],
       spec: '右上角「列设置」打开面板：勾选显示 / 隐藏，上移 / 下移调整顺序（拖拽的键盘替代），表格实时变化；至少保留 1 列，最后一列的勾选置灰；「恢复默认」一键还原；设置记在本机。',
       render(s) {
         const C = this.c || (this.c = [{ k: 'city', n: '城市', on: true }, { k: 'mgr', n: '店长', on: true }, { k: 'sales', n: '销售额（元）', on: true, r: 1 }, { k: 'orders', n: '订单数', on: true, r: 1 }, { k: 'refund', n: '退款率', on: false, r: 1 }]);
@@ -1114,7 +1114,8 @@ Gallery.init({
       },
       mount(el) { el.addEventListener('click', e => { if (e.target.closest('[data-y]')) { go('missing', 'partial'); toast('已切到 11-09', '', T); } if (e.target.closest('[data-retry]')) { el.querySelector('.state').innerHTML = '<span class="spin" style="color:var(--ink-500)"></span>'; setTimeout(() => { if (document.body.contains(el)) go('missing', 'partial'); }, 700); } }); } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 </script>
 </body>

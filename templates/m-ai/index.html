@@ -147,7 +147,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -366,7 +366,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -377,8 +377,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -514,6 +515,21 @@ body.gal{background:var(--bg)}
 .ai-human .t b{display:block;color:var(--ink-900);font-size:14px;font-weight:500}
 .ai-sk{display:flex;flex-direction:column;gap:8px;padding-top:4px}
 @media (max-width:760px){.ai-pair,.ai-cmp{grid-template-columns:1fr}}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.ai-cite{min-width:32px;min-height:32px;height:32px} [data-stop]{background:#16171A!important;color:#FFFFFF!important;border-color:#16171A!important}
+@media(max-width:700px),(pointer:coarse){.ai-cite{min-width:44px;min-height:44px;height:44px}}
 </style>
 </head>
 <body>
@@ -522,56 +538,21 @@ body.gal{background:var(--bg)}
    AI 提示词（页面顶部「AI 提示词」打开；{{变量}} 点一下就能填）
    ========================================================================== */
 const PROMPTS = [
-  { title: '从零生成整套「AI 交互」模块',
-    when: '要给 AI 功能定一套交互规范 + 可点演示时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「AI 交互模块」演示页。
-
-页面结构：左侧目录（可搜索），右侧每种做法一张卡片。每张卡片包含：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可以真实操作的演示、「复制 HTML」按钮。
-
-要做的 12 种做法和状态：
-1. 流式输出 vs 一次性返回：左右对比，点「生成」同时开始；流式逐字出现带光标，一次性先出骨架再整段出现。
-2. 停止与继续生成：生成中（发送按钮变停止）/ 已停止（保留已生成内容，显示「已停止 · 继续生成」）/ 继续后完成。
-3. 引用来源三层：正文角标 [1] → 下方来源卡片 → 点开看原文片段并高亮命中句。
-4. 重新生成与多版本：版本切换「‹ 2 / 3 ›」/ 两版并排对比并选用一版。
-5. 点赞点踩：未反馈 / 已点赞 / 点踩后展开原因标签（至少选 1 个才能提交）/ 已提交感谢。
-6. 置信度提示：高（正常显示）/ 中（黄色提示「请核对」）/ 无依据（不直接给结论，给转人工）。
-7. 拒答：超出范围（说清能答什么 + 推荐问题）/ 不该答（说明原因）/ 信息不够先追问（给可点的选项）。
-8. 出错重试：超时 / 网络中断 / 问题太长，每种都保留用户的问题，一键重试或缩短。
-9. 转人工：入口 / 排队中（写清预计时间，不做跳秒倒计时）/ 已接入（对话上下文一并转交）。
-10. Agent 多步任务：计划待确认 / 执行中（步骤进度）/ 等人确认（高风险步骤暂停）/ 完成 / 某步失败已回滚 / 已中断。
-11. 结果可编辑后再用：AI 草稿 / 编辑中 / 已采纳（采纳、改写、丢弃三个按钮）。
-12. AI 生成标识与免责：标签、免责小字、来源说明三种放置位置。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；中性配色；可点元素 ≥32px；文字对比度 ≥4.5:1；动效只动 transform 和 opacity；图标用内联线性 SVG。示例数据标「示例」，不出现真实公司名和任何具体 AI 产品名。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把 AI 交互改成我的产品',
-    when: '已经下载了这个模块，想换成自己 AI 功能的场景时用',
-    text: `附件是一个单文件 HTML 的「AI 交互模块」（index.html）。请把里面的示例换成我的产品：
-- AI 功能：{{AI 功能，例如：客服助手自动起草回复}}
-- 用的人：{{角色，例如：客服专员}}
-- AI 能依据的资料：{{资料范围，例如：售后规则 2026 版}}
-- AI 不该回答的话题：{{拒答范围}}
-- 哪些操作必须人工确认：{{高风险操作，例如：退款金额超过 500 元}}
-
-要求：
-1. 只改示例文案、问题和回答，保留每种做法的所有状态和交互；
-2. 回答里的引用必须对应真实存在于资料范围里的标题，写不出来就用「（示例）」标注，不要编造；
-3. 拒答文案要说清「能答什么」，并给一个出路（换个问题或转人工）；
-4. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出改了哪几处。` },
-  { title: '在此基础上加一种 AI 做法 / 状态',
-    when: '模块里没有你要的 AI 交互做法时用',
-    text: `附件是一个单文件 HTML 的「AI 交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：AI 批量处理 200 条工单，逐条可审核}}」。
-
-要求：
-1. 照现有写法加一项 section：name、desc、use（什么时候用）、avoid（什么时候别用）、states、spec（交互要点）、render(state)、mount(el, state)（有定时器的话 mount 返回清理函数）；
-2. 至少包含这些状态：{{状态清单，例如：处理中 / 部分失败 / 全部完成 / 已撤回}}；
-3. AI 出错、没把握、做不了的情况都要有出路，不能只有成功态；
-4. 样式类名用 ai- 开头，颜色圆角只用已有的 CSS 变量；
-5. 加完页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建AI 交互",
+    "when": "建立完整离线演示",
+    "text": "请制作「AI 交互」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n流式输出 vs 一次性返回（待生成、生成中、已完成）；点「生成」两边同时开始：左边逐字出现带光标；右边先出骨架屏，整段一次出现。流式时光标在末尾闪；一次性时骨架宽度和真实段落接近，避免跳动。\n停止与继续生成（生成中、已停止、继续后完成）；生成中发送按钮原位变成黑色「停止」（同一个位置，拇指不用移动）；停止后保留已生成部分，下方出现「已停止生成 · 继续生成」；继续从断点接着写。按 Esc 也能停止。\n引用来源三层（第 1 层：角标、第 2 层：来源卡片、第 3 层：原文高亮）；点正文角标 → 对应来源卡片高亮；点来源卡片 → 下方展开原文片段，命中句黄色高亮；再点收起。\n重新生成与多版本（单个版本、多版本切换、并排对比）；「重新生成」后不覆盖，版本号变成「2 / 2」，左右箭头切换；「对比」把两版并排，点「用这版」选定并收起其余版本。\n点赞点踩反馈闭环（未反馈、已点赞、点踩选原因、已提交）；点赞：图标变主色 + 小字「谢谢」，再点取消。点踩：展开原因标签，至少选 1 个「提交」才可点，补充说明选填；提交后收起并显示「已收到，会用来改进」。\n置信度提示（有依据、部分依据、没有依据）；有依据：正常显示 + 来源。部分依据：黄色提示「请核对」，回答照给。没有依据：不直接给结论，说明没找到，给「转人工」和「换个问法」。\n拒答与追问（超出范围、不该回答、信息不够先追问）；超出范围：说清「我能答 A、B、C」+ 2 个推荐问题可点。不该回答：一句话原因 + 正确渠道。追问：给 2–4 个可点选项，点了直接继续回答。\n出错重试（超时、网络中断、问题太长、重试成功）；错误提示写「发生了什么 + 你能做什么」；问题原样保留；「重新生成」先回到思考中再出结果；问题太长时给「自动精简后重试」并写明会删掉什么。\n转人工（入口、排队中、已接入）；入口常驻在回答下方；点击先确认「会把这段对话一起转过去」；排队中写清前面几位、预计几分钟（不做跳秒倒计时），可取消；接入后显示同事名字，AI 不再插话。\nAgent 多步任务（计划待确认、执行中、等人确认、完成、失败已回滚、已中断）；先给计划，用户确认才开始；每步显示状态（完成 / 进行中 / 等确认 / 失败 / 跳过）；高风险步骤暂停并写清会影响什么；失败时说明已回滚哪些；全程可「中断」，已完成的步骤写清是否保留。\nAI 结果改了再用（AI 草稿、编辑中、已采纳）；草稿带「AI 起草」标签；「改一下」原地变成文本框，光标在末尾；「采纳」填进正式位置并记录是否改过；「丢弃」可撤销。\nAI 生成标识与免责（三种放置位置）；内容级：标题旁小标签「AI 生成」；段落级：AI 写的段落左侧细线 + 悬停说明；页面级：输入框下方一行免责小字，写清「涉及金额、时效以来源为准」。\n业务字段：用户问题、生成内容、引用来源、置信度、拒答原因、任务步骤。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换AI 交互业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「AI 交互」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n流式输出 vs 一次性返回（待生成、生成中、已完成）；点「生成」两边同时开始：左边逐字出现带光标；右边先出骨架屏，整段一次出现。流式时光标在末尾闪；一次性时骨架宽度和真实段落接近，避免跳动。\n停止与继续生成（生成中、已停止、继续后完成）；生成中发送按钮原位变成黑色「停止」（同一个位置，拇指不用移动）；停止后保留已生成部分，下方出现「已停止生成 · 继续生成」；继续从断点接着写。按 Esc 也能停止。\n引用来源三层（第 1 层：角标、第 2 层：来源卡片、第 3 层：原文高亮）；点正文角标 → 对应来源卡片高亮；点来源卡片 → 下方展开原文片段，命中句黄色高亮；再点收起。\n重新生成与多版本（单个版本、多版本切换、并排对比）；「重新生成」后不覆盖，版本号变成「2 / 2」，左右箭头切换；「对比」把两版并排，点「用这版」选定并收起其余版本。\n点赞点踩反馈闭环（未反馈、已点赞、点踩选原因、已提交）；点赞：图标变主色 + 小字「谢谢」，再点取消。点踩：展开原因标签，至少选 1 个「提交」才可点，补充说明选填；提交后收起并显示「已收到，会用来改进」。\n置信度提示（有依据、部分依据、没有依据）；有依据：正常显示 + 来源。部分依据：黄色提示「请核对」，回答照给。没有依据：不直接给结论，说明没找到，给「转人工」和「换个问法」。\n拒答与追问（超出范围、不该回答、信息不够先追问）；超出范围：说清「我能答 A、B、C」+ 2 个推荐问题可点。不该回答：一句话原因 + 正确渠道。追问：给 2–4 个可点选项，点了直接继续回答。\n出错重试（超时、网络中断、问题太长、重试成功）；错误提示写「发生了什么 + 你能做什么」；问题原样保留；「重新生成」先回到思考中再出结果；问题太长时给「自动精简后重试」并写明会删掉什么。\n转人工（入口、排队中、已接入）；入口常驻在回答下方；点击先确认「会把这段对话一起转过去」；排队中写清前面几位、预计几分钟（不做跳秒倒计时），可取消；接入后显示同事名字，AI 不再插话。\nAgent 多步任务（计划待确认、执行中、等人确认、完成、失败已回滚、已中断）；先给计划，用户确认才开始；每步显示状态（完成 / 进行中 / 等确认 / 失败 / 跳过）；高风险步骤暂停并写清会影响什么；失败时说明已回滚哪些；全程可「中断」，已完成的步骤写清是否保留。\nAI 结果改了再用（AI 草稿、编辑中、已采纳）；草稿带「AI 起草」标签；「改一下」原地变成文本框，光标在末尾；「采纳」填进正式位置并记录是否改过；「丢弃」可撤销。\nAI 生成标识与免责（三种放置位置）；内容级：标题旁小标签「AI 生成」；段落级：AI 写的段落左侧细线 + 悬停说明；页面级：输入框下方一行免责小字，写清「涉及金额、时效以来源为准」。\n逐一核对用户问题、生成内容、引用来源、置信度、拒答原因、任务步骤的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对AI 交互交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「AI 交互」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n流式输出 vs 一次性返回（待生成、生成中、已完成）；点「生成」两边同时开始：左边逐字出现带光标；右边先出骨架屏，整段一次出现。流式时光标在末尾闪；一次性时骨架宽度和真实段落接近，避免跳动。\n停止与继续生成（生成中、已停止、继续后完成）；生成中发送按钮原位变成黑色「停止」（同一个位置，拇指不用移动）；停止后保留已生成部分，下方出现「已停止生成 · 继续生成」；继续从断点接着写。按 Esc 也能停止。\n引用来源三层（第 1 层：角标、第 2 层：来源卡片、第 3 层：原文高亮）；点正文角标 → 对应来源卡片高亮；点来源卡片 → 下方展开原文片段，命中句黄色高亮；再点收起。\n重新生成与多版本（单个版本、多版本切换、并排对比）；「重新生成」后不覆盖，版本号变成「2 / 2」，左右箭头切换；「对比」把两版并排，点「用这版」选定并收起其余版本。\n点赞点踩反馈闭环（未反馈、已点赞、点踩选原因、已提交）；点赞：图标变主色 + 小字「谢谢」，再点取消。点踩：展开原因标签，至少选 1 个「提交」才可点，补充说明选填；提交后收起并显示「已收到，会用来改进」。\n置信度提示（有依据、部分依据、没有依据）；有依据：正常显示 + 来源。部分依据：黄色提示「请核对」，回答照给。没有依据：不直接给结论，说明没找到，给「转人工」和「换个问法」。\n拒答与追问（超出范围、不该回答、信息不够先追问）；超出范围：说清「我能答 A、B、C」+ 2 个推荐问题可点。不该回答：一句话原因 + 正确渠道。追问：给 2–4 个可点选项，点了直接继续回答。\n出错重试（超时、网络中断、问题太长、重试成功）；错误提示写「发生了什么 + 你能做什么」；问题原样保留；「重新生成」先回到思考中再出结果；问题太长时给「自动精简后重试」并写明会删掉什么。\n转人工（入口、排队中、已接入）；入口常驻在回答下方；点击先确认「会把这段对话一起转过去」；排队中写清前面几位、预计几分钟（不做跳秒倒计时），可取消；接入后显示同事名字，AI 不再插话。\nAgent 多步任务（计划待确认、执行中、等人确认、完成、失败已回滚、已中断）；先给计划，用户确认才开始；每步显示状态（完成 / 进行中 / 等确认 / 失败 / 跳过）；高风险步骤暂停并写清会影响什么；失败时说明已回滚哪些；全程可「中断」，已完成的步骤写清是否保留。\nAI 结果改了再用（AI 草稿、编辑中、已采纳）；草稿带「AI 起草」标签；「改一下」原地变成文本框，光标在末尾；「采纳」填进正式位置并记录是否改过；「丢弃」可撤销。\nAI 生成标识与免责（三种放置位置）；内容级：标题旁小标签「AI 生成」；段落级：AI 写的段落左侧细线 + 悬停说明；页面级：输入框下方一行免责小字，写清「涉及金额、时效以来源为准」。\n围绕业务字段用户问题、生成内容、引用来源、置信度、拒答原因、任务步骤检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -852,11 +833,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -915,7 +912,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -959,8 +956,8 @@ const PROMPTS = [
 const { $, $$, ic, esc, toast } = Proto;
 const T = { host: document.body };
 const spin = '<span class="spin"></span>';
-const Q = q => `<div class="ai-q"><span>${esc(q)}</span></div>`;
-const A = inner => `<div class="ai-a"><span class="ai-mark">${ic('spark')}</span><div class="ai-body">${inner}</div></div>`;
+const Q = q => `<div class="ai-q" data-speaker="用户" role="article" aria-label="用户提问"><span>${esc(q)}</span></div>`;
+const A = inner => `<div class="ai-a" data-speaker="助手" role="article" aria-label="AI回复"><span class="ai-mark">${ic('spark')}</span><div class="ai-body">${inner}</div></div>`;
 const think = (t = '正在查资料…') => `<div class="ai-think"><span class="ai-dots"><i></i><i></i><i></i></span>${t}</div>`;
 const sk = () => `<div class="ai-sk"><div class="sk" style="height:12px;width:92%"></div><div class="sk" style="height:12px;width:78%"></div><div class="sk" style="height:12px;width:60%"></div></div>`;
 const ANS = '退款到账时间看原支付方式：在线支付审核通过后 1–3 个工作日原路退回；余额支付即时到账；货到付款需先填收款账户，3–5 个工作日到账。（示例）';
@@ -970,7 +967,7 @@ const go = (id, st) => { press(id, st); Gallery.show(id, st); };
 // 逐字输出：返回清理函数
 function typeOut(el, text, step, done) { let i = 0; const t = setInterval(() => { i = Math.min(text.length, i + step); el.innerHTML = esc(text.slice(0, i)) + (i < text.length ? '<span class="ai-caret"></span>' : ''); if (i >= text.length) { clearInterval(t); done && done(); } }, 40); return () => clearInterval(t); }
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: 'AI 交互',
   intro: '12 种 AI 功能里最常见的交互做法：每个环节有几种做法、什么时候用哪种。重点是 AI 没把握、答不了、出错时，用户还有路可走。',
@@ -1178,7 +1175,7 @@ Gallery.init({
         const li = steps.map((x, i) => `<li class="${st[i]}"><span class="dot">${st[i] === 'done' ? ic('check') : st[i] === 'fail' ? ic('x') : st[i] === 'run' ? '' : i + 1}</span><div class="st"><b>${x[0]}</b><span>${st[i] === 'skip' ? '未执行' : x[1]}</span>
           ${st[i] === 'wait' ? `<div class="box">${ic('alert', 'ic-sm')} 这一步会修改 <b>32</b> 个商品的前台售价，修改后顾客立即看到。<div class="row"><button class="btn btn-primary" type="button" data-ok>确认修改</button><button class="btn" type="button" data-skip>跳过这步</button></div></div>` : ''}
           ${st[i] === 'fail' ? `<div class="ai-notice err" style="margin-top:8px">${ic('alert')}<div>3 个商品价格低于成本价被拦截，已把本步改过的 29 个恢复原价。<div class="row"><button class="btn" type="button" data-retry>只重试这一步</button></div></div></div>` : ''}</div></li>`).join('');
-        return `<div class="ai-box wide"><div class="ai-head">${ic('flow')}<h4>临期商品促销（示例任务）</h4><span class="tag ${head[1]}">${head[0]}</span></div>
+        return `<div class="ai-box wide"><div class="ai-head">${ic('flow')}<h4>临期商品促销（冷藏柜温控巡检）</h4><span class="tag ${head[1]}">${head[0]}</span></div>
           <ol class="ai-steps">${li}</ol>
           <div class="ai-acts">${s === 'plan' ? `<button class="btn" type="button" data-editp>改计划</button><span class="sp"></span><button class="btn btn-primary" type="button" data-start>按这个计划执行</button>`
             : s === 'run' || s === 'wait' ? `<span class="note">已完成的步骤中断后会保留</span><span class="sp"></span><button class="btn btn-danger" type="button" data-halt>中断任务</button>`
@@ -1236,10 +1233,11 @@ Gallery.init({
         return `<div class="g-matrix" style="grid-template-columns:1fr;max-width:640px;width:100%">
           <div><div class="cap">内容级：标签</div><div class="ai-box"><div class="ai-head"><h4>门店评价摘要（示例）</h4><span class="ai-label">${ic('spark')}AI 生成</span></div><p style="font-size:14px">顾客多提到「出餐快」「分量足」，少数提到「周末排队久」。基于近 30 天 126 条评价（示例）。</p></div></div>
           <div><div class="cap">段落级：左侧细线</div><div class="ai-box"><p style="font-size:14px;margin-bottom:8px">店长原文：本周新增两款套餐。</p><p style="font-size:14px;padding-left:12px;border-left:2px solid var(--accent)" title="这段由 AI 补充">AI 补充：两款套餐上线后客单价上升约 6%（示例）。</p></div></div>
-          <div><div class="cap">页面级：免责小字</div><div class="ai-box" style="padding:12px 16px"><div class="input" style="display:flex;align-items:center;color:var(--ink-300)">问点什么…</div><p class="ai-disc">AI 回答可能出错，涉及金额、时效的信息请以来源原文为准</p></div></div></div>`;
+          <div><div class="cap">页面级：免责小字</div><div class="ai-box" style="padding:12px 16px"><div class="input" style="display:flex;align-items:center;color:var(--ink-700)">问点什么…</div><p class="ai-disc">AI 回答可能出错，涉及金额、时效的信息请以来源原文为准</p></div></div></div>`;
       } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 </script>
 </body>

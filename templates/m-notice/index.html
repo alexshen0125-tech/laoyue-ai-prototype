@@ -146,7 +146,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -365,7 +365,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -376,8 +376,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -490,56 +491,40 @@ body.gal{background:var(--bg)}
 .nt-partial{display:flex;gap:10px;align-items:center;margin:10px 16px 0;padding:10px 12px;border-radius:var(--r-md);background:var(--warning-soft);color:var(--warning);font-size:var(--fs-13)}
 .nt-partial .btn{margin-left:auto;height:28px;font-size:12px}
 @media (max-width:640px){.nt-rules{grid-template-columns:repeat(2,auto)}}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.nt-dot .b{color:var(--danger-ink)}
 </style>
 </head>
 <body>
 <script>
 const PROMPTS = [
-  { title: '从零生成整套「消息通知」交互模块',
-    when: '要设计消息中心、推送和通知偏好时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「消息通知交互模块」演示页。
-
-页面结构：左侧做法目录（可搜索），右侧每种做法一张卡片：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可真实操作的演示、「复制 HTML」按钮。
-
-要做的 8 种做法和状态：
-1. 消息中心：分类 Tab（全部 / 业务 / 系统 / 互动，各带未读数）、单条点开即已读、悬停出现「标为已读」、「全部已读」后可撤销；状态：有未读 / 全部已读。
-2. 红点 vs 数字角标：规则对照（无未读不显示、只需提醒有新东西用红点、需要知道数量用数字、超过 99 显示 99+），可加减数量实时看效果。
-3. 站内信详情与跳转：列表 / 详情（写清时间、来源、正文、「去处理」按钮跳到业务页）/ 跳转目标已失效（说明原因并给替代入口）。
-4. 推送权限请求：先讲用处的说明页（列 3 个好处，「开启通知」+「以后再说」）/ 模拟系统授权弹窗 / 已允许 / 已拒绝（告诉用户去系统设置哪里打开）。
-5. 通知偏好：消息类型 × 渠道（站内、推送、邮件、短信）的勾选表；安全类通知必选不能关并说明原因；改了立即保存。
-6. 免打扰时段：开关 + 开始结束时间（跨天写清「22:00 到次日 08:00」）；紧急通知仍提醒的例外说明。
-7. 实时新消息提示：顶部横幅（可点「查看」、可关闭、5 秒自动收起）/ 静默只加角标 / 声音开关；有「模拟来一条新消息」按钮。
-8. 消息为空 / 加载失败：空（说清什么时候会有消息）/ 加载失败（重试，保留当前分类）/ 部分失败（顶部提示某类没加载出来）。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；可点元素 PC ≥32px、手机 ≥44px；文字对比度 ≥4.5:1；未读不能只靠颜色区分（加粗 + 圆点）；动效只动 transform 和 opacity；图标用内联线性 SVG。示例数据标「示例」，不出现真实公司名。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把消息通知改成我的产品',
-    when: '已经下载了这个模块，想换成自己的消息类型时用',
-    text: `附件是一个单文件 HTML 的「消息通知交互模块」（index.html）。请把「{{要用的做法，例如：消息中心}}」改成我的产品：
-- 产品：{{产品名称，例如：门店订货 App}}
-- 收消息的人：{{角色，例如：门店店长}}
-- 消息类型和例子（类型 / 一条示例标题 / 点了去哪个页面）：{{消息类型清单}}
-- 能用的通知渠道：{{渠道，例如：站内、推送、短信}}
-
-要求：
-1. 保留这种做法的全部状态（未读 / 已读 / 空 / 加载失败 / 跳转失效等）和交互；
-2. 每类消息写清「点了去哪」，没有落地页的消息不要做成可点；
-3. 必须收到的安全类、资金类通知不允许关闭，并说明原因；
-4. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出你改了哪几处。` },
-  { title: '在此基础上加一种做法 / 状态',
-    when: '模块里没有你要的通知做法时用',
-    text: `附件是一个单文件 HTML 的「消息通知交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：消息聚合（同一订单的多条状态合并成一条，展开看全部）}}」。
-
-要求：
-1. 照现有写法加一项 section：name、desc、use、avoid、states、spec、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：未展开 / 已展开 / 有新消息加入}}；
-3. 未读数在合并前后保持一致，不能凭空变少或变多；
-4. 样式类名用 nt- 开头，颜色圆角只用已有 CSS 变量；
-5. 加完后页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建消息通知",
+    "when": "建立完整离线演示",
+    "text": "请制作「消息通知」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n消息中心（有未读、全部已读）；未读 = 加粗标题 + 左侧红点（不只靠颜色）；点开一条即已读，Tab 数字同步减；悬停出现「标为已读」；「全部已读」只作用于当前 Tab，5 秒内可撤销；键盘 Enter 打开。\n红点 vs 数字角标（规则对照、试一下）；0 条不显示；1–99 显示数字；≥100 显示「99+」；红点 8–10px，数字角标最小 18px 高、带白描边防止和图标粘连；读掉后角标立即消失。\n站内信详情与跳转（列表、详情、跳转目标已失效）；详情写清时间、来源、正文；主按钮「去处理」直达业务页；目标已删除 / 已处理 / 无权限时，不报错，写原因并给替代入口（如「查看同类商品」）。\n推送权限请求（说明页、系统弹窗、已允许、已拒绝）；说明页列 3 条具体好处；「以后再说」不弹系统框、3 天后在合适时机再问；系统框只在用户点「开启」后出现；被拒后给去系统设置的路径，不反复弹。\n通知偏好（类型 × 渠道）（默认）；一行一类消息、一列一种渠道；勾选即保存（Toast 反馈）；安全类整行置灰勾选并写「为了账号安全，不能关闭」；短信要花钱的渠道标注「每条约 0.05 元（示例）」。\n免打扰时段（关闭、开启（跨天））；打开开关才展开时间选择；开始晚于结束时写清「到次日」；下方一句话复述效果「22:00 到次日 08:00 不响铃不弹窗，消息照常收」；例外：账号安全、你设为紧急的仍提醒。\n实时新消息提示（顶部横幅、静默加角标）；横幅从顶部滑入，5 秒自动收起，鼠标悬停时不收；有「查看」和关闭；同时来多条合并为「3 条新消息」；声音开关记在本机。\n消息为空 / 加载失败（空、加载失败、部分失败）；空：一句话说明「有新订单、审批时会出现在这里」+ 去设置通知的出路；失败：保留当前分类，「重试」先出骨架再出结果；部分失败：已加载的照常显示，顶部提示哪一类没加载出来并可单独重试。\n业务字段：通知标题、通知类型、接收范围、已读状态、发送时间。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换消息通知业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「消息通知」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n消息中心（有未读、全部已读）；未读 = 加粗标题 + 左侧红点（不只靠颜色）；点开一条即已读，Tab 数字同步减；悬停出现「标为已读」；「全部已读」只作用于当前 Tab，5 秒内可撤销；键盘 Enter 打开。\n红点 vs 数字角标（规则对照、试一下）；0 条不显示；1–99 显示数字；≥100 显示「99+」；红点 8–10px，数字角标最小 18px 高、带白描边防止和图标粘连；读掉后角标立即消失。\n站内信详情与跳转（列表、详情、跳转目标已失效）；详情写清时间、来源、正文；主按钮「去处理」直达业务页；目标已删除 / 已处理 / 无权限时，不报错，写原因并给替代入口（如「查看同类商品」）。\n推送权限请求（说明页、系统弹窗、已允许、已拒绝）；说明页列 3 条具体好处；「以后再说」不弹系统框、3 天后在合适时机再问；系统框只在用户点「开启」后出现；被拒后给去系统设置的路径，不反复弹。\n通知偏好（类型 × 渠道）（默认）；一行一类消息、一列一种渠道；勾选即保存（Toast 反馈）；安全类整行置灰勾选并写「为了账号安全，不能关闭」；短信要花钱的渠道标注「每条约 0.05 元（示例）」。\n免打扰时段（关闭、开启（跨天））；打开开关才展开时间选择；开始晚于结束时写清「到次日」；下方一句话复述效果「22:00 到次日 08:00 不响铃不弹窗，消息照常收」；例外：账号安全、你设为紧急的仍提醒。\n实时新消息提示（顶部横幅、静默加角标）；横幅从顶部滑入，5 秒自动收起，鼠标悬停时不收；有「查看」和关闭；同时来多条合并为「3 条新消息」；声音开关记在本机。\n消息为空 / 加载失败（空、加载失败、部分失败）；空：一句话说明「有新订单、审批时会出现在这里」+ 去设置通知的出路；失败：保留当前分类，「重试」先出骨架再出结果；部分失败：已加载的照常显示，顶部提示哪一类没加载出来并可单独重试。\n逐一核对通知标题、通知类型、接收范围、已读状态、发送时间的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对消息通知交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「消息通知」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n消息中心（有未读、全部已读）；未读 = 加粗标题 + 左侧红点（不只靠颜色）；点开一条即已读，Tab 数字同步减；悬停出现「标为已读」；「全部已读」只作用于当前 Tab，5 秒内可撤销；键盘 Enter 打开。\n红点 vs 数字角标（规则对照、试一下）；0 条不显示；1–99 显示数字；≥100 显示「99+」；红点 8–10px，数字角标最小 18px 高、带白描边防止和图标粘连；读掉后角标立即消失。\n站内信详情与跳转（列表、详情、跳转目标已失效）；详情写清时间、来源、正文；主按钮「去处理」直达业务页；目标已删除 / 已处理 / 无权限时，不报错，写原因并给替代入口（如「查看同类商品」）。\n推送权限请求（说明页、系统弹窗、已允许、已拒绝）；说明页列 3 条具体好处；「以后再说」不弹系统框、3 天后在合适时机再问；系统框只在用户点「开启」后出现；被拒后给去系统设置的路径，不反复弹。\n通知偏好（类型 × 渠道）（默认）；一行一类消息、一列一种渠道；勾选即保存（Toast 反馈）；安全类整行置灰勾选并写「为了账号安全，不能关闭」；短信要花钱的渠道标注「每条约 0.05 元（示例）」。\n免打扰时段（关闭、开启（跨天））；打开开关才展开时间选择；开始晚于结束时写清「到次日」；下方一句话复述效果「22:00 到次日 08:00 不响铃不弹窗，消息照常收」；例外：账号安全、你设为紧急的仍提醒。\n实时新消息提示（顶部横幅、静默加角标）；横幅从顶部滑入，5 秒自动收起，鼠标悬停时不收；有「查看」和关闭；同时来多条合并为「3 条新消息」；声音开关记在本机。\n消息为空 / 加载失败（空、加载失败、部分失败）；空：一句话说明「有新订单、审批时会出现在这里」+ 去设置通知的出路；失败：保留当前分类，「重试」先出骨架再出结果；部分失败：已加载的照常显示，顶部提示哪一类没加载出来并可单独重试。\n围绕业务字段通知标题、通知类型、接收范围、已读状态、发送时间检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -820,11 +805,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -883,7 +884,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -939,7 +940,7 @@ const MSGS = () => [
 ];
 const item = m => `<div class="nt-item ${m.u ? 'unread' : ''}" data-m="${m.id}" role="button" tabindex="0" aria-label="${m.u ? '未读，' : ''}${esc(m.t)}"><span class="ico">${ic(CAT[m.c][1], 'ic-sm')}</span><div class="t"><b>${esc(m.t)}</b><p>${esc(m.p)}</p></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="tm">${m.tm}</span>${m.u ? `<button class="btn btn-ghost rd" type="button" data-rd="${m.id}">标为已读</button>` : ''}</div></div>`;
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '消息通知',
   intro: '8 种消息通知做法：消息中心、红点规则、详情跳转、推送权限、通知偏好、免打扰、实时提示、空与失败。每种都能点、能切状态。',
@@ -1017,9 +1018,9 @@ Gallery.init({
       layout: 'center',
       render(s) {
         if (s === 'granted') return `<div class="nt-card nt-perm"><div class="big" style="background:var(--success-soft);color:var(--success)">${ic('check-c')}</div><h4>通知已开启</h4><p class="muted" style="font-size:14px">新订单、退款会第一时间提醒你。可在「设置 › 通知」里按类型关掉。</p></div>`;
-        if (s === 'denied') return `<div class="nt-card nt-perm"><div class="big" style="background:var(--line-soft);color:var(--ink-500)">${ic('bell')}</div><h4>通知没开</h4><p class="muted" style="font-size:14px">新订单不会提醒你，只能打开 App 才看到。</p><ul><li>${ic('chev-r', 'ic-sm')}打开手机「设置」</li><li>${ic('chev-r', 'ic-sm')}找到本 App（示例 App）</li><li>${ic('chev-r', 'ic-sm')}点「通知」，打开「允许通知」</li></ul><button class="btn" type="button" data-later>知道了</button></div>`;
+        if (s === 'denied') return `<div class="nt-card nt-perm"><div class="big" style="background:var(--line-soft);color:var(--ink-500)">${ic('bell')}</div><h4>通知没开</h4><p class="muted" style="font-size:14px">新订单不会提醒你，只能打开 App 才看到。</p><ul><li>${ic('chev-r', 'ic-sm')}打开手机「设置」</li><li>${ic('chev-r', 'ic-sm')}找到本 App（文三店补货pp）</li><li>${ic('chev-r', 'ic-sm')}点「通知」，打开「允许通知」</li></ul><button class="btn" type="button" data-later>知道了</button></div>`;
         return `<div class="nt-card nt-perm"><div class="big">${ic('bell')}</div><h4>新订单来了，第一时间告诉你</h4><p class="muted" style="font-size:14px">开启通知后：</p><ul><li>${ic('check', 'ic-sm')}新订单 30 秒内提醒，不错过确认时间</li><li>${ic('check', 'ic-sm')}退款、投诉马上知道</li><li>${ic('check', 'ic-sm')}不发广告，可以按类型关闭</li></ul>
-          <button class="btn btn-primary" type="button" data-ask>开启通知</button><button class="btn btn-ghost" type="button" data-later>以后再说</button>${s === 'sys' ? `<div class="nt-sys"><div class="box" role="alertdialog" aria-label="系统授权（模拟）"><p><b>「示例 App」想给你发送通知</b>通知可能包括提醒、声音和图标标记（模拟系统弹窗）</p><div class="row"><button type="button" data-sys="no">不允许</button><button type="button" data-sys="yes">允许</button></div></div></div>` : ''}</div>`;
+          <button class="btn btn-primary" type="button" data-ask>开启通知</button><button class="btn btn-ghost" type="button" data-later>以后再说</button>${s === 'sys' ? `<div class="nt-sys"><div class="box" role="alertdialog" aria-label="系统授权（模拟）"><p><b>「文三店补货pp」想给你发送通知</b>通知可能包括提醒、声音和图标标记（模拟系统弹窗）</p><div class="row"><button type="button" data-sys="no">不允许</button><button type="button" data-sys="yes">允许</button></div></div></div>` : ''}</div>`;
       },
       mount(el) {
         el.addEventListener('click', e => {
@@ -1033,7 +1034,7 @@ Gallery.init({
     { id: 'pref', group: '推送', name: '通知偏好（类型 × 渠道）', desc: '按消息类型和渠道勾选，安全类通知锁定不能关。',
       use: '消息类型多、渠道多（站内、推送、邮件、短信）；不同岗位关心的消息不同。',
       avoid: '只有一种消息时用一个开关就够；不要把每条细项都列出来（30 行的表格没人看完）。',
-      states: [{ id: 'default', name: '默认' }],
+      states: [{ id: 'default', name: '消息通知待操作' }],
       spec: '一行一类消息、一列一种渠道；勾选即保存（Toast 反馈）；安全类整行置灰勾选并写「为了账号安全，不能关闭」；短信要花钱的渠道标注「每条约 0.05 元（示例）」。',
       render() {
         const R = this.r || (this.r = [['订单与退款', '新订单、退款申请', [1, 1, 0, 1]], ['审批待办', '需要你审批的单据', [1, 1, 1, 0]], ['评论与提及', '有人 @ 你', [1, 0, 0, 0]], ['账号安全', '登录异常、密码修改', [1, 1, 1, 1], 1]]);
@@ -1114,7 +1115,8 @@ Gallery.init({
         return () => clearTimeout(t);
       } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 </script>
 </body>

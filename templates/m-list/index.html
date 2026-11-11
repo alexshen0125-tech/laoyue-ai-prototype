@@ -146,7 +146,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -365,7 +365,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -376,8 +376,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -460,56 +461,40 @@ body.gal{background:var(--bg)}
 .l-task .bar{height:6px;border-radius:3px;background:var(--line-soft);overflow:hidden;margin-top:6px}
 .l-task .bar i{display:block;height:100%;background:var(--accent);transform-origin:left;transition:transform 300ms var(--ease)}
 .l-note{font-size:var(--fs-12);color:var(--ink-500)}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.th-sort{min-height:32px} .l-chip{height:auto;min-height:32px} .l-chip button{min-width:32px;min-height:32px}
 </style>
 </head>
 <body>
 <script>
 const PROMPTS = [
-  { title: '从零生成整套「列表」交互模块',
-    when: '想要一份列表页交互规范 + 可点演示时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「列表交互模块」演示页。
-
-页面结构：左侧目录（可搜索），右侧每种做法一张卡片：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、能真实操作的演示、「复制 HTML」按钮。
-
-要做的 7 种做法和状态（示例数据用 20 多条虚构订单：单号、客户、金额、状态、下单时间）：
-1. 筛选：常用条件常驻一行（关键词、状态、日期），其余收进「更多筛选」展开；已选条件显示成标签，可单个删除，也可一键清除；条数实时显示「找到 N 条」。状态：默认 / 展开更多 / 已选条件。
-2. 排序：点表头切换降序 → 升序 → 取消，箭头高亮当前排序列。
-3. 分页与无限滚动：分页（页码、上一页下一页）/ 无限滚动（滚到底自动加载、显示加载中）/ 加载失败（底部「加载失败，点击重试」）/ 到底了（「没有更多了」）。
-4. 批量操作：批量按钮常驻，没勾选时置灰；勾选跨页保留；勾满本页后出现「已选本页 10 条，选择全部 N 条」；所选里有不能操作的单据，确认弹窗写明「将跳过 N 条，原因…」。
-5. 行内编辑：点单元格直接改，Enter 保存、Esc 取消；保存中显示转圈；保存失败恢复原值并提示原因。
-6. 列表状态集：加载骨架 / 空态（给「新建」「导入」出路）/ 无结果（给「清除筛选」）/ 出错（给「重新加载」，保留筛选条件）。
-7. 导出：少于 1000 条直接下载；超过 1000 条转为后台导出，显示进度，完成后通知并给「下载」。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；中性配色；表格数字右对齐、等宽数字；PC 可点元素 ≥32px；文字对比度 ≥4.5:1；动效只动 transform 和 opacity；图标用内联线性 SVG。示例数据标「示例」，不出现真实公司名。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把列表改成我的业务',
-    when: '已经下载了这个模块，想换成自己的字段时用',
-    text: `附件是一个单文件 HTML 的「列表交互模块」（index.html）。请把示例订单数据改成我的业务：
-- 列表是：{{业务名称，例如：供应商列表}}
-- 看列表的人：{{角色，例如：采购经理}}
-- 列（名称 / 类型 / 是否能排序 / 是否能行内编辑）：{{字段列表}}
-- 状态枚举：{{状态枚举，例如：合作中 / 暂停 / 已淘汰}}
-- 批量操作：{{批量动作，例如：批量暂停、批量导出}}，以及哪些状态不能做这个操作
-
-要求：
-1. 只改示例数据、列定义和文案，保留每种做法的所有状态和交互；
-2. 常用筛选条件不超过 3 个，其余放进「更多筛选」；
-3. 不能操作的单据在批量时自动跳过并写明原因；
-4. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出你改了哪几处。` },
-  { title: '在此基础上加一种做法 / 状态',
-    when: '模块里没有你要的列表做法时用',
-    text: `附件是一个单文件 HTML 的「列表交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：列设置（显示/隐藏列、拖动排序、恢复默认）}}」。
-
-要求：
-1. 照现有写法加一项 section：name、desc、use（什么时候用）、avoid（什么时候别用）、states、spec（交互要点）、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：默认 / 隐藏了 2 列 / 恢复默认}}；
-3. 用户的设置记在本机，下次打开自动恢复，并提示「已按你上次的设置显示」；
-4. 样式类名用 l- 开头，颜色圆角只用已有的 CSS 变量；
-5. 加完后页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建列表",
+    "when": "建立完整离线演示",
+    "text": "请制作「列表」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n筛选（常用 + 更多）（默认、展开更多、已选条件）；关键词输入即搜（停 0.2 秒）；选择即生效，不用点「查询」；已选条件变成标签，点 × 删一个，「清除全部」一次清空；条数实时显示「找到 N 条」；「更多筛选」里有已选条件时按钮上显示数字。\n表头排序（默认（按时间）、按金额降序）；能排序的列表头显示上下箭头；当前排序列箭头变深并写明方向（读屏读「降序」）；默认排序要和用户最常看的一致（通常是时间倒序）；排序后回到第 1 页。\n分页 vs 无限滚动（分页、无限滚动、加载失败、到底了）；分页：显示「第 x–y 条，共 N 条」，当前页高亮，首末页禁用上下页；无限滚动：离底 80px 自动加载，加载中显示转圈，失败显示「加载失败，点击重试」不自动重试，全部加载完显示「没有更多了」。\n批量操作（未勾选、勾满本页、已选全部结果、含不可操作）；批量按钮常驻显示，未勾选置灰并提示「勾选后可批量处理」；表头全选只选本页，选满后出现「选择全部 N 条」；勾选跨页保留；确认弹窗写明处理几条、跳过几条及原因；完成后 Toast 可撤销。\n行内编辑（默认、编辑中、保存中、保存失败）；悬停显示虚线框和铅笔，提示可编辑；点击变输入框并全选内容；Enter 或失焦保存，Esc 取消；保存中显示转圈；成功行闪绿一下；失败恢复原值、提示原因；输入非法值不提交并就地提示。\n列表四种状态（加载骨架、空态、无结果、出错）；加载用骨架屏，不用整页转圈，表头和筛选照常显示；空态说明「为什么空 + 怎么开始」并给新建/导入；无结果显示搜索词并给「清除筛选」；出错说明保留了什么并给「重新加载」，重试时先回到骨架。\n导出当前筛选（少量：直接下载、大量：后台导出、导出完成）；按钮写明导出范围「导出当前筛选（N 条）」；≤1000 条直接下载并 Toast；>1000 条弹出说明「将在后台导出，约 1 分钟，完成后通知你」，页面出现任务进度，可以继续干别的；完成后给「下载」，文件保留 7 天（示例）。\n业务字段：记录编号、订单状态、客户名称、金额、负责人。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换列表业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「列表」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n筛选（常用 + 更多）（默认、展开更多、已选条件）；关键词输入即搜（停 0.2 秒）；选择即生效，不用点「查询」；已选条件变成标签，点 × 删一个，「清除全部」一次清空；条数实时显示「找到 N 条」；「更多筛选」里有已选条件时按钮上显示数字。\n表头排序（默认（按时间）、按金额降序）；能排序的列表头显示上下箭头；当前排序列箭头变深并写明方向（读屏读「降序」）；默认排序要和用户最常看的一致（通常是时间倒序）；排序后回到第 1 页。\n分页 vs 无限滚动（分页、无限滚动、加载失败、到底了）；分页：显示「第 x–y 条，共 N 条」，当前页高亮，首末页禁用上下页；无限滚动：离底 80px 自动加载，加载中显示转圈，失败显示「加载失败，点击重试」不自动重试，全部加载完显示「没有更多了」。\n批量操作（未勾选、勾满本页、已选全部结果、含不可操作）；批量按钮常驻显示，未勾选置灰并提示「勾选后可批量处理」；表头全选只选本页，选满后出现「选择全部 N 条」；勾选跨页保留；确认弹窗写明处理几条、跳过几条及原因；完成后 Toast 可撤销。\n行内编辑（默认、编辑中、保存中、保存失败）；悬停显示虚线框和铅笔，提示可编辑；点击变输入框并全选内容；Enter 或失焦保存，Esc 取消；保存中显示转圈；成功行闪绿一下；失败恢复原值、提示原因；输入非法值不提交并就地提示。\n列表四种状态（加载骨架、空态、无结果、出错）；加载用骨架屏，不用整页转圈，表头和筛选照常显示；空态说明「为什么空 + 怎么开始」并给新建/导入；无结果显示搜索词并给「清除筛选」；出错说明保留了什么并给「重新加载」，重试时先回到骨架。\n导出当前筛选（少量：直接下载、大量：后台导出、导出完成）；按钮写明导出范围「导出当前筛选（N 条）」；≤1000 条直接下载并 Toast；>1000 条弹出说明「将在后台导出，约 1 分钟，完成后通知你」，页面出现任务进度，可以继续干别的；完成后给「下载」，文件保留 7 天（示例）。\n逐一核对记录编号、订单状态、客户名称、金额、负责人的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对列表交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「列表」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n筛选（常用 + 更多）（默认、展开更多、已选条件）；关键词输入即搜（停 0.2 秒）；选择即生效，不用点「查询」；已选条件变成标签，点 × 删一个，「清除全部」一次清空；条数实时显示「找到 N 条」；「更多筛选」里有已选条件时按钮上显示数字。\n表头排序（默认（按时间）、按金额降序）；能排序的列表头显示上下箭头；当前排序列箭头变深并写明方向（读屏读「降序」）；默认排序要和用户最常看的一致（通常是时间倒序）；排序后回到第 1 页。\n分页 vs 无限滚动（分页、无限滚动、加载失败、到底了）；分页：显示「第 x–y 条，共 N 条」，当前页高亮，首末页禁用上下页；无限滚动：离底 80px 自动加载，加载中显示转圈，失败显示「加载失败，点击重试」不自动重试，全部加载完显示「没有更多了」。\n批量操作（未勾选、勾满本页、已选全部结果、含不可操作）；批量按钮常驻显示，未勾选置灰并提示「勾选后可批量处理」；表头全选只选本页，选满后出现「选择全部 N 条」；勾选跨页保留；确认弹窗写明处理几条、跳过几条及原因；完成后 Toast 可撤销。\n行内编辑（默认、编辑中、保存中、保存失败）；悬停显示虚线框和铅笔，提示可编辑；点击变输入框并全选内容；Enter 或失焦保存，Esc 取消；保存中显示转圈；成功行闪绿一下；失败恢复原值、提示原因；输入非法值不提交并就地提示。\n列表四种状态（加载骨架、空态、无结果、出错）；加载用骨架屏，不用整页转圈，表头和筛选照常显示；空态说明「为什么空 + 怎么开始」并给新建/导入；无结果显示搜索词并给「清除筛选」；出错说明保留了什么并给「重新加载」，重试时先回到骨架。\n导出当前筛选（少量：直接下载、大量：后台导出、导出完成）；按钮写明导出范围「导出当前筛选（N 条）」；≤1000 条直接下载并 Toast；>1000 条弹出说明「将在后台导出，约 1 分钟，完成后通知你」，页面出现任务进度，可以继续干别的；完成后给「下载」，文件保留 7 天（示例）。\n围绕业务字段记录编号、订单状态、客户名称、金额、负责人检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -790,11 +775,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -853,7 +854,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -900,7 +901,431 @@ const spin = '<span class="spin"></span>';
 const STS = { p: ['待确认', 'warning'], s: ['待发货', 'info'], d: ['已完成', 'success'], c: ['已取消', 'neutral'] };
 const CUS = ['青禾小馆', '南岸咖啡', '山野面馆', '拾味轻食', '橙子烘焙', '北街火锅', '晴天茶饮', '老街卤味'];
 let sd = 11; const rnd = () => (sd = (sd * 9301 + 49297) % 233280) / 233280;
-const ROWS = Array.from({ length: 47 }, (_, i) => ({ id: 'SO' + (2611100 - i), cus: CUS[Math.floor(rnd() * CUS.length)], amt: Math.round(80 + rnd() * 1800), st: i < 7 ? 'p' : 'psddddc'[Math.floor(rnd() * 7)], day: `11-${String(10 - Math.floor(i / 5)).padStart(2, '0')}`, city: rnd() > .5 ? '示例市' : '样例市', pay: rnd() > .5 ? '月结' : '在线支付' }));
+const ROWS = [
+  {
+    "id": "SO2611100",
+    "cus": "北街火锅",
+    "amt": 1708,
+    "st": "p",
+    "day": "11-10",
+    "city": "宁波市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611099",
+    "cus": "南岸咖啡",
+    "amt": 1447,
+    "st": "p",
+    "day": "11-10",
+    "city": "宁波市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611098",
+    "cus": "晴天茶饮",
+    "amt": 690,
+    "st": "p",
+    "day": "11-10",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611097",
+    "cus": "老街卤味",
+    "amt": 1014,
+    "st": "p",
+    "day": "11-10",
+    "city": "宁波市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611096",
+    "cus": "拾味轻食",
+    "amt": 1131,
+    "st": "p",
+    "day": "11-10",
+    "city": "宁波市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611095",
+    "cus": "青禾小馆",
+    "amt": 1485,
+    "st": "p",
+    "day": "11-09",
+    "city": "宁波市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611094",
+    "cus": "拾味轻食",
+    "amt": 1054,
+    "st": "p",
+    "day": "11-09",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611093",
+    "cus": "北街火锅",
+    "amt": 748,
+    "st": "d",
+    "day": "11-09",
+    "city": "宁波市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611092",
+    "cus": "拾味轻食",
+    "amt": 1640,
+    "st": "p",
+    "day": "11-09",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611091",
+    "cus": "晴天茶饮",
+    "amt": 753,
+    "st": "d",
+    "day": "11-09",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611090",
+    "cus": "北街火锅",
+    "amt": 626,
+    "st": "c",
+    "day": "11-08",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611089",
+    "cus": "北街火锅",
+    "amt": 933,
+    "st": "d",
+    "day": "11-08",
+    "city": "宁波市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611088",
+    "cus": "橙子烘焙",
+    "amt": 478,
+    "st": "d",
+    "day": "11-08",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611087",
+    "cus": "拾味轻食",
+    "amt": 400,
+    "st": "d",
+    "day": "11-08",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611086",
+    "cus": "青禾小馆",
+    "amt": 1372,
+    "st": "s",
+    "day": "11-08",
+    "city": "宁波市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611085",
+    "cus": "山野面馆",
+    "amt": 199,
+    "st": "d",
+    "day": "11-07",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611084",
+    "cus": "青禾小馆",
+    "amt": 220,
+    "st": "d",
+    "day": "11-07",
+    "city": "杭州市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611083",
+    "cus": "北街火锅",
+    "amt": 1307,
+    "st": "d",
+    "day": "11-07",
+    "city": "宁波市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611082",
+    "cus": "拾味轻食",
+    "amt": 1865,
+    "st": "p",
+    "day": "11-07",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611081",
+    "cus": "北街火锅",
+    "amt": 235,
+    "st": "d",
+    "day": "11-07",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611080",
+    "cus": "北街火锅",
+    "amt": 887,
+    "st": "d",
+    "day": "11-06",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611079",
+    "cus": "老街卤味",
+    "amt": 228,
+    "st": "d",
+    "day": "11-06",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611078",
+    "cus": "山野面馆",
+    "amt": 596,
+    "st": "d",
+    "day": "11-06",
+    "city": "杭州市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611077",
+    "cus": "青禾小馆",
+    "amt": 264,
+    "st": "c",
+    "day": "11-06",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611076",
+    "cus": "晴天茶饮",
+    "amt": 837,
+    "st": "d",
+    "day": "11-06",
+    "city": "宁波市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611075",
+    "cus": "青禾小馆",
+    "amt": 1453,
+    "st": "p",
+    "day": "11-05",
+    "city": "宁波市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611074",
+    "cus": "老街卤味",
+    "amt": 1386,
+    "st": "d",
+    "day": "11-05",
+    "city": "宁波市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611073",
+    "cus": "山野面馆",
+    "amt": 241,
+    "st": "s",
+    "day": "11-05",
+    "city": "杭州市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611072",
+    "cus": "青禾小馆",
+    "amt": 1156,
+    "st": "d",
+    "day": "11-05",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611071",
+    "cus": "拾味轻食",
+    "amt": 804,
+    "st": "c",
+    "day": "11-05",
+    "city": "宁波市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611070",
+    "cus": "山野面馆",
+    "amt": 391,
+    "st": "d",
+    "day": "11-04",
+    "city": "杭州市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611069",
+    "cus": "拾味轻食",
+    "amt": 1655,
+    "st": "d",
+    "day": "11-04",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611068",
+    "cus": "橙子烘焙",
+    "amt": 468,
+    "st": "d",
+    "day": "11-04",
+    "city": "杭州市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611067",
+    "cus": "青禾小馆",
+    "amt": 1437,
+    "st": "d",
+    "day": "11-04",
+    "city": "宁波市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611066",
+    "cus": "青禾小馆",
+    "amt": 1299,
+    "st": "s",
+    "day": "11-04",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611065",
+    "cus": "拾味轻食",
+    "amt": 528,
+    "st": "c",
+    "day": "11-03",
+    "city": "宁波市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611064",
+    "cus": "橙子烘焙",
+    "amt": 1729,
+    "st": "s",
+    "day": "11-03",
+    "city": "宁波市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611063",
+    "cus": "南岸咖啡",
+    "amt": 240,
+    "st": "c",
+    "day": "11-03",
+    "city": "宁波市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611062",
+    "cus": "青禾小馆",
+    "amt": 1134,
+    "st": "d",
+    "day": "11-03",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611061",
+    "cus": "老街卤味",
+    "amt": 1416,
+    "st": "p",
+    "day": "11-03",
+    "city": "宁波市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611060",
+    "cus": "老街卤味",
+    "amt": 426,
+    "st": "s",
+    "day": "11-02",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611059",
+    "cus": "北街火锅",
+    "amt": 635,
+    "st": "d",
+    "day": "11-02",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611058",
+    "cus": "山野面馆",
+    "amt": 650,
+    "st": "p",
+    "day": "11-02",
+    "city": "杭州市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611057",
+    "cus": "山野面馆",
+    "amt": 208,
+    "st": "p",
+    "day": "11-02",
+    "city": "杭州市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611056",
+    "cus": "山野面馆",
+    "amt": 983,
+    "st": "d",
+    "day": "11-02",
+    "city": "宁波市",
+    "pay": "在线支付"
+  },
+  {
+    "id": "SO2611055",
+    "cus": "北街火锅",
+    "amt": 1379,
+    "st": "d",
+    "day": "11-01",
+    "city": "杭州市",
+    "pay": "月结"
+  },
+  {
+    "id": "SO2611054",
+    "cus": "拾味轻食",
+    "amt": 1536,
+    "st": "d",
+    "day": "11-01",
+    "city": "杭州市",
+    "pay": "月结"
+  }
+];
 const tag = s => `<span class="tag tag-${STS[s][1]}">${STS[s][0]}</span>`;
 const head = (cols) => `<thead><tr>${cols.map(c => `<th class="${c.r ? 'r' : ''}">${c.t}</th>`).join('')}</tr></thead>`;
 const row = (o, pre = '') => `<tr data-id="${o.id}">${pre}<td class="mono">${o.id}</td><td>${esc(o.cus)}</td><td class="r num">${money(o.amt)}</td><td>${tag(o.st)}</td><td class="num muted">${o.day}</td></tr>`;
@@ -908,7 +1333,7 @@ const COLS = [{ t: '单号' }, { t: '客户' }, { t: '金额（元）', r: 1 }, 
 const skRows = n => Proto.skRows(n, 5);
 const kwHas = (o, kw) => !kw || (o.id + o.cus).toLowerCase().includes(kw.toLowerCase().replace(/\s/g, ''));
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '列表',
   intro: '7 种常见列表做法：筛选、排序、翻页、批量、行内编辑、各种状态、导出。都能点，复制 HTML 或提示词直接用。',
@@ -917,10 +1342,10 @@ Gallery.init({
     { id: 'filter', group: '找数据', name: '筛选（常用 + 更多）', desc: '常用条件一直摆着，不常用的收起来；选了什么一眼看得到，一键能清掉。',
       use: '条件 ≥ 4 个的后台列表；大多数人只用其中 1–3 个。',
       avoid: '条件只有 1–2 个 —— 直接平铺，不要「更多」；C 端手机列表 —— 改用底部弹层筛选。',
-      states: [{ id: 'default', name: '默认' }, { id: 'more', name: '展开更多' }, { id: 'chips', name: '已选条件' }],
+      states: [{ id: 'default', name: '列表待操作' }, { id: 'more', name: '展开更多' }, { id: 'chips', name: '已选条件' }],
       spec: '关键词输入即搜（停 0.2 秒）；选择即生效，不用点「查询」；已选条件变成标签，点 × 删一个，「清除全部」一次清空；条数实时显示「找到 N 条」；「更多筛选」里有已选条件时按钮上显示数字。',
       render(s) {
-        this.f = s === 'chips' ? { kw: '', st: 'p', city: '示例市', pay: '月结' } : { kw: '', st: '', city: '', pay: '' };
+        this.f = s === 'chips' ? { kw: '', st: 'p', city: '杭州市', pay: '月结' } : { kw: '', st: '', city: '', pay: '' };
         this.open = s === 'more';
         return `<div class="l-card"><div data-ui></div><div class="l-wrap"><table class="table">${head(COLS)}<tbody data-tb></tbody></table></div></div>`;
       },
@@ -932,7 +1357,7 @@ Gallery.init({
             <div class="field grow"><label class="label" for="lf-kw">关键词</label><div class="input-wrap">${ic('search')}<input class="input" id="lf-kw" placeholder="单号 / 客户" value="${esc(f.kw)}" autocomplete="off"></div></div>
             <div class="field"><label class="label" for="lf-st">状态</label><select class="select" id="lf-st"><option value="">全部</option>${Object.entries(STS).map(([k, v]) => `<option value="${k}" ${f.st === k ? 'selected' : ''}>${v[0]}</option>`).join('')}</select></div>
             <button class="btn" type="button" data-more aria-expanded="${S.open}">${ic('filter', 'ic-sm')}更多筛选${moreN ? ` <span class="badge badge-accent">${moreN}</span>` : ''}${ic(S.open ? 'chev-u' : 'chev-d', 'ic-sm')}</button></div>
-            ${S.open ? `<div class="l-more"><div class="field"><label class="label" for="lf-city">城市</label><select class="select" id="lf-city"><option value="">全部</option>${['示例市', '样例市'].map(x => `<option ${f.city === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div><div class="field"><label class="label" for="lf-pay">支付方式</label><select class="select" id="lf-pay"><option value="">全部</option>${['月结', '在线支付'].map(x => `<option ${f.pay === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div></div>` : ''}
+            ${S.open ? `<div class="l-more"><div class="field"><label class="label" for="lf-city">城市</label><select class="select" id="lf-city"><option value="">全部</option>${['杭州市', '宁波市'].map(x => `<option ${f.city === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div><div class="field"><label class="label" for="lf-pay">支付方式</label><select class="select" id="lf-pay"><option value="">全部</option>${['月结', '在线支付'].map(x => `<option ${f.pay === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div></div>` : ''}
             ${(f.kw || f.st || f.city || f.pay) ? `<div class="l-chips">已选：${[f.kw && ['kw', '含「' + f.kw + '」'], f.st && ['st', '状态：' + STS[f.st][0]], f.city && ['city', '城市：' + f.city], f.pay && ['pay', '支付：' + f.pay]].filter(Boolean).map(([k, t]) => `<span class="l-chip">${esc(t)}<button type="button" data-rm="${k}" aria-label="删除条件 ${esc(t)}">${ic('x', 'ic-sm')}</button></span>`).join('')}<button class="btn-link" type="button" data-clear>清除全部</button></div>` : ''}`;
           list();
         };
@@ -940,7 +1365,7 @@ Gallery.init({
           const f = S.f, r = ROWS.filter(o => kwHas(o, f.kw) && (!f.st || o.st === f.st) && (!f.city || o.city === f.city) && (!f.pay || o.pay === f.pay));
           el.querySelector('[data-tb]').innerHTML = r.length ? r.slice(0, 8).map(o => row(o)).join('') : `<tr><td colspan="5">${Proto.stateBlock({ icon: 'search', title: '没有符合条件的订单', acts: '<button class="btn" type="button" data-clear>清除筛选</button>' })}</td></tr>`;
           let m = el.querySelector('.l-meta'); if (!m) { m = document.createElement('div'); m.className = 'l-meta'; el.querySelector('.l-wrap').before(m); }
-          m.innerHTML = `找到 <b>${r.length}</b> 条${r.length > 8 ? '，演示只显示前 8 条' : ''}<span class="sp"></span><span class="demo-mark">示例数据</span>`;
+          m.innerHTML = `找到 <b>${r.length}</b> 条${r.length > 8 ? '，演示只显示前 8 条' : ''}<span class="sp"></span><span class="sample-badge">示例数据</span>`;
         };
         draw(); let t;
         el.addEventListener('input', e => { if (e.target.id === 'lf-kw') { clearTimeout(t); t = setTimeout(() => { S.f.kw = e.target.value.trim(); const pos = e.target.selectionStart; draw(); const k = el.querySelector('#lf-kw'); k.focus(); k.setSelectionRange(pos, pos); }, 200); } });
@@ -1054,11 +1479,11 @@ Gallery.init({
     { id: 'inline', group: '处理数据', name: '行内编辑', desc: '不用打开详情，点一下单元格直接改。',
       use: '改一两个简单字段：数量、价格、备注、负责人；要一口气改很多行。',
       avoid: '改动有连锁影响、需要审批或要填理由的字段 —— 走详情页或弹窗；字段很长（多行文本）。',
-      states: [{ id: 'default', name: '默认' }, { id: 'editing', name: '编辑中' }, { id: 'saving', name: '保存中' }, { id: 'failed', name: '保存失败' }],
+      states: [{ id: 'default', name: '列表待操作' }, { id: 'editing', name: '编辑中' }, { id: 'saving', name: '保存中' }, { id: 'failed', name: '保存失败' }],
       spec: '悬停显示虚线框和铅笔，提示可编辑；点击变输入框并全选内容；Enter 或失焦保存，Esc 取消；保存中显示转圈；成功行闪绿一下；失败恢复原值、提示原因；输入非法值不提交并就地提示。',
       render(s) {
         this.rows = ROWS.slice(0, 5).map(o => ({ ...o }));
-        return `<div class="l-card"><div class="l-meta">点「单价」直接改；第 3 行模拟保存失败<span class="sp"></span><span class="demo-mark">示例数据</span></div><table class="table"><thead><tr><th>单号</th><th>客户</th><th class="r">单价（元）</th><th>状态</th></tr></thead><tbody data-tb></tbody></table></div>`;
+        return `<div class="l-card"><div class="l-meta">点「单价」直接改；第 3 行模拟保存失败<span class="sp"></span><span class="sample-badge">示例数据</span></div><table class="table"><thead><tr><th>单号</th><th>客户</th><th class="r">单价（元）</th><th>状态</th></tr></thead><tbody data-tb></tbody></table></div>`;
       },
       mount(el, s) {
         const S = Gallery.cfg.sections.find(x => x.id === 'inline');
@@ -1113,7 +1538,8 @@ Gallery.init({
         });
       } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 function task(p) { return `<div class="l-task">${ic(p >= 100 ? 'check-c' : 'file')}<div class="t"><div>订单_已完成_近30天.xlsx <span class="muted">· 12,480 条</span></div>${p < 100 ? `<div class="bar" role="progressbar" aria-valuenow="${p}" aria-valuemin="0" aria-valuemax="100"><i style="transform:scaleX(${p / 100})"></i></div><div class="l-note">后台导出中 ${p}%，可以离开这个页面</div>` : '<div class="l-note">已完成 · 文件保留 7 天（示例）</div>'}</div>${p >= 100 ? `<button class="btn btn-primary" type="button" data-dl>${ic('download', 'ic-sm')}下载</button>` : ''}</div>`; }
 Proto.prompts(PROMPTS);
 </script>

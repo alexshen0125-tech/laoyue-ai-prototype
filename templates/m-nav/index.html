@@ -146,7 +146,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -365,7 +365,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -376,8 +376,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -503,6 +504,21 @@ body.gal{background:var(--bg)}
 .nv-sline.done{background:var(--accent)}
 .nv-sbody{font-size:var(--fs-13);color:var(--ink-700);min-height:60px}
 .nv-acts{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.nv-stepbar{list-style:none;margin:0;padding:0}.nv-stepbar li{display:flex;align-items:center;flex:1;min-width:0}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.nv-tb .num{color:var(--danger-ink)}
 </style>
 </head>
 <body>
@@ -511,50 +527,21 @@ body.gal{background:var(--bg)}
    AI 提示词（页面顶部「AI 提示词」打开；{{变量}} 点一下就能填）
    ========================================================================== */
 const PROMPTS = [
-  { title: '从零生成整套「导航」交互模块',
-    when: '想要一份自己的导航交互规范 + 可点演示时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「导航交互模块」演示页。
-
-页面结构：左侧目录（可搜索），右侧每种做法一张卡片。每张卡片包含：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可以真实操作的演示、「复制 HTML」按钮。
-
-要做的 9 种做法和状态：
-1. 侧栏多级菜单：展开 / 收起成图标。点父级展开子菜单，当前页高亮、父级加粗；收起后只剩图标，悬停显示名字；记住收起状态。
-2. 顶部导航 + 下拉：默认 / 下拉展开。下拉每项带一句说明；点外面、Esc 关闭；键盘上下能选。
-3. 面包屑：层级少 / 层级多（中间折叠成「…」，点开看完整路径）/ 当前页名很长（省略号 + 悬停显示全名）。
-4. 页内 Tab：普通 / 带计数 / 溢出（Tab 太多时可左右滚动，两侧箭头到头置灰）。
-5. 分段控制：2–5 个互斥选项切换视图，切换即生效，不刷新页面。
-6. 移动底部 Tab：默认 / 红点 / 数字角标（超过 99 显示「99+」）。最多 5 个，图标 + 文字，当前项主色。
-7. 移动返回逻辑：普通返回 / 有未保存内容时先确认「放弃编辑 / 继续编辑」。
-8. 页内锚点目录：右侧目录随滚动高亮当前小节，点目录平滑滚到对应位置。
-9. 步骤导航：进行中 / 有一步出错。已完成的步骤可点回去改，未到的步骤不可点。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；中性配色、留白充足；PC 可点元素 ≥32px、移动 ≥44px；当前位置要一眼能看出来；文字对比度 ≥4.5:1；键盘可操作、焦点框清晰；动效只动 transform 和 opacity，用 cubic-bezier 缓动；图标用内联线性 SVG。示例数据标「示例」，不出现真实公司名。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把导航改成我的系统',
-    when: '已经下载了这个模块，想换成自己的菜单结构时用',
-    text: `附件是一个单文件 HTML 的「导航交互模块」（index.html）。请把里面「{{要用的做法，例如：侧栏多级菜单 + 面包屑}}」改成我的系统：
-- 系统名称：{{业务名称，例如：门店管理后台}}
-- 使用的人：{{角色，例如：区域经理}}
-- 菜单结构（一级 / 二级，最多三级）：{{菜单清单}}
-- 需要红点或角标的入口：{{带提醒的入口，例如：待审批（数字）、消息（红点）}}
-
-要求：
-1. 只改这一种做法的菜单和文案，保留它所有状态和交互（展开收起、当前高亮、键盘操作）；
-2. 一级菜单不超过 8 个，超过的合并分组；名字用 2–5 个字的动词或名词，不用「管理中心」这种空词；
-3. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出你改了哪几处。` },
-  { title: '在此基础上加一种做法 / 状态',
-    when: '模块里没有你要的导航做法时用',
-    text: `附件是一个单文件 HTML 的「导航交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：多标签页（浏览器式页签，可关闭、可右键关闭其他）}}」。
-
-要求：
-1. 照现有做法的写法加一项 section：写清 name、desc、use（什么时候用）、avoid（什么时候别用）、states、spec（交互要点）、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：默认 / 页签很多溢出 / 关闭有未保存内容的页签}}；
-3. 样式类名用 nv- 开头，颜色圆角只用已有的 CSS 变量；
-4. 加完后页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建导航",
+    "when": "建立完整离线演示",
+    "text": "请制作「导航」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n侧栏多级菜单（展开、收起成图标）；点父级只展开 / 收起子菜单，不跳页；当前页高亮主色，所属父级加粗并保持展开；收起后只剩图标，悬停显示名字（title），收起状态记在本机；底部「收起」按钮固定位置。\n顶部导航 + 下拉（默认、下拉展开）；当前一级下方主色短横线；点有下拉的一级展开，每项带一句说明；点外面或按 Esc 关闭并把焦点还给按钮；键盘 ↑ ↓ 在下拉里移动；下拉打开时按钮保持按下态。\n面包屑（层级少、层级多（折叠）、当前页名很长）；上层都是可点链接，当前页加粗不可点；超过 4 层时中间折叠成「…」，点开展示完整路径；当前页名过长用省略号，悬停显示全名；分隔符用细箭头图标。\n页内 Tab（普通、带计数、溢出滚动）；当前 Tab 文字加深 + 底部主色线；计数用浅色徽标，0 也显示；溢出时两侧出现箭头，到头置灰，当前 Tab 自动滚进可视区；键盘 ← → 切换（role=tablist）。\n分段控制（切视图、切时间）；当前项白底浮起，其他项灰字；切换即生效，不刷新页面、不丢筛选；记住上次选择；键盘 Tab 可聚焦、空格切换。\n移动底部 Tab 栏（默认、红点、数字角标）；图标 + 文字，当前项主色加粗；每项触控 ≥ 44px；红点表示「有新内容」不说数量，数字角标超过 99 显示「99+」；点当前项回到顶部；切换时保留各 Tab 的浏览位置。\n移动返回逻辑（没改动、有未保存内容）；左上角返回按钮触控 ≥ 44px；没改动直接回上一页；有改动时底部弹层二选一「放弃编辑 / 继续编辑」，危险项红字；系统返回手势同样触发。\n页内锚点目录（默认）；目录固定在右侧；滚动时高亮当前小节（以内容区顶部 40px 为准）；点目录平滑滚到对应小节并更新地址里的锚点；小节标题用 h 级标题，方便屏幕阅读器跳转。\n步骤导航（进行中、有一步出错）；已完成：主色描边 + 勾，可点回去改；当前：主色实心；未到：灰色不可点；某步校验没过时该步变红并写原因；返回已完成步骤修改后，后面的步骤内容保留。\n业务字段：菜单名称、当前页面、父级路径、步骤编号、未保存内容。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换导航业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「导航」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n侧栏多级菜单（展开、收起成图标）；点父级只展开 / 收起子菜单，不跳页；当前页高亮主色，所属父级加粗并保持展开；收起后只剩图标，悬停显示名字（title），收起状态记在本机；底部「收起」按钮固定位置。\n顶部导航 + 下拉（默认、下拉展开）；当前一级下方主色短横线；点有下拉的一级展开，每项带一句说明；点外面或按 Esc 关闭并把焦点还给按钮；键盘 ↑ ↓ 在下拉里移动；下拉打开时按钮保持按下态。\n面包屑（层级少、层级多（折叠）、当前页名很长）；上层都是可点链接，当前页加粗不可点；超过 4 层时中间折叠成「…」，点开展示完整路径；当前页名过长用省略号，悬停显示全名；分隔符用细箭头图标。\n页内 Tab（普通、带计数、溢出滚动）；当前 Tab 文字加深 + 底部主色线；计数用浅色徽标，0 也显示；溢出时两侧出现箭头，到头置灰，当前 Tab 自动滚进可视区；键盘 ← → 切换（role=tablist）。\n分段控制（切视图、切时间）；当前项白底浮起，其他项灰字；切换即生效，不刷新页面、不丢筛选；记住上次选择；键盘 Tab 可聚焦、空格切换。\n移动底部 Tab 栏（默认、红点、数字角标）；图标 + 文字，当前项主色加粗；每项触控 ≥ 44px；红点表示「有新内容」不说数量，数字角标超过 99 显示「99+」；点当前项回到顶部；切换时保留各 Tab 的浏览位置。\n移动返回逻辑（没改动、有未保存内容）；左上角返回按钮触控 ≥ 44px；没改动直接回上一页；有改动时底部弹层二选一「放弃编辑 / 继续编辑」，危险项红字；系统返回手势同样触发。\n页内锚点目录（默认）；目录固定在右侧；滚动时高亮当前小节（以内容区顶部 40px 为准）；点目录平滑滚到对应小节并更新地址里的锚点；小节标题用 h 级标题，方便屏幕阅读器跳转。\n步骤导航（进行中、有一步出错）；已完成：主色描边 + 勾，可点回去改；当前：主色实心；未到：灰色不可点；某步校验没过时该步变红并写原因；返回已完成步骤修改后，后面的步骤内容保留。\n逐一核对菜单名称、当前页面、父级路径、步骤编号、未保存内容的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对导航交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「导航」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n侧栏多级菜单（展开、收起成图标）；点父级只展开 / 收起子菜单，不跳页；当前页高亮主色，所属父级加粗并保持展开；收起后只剩图标，悬停显示名字（title），收起状态记在本机；底部「收起」按钮固定位置。\n顶部导航 + 下拉（默认、下拉展开）；当前一级下方主色短横线；点有下拉的一级展开，每项带一句说明；点外面或按 Esc 关闭并把焦点还给按钮；键盘 ↑ ↓ 在下拉里移动；下拉打开时按钮保持按下态。\n面包屑（层级少、层级多（折叠）、当前页名很长）；上层都是可点链接，当前页加粗不可点；超过 4 层时中间折叠成「…」，点开展示完整路径；当前页名过长用省略号，悬停显示全名；分隔符用细箭头图标。\n页内 Tab（普通、带计数、溢出滚动）；当前 Tab 文字加深 + 底部主色线；计数用浅色徽标，0 也显示；溢出时两侧出现箭头，到头置灰，当前 Tab 自动滚进可视区；键盘 ← → 切换（role=tablist）。\n分段控制（切视图、切时间）；当前项白底浮起，其他项灰字；切换即生效，不刷新页面、不丢筛选；记住上次选择；键盘 Tab 可聚焦、空格切换。\n移动底部 Tab 栏（默认、红点、数字角标）；图标 + 文字，当前项主色加粗；每项触控 ≥ 44px；红点表示「有新内容」不说数量，数字角标超过 99 显示「99+」；点当前项回到顶部；切换时保留各 Tab 的浏览位置。\n移动返回逻辑（没改动、有未保存内容）；左上角返回按钮触控 ≥ 44px；没改动直接回上一页；有改动时底部弹层二选一「放弃编辑 / 继续编辑」，危险项红字；系统返回手势同样触发。\n页内锚点目录（默认）；目录固定在右侧；滚动时高亮当前小节（以内容区顶部 40px 为准）；点目录平滑滚到对应小节并更新地址里的锚点；小节标题用 h 级标题，方便屏幕阅读器跳转。\n步骤导航（进行中、有一步出错）；已完成：主色描边 + 勾，可点回去改；当前：主色实心；未到：灰色不可点；某步校验没过时该步变红并写原因；返回已完成步骤修改后，后面的步骤内容保留。\n围绕业务字段菜单名称、当前页面、父级路径、步骤编号、未保存内容检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -835,11 +822,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -898,7 +901,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -951,7 +954,7 @@ const MENU = [
   { id: 'set', name: '设置', icon: 'settings' }
 ];
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '导航',
   intro: '9 种常见导航做法：侧栏、顶部、面包屑、Tab、分段、移动底部 Tab、返回、锚点目录、步骤。核心只有一条——让人一眼知道自己在哪、怎么回去。',
@@ -986,7 +989,7 @@ Gallery.init({
     { id: 'topnav', group: 'PC 全局', name: '顶部导航 + 下拉', desc: '菜单横排在顶部，二级放下拉里。',
       use: '一级菜单 3–7 个、内容区需要更宽（看板、编辑器、官网）；二级不多。',
       avoid: '一级超过 7 个横排放不下；二级要常驻可见、频繁切换时用侧栏。',
-      states: [{ id: 'default', name: '默认' }, { id: 'open', name: '下拉展开' }],
+      states: [{ id: 'default', name: '导航待操作' }, { id: 'open', name: '下拉展开' }],
       spec: '当前一级下方主色短横线；点有下拉的一级展开，每项带一句说明；点外面或按 Esc 关闭并把焦点还给按钮；键盘 ↑ ↓ 在下拉里移动；下拉打开时按钮保持按下态。',
       render(s) {
         const menu = s === 'open' ? `<div class="nv-menu" role="menu" style="left:184px">${[['订单列表', '查一批、处理一批'], ['退款售后', '处理退款和退货'], ['发票', '开票、红冲、下载']].map(x => `<button type="button" role="menuitem" data-pick="${x[0]}">${x[0]}<span>${x[1]}</span></button>`).join('')}</div>` : '';
@@ -1064,7 +1067,7 @@ Gallery.init({
     { id: 'tabbar', group: '移动', name: '移动底部 Tab 栏', desc: 'App 一级入口放在拇指够得着的底部。',
       use: 'App 有 3–5 个同等重要、经常切换的一级入口。',
       avoid: '超过 5 个入口（多的放「我的」里）；只有一两个入口的工具类 App；别把「发布」这类一次性动作塞进 Tab 当入口。',
-      states: [{ id: 'default', name: '默认' }, { id: 'dot', name: '红点' }, { id: 'num', name: '数字角标' }],
+      states: [{ id: 'default', name: '导航待操作' }, { id: 'dot', name: '红点' }, { id: 'num', name: '数字角标' }],
       spec: '图标 + 文字，当前项主色加粗；每项触控 ≥ 44px；红点表示「有新内容」不说数量，数字角标超过 99 显示「99+」；点当前项回到顶部；切换时保留各 Tab 的浏览位置。',
       render(s) {
         const cur = this.cur || 0;
@@ -1081,8 +1084,8 @@ Gallery.init({
       states: [{ id: 'clean', name: '没改动' }, { id: 'dirty', name: '有未保存内容' }],
       spec: '左上角返回按钮触控 ≥ 44px；没改动直接回上一页；有改动时底部弹层二选一「放弃编辑 / 继续编辑」，危险项红字；系统返回手势同样触发。',
       render(s) {
-        if (this.page === 'list') return `<div class="nv-phone"><div class="nv-mbar"><h5>我的地址</h5></div><div class="nv-mbody nv-mlist"><button type="button" data-open>示例市青石路 88 号${ic('chev-r', 'ic-sm')}</button><button type="button" data-open>示例市南岸路 12 号${ic('chev-r', 'ic-sm')}</button></div></div>`;
-        return `<div class="nv-phone"><div class="nv-mbar"><button class="tap" type="button" data-back aria-label="返回">${ic('chev-l')}</button><h5>编辑地址</h5></div><div class="nv-mbody"><div class="field"><label class="label" for="nv-addr">详细地址</label><input class="input" id="nv-addr" style="height:44px" value="${s === 'dirty' ? '示例市青石路 88 号 3 栋（已改）' : '示例市青石路 88 号'}"></div><p class="muted" style="font-size:12px;margin-top:10px">${s === 'dirty' ? '有改动还没保存，点返回试试' : '没改动，点返回会直接回去'}</p></div></div>`;
+        if (this.page === 'list') return `<div class="nv-phone"><div class="nv-mbar"><h5>我的地址</h5></div><div class="nv-mbody nv-mlist"><button type="button" data-open>杭州市青石路 88 号${ic('chev-r', 'ic-sm')}</button><button type="button" data-open>杭州市南岸路 12 号${ic('chev-r', 'ic-sm')}</button></div></div>`;
+        return `<div class="nv-phone"><div class="nv-mbar"><button class="tap" type="button" data-back aria-label="返回">${ic('chev-l')}</button><h5>编辑地址</h5></div><div class="nv-mbody"><div class="field"><label class="label" for="nv-addr">详细地址</label><input class="input" id="nv-addr" style="height:44px" value="${s === 'dirty' ? '杭州市青石路 88 号 3 栋（已改）' : '杭州市青石路 88 号'}"></div><p class="muted" style="font-size:12px;margin-top:10px">${s === 'dirty' ? '有改动还没保存，点返回试试' : '没改动，点返回会直接回去'}</p></div></div>`;
       },
       mount(el, s) {
         const sec = Gallery.cfg.sections.find(x => x.id === 'back'); let dirty = s === 'dirty';
@@ -1100,7 +1103,7 @@ Gallery.init({
     { id: 'anchor', group: '页内', name: '页内锚点目录', desc: '长页面右侧放目录，随滚动高亮当前小节。',
       use: '超过三屏、要从头读到尾的页面：帮助文档、合同、方案、长表单。',
       avoid: '页面不到两屏；各小节互不相关、只看其中一块（用 Tab）。',
-      states: [{ id: 'default', name: '默认' }],
+      states: [{ id: 'default', name: '导航待操作' }],
       spec: '目录固定在右侧；滚动时高亮当前小节（以内容区顶部 40px 为准）；点目录平滑滚到对应小节并更新地址里的锚点；小节标题用 h 级标题，方便屏幕阅读器跳转。',
       render() {
         const secs = ['适用范围', '下单规则', '配送时效', '退换货', '发票说明', '联系我们'];
@@ -1122,9 +1125,9 @@ Gallery.init({
       render(s) {
         const names = ['填写资料', '上传证件', '设置收款', '提交审核'];
         const cur = this.cur ?? 2;
-        const bar = names.map((n, i) => { const cls = s === 'err' && i === 1 ? 'err' : i < cur ? 'done' : i === cur ? 'on' : ''; return `${i ? `<span class="nv-sline ${i <= cur ? 'done' : ''}"></span>` : ''}<button class="nv-step ${cls}" type="button" data-s="${i}" ${i > cur ? 'disabled' : ''} ${i === cur ? 'aria-current="step"' : ''}><i>${cls === 'done' ? ic('check', 'ic-sm') : cls === 'err' ? '!' : i + 1}</i>${n}</button>`; }).join('');
+        const bar = '<ol class="nv-stepbar" aria-label="申请步骤">'+names.map((n, i) => { const cls = s === 'err' && i === 1 ? 'err' : i < cur ? 'done' : i === cur ? 'on' : ''; return `<li aria-current="${i===cur?'step':'false'}">${i ? `<span class="nv-sline ${i <= cur ? 'done' : ''}"></span>` : ''}<button class="nv-step ${cls}" type="button" data-s="${i}" ${i > cur ? 'disabled' : ''} ${i === cur ? 'aria-current="step"' : ''}><i>${cls === 'done' ? ic('check', 'ic-sm') : cls === 'err' ? '!' : i + 1}</i>${n}</button></li>`; }).join('')+'</ol>';
         const body = s === 'err' && cur !== 1 ? `<p style="color:var(--danger)">第 2 步「上传证件」有问题：营业执照照片看不清，请重新上传。</p>` : `当前在第 ${cur + 1} 步「${names[cur]}」（示例内容）`;
-        return `<div class="nv-steps"><div class="nv-stepbar">${bar}</div><div class="nv-sbody">${body}</div><div class="nv-acts">${cur > 0 ? '<button class="btn" type="button" data-prev>上一步</button>' : ''}<button class="btn btn-primary" type="button" data-next>${cur === names.length - 1 ? '提交审核' : '下一步'}</button></div></div>`;
+        return `<div class="nv-steps">${bar}<div class="nv-sbody">${body}</div><div class="nv-acts">${cur > 0 ? '<button class="btn" type="button" data-prev>上一步</button>' : ''}<button class="btn btn-primary" type="button" data-next>${cur === names.length - 1 ? '提交审核' : '下一步'}</button></div></div>`;
       },
       mount(el, s) {
         const sec = Gallery.cfg.sections.find(x => x.id === 'steps'); if (sec.cur == null) sec.cur = 2;
@@ -1136,7 +1139,8 @@ Gallery.init({
         });
       } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 </script>
 </body>

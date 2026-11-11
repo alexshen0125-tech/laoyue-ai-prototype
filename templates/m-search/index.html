@@ -147,7 +147,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -366,7 +366,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -377,8 +377,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -501,6 +502,20 @@ mark.se-hl{background:transparent;color:var(--accent);font-weight:600;padding:0}
 .se-m-body .se-res li{padding:14px 0}
 .se-m-home{flex:1;display:grid;place-items:center;color:var(--ink-500);font-size:13px;text-align:center;padding:24px}
 @media (max-width:700px){.se-hot{grid-template-columns:1fr}.se-trigger{width:100%}}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.se-chip{height:auto;min-height:32px;padding-left:4px} .se-chip>.se-use{border:0;background:none;color:inherit;padding:4px 8px;border-radius:var(--r-full);font:inherit}
 </style>
 </head>
 <body>
@@ -509,52 +524,21 @@ mark.se-hl{background:transparent;color:var(--accent);font-weight:600;padding:0}
    AI 提示词（页面顶部「AI 提示词」打开；{{变量}} 点一下就能填）
    ========================================================================== */
 const PROMPTS = [
-  { title: '从零生成整套「搜索」交互模块',
-    when: '想要一份自己的搜索交互规范 + 可点演示时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「搜索交互模块」演示页。
-
-页面结构：左侧目录（可搜索），右侧每种做法一张卡片。每张卡片包含：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可以真实操作的演示、「复制 HTML」按钮。
-
-要做的 9 种做法和状态：
-1. 输入联想：空输入 / 有联想 / 没有联想。输入停 0.2 秒再出联想；键盘上下键选择、回车确认、Esc 收起；联想词里命中的字高亮。
-2. 搜索历史：有历史 / 没有历史。存在本机，最多 10 条，最新的在前；每条可单独删除；「清空」先确认。
-3. 热门搜索：正常 / 加载中 / 加载失败。前 3 名用主色标出，点一下直接搜索；失败时给「重试」。
-4. 结果按类型分组：全部 / 订单 / 客户 / 商品。Tab 上写各类条数，条数为 0 的 Tab 置灰。
-5. 命中高亮：标题命中 / 摘要命中 / 多个词同时命中。多个词用空格分开，都高亮。
-6. 编号直达：普通搜索 / 识别到编号 / 编号不存在。输入完整单号（大小写、空格、横杠都认）时，回车直接跳到详情，不走结果列表。
-7. 无结果出路：无结果 / 可能打错字 / 放宽条件能找到。至少给三个出路：换词建议、去掉某个筛选能找到几条、告诉我们缺什么（一句话提交）。
-8. 全局搜索弹窗：关闭 / 打开（最近访问）/ 打开（有结果）。⌘K 或 Ctrl+K 唤起，Esc 关闭，焦点锁在弹窗内，关闭后焦点回到触发按钮；底部写快捷键说明。
-9. 移动端搜索页：初始（历史 + 热搜）/ 联想 / 结果 / 无结果。搜索框吸顶，右侧「取消」返回；触控区域 ≥44px；输入框字号 16px 防止手机自动放大。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；中性配色、留白充足；PC 可点元素 ≥32px；文字对比度 ≥4.5:1；焦点框清晰；动效只动 transform 和 opacity，用 cubic-bezier 缓动；图标用内联线性 SVG。示例数据标「示例」，不出现真实公司名。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把搜索改成我的业务',
-    when: '已经下载了这个模块，想换成自己能搜的东西时用',
-    text: `附件是一个单文件 HTML 的「搜索交互模块」（index.html）。请把其中「{{要用的做法，例如：结果按类型分组}}」改成我的业务：
-- 产品：{{业务名称，例如：门店进销存后台}}
-- 谁在搜：{{角色，例如：仓库管理员}}
-- 能搜到的东西分几类、每类显示哪些字段：{{类型和字段，例如：采购单（单号、供应商、金额）、商品（名称、规格、库存）}}
-- 编号规则（如果有）：{{编号格式，例如：PO + 8 位日期 + 4 位流水}}
-
-要求：
-1. 保留这种做法的所有状态（有结果、无结果、加载、出错等）和键盘操作；
-2. 示例数据换成我的业务，标「示例」，不要编真实公司名；
-3. 无结果时的出路按我的业务写（比如「去掉仓库筛选能找到几条」）；
-4. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出你改了哪几处。` },
-  { title: '在此基础上加一种做法 / 状态',
-    when: '模块里没有你要的搜索做法时用',
-    text: `附件是一个单文件 HTML 的「搜索交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：搜索结果里直接筛选（价格区间、只看有货）}}」。
-
-要求：
-1. 照现有做法的写法加一项 section：写清 name、desc、use（什么时候用）、avoid（什么时候别用）、states、spec（交互要点）、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：默认 / 筛选后有结果 / 筛选后无结果 / 加载中}}；
-3. 条数实时显示，清除条件一键回到原结果；
-4. 样式类名用 se- 开头，颜色圆角只用已有的 CSS 变量；
-5. 加完后页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建搜索",
+    "when": "建立完整离线演示",
+    "text": "请制作「搜索」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n输入联想（有联想、空输入、没有联想）；输入停 0.2 秒再请求（防抖）；最多 6 条，命中的字高亮，右侧标类型；↑↓ 选择、回车确认、Esc 收起；没有联想时提示「按回车直接搜」；鼠标点联想不会让输入框失焦。\n搜索历史（有历史、没有历史）；只存在本机，最多 10 条，新的在前、重复的提到最前；每条可单独删；「清空」先确认；没有历史时整块不显示，不留空标题。\n热门搜索（正常、加载中、加载失败）；前 3 名用主色数字强调；点一下直接搜索并记入历史；加载用骨架不用转圈；失败只在这一块提示并可重试，不影响搜索框使用。\n结果按类型分组（全部、订单、客户、商品）；「全部」里每类最多 3 条 + 「查看全部 N 条」；Tab 上写条数，0 条的 Tab 置灰；切 Tab 不清空关键词；改关键词时停在当前 Tab。\n命中高亮（标题命中、摘要命中、多词命中）；只改颜色和字重，不加底色块；多个词用空格分开、全部命中才出现、每个词都高亮；大小写、全角半角都认。\n编号直达（普通搜索、识别到编号、编号不存在）；大小写、空格、横杠都认（so 2026-1110-1046 也行）；识别到时输入框下方立刻提示「回车直接打开」；编号不存在时说清并给「按关键词搜」出路。\n无结果出路（无结果、可能打错字、放宽条件能找到）；标题写清搜了什么；出路按「最可能有用」排：纠错建议 → 去掉筛选能找到几条 → 热门词 → 告诉我们缺什么（一句话提交，提交后反馈）；不清空用户的关键词。\n全局搜索弹窗（⌘K）（关闭、打开 · 最近访问、打开 · 有结果）；⌘K / Ctrl+K 唤起，再按一次或 Esc 关闭；打开自动聚焦输入框；↑↓ 选择、回车打开；焦点锁在弹窗内，关闭后回到触发按钮；底部写快捷键。\n手机搜索页（初始（历史 + 热搜）、联想、结果、无结果）；进入即聚焦弹键盘；搜索框吸顶，右侧「取消」返回上一页并收起键盘；输入框字号 16px（防止手机自动放大）；列表行高 ≥48px；回车（键盘「搜索」键）出结果。\n业务字段：搜索词、搜索范围、最近搜索、结果数量、高亮片段。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换搜索业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「搜索」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n输入联想（有联想、空输入、没有联想）；输入停 0.2 秒再请求（防抖）；最多 6 条，命中的字高亮，右侧标类型；↑↓ 选择、回车确认、Esc 收起；没有联想时提示「按回车直接搜」；鼠标点联想不会让输入框失焦。\n搜索历史（有历史、没有历史）；只存在本机，最多 10 条，新的在前、重复的提到最前；每条可单独删；「清空」先确认；没有历史时整块不显示，不留空标题。\n热门搜索（正常、加载中、加载失败）；前 3 名用主色数字强调；点一下直接搜索并记入历史；加载用骨架不用转圈；失败只在这一块提示并可重试，不影响搜索框使用。\n结果按类型分组（全部、订单、客户、商品）；「全部」里每类最多 3 条 + 「查看全部 N 条」；Tab 上写条数，0 条的 Tab 置灰；切 Tab 不清空关键词；改关键词时停在当前 Tab。\n命中高亮（标题命中、摘要命中、多词命中）；只改颜色和字重，不加底色块；多个词用空格分开、全部命中才出现、每个词都高亮；大小写、全角半角都认。\n编号直达（普通搜索、识别到编号、编号不存在）；大小写、空格、横杠都认（so 2026-1110-1046 也行）；识别到时输入框下方立刻提示「回车直接打开」；编号不存在时说清并给「按关键词搜」出路。\n无结果出路（无结果、可能打错字、放宽条件能找到）；标题写清搜了什么；出路按「最可能有用」排：纠错建议 → 去掉筛选能找到几条 → 热门词 → 告诉我们缺什么（一句话提交，提交后反馈）；不清空用户的关键词。\n全局搜索弹窗（⌘K）（关闭、打开 · 最近访问、打开 · 有结果）；⌘K / Ctrl+K 唤起，再按一次或 Esc 关闭；打开自动聚焦输入框；↑↓ 选择、回车打开；焦点锁在弹窗内，关闭后回到触发按钮；底部写快捷键。\n手机搜索页（初始（历史 + 热搜）、联想、结果、无结果）；进入即聚焦弹键盘；搜索框吸顶，右侧「取消」返回上一页并收起键盘；输入框字号 16px（防止手机自动放大）；列表行高 ≥48px；回车（键盘「搜索」键）出结果。\n逐一核对搜索词、搜索范围、最近搜索、结果数量、高亮片段的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对搜索交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「搜索」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n输入联想（有联想、空输入、没有联想）；输入停 0.2 秒再请求（防抖）；最多 6 条，命中的字高亮，右侧标类型；↑↓ 选择、回车确认、Esc 收起；没有联想时提示「按回车直接搜」；鼠标点联想不会让输入框失焦。\n搜索历史（有历史、没有历史）；只存在本机，最多 10 条，新的在前、重复的提到最前；每条可单独删；「清空」先确认；没有历史时整块不显示，不留空标题。\n热门搜索（正常、加载中、加载失败）；前 3 名用主色数字强调；点一下直接搜索并记入历史；加载用骨架不用转圈；失败只在这一块提示并可重试，不影响搜索框使用。\n结果按类型分组（全部、订单、客户、商品）；「全部」里每类最多 3 条 + 「查看全部 N 条」；Tab 上写条数，0 条的 Tab 置灰；切 Tab 不清空关键词；改关键词时停在当前 Tab。\n命中高亮（标题命中、摘要命中、多词命中）；只改颜色和字重，不加底色块；多个词用空格分开、全部命中才出现、每个词都高亮；大小写、全角半角都认。\n编号直达（普通搜索、识别到编号、编号不存在）；大小写、空格、横杠都认（so 2026-1110-1046 也行）；识别到时输入框下方立刻提示「回车直接打开」；编号不存在时说清并给「按关键词搜」出路。\n无结果出路（无结果、可能打错字、放宽条件能找到）；标题写清搜了什么；出路按「最可能有用」排：纠错建议 → 去掉筛选能找到几条 → 热门词 → 告诉我们缺什么（一句话提交，提交后反馈）；不清空用户的关键词。\n全局搜索弹窗（⌘K）（关闭、打开 · 最近访问、打开 · 有结果）；⌘K / Ctrl+K 唤起，再按一次或 Esc 关闭；打开自动聚焦输入框；↑↓ 选择、回车打开；焦点锁在弹窗内，关闭后回到触发按钮；底部写快捷键。\n手机搜索页（初始（历史 + 热搜）、联想、结果、无结果）；进入即聚焦弹键盘；搜索框吸顶，右侧「取消」返回上一页并收起键盘；输入框字号 16px（防止手机自动放大）；列表行高 ≥48px；回车（键盘「搜索」键）出结果。\n围绕业务字段搜索词、搜索范围、最近搜索、结果数量、高亮片段检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -835,11 +819,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -898,7 +898,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -991,7 +991,7 @@ function wireSuggest(el, getList, onPick) {
   return () => clearTimeout(timer);
 }
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '搜索',
   intro: '9 种常见搜索做法：联想、历史、热搜、分组、高亮、编号直达、无结果出路、全局搜索弹窗、手机搜索页。每种都能真实输入、切状态。',
@@ -1021,7 +1021,7 @@ Gallery.init({
       render(s) {
         const list = s === 'none' ? [] : HIST;
         return `<div class="se-box">${inputHTML('', '搜商品、单号')}
-          ${list.length ? `<div class="se-sec"><div class="se-sec-hd">${ic('history', 'ic-sm')}最近搜索<button class="btn-link" type="button" data-clearall>清空</button></div><div class="se-chips">${list.map((h, i) => `<span class="se-chip"><span role="button" tabindex="0" data-use="${esc(h)}">${esc(h)}</span><button class="se-del" type="button" aria-label="删除 ${esc(h)}" data-del="${i}">${ic('x', 'ic-sm')}</button></span>`).join('')}</div></div>` : `<p class="se-meta">还没有搜索记录。搜过的词会出现在这里（只存在你这台设备上）。</p>`}</div>`;
+          ${list.length ? `<div class="se-sec"><div class="se-sec-hd">${ic('history', 'ic-sm')}最近搜索<button class="btn-link" type="button" data-clearall>清空</button></div><div class="se-chips">${list.map((h, i) => `<span class="se-chip"><button class="se-use" type="button" data-use="${esc(h)}">${esc(h)}</button><button class="se-del" type="button" aria-label="删除 ${esc(h)}" data-del="${i}">${ic('x', 'ic-sm')}</button></span>`).join('')}</div></div>` : `<p class="se-meta">还没有搜索记录。搜过的词会出现在这里（只存在你这台设备上）。</p>`}</div>`;
       },
       mount(el, s) {
         el.addEventListener('click', async e => {
@@ -1045,7 +1045,7 @@ Gallery.init({
         if (s === 'ok') body = `<ol class="se-hot">${HOT.map((h, i) => `<li><button type="button" data-hot="${esc(h)}"><span class="no">${i + 1}</span>${esc(h)}${i === 0 ? '<span class="tg">上升</span>' : ''}</button></li>`).join('')}</ol>`;
         if (s === 'loading') body = `<div class="se-hot" style="display:grid">${Array.from({ length: 8 }, (_, i) => `<div class="sk" style="height:14px;margin:11px 6px;width:${50 + (i * 17) % 40}%"></div>`).join('')}</div>`;
         if (s === 'error') body = `<div class="se-err" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-md);background:var(--line-soft);font-size:13px;color:var(--ink-700)">${ic('alert', 'ic-sm')}热门搜索没加载出来，不影响你直接搜索<button class="btn" type="button" data-retry style="margin-left:auto;height:28px;font-size:12px">重试</button></div>`;
-        return `<div class="se-box">${inputHTML('', '搜商品')}<div class="se-sec"><div class="se-sec-hd">${ic('chart', 'ic-sm')}大家都在搜 <span class="demo-mark">示例</span></div>${body}</div></div>`;
+        return `<div class="se-box">${inputHTML('', '搜商品')}<div class="se-sec"><div class="se-sec-hd">${ic('chart', 'ic-sm')}大家都在搜 <span class="sample-badge">示例</span></div>${body}</div></div>`;
       },
       mount(el) {
         el.addEventListener('click', e => {
@@ -1208,7 +1208,8 @@ Gallery.init({
         return () => clearTimeout(t);
       } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 </script>
 </body>

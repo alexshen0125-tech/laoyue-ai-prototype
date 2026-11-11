@@ -146,7 +146,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -365,7 +365,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -376,8 +376,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -494,27 +495,42 @@ body.gal{background:var(--bg)}
 .ca-empty{text-align:center;padding:30px 0;font-size:13px;color:var(--ink-500)}
 .ca-empty .ic{width:32px;height:32px;color:var(--ink-300);margin-bottom:6px}
 
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+.ca-mgrid .cell.out .n,.ca-days button.full,.ca-days button.full b{color:var(--ink-700)} .ca-ev{min-height:32px} .ca-ev small{color:var(--ink-700)}
+@media(max-width:700px),(pointer:coarse){.ca-ev{min-height:44px}}
 </style>
 </head>
 <body>
 <script>
 /* AI 提示词（页面顶部「AI 提示词」打开；{{变量}} 点一下就能填） */
 const PROMPTS = [
- {
-  "title": "从零生成整套「日历与日程」交互模块",
-  "when": "产品要做预约、排班、日程，想先把日期时间的交互定下来时用",
-  "text": "请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「日历与日程交互模块」演示页。\n\n页面结构：左侧目录（可搜索），右侧每种做法一张卡片。每张卡片包含：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可以真实操作的演示、「复制 HTML」按钮。\n\n要做的 6 种做法和状态：\n1. 日期选择：默认 / 已选日期 / 有不可选日期。今天有标记，过去或不可约的日期置灰并说明原因。\n2. 区间选择：快捷选项 / 选择中（悬停预览区间）/ 已选区间。给「近 7 天」「本月」等快捷项，底部实时显示共几天。\n3. 日 / 周 / 月视图：日 / 周 / 月 / 当天没有日程。周视图有当前时间线，月视图一格最多 2 条、其余写「还有 N 条」。\n4. 预约时段：可约 / 部分约满 / 当天约满。按天横滑选日期，时段写剩余名额；当天约满时推荐最近可约的日期。\n5. 冲突提示：无冲突 / 有冲突。新建日程和已有日程重叠时标红并给出最近的空闲时段，一键改过去。\n6. 提醒设置：默认提前 15 分钟 / 自定义 / 系统通知已关闭。通知被关时说清收不到并给「去打开」。\n\n设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；可点区域 ≥32px；文字对比度 ≥4.5:1；弹层 Esc 可关；动效只动 transform 和 opacity；图标用内联线性 SVG；日期统一写「11月10日 周二」格式、时间 24 小时制、数字等宽；不做跳秒倒计时；示例数据全部虚构并标「示例」，不出现真实公司名和品牌。\n\n交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。"
- },
- {
-  "title": "把日历与日程改成我的产品",
-  "when": "已经下载了这个模块，想换成自己的业务数据和规则时用",
-  "text": "附件是一个单文件 HTML 的「日历与日程交互模块」（index.html）。请改成我的产品：\n- 产品：{{产品名称，例如：门店预约小程序}}\n- 被预约 / 被安排的东西：{{对象，例如：到店量体、会议室}}\n- 营业时间与时段长度：{{时段规则，例如：10:00–20:00，每 30 分钟一档，每档 3 个名额}}\n- 不可选日期：{{不可选规则，例如：周一店休、提前 1 小时截止}}\n- 提醒规则：{{提醒规则}}\n\n要求：\n1. 改 EVENTS、SLOTS 等数据和文案，保留所有做法的状态和交互；\n2. 日期、星期、剩余名额、区间天数都由系统按数据算出，不写死；\n3. 不要改文件里 KIT 标记之间的共用样式和脚本。\n输出完整文件，并列出你改了哪几处。"
- },
- {
-  "title": "在此基础上加一种做法 / 状态",
-  "when": "模块里没有你要的做法时用",
-  "text": "附件是一个单文件 HTML 的「日历与日程交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。\n请新增一种做法：「{{要加的做法，例如：重复日程（每天 / 每周 / 工作日，修改时问「仅此一次还是全部」）}}」。\n\n要求：\n1. 照现有写法加一项 section：写清 name、desc、use、avoid、states、spec、render(state)、mount(el, state)；\n2. 至少包含这些状态：{{状态清单，例如：不重复 / 每周重复 / 修改重复日程}}；\n3. 样式类名用 ca- 开头，颜色圆角只用已有 CSS 变量；\n4. 加完后页面无报错，左侧目录自动出现这一项。\n输出完整文件。"
- }
+  {
+    "title": "从零构建日历与日程",
+    "when": "建立完整离线演示",
+    "text": "请制作「日历与日程」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n日期选择（默认、已选日期、有不可选日期）；今天下方一个主色小点；点日期即选中，输入框立刻写「11月12日 周四」；过去的日期和店休日置灰加删除线，读屏念出原因，下方写「周一店休，过去的日期不能约」；选中后可再点其他日期直接改。\n区间选择（快捷选项、选择中、已选区间）；顶部快捷项：今天 / 近 7 天 / 本月 / 上个月，点一下直接选好；手动选时第一下定开始，鼠标移动预览区间（虚线），第二下定结束；若第二下早于第一下自动对调；底部实时写「11月3日 – 11月9日，共 7 天」。\n日 / 周 / 月视图（日、周、月、当天没有日程）；顶部分段切换日 / 周 / 月 +「今天」按钮；周视图今天的日期主色，红线标演示时钟（10:30）；日程块写标题和时间，按类型三种颜色；月视图每格最多 2 条，其余写「还有 N 条」；当天没有日程写「今天没有安排」+「新建日程」。\n预约时段（可约、部分约满、当天约满）；上方按天横滑（7 天），每格写周几和日期，约满的天置灰；下方 4 列时段，每格写时间和「余 N」，约满置灰写「已满」，已过时段不显示；当天全满时上方写「11月12日 已约满，最近可约 11月13日 周五」，一键切过去；选中时段后底部写完整时间并可提交。\n冲突提示（无冲突、有冲突）；选时间时实时检查；冲突时新日程块标红，和它重叠的已有日程写出名字和时间；给「改到 15:30–16:30（最近空闲）」一键改；仍可「保持冲突并保存」，不强拦。\n提醒设置（默认、自定义、系统通知已关闭）；默认「提前 15 分钟」，下拉给常用档：不提醒 / 准点 / 5 分钟 / 15 分钟 / 1 小时 / 1 天 / 自定义；选「自定义」才出现数字 + 单位；下方写清「11月10日 14:15 提醒你」（系统算好）；系统通知被关时黄条说明「现在收不到提醒」+「去打开」。\n业务字段：日程标题、开始日期、结束日期、开始时间、结束时间、参与人。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换日历与日程业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「日历与日程」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n日期选择（默认、已选日期、有不可选日期）；今天下方一个主色小点；点日期即选中，输入框立刻写「11月12日 周四」；过去的日期和店休日置灰加删除线，读屏念出原因，下方写「周一店休，过去的日期不能约」；选中后可再点其他日期直接改。\n区间选择（快捷选项、选择中、已选区间）；顶部快捷项：今天 / 近 7 天 / 本月 / 上个月，点一下直接选好；手动选时第一下定开始，鼠标移动预览区间（虚线），第二下定结束；若第二下早于第一下自动对调；底部实时写「11月3日 – 11月9日，共 7 天」。\n日 / 周 / 月视图（日、周、月、当天没有日程）；顶部分段切换日 / 周 / 月 +「今天」按钮；周视图今天的日期主色，红线标演示时钟（10:30）；日程块写标题和时间，按类型三种颜色；月视图每格最多 2 条，其余写「还有 N 条」；当天没有日程写「今天没有安排」+「新建日程」。\n预约时段（可约、部分约满、当天约满）；上方按天横滑（7 天），每格写周几和日期，约满的天置灰；下方 4 列时段，每格写时间和「余 N」，约满置灰写「已满」，已过时段不显示；当天全满时上方写「11月12日 已约满，最近可约 11月13日 周五」，一键切过去；选中时段后底部写完整时间并可提交。\n冲突提示（无冲突、有冲突）；选时间时实时检查；冲突时新日程块标红，和它重叠的已有日程写出名字和时间；给「改到 15:30–16:30（最近空闲）」一键改；仍可「保持冲突并保存」，不强拦。\n提醒设置（默认、自定义、系统通知已关闭）；默认「提前 15 分钟」，下拉给常用档：不提醒 / 准点 / 5 分钟 / 15 分钟 / 1 小时 / 1 天 / 自定义；选「自定义」才出现数字 + 单位；下方写清「11月10日 14:15 提醒你」（系统算好）；系统通知被关时黄条说明「现在收不到提醒」+「去打开」。\n逐一核对日程标题、开始日期、结束日期、开始时间、结束时间、参与人的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对日历与日程交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「日历与日程」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n日期选择（默认、已选日期、有不可选日期）；今天下方一个主色小点；点日期即选中，输入框立刻写「11月12日 周四」；过去的日期和店休日置灰加删除线，读屏念出原因，下方写「周一店休，过去的日期不能约」；选中后可再点其他日期直接改。\n区间选择（快捷选项、选择中、已选区间）；顶部快捷项：今天 / 近 7 天 / 本月 / 上个月，点一下直接选好；手动选时第一下定开始，鼠标移动预览区间（虚线），第二下定结束；若第二下早于第一下自动对调；底部实时写「11月3日 – 11月9日，共 7 天」。\n日 / 周 / 月视图（日、周、月、当天没有日程）；顶部分段切换日 / 周 / 月 +「今天」按钮；周视图今天的日期主色，红线标演示时钟（10:30）；日程块写标题和时间，按类型三种颜色；月视图每格最多 2 条，其余写「还有 N 条」；当天没有日程写「今天没有安排」+「新建日程」。\n预约时段（可约、部分约满、当天约满）；上方按天横滑（7 天），每格写周几和日期，约满的天置灰；下方 4 列时段，每格写时间和「余 N」，约满置灰写「已满」，已过时段不显示；当天全满时上方写「11月12日 已约满，最近可约 11月13日 周五」，一键切过去；选中时段后底部写完整时间并可提交。\n冲突提示（无冲突、有冲突）；选时间时实时检查；冲突时新日程块标红，和它重叠的已有日程写出名字和时间；给「改到 15:30–16:30（最近空闲）」一键改；仍可「保持冲突并保存」，不强拦。\n提醒设置（默认、自定义、系统通知已关闭）；默认「提前 15 分钟」，下拉给常用档：不提醒 / 准点 / 5 分钟 / 15 分钟 / 1 小时 / 1 天 / 自定义；选「自定义」才出现数字 + 单位；下方写清「11月10日 14:15 提醒你」（系统算好）；系统通知被关时黄条说明「现在收不到提醒」+「去打开」。\n围绕业务字段日程标题、开始日期、结束日期、开始时间、结束时间、参与人检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -795,11 +811,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -858,7 +890,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -928,7 +960,7 @@ function month(opts) {
 const dayOf = i => new Date(TODAY.getFullYear(), TODAY.getMonth(), i);
 const monthNav = el => el.addEventListener('click', e => { if (e.target.closest('[data-prev],[data-next]')) toast('示例只演示 11 月，接入时按月切换', '', T); });
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '日历与日程',
   intro: '6 种日期与日程做法：不可选的说原因、区间天数系统算、满了推荐最近可约、冲突给空闲时段。日期以 11月10日 周二为「今天」演示，均为示例。',
@@ -937,7 +969,7 @@ Gallery.init({
     { id: 'date', group: '选日期', name: '日期选择', desc: '今天有标记，不能选的置灰并说原因。',
       use: '预约日期、截止日期、出生日期以外的大多数单日选择。',
       avoid: '选生日这类离今天很远的日期（用年月日三个下拉或直接输入更快）；不可选日期不说原因。',
-      states: [{ id: 'none', name: '默认' }, { id: 'sel', name: '已选日期' }, { id: 'dis', name: '有不可选日期' }],
+      states: [{ id: 'none', name: '日历与日程待操作' }, { id: 'sel', name: '已选日期' }, { id: 'dis', name: '有不可选日期' }],
       spec: '今天下方一个主色小点；点日期即选中，输入框立刻写「11月12日 周四」；过去的日期和店休日置灰加删除线，读屏念出原因，下方写「周一店休，过去的日期不能约」；选中后可再点其他日期直接改。',
       render(s) {
         const sel = s === 'sel' ? dayOf(12) : null;
@@ -974,9 +1006,9 @@ Gallery.init({
       use: '排班、会议、课表、门店预约后台。',
       avoid: '只有月视图却塞满文字看不清；不标「现在」；没有日程时显示一整片空格子。',
       states: [{ id: 'day', name: '日' }, { id: 'week', name: '周' }, { id: 'month', name: '月' }, { id: 'empty', name: '当天没有日程' }],
-      spec: '顶部分段切换日 / 周 / 月 +「今天」按钮；周视图今天的日期主色，红线标当前时间（示例 10:30）；日程块写标题和时间，按类型三种颜色；月视图每格最多 2 条，其余写「还有 N 条」；当天没有日程写「今天没有安排」+「新建日程」。',
+      spec: '顶部分段切换日 / 周 / 月 +「今天」按钮；周视图今天的日期主色，红线标演示时钟（10:30）；日程块写标题和时间，按类型三种颜色；月视图每格最多 2 条，其余写「还有 N 条」；当天没有日程写「今天没有安排」+「新建日程」。',
       render(s) {
-        const bar = `<div class="ca-hd">11月9日 – 11月13日<span class="sp"></span><button class="btn" type="button" data-today style="height:30px">今天</button><div class="seg" role="group" aria-label="视图">${[['day', '日'], ['week', '周'], ['month', '月']].map(v => `<button type="button" data-v="${v[0]}" aria-pressed="${s === v[0] || (s === 'empty' && v[0] === 'day')}">${v[1]}</button>`).join('')}</div></div>`;
+        const bar = `<ol aria-label="本周日程摘要">${EVENTS.map(x=>`<li><time>${hm(x.s)}–${hm(x.e)}</time> ${esc(x.t)}</li>`).join('')}</ol><div class="ca-hd">11月9日 – 11月13日<span class="sp"></span><button class="btn" type="button" data-today style="height:30px">今天</button><div class="seg" role="group" aria-label="视图">${[['day', '日'], ['week', '周'], ['month', '月']].map(v => `<button type="button" data-v="${v[0]}" aria-pressed="${s === v[0] || (s === 'empty' && v[0] === 'day')}">${v[1]}</button>`).join('')}</div></div>`;
         const hours = [9, 10, 11, 12, 13, 14, 15, 16], H = 44, ev = (x, i) => `<button class="ca-ev ${x.c}" type="button" data-ev="${x.t}" style="top:${(x.s - Math.floor(x.s)) * H + 1}px;height:${(x.e - x.s) * H - 3}px">${x.t}<small>${hm(x.s)}–${hm(x.e)}</small></button>`;
         if (s === 'empty') return `<div class="ca-card wide">${bar.replace('11月9日 – 11月13日', fmt(TODAY))}<div class="ca-bd"><div class="ca-empty">${ic('calendar')}<p>今天没有安排</p><button class="btn btn-primary" type="button" data-new style="margin-top:10px">${ic('plus')}新建日程</button></div></div></div>`;
         if (s === 'month') { const off = 6, cells = []; for (let i = 0; i < 42; i++) { const n = i - off + 1, d = dayOf(n), inM = n >= 1 && n <= 30; const evs = inM && d.getDay() > 0 && d.getDay() < 6 ? EVENTS.filter(x => x.d === (d.getDay() + 6) % 7).concat(same(d, TODAY) ? [{ t: '月度盘点', c: 'c' }, { t: '供应商来访', c: 'b' }] : []) : [];
@@ -1037,7 +1069,7 @@ Gallery.init({
     { id: 'remind', group: '提醒', name: '提醒设置', desc: '默认提前 15 分钟，通知被关时说清楚。',
       use: '预约、会议、待办等需要到点提醒的场景。',
       avoid: '默认不提醒；只给「提前 N 分钟」输入框让人自己填；系统通知被关了还显示「已开启提醒」。',
-      states: [{ id: 'def', name: '默认' }, { id: 'custom', name: '自定义' }, { id: 'off', name: '系统通知已关闭' }],
+      states: [{ id: 'def', name: '日历与日程待操作' }, { id: 'custom', name: '自定义' }, { id: 'off', name: '系统通知已关闭' }],
       spec: '默认「提前 15 分钟」，下拉给常用档：不提醒 / 准点 / 5 分钟 / 15 分钟 / 1 小时 / 1 天 / 自定义；选「自定义」才出现数字 + 单位；下方写清「11月10日 14:15 提醒你」（系统算好）；系统通知被关时黄条说明「现在收不到提醒」+「去打开」。',
       render(s) {
         const v = s === 'custom' ? 'c' : '15';
@@ -1054,7 +1086,8 @@ Gallery.init({
         el.addEventListener('input', upd); el.addEventListener('change', upd); upd();
         el.addEventListener('click', e => { if (e.target.closest('[data-perm]')) { setSt('remind', 'def'); toast('已打开通知（示例）', 'ok', T); } }); } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 
 </script>
