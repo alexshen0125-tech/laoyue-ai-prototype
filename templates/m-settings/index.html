@@ -146,7 +146,7 @@ a{color:var(--accent);text-decoration:none}
 .badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--r-full);background:var(--line-soft);color:var(--ink-700);font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
 .badge-accent{background:var(--accent);color:var(--accent-ink)}
 .badge-danger{background:var(--danger);color:#fff}
-.demo-mark{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
+.sample-badge{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px dashed var(--ink-300);border-radius:var(--r-sm);font-size:11px;color:var(--ink-500);font-weight:500;letter-spacing:.02em}
 
 /* ============================ ⑥ 卡片 / 表格 ============================ */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-1)}
@@ -365,7 +365,7 @@ body.gal{background:var(--bg)}
 .g-toc a .n{flex:none}
 .g-toc a:hover{background:var(--line-soft);color:var(--ink-900)}
 .g-toc a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
-.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-500);font-variant-numeric:tabular-nums}
+.g-toc a .n{margin-left:auto;font-size:11px;color:var(--ink-700);font-variant-numeric:tabular-nums}
 .g-toc .g-none{font-size:12px;color:var(--ink-500);padding:8px}
 .g-main{min-width:0;padding:28px 40px 120px}
 .g-hero{display:flex;align-items:flex-end;gap:24px;margin-bottom:24px;flex-wrap:wrap}
@@ -376,8 +376,9 @@ body.gal{background:var(--bg)}
 .g-theme{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);flex-wrap:wrap}
 .g-theme .lb{font-size:12px;color:var(--ink-500)}
 .g-sw{display:flex;gap:6px}
-.g-sw button{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);padding:0}
-.g-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink-900)}
+.g-sw button{width:44px;height:44px;min-width:44px;min-height:44px;flex:none;border:0;border-radius:50%;padding:10px;background-clip:content-box;position:relative}
+.g-sw button::after{content:"";position:absolute;inset:10px;border:2px solid var(--surface);border-radius:50%;box-shadow:0 0 0 1px var(--line);pointer-events:none}
+.g-sw button[aria-pressed="true"]::after{box-shadow:0 0 0 2px var(--ink-900)}
 .g-theme input[type=range]{width:90px;accent-color:var(--accent)}
 .g-theme .val{font-size:12px;color:var(--ink-700);font-variant-numeric:tabular-nums;width:30px}
 .g-sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:20px;scroll-margin-top:calc(var(--bar-h) + 16px);box-shadow:var(--shadow-1)}
@@ -475,56 +476,40 @@ body.gal{background:var(--bg)}
 .st-mob .st-box{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .st-mob .st-row{min-height:52px;padding:10px 16px}
 @media (max-width:760px){.st-layout{grid-template-columns:1fr}.st-nav{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}.st-nav button{width:auto;white-space:nowrap}}
+
+/* fix14b: readable text and measurable control boxes in both themes. */
+button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:32px;min-height:32px;flex-shrink:0}
+input[type=range]{min-height:44px;height:44px;flex-shrink:0}
+label.check,label.rck{min-width:32px;min-height:32px;padding:4px;flex-shrink:0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;min-width:0!important;min-height:0!important}
+:root{--ink-500:#60626A;--danger-ink:#FFFFFF}
+:root[data-theme="dark"]{--ink-500:#ADB0B9;--danger-ink:#16171A}
+.btn-danger-solid{color:var(--danger-ink)}
+@media(max-width:700px),(pointer:coarse){
+ button,a[href],[role=button],[role=tab],[role=checkbox],[role=switch]{min-width:44px;min-height:44px}
+ label.check,label.rck{min-width:44px;min-height:44px}
+}
+
 </style>
 </head>
 <body>
 <script>
 const PROMPTS = [
-  { title: '从零生成整套「设置」交互模块',
-    when: '要设计账号 / 系统设置页，想先有一份能点的规范时用',
-    text: `请用单文件 HTML（样式和脚本都写在文件里，不引用任何外部网址，双击离线能打开）做一个「设置交互模块」演示页。
-
-页面结构：左侧做法目录（可搜索），右侧每种做法一张卡片：标题、一句说明、「什么时候用 / 什么时候别用」两栏、一排状态切换按钮、可真实操作的演示、「复制 HTML」按钮。
-
-要做的 8 种做法和状态：
-1. 分组设置页：PC（左侧分组导航 + 右侧分组卡片）/ 手机（分组列表）。
-2. 开关即时生效 vs 统一保存：即时生效 / 统一保存（底部保存条显示「有 N 项未保存」）/ 保存中 / 保存失败（开关自动回到原来的位置并提示原因）。
-3. 有未保存改动时离开：无改动直接离开 / 有改动先弹确认「保存并离开 / 不保存离开 / 继续编辑」。
-4. 危险区：默认 / 输入确认（输入空间名称后按钮才可点，写清删除哪些数据、能不能恢复）/ 冷静期中（7 天内可撤销，写清截止日期）。
-5. 账号安全：改密码（旧密码、新密码强度条、确认一致）/ 绑定手机 / 登录设备列表（当前设备不可下线，其他设备可下线并确认）。
-6. 偏好设置：语言、主题、时区，改了立刻在预览区看到效果。
-7. 恢复默认设置：有自定义项 / 已恢复（Toast 可撤销）。
-8. 设置项搜索：默认 / 有结果（命中高亮、显示所在分组）/ 无结果（给出路）。
-
-设计要求：颜色、字体、圆角、间距全部写成 :root 里的 CSS 变量，主色只用 --accent；开关、按钮在 PC ≥32px、手机 ≥44px；文字对比度 ≥4.5:1；焦点框清晰；动效只动 transform 和 opacity；图标用内联线性 SVG。示例数据标「示例」，不出现真实公司名。
-
-交付：完整 HTML 代码，加一张「做法 | 元素 | 交互 | 反馈」说明表。` },
-  { title: '把设置页改成我的产品',
-    when: '已经下载了这个模块，想换成自己的设置项时用',
-    text: `附件是一个单文件 HTML 的「设置交互模块」（index.html）。请把「{{要用的做法，例如：分组设置页}}」改成我的产品：
-- 产品：{{产品名称，例如：门店排班系统}}
-- 谁在用设置：{{角色，例如：店长、总部管理员}}
-- 设置分组和每一项（名称 / 类型：开关、选择、输入 / 默认值 / 是否即时生效）：{{设置项清单}}
-- 危险操作：{{危险操作，例如：删除门店、注销账号}}
-
-要求：
-1. 保留这种做法的全部状态和交互（保存中、失败回滚、离开确认等）；
-2. 高频设置放前面，危险操作单独放最后的危险区；
-3. 开关类默认即时生效，会影响别人或要花钱的改成统一保存并二次确认；
-4. 不要改文件里 KIT 标记之间的共用样式和脚本。
-输出完整文件，并列出你改了哪几处。` },
-  { title: '在此基础上加一种做法 / 状态',
-    when: '模块里没有你要的设置做法时用',
-    text: `附件是一个单文件 HTML 的「设置交互模块」（index.html），每种做法是 Gallery.init 里 sections 的一项。
-请新增一种做法：「{{要加的做法，例如：团队成员权限设置（按角色批量改、改动前后对比）}}」。
-
-要求：
-1. 照现有写法加一项 section：name、desc、use、avoid、states、spec、render(state)、mount(el, state)；
-2. 至少包含这些状态：{{状态清单，例如：默认 / 有改动未保存 / 保存中 / 保存失败}}；
-3. 有影响他人的改动时，保存前列出「将影响谁、改了什么」；
-4. 样式类名用 st- 开头，颜色圆角只用已有 CSS 变量；
-5. 加完后页面无报错，左侧目录自动出现这一项。
-输出完整文件。` }
+  {
+    "title": "从零构建设置",
+    "when": "建立完整离线演示",
+    "text": "请制作「设置」的单文件离线原型，服务于{{业务名称}}的{{使用角色}}。逐项实现下列做法与状态，不只画静态截图：\n分组设置页（PC 左右布局、手机分组列表）；分组按使用频率排，最常改的在最上；当前分组高亮；每组卡片有组名；手机端每行 ≥52px，右侧箭头或开关；切分组不丢已改内容。\n即时生效 vs 统一保存（即时生效、统一保存、保存中、保存失败回滚）；即时生效：点开关立刻切换并在后台保存，失败则开关自动弹回原位 + Toast 说原因；统一保存：改动后底部出现保存条「有 N 项未保存」，保存中禁用，失败保留改动可重试。\n有未保存改动时离开（无改动、有改动）；只有真有改动才弹；弹窗写清「有几项没保存」，按钮三个：保存并离开（主）/ 不保存离开 / 继续编辑；Esc = 继续编辑。\n危险区（删除 / 注销）（默认、输入确认、冷静期中）；危险区单独一块、红色细边；弹窗列出会删掉的具体内容和能否恢复；输入空间名称完全一致后按钮才可点；提交后进入 7 天冷静期，写清截止日期，期间可一键撤销。\n账号安全（概览、改密码、登录设备）；新密码实时显示强度（弱 / 中 / 强）；确认密码失焦校验是否一致；保存后提示「其他设备需要重新登录」；当前设备标「本机」不能下线，其他设备下线先确认。\n偏好设置即时预览（默认）；下拉一改，下方预览立刻变化（文案语言、深浅底色、时间换算、日期格式）；这些都只影响自己，即时生效；预览区标「预览」。\n恢复默认设置（有自定义、已恢复）；按钮旁写清「有 N 项和默认不同」；恢复前列出将改回的项；恢复后 Toast 5 秒内可撤销；改过的项旁标「已修改」小圆点。\n设置项搜索（默认、有结果、无结果）；输入即搜（停 0.2 秒）；结果显示「所在分组 › 设置项」，命中字高亮；结果里的开关可以直接改；无结果时给「常见设置」入口和「告诉我们想找什么」。\n业务字段：昵称、手机号、通知开关、语言、时区、登录设备。按{{校验规则}}验证必填、格式与权限；保留搜索目录、主题色、圆角、深浅色、下载和提示词面板，提供真实操作及取消恢复。使用逐行不同的业务演示数据。"
+  },
+  {
+    "title": "替换设置业务数据",
+    "when": "映射实际业务字段",
+    "text": "将附件「设置」接入{{业务场景}}，字段映射由{{字段映射}}就地填写。必须保留这些业务做法及状态：\n分组设置页（PC 左右布局、手机分组列表）；分组按使用频率排，最常改的在最上；当前分组高亮；每组卡片有组名；手机端每行 ≥52px，右侧箭头或开关；切分组不丢已改内容。\n即时生效 vs 统一保存（即时生效、统一保存、保存中、保存失败回滚）；即时生效：点开关立刻切换并在后台保存，失败则开关自动弹回原位 + Toast 说原因；统一保存：改动后底部出现保存条「有 N 项未保存」，保存中禁用，失败保留改动可重试。\n有未保存改动时离开（无改动、有改动）；只有真有改动才弹；弹窗写清「有几项没保存」，按钮三个：保存并离开（主）/ 不保存离开 / 继续编辑；Esc = 继续编辑。\n危险区（删除 / 注销）（默认、输入确认、冷静期中）；危险区单独一块、红色细边；弹窗列出会删掉的具体内容和能否恢复；输入空间名称完全一致后按钮才可点；提交后进入 7 天冷静期，写清截止日期，期间可一键撤销。\n账号安全（概览、改密码、登录设备）；新密码实时显示强度（弱 / 中 / 强）；确认密码失焦校验是否一致；保存后提示「其他设备需要重新登录」；当前设备标「本机」不能下线，其他设备下线先确认。\n偏好设置即时预览（默认）；下拉一改，下方预览立刻变化（文案语言、深浅底色、时间换算、日期格式）；这些都只影响自己，即时生效；预览区标「预览」。\n恢复默认设置（有自定义、已恢复）；按钮旁写清「有 N 项和默认不同」；恢复前列出将改回的项；恢复后 Toast 5 秒内可撤销；改过的项旁标「已修改」小圆点。\n设置项搜索（默认、有结果、无结果）；输入即搜（停 0.2 秒）；结果显示「所在分组 › 设置项」，命中字高亮；结果里的开关可以直接改；无结果时给「常见设置」入口和「告诉我们想找什么」。\n逐一核对昵称、手机号、通知开关、语言、时区、登录设备的来源、默认值与提交范围。将演示值替换为{{业务数据}}，输入变更后重新校验；说明确认前后的数据变化与失败保留内容。交付可离线运行的完整HTML与字段说明。"
+  },
+  {
+    "title": "核对设置交互边界",
+    "when": "补齐异常与恢复",
+    "text": "请对「设置」开展交互边界修订，重点场景为{{边界场景}}，验收条件为{{验收条件}}。以下是本模块必须逐项走通的做法和状态清单：\n分组设置页（PC 左右布局、手机分组列表）；分组按使用频率排，最常改的在最上；当前分组高亮；每组卡片有组名；手机端每行 ≥52px，右侧箭头或开关；切分组不丢已改内容。\n即时生效 vs 统一保存（即时生效、统一保存、保存中、保存失败回滚）；即时生效：点开关立刻切换并在后台保存，失败则开关自动弹回原位 + Toast 说原因；统一保存：改动后底部出现保存条「有 N 项未保存」，保存中禁用，失败保留改动可重试。\n有未保存改动时离开（无改动、有改动）；只有真有改动才弹；弹窗写清「有几项没保存」，按钮三个：保存并离开（主）/ 不保存离开 / 继续编辑；Esc = 继续编辑。\n危险区（删除 / 注销）（默认、输入确认、冷静期中）；危险区单独一块、红色细边；弹窗列出会删掉的具体内容和能否恢复；输入空间名称完全一致后按钮才可点；提交后进入 7 天冷静期，写清截止日期，期间可一键撤销。\n账号安全（概览、改密码、登录设备）；新密码实时显示强度（弱 / 中 / 强）；确认密码失焦校验是否一致；保存后提示「其他设备需要重新登录」；当前设备标「本机」不能下线，其他设备下线先确认。\n偏好设置即时预览（默认）；下拉一改，下方预览立刻变化（文案语言、深浅底色、时间换算、日期格式）；这些都只影响自己，即时生效；预览区标「预览」。\n恢复默认设置（有自定义、已恢复）；按钮旁写清「有 N 项和默认不同」；恢复前列出将改回的项；恢复后 Toast 5 秒内可撤销；改过的项旁标「已修改」小圆点。\n设置项搜索（默认、有结果、无结果）；输入即搜（停 0.2 秒）；结果显示「所在分组 › 设置项」，命中字高亮；结果里的开关可以直接改；无结果时给「常见设置」入口和「告诉我们想找什么」。\n围绕业务字段昵称、手机号、通知开关、语言、时区、登录设备检查无输入、非法值、取消、重复操作及失败恢复；每条路径写出触发、反馈和恢复位置。保持500px宽度、浅深色对比度及至少24px触控目标，返回完整代码和验收记录。"
+  }
 ];
 </script>
 <script>
@@ -805,11 +790,27 @@ const PROMPTS = [
   var ACCENTS=[['默认蓝','#2F54D4'],['墨黑','#16171A'],['青绿','#0F766E'],['琥珀','#B45309'],['玫红','#BE185D']];
   var TH={accent:'#2F54D4',r:10,dark:false};
   try{Object.assign(TH,JSON.parse(localStorage.getItem('gal-theme')||'{}'))}catch(e){}
+  function themeLuminance(hex){
+    var c=hex.replace('#','').match(/../g).map(function(v){var x=parseInt(v,16)/255;return x<=.04045?x/12.92:Math.pow((x+.055)/1.055,2.4)});
+    return .2126*c[0]+.7152*c[1]+.0722*c[2];
+  }
+  function themeContrast(a,b){var x=themeLuminance(a),y=themeLuminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+  function readableAccent(hex,dark){
+    var rgb=hex.replace('#','').match(/../g).map(function(v){return parseInt(v,16)}),bg=dark?'#202226':'#FFFFFF',out=hex;
+    for(var t=0;t<=100;t++){
+      out='#'+rgb.map(function(v){return Math.round(v+(dark?255-v:-v)*t/100).toString(16).padStart(2,'0')}).join('');
+      if(themeContrast(out,bg)>=7)break;
+    }
+    return out;
+  }
   function applyTheme(){
     var s=document.documentElement.style;
-    s.setProperty('--accent',TH.accent);
-    s.setProperty('--accent-soft','color-mix(in srgb, '+TH.accent+' '+(TH.dark?'22%':'10%')+', var(--surface))');
-    s.setProperty('--info',TH.accent);
+    var accent=readableAccent(TH.accent,TH.dark);
+    s.setProperty('--accent',accent);
+    s.setProperty('--accent-ink',themeContrast(accent,'#FFFFFF')>=4.5?'#FFFFFF':'#16171A');
+    s.setProperty('--accent-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info-soft','color-mix(in srgb, '+accent+' 10%, var(--surface))');
+    s.setProperty('--info',accent);
     s.setProperty('--r-sm',Math.round(TH.r*.6)+'px');s.setProperty('--r-md',TH.r+'px');s.setProperty('--r-lg',Math.round(TH.r*1.6)+'px');
     if(TH.dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');
     try{localStorage.setItem('gal-theme',JSON.stringify(TH))}catch(e){}
@@ -868,7 +869,7 @@ const PROMPTS = [
     var groups=[];cfg.sections.forEach(function(s){if(groups.indexOf(s.group)<0)groups.push(s.group)});
     var toc='<nav class="g-toc" aria-label="目录"><div class="g-brand">积木盒 · '+P.esc(cfg.kind)+'</div><h1>'+P.esc(cfg.title)+'</h1><div class="input-wrap"><svg class="ic"><use href="#i-search"/></svg><input class="input" id="gq" placeholder="搜做法或组件" aria-label="搜索目录"></div><div id="gtl"></div></nav>';
     var hero='<div class="g-hero"><div class="t"><span class="eyebrow">'+P.esc(cfg.kind)+' · 共 '+cfg.sections.length+' 种'+(cfg.kind==='组件库'?'组件':'做法')+'</span><h2>'+P.esc(cfg.title)+'</h2><p>'+P.esc(cfg.intro||'')+'</p></div>'+
-      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
+      '<div class="g-theme" aria-label="主题"><span class="lb">主题色</span><div class="g-sw">'+ACCENTS.map(function(a){return '<button type="button" title="'+a[0]+'" aria-label="主题色 '+a[0]+'" data-acc="'+a[1]+'" style="background-color:'+a[1]+'" aria-pressed="'+(a[1]===TH.accent)+'"></button>'}).join('')+'</div>'+
       '<span class="lb">圆角</span><input type="range" min="0" max="16" step="1" id="grad" value="'+TH.r+'" aria-label="圆角"><span class="val" id="gradv">'+TH.r+'px</span>'+
       '<div class="seg" role="group" aria-label="明暗"><button type="button" data-dark="0" aria-pressed="'+!TH.dark+'"><svg class="ic ic-sm"><use href="#i-sun"/></svg></button><button type="button" data-dark="1" aria-pressed="'+TH.dark+'" aria-label="深色"><svg class="ic ic-sm"><use href="#i-moon"/></svg></button></div></div></div>';
     var main='<main class="g-main">'+hero+cfg.sections.map(function(s){
@@ -910,15 +911,15 @@ const PROMPTS = [
 /*@END_GAL_JS*/
 
 const { $, $$, ic, esc, toast } = Proto;
-const T = (msg, type, o) => toast(msg, type, Object.assign({ host: document.body }, o || {}));
+const notify = (msg, type, o) => toast(msg, type, Object.assign({ host: document.body }, o || {}));
 const spin = '<span class="spin"></span>';
-const sw = (k, on, extra = '') => `<button class="st-sw" type="button" role="switch" aria-checked="${!!on}" data-sw="${k}" ${extra}><span class="sr-only">${k}</span></button>`;
+const sw = (k, on, extra = '') => `<button class="st-sw" type="button" role="switch" aria-checked="${!!on}" data-sw="${k}" ${extra}></button>`;
 const row = (title, sub, ctl) => `<div class="st-row"><div class="t"><b>${title}</b>${sub ? `<span>${sub}</span>` : ''}</div>${ctl}</div>`;
 const sec = id => Gallery.cfg.sections.find(x => x.id === id);
 const ST_SUB = { 昵称: '同事看到的名字', 头像: '支持 JPG、PNG，2MB 以内', 手机号: '138****5678 · 用于登录和找回密码', 新订单提醒: '有新订单时推送到手机（改了马上生效）', 每日汇总邮件: '每天 8:00 发昨天的数据（示例）', 声音提示: '电脑端收到消息时响一下', 对同事显示在线状态: '关闭后别人看到你是「离线」', 允许被搜索到: '同事能用手机号搜到你', 成员与角色: '12 位成员（示例）', 邀请链接: '7 天内有效' };
 const setSt = (id, st) => { $$('#' + id + ' .g-states [data-st]').forEach(b => b.setAttribute('aria-pressed', b.dataset.st === st)); Gallery.show(id, st); };
 
-Gallery.init({
+const GALLERY_CONFIG = {
   kind: '交互模块',
   title: '设置',
   intro: '8 种设置页做法：分组、即时生效还是统一保存、离开确认、危险区、账号安全、偏好预览、恢复默认、设置搜索。每种都能点、能切状态。',
@@ -933,14 +934,14 @@ Gallery.init({
         const G = this.g || (this.g = [['账号', ['昵称', '头像', '手机号']], ['通知', ['新订单提醒', '每日汇总邮件', '声音提示']], ['隐私', ['对同事显示在线状态', '允许被搜索到']], ['团队', ['成员与角色', '邀请链接']]]);
         if (s === 'mobile') return `<div class="st-mob">${G.map(([g, items]) => `<div class="st-sec">${g}</div><div class="st-box">${items.map((x, i) => row(x, '', /提醒|邮件|提示|显示|允许/.test(x) ? sw(x, i % 2 === 0) : `<span class="v">${x === '手机号' ? '138****5678' : ''}</span>${ic('chev-r', 'ic-sm')}`)).join('')}</div>`).join('')}</div>`;
         const cur = this.cur || 0;
-        return `<div class="st-card wide"><div class="st-layout"><nav class="st-nav" aria-label="设置分组">${G.map(([g], i) => `<button type="button" data-g="${i}" aria-current="${i === cur}">${ic(['user', 'bell', 'shield', 'users'][i], 'ic-sm')}${g}</button>`).join('')}</nav>
+        return `<div class="st-card wide"><div class="st-layout"><nav class="st-nav" aria-label="设置分组"><ul>${G.map(([g], i) => `<li><button type="button" data-g="${i}" aria-current="${i === cur}">${ic(['user', 'bell', 'shield', 'users'][i], 'ic-sm')}${g}</button></li>`).join('')}</ul></nav>
           <div class="st-body"><div class="st-group"><div class="st-group-t">${G[cur][0]}</div>${G[cur][1].map((x, i) => row(x, ST_SUB[x] || '', /提醒|邮件|提示|显示|允许/.test(x) ? sw(x, i !== 1) : `<button class="btn" type="button">修改</button>`)).join('')}</div></div></div></div>`;
       },
       mount(el) {
         const S = sec('group');
         el.addEventListener('click', e => {
           const g = e.target.closest('[data-g]'); if (g) { S.cur = +g.dataset.g; Gallery.show('group', 'pc'); $('#group [data-g="' + S.cur + '"]').focus(); }
-          const s = e.target.closest('[data-sw]'); if (s) { const on = s.getAttribute('aria-checked') !== 'true'; s.setAttribute('aria-checked', on); T(`「${s.dataset.sw}」已${on ? '打开' : '关闭'}`, 'ok'); }
+          const s = e.target.closest('[data-sw]'); if (s) { const on = s.getAttribute('aria-checked') !== 'true'; s.setAttribute('aria-checked', on); notify(`「${s.dataset.sw}」已${on ? '打开' : '关闭'}`, 'ok'); }
         });
       } },
 
@@ -953,12 +954,12 @@ Gallery.init({
       render(s) {
         const V = this.v || (this.v = { a: true, b: false, c: true });
         if (s === 'instant' || s === 'fail') return `<div class="st-card"><div class="st-hd"><h4>通知（改了马上生效）</h4><p>${s === 'fail' ? '第一次切换会模拟保存失败' : '切换后自动保存，不用点保存'}</p></div>
-          ${row('新订单提醒', '有新订单时推送到手机', sw('a', V.a))}${row('每日汇总邮件', '每天 8:00 发昨天的数据（示例）', sw('b', V.b))}${row('声音提示', '电脑端有提示音', sw('c', V.c))}</div>`;
+          ${row('新订单提醒', '有新订单时推送到手机', sw('a', V.a, 'aria-label="新订单提醒"'))}${row('每日汇总邮件', '每天 8:00 发昨天的数据（示例）', sw('b', V.b, 'aria-label="每日汇总邮件"'))}${row('声音提示', '电脑端有提示音', sw('c', V.c, 'aria-label="声音提示"'))}</div>`;
         const dirty = s === 'saving' ? 2 : 0;
         return `<div class="st-card"><div class="st-hd"><h4>团队信息（改完点保存）</h4><p>会显示给所有成员，所以统一保存</p></div>
           <div class="st-form"><div class="field"><label class="label" for="sv-n">团队名称</label><input class="input" id="sv-n" value="示例运营组"></div>
           <div class="field"><label class="label" for="sv-r">新成员默认角色</label><select class="select" id="sv-r"><option>成员</option><option>只读</option><option>管理员</option></select></div>
-          ${row('允许成员邀请他人', '关闭后只有管理员能邀请', sw('inv', true))}</div>
+          ${row('允许成员邀请他人', '关闭后只有管理员能邀请', sw('inv', true, 'aria-label="允许成员邀请他人"'))}</div>
           <div class="st-foot"><span class="msg ${dirty ? 'dirty' : ''}" data-msg>${dirty ? `有 ${dirty} 项未保存` : '没有改动'}</span><button class="btn" type="button" data-cancel ${dirty ? '' : 'disabled'}>撤销改动</button><button class="btn btn-primary" type="button" data-save ${dirty ? '' : 'disabled'} ${s === 'saving' ? 'aria-busy="true"' : ''}>${s === 'saving' ? spin + '保存中…' : '保存'}</button></div></div>`;
       },
       mount(el, s) {
@@ -968,8 +969,8 @@ Gallery.init({
             const b = e.target.closest('[data-sw]'); if (!b || b.disabled) return;
             const k = b.dataset.sw, was = S.v[k]; S.v[k] = !was; b.setAttribute('aria-checked', !was); b.classList.add('busy'); b.disabled = true;
             timers.push(setTimeout(() => { b.classList.remove('busy'); b.disabled = false;
-              if (failOnce) { failOnce = false; S.v[k] = was; b.setAttribute('aria-checked', was); T('没保存上：网络中断，已改回原来的设置', 'err'); }
-              else T('已保存', 'ok'); }, 700));
+              if (failOnce) { failOnce = false; S.v[k] = was; b.setAttribute('aria-checked', was); notify('没保存上：网络中断，已改回原来的设置', 'err'); }
+              else notify('已保存', 'ok'); }, 700));
           });
           return () => timers.forEach(clearTimeout);
         }
@@ -978,8 +979,8 @@ Gallery.init({
         el.addEventListener('input', count); el.addEventListener('change', count);
         el.addEventListener('click', e => {
           const b = e.target.closest('[data-sw]'); if (b) { b.setAttribute('aria-checked', b.getAttribute('aria-checked') !== 'true'); count(); }
-          if (e.target.closest('[data-cancel]')) { $('#sv-n', el).value = init.n; $('#sv-r', el).value = init.r; $('[data-sw=inv]', el).setAttribute('aria-checked', init.inv); count(); T('已撤销改动'); }
-          const sv = e.target.closest('[data-save]'); if (sv && !sv.disabled) { sv.disabled = true; sv.innerHTML = spin + '保存中…'; timers.push(setTimeout(() => { sv.innerHTML = '保存'; Object.assign(init, { n: $('#sv-n', el).value, r: $('#sv-r', el).value, inv: $('[data-sw=inv]', el).getAttribute('aria-checked') }); count(); T('已保存，所有成员刷新后可见', 'ok'); }, 900)); }
+          if (e.target.closest('[data-cancel]')) { $('#sv-n', el).value = init.n; $('#sv-r', el).value = init.r; $('[data-sw=inv]', el).setAttribute('aria-checked', init.inv); count(); notify('已撤销改动'); }
+          const sv = e.target.closest('[data-save]'); if (sv && !sv.disabled) { sv.disabled = true; sv.innerHTML = spin + '保存中…'; timers.push(setTimeout(() => { sv.innerHTML = '保存'; Object.assign(init, { n: $('#sv-n', el).value, r: $('#sv-r', el).value, inv: $('[data-sw=inv]', el).getAttribute('aria-checked') }); count(); notify('已保存，所有成员刷新后可见', 'ok'); }, 900)); }
         });
         if (s === 'saving') { $('#sv-n', el).value = '示例运营一组'; timers.push(setTimeout(() => { const sv = $('[data-save]', el); sv.innerHTML = '保存'; init.n = $('#sv-n', el).value; count(); }, 1600)); }
         return () => timers.forEach(clearTimeout);
@@ -1000,12 +1001,12 @@ Gallery.init({
         let dirty = s === 'dirty'; const m = () => { $('[data-msg]', el).textContent = dirty ? '有改动未保存' : ''; $('[data-msg]', el).classList.toggle('dirty', dirty); }; m();
         el.addEventListener('input', () => { dirty = true; m(); });
         el.addEventListener('click', async e => {
-          if (e.target.closest('[data-save]')) { dirty = false; m(); T('已保存', 'ok'); }
+          if (e.target.closest('[data-save]')) { dirty = false; m(); notify('已保存', 'ok'); }
           if (e.target.closest('[data-back]')) {
-            if (!dirty) { T('已返回上一页（没有改动，不用确认）'); return; }
+            if (!dirty) { notify('已返回上一页（没有改动，不用确认）'); return; }
             const md = document.createElement('div'); md.className = 'modal'; md.dataset.temp = 1;
             md.innerHTML = `<div class="layer-hd"><h2>有改动还没保存</h2></div><div class="layer-bd"><p class="muted">昵称改了还没保存。要怎么处理？</p></div><div class="layer-ft"><button class="btn" type="button" data-k="stay">继续编辑</button><button class="btn" type="button" data-k="drop">不保存离开</button><button class="btn btn-primary" type="button" data-k="save" autofocus>保存并离开</button></div>`;
-            md.addEventListener('click', ev => { const k = ev.target.closest('[data-k]'); if (!k) return; Proto.close(md); if (k.dataset.k === 'save') { dirty = false; m(); T('已保存并返回', 'ok'); } if (k.dataset.k === 'drop') T('已返回，改动没有保存'); });
+            md.addEventListener('click', ev => { const k = ev.target.closest('[data-k]'); if (!k) return; Proto.close(md); if (k.dataset.k === 'save') { dirty = false; m(); notify('已保存并返回', 'ok'); } if (k.dataset.k === 'drop') notify('已返回，改动没有保存'); });
             Proto.open(md);
           }
         });
@@ -1015,7 +1016,7 @@ Gallery.init({
     { id: 'danger', group: '风险操作', name: '危险区（删除 / 注销）', desc: '不能撤回的操作放在最底部，说清后果，输入名称确认，再给冷静期。',
       use: '删除空间、注销账号、清空数据、转让所有权 —— 做了就很难回头的操作。',
       avoid: '普通删除一条记录不用这么重，用 Toast 撤销即可；不要把危险操作和普通设置混排在同一组。',
-      states: [{ id: 'default', name: '默认' }, { id: 'confirm', name: '输入确认' }, { id: 'cooling', name: '冷静期中' }],
+      states: [{ id: 'default', name: '设置待操作' }, { id: 'confirm', name: '输入确认' }, { id: 'cooling', name: '冷静期中' }],
       spec: '危险区单独一块、红色细边；弹窗列出会删掉的具体内容和能否恢复；输入空间名称完全一致后按钮才可点；提交后进入 7 天冷静期，写清截止日期，期间可一键撤销。',
       render(s) {
         if (s === 'cooling') return `<div class="st-card"><div class="st-cool" role="status">${ic('clock')}<span>空间「示例运营组」将在 <b>2026-11-17 18:00</b> 删除。在这之前可以撤销，数据不会丢。</span><button class="btn" type="button" data-undo>撤销删除</button></div>${row('空间状态', '冷静期内所有成员只能查看，不能新建内容', '<span class="tag tag-warning">待删除</span>')}</div>`;
@@ -1030,10 +1031,10 @@ Gallery.init({
             <div class="field" style="margin-top:14px"><label class="label" for="dz-in">输入空间名称「${NAME}」确认</label><input class="input" id="dz-in" autocomplete="off" placeholder="${NAME}" autofocus></div></div>
             <div class="layer-ft"><button class="btn" type="button" data-k="0">取消</button><button class="btn btn-danger-solid" type="button" data-k="1" disabled>我已了解，删除空间</button></div>`;
           md.addEventListener('input', () => { md.querySelector('[data-k="1"]').disabled = md.querySelector('#dz-in').value.trim() !== NAME; });
-          md.addEventListener('click', ev => { const k = ev.target.closest('[data-k]'); if (!k || k.disabled) return; Proto.close(md); if (k.dataset.k === '1') { setSt('danger', 'cooling'); T('已进入 7 天冷静期，可随时撤销', 'ok'); } });
+          md.addEventListener('click', ev => { const k = ev.target.closest('[data-k]'); if (!k || k.disabled) return; Proto.close(md); if (k.dataset.k === '1') { setSt('danger', 'cooling'); notify('已进入 7 天冷静期，可随时撤销', 'ok'); } });
           Proto.open(md);
         };
-        el.addEventListener('click', e => { if (e.target.closest('[data-del]')) open(); if (e.target.closest('[data-undo]')) { setSt('danger', 'default'); T('已撤销删除，空间恢复正常', 'ok'); } });
+        el.addEventListener('click', e => { if (e.target.closest('[data-del]')) open(); if (e.target.closest('[data-undo]')) { setSt('danger', 'default'); notify('已撤销删除，空间恢复正常', 'ok'); } });
         if (s === 'confirm') open();
         return () => { const m = document.querySelector('.modal.show'); if (m) Proto.close(m); };
       } },
@@ -1050,7 +1051,7 @@ Gallery.init({
           <div class="field"><label class="label" for="pw-n">新密码</label><input class="input" id="pw-n" type="password" placeholder="至少 8 位，字母加数字"><div class="st-strength" data-str><i></i><i></i><i></i></div><span class="field-hint" data-strt>至少 8 位，字母加数字</span></div>
           <div class="field"><label class="label" for="pw-c">再输一次新密码</label><input class="input" id="pw-c" type="password"></div></div>
           <div class="st-foot"><span class="msg"></span><button class="btn" type="button" data-to="default">取消</button><button class="btn btn-primary" type="button" data-pw>保存新密码</button></div></div>`;
-        const D = this.d || (this.d = [['电脑 · 浏览器', '示例市 · 刚刚', true], ['手机 App', '示例市 · 2 小时前', false], ['平板', '样例市 · 3 天前', false]]);
+        const D = this.d || (this.d = [['电脑 · 浏览器', '杭州市 · 刚刚', true], ['手机 App', '杭州市 · 2 小时前', false], ['平板', '宁波市 · 3 天前', false]]);
         if (s === 'devices') return `<div class="st-card"><div class="st-hd"><h4>登录设备 <span class="badge">${D.length}</span></h4><p>不认识的设备请立刻下线并改密码</p></div>${D.map((d, i) => `<div class="st-dev"><span class="ico">${ic(i ? 'phone' : 'grid', 'ic-sm')}</span><div class="t"><b>${d[0]}</b><span>${d[1]}</span></div>${d[2] ? '<span class="tag tag-success">本机</span>' : `<button class="btn" type="button" data-off="${i}">下线</button>`}</div>`).join('')}<div style="height:8px"></div></div>`;
         return `<div class="st-card"><div class="st-hd"><h4>账号安全</h4><p>示例账号</p></div>${row('登录密码', '上次修改：2026-08-02', '<button class="btn" type="button" data-to="pwd">修改</button>')}${row('绑定手机', '138****5678 · 用于找回密码', '<button class="btn" type="button" data-phone>更换</button>')}${row('登录设备', `${D.length} 台设备在线`, '<button class="btn" type="button" data-to="devices">管理</button>')}<div style="height:8px"></div></div>`;
       },
@@ -1062,13 +1063,13 @@ Gallery.init({
         });
         el.addEventListener('click', async e => {
           const to = e.target.closest('[data-to]'); if (to) setSt('security', to.dataset.to);
-          if (e.target.closest('[data-phone]')) T('这里接「验证旧手机 → 输入新手机 → 验证码」流程（见登录注册模块）');
+          if (e.target.closest('[data-phone]')) notify('这里接「验证旧手机 → 输入新手机 → 验证码」流程（见登录注册模块）');
           if (e.target.closest('[data-pw]')) {
             const n = $('#pw-n', el), c = $('#pw-c', el); const rules = [['pw-n', v => v.length >= 8 && /[a-z]/i.test(v) && /\d/.test(v), '新密码至少 8 位，要同时有字母和数字'], ['pw-c', v => v === n.value, '两次输入不一样，请再输一次新密码']];
             let ok = true; rules.forEach(([id, f, msg]) => { const i = $('#' + id, el), good = f(i.value); i.classList.toggle('is-error', !good); let er = i.parentNode.querySelector('.field-err'); if (!good) { ok && i.focus(); ok = false; if (!er) { er = document.createElement('span'); er.className = 'field-err'; i.parentNode.appendChild(er); } er.textContent = msg; } else if (er) er.remove(); });
-            if (ok) { setSt('security', 'default'); T('密码已修改，其他设备需要重新登录', 'ok'); }
+            if (ok) { setSt('security', 'default'); notify('密码已修改，其他设备需要重新登录', 'ok'); }
           }
-          const off = e.target.closest('[data-off]'); if (off) { const d = S.d[+off.dataset.off]; if (await Proto.confirm({ title: `让「${d[0]}」下线？`, body: '那台设备需要重新登录才能使用。', ok: '下线' })) { S.d.splice(+off.dataset.off, 1); setSt('security', 'devices'); T(`「${d[0]}」已下线`, 'ok'); } }
+          const off = e.target.closest('[data-off]'); if (off) { const d = S.d[+off.dataset.off]; if (await Proto.confirm({ title: `让「${d[0]}」下线？`, body: '那台设备需要重新登录才能使用。', ok: '下线' })) { S.d.splice(+off.dataset.off, 1); setSt('security', 'devices'); notify(`「${d[0]}」已下线`, 'ok'); } }
         });
       } },
 
@@ -1076,7 +1077,7 @@ Gallery.init({
     { id: 'pref', group: '偏好', name: '偏好设置即时预览', desc: '语言、主题、时区、日期格式：改了立刻在预览里看到效果。',
       use: '改了之后「长什么样」不好想象的设置：主题、字号、语言、时区、数字格式。',
       avoid: '预览区和真实效果不一致会误导；改动会影响别人（比如团队默认语言）时，不要只给预览不给保存确认。',
-      states: [{ id: 'default', name: '默认' }],
+      states: [{ id: 'default', name: '设置待操作' }],
       spec: '下拉一改，下方预览立刻变化（文案语言、深浅底色、时间换算、日期格式）；这些都只影响自己，即时生效；预览区标「预览」。',
       render() {
         const P = this.p || (this.p = { lang: '简体中文', theme: '浅色', tz: 'UTC+8', fmt: '2026-11-10' });
@@ -1086,7 +1087,7 @@ Gallery.init({
         return `<div class="st-card"><div class="st-hd"><h4>偏好设置</h4><p>只影响你自己，改了马上生效</p></div>${sel('lang', '语言', ['简体中文', '繁體中文', 'English'])}${sel('theme', '主题', ['浅色', '深色'])}${sel('tz', '时区', ['UTC+8', 'UTC+0', 'UTC-5'])}${sel('fmt', '日期格式', ['2026-11-10', '11/10/2026', '2026年11月10日'])}
           <div class="st-prev ${P.theme === '深色' ? 'dark' : ''}" aria-live="polite"><div class="cap">预览</div><b>${txt[0]}</b><div>${txt[1]}：${date} ${String(hour).padStart(2, '0')}:00（${P.tz}，示例）</div></div></div>`;
       },
-      mount(el) { el.addEventListener('change', e => { const k = e.target.dataset.p; if (!k) return; sec('pref').p[k] = e.target.value; Gallery.show('pref', 'default'); $('#pref [data-p="' + k + '"]').focus(); T('已更新'); }); } },
+      mount(el) { el.addEventListener('change', e => { const k = e.target.dataset.p; if (!k) return; sec('pref').p[k] = e.target.value; Gallery.show('pref', 'default'); $('#pref [data-p="' + k + '"]').focus(); notify('已更新'); }); } },
 
     /* 7 恢复默认 */
     { id: 'reset', group: '偏好', name: '恢复默认设置', desc: '改乱了一键回到出厂设置，恢复后还能撤销。',
@@ -1099,11 +1100,11 @@ Gallery.init({
         const V = s === 'reset' ? D : C, diff = Object.keys(D).filter(k => D[k] !== V[k]).length;
         const mark = k => D[k] !== V[k] ? ' <span class="tag tag-info plain" style="height:20px">已修改</span>' : '';
         return `<div class="st-card"><div class="st-hd" style="display:flex;align-items:flex-start;gap:12px"><div style="flex:1"><h4>显示与通知</h4><p>${diff ? `有 ${diff} 项和默认不同` : '全部是默认设置'}</p></div><button class="btn" type="button" data-reset ${diff ? '' : 'disabled'}>${ic('refresh', 'ic-sm')}恢复默认</button></div>
-          ${row('新消息桌面提醒' + mark('a'), '默认：打开', sw('a', V.a))}${row('每周报告邮件' + mark('b'), '默认：打开', sw('b', V.b))}${row('显示已完成的任务' + mark('c'), '默认：关闭', sw('c', V.c))}${row('列表密度' + mark('d'), '默认：标准', `<span class="v">${V.d}</span>`)}<div style="height:8px"></div></div>`;
+          ${row('新消息桌面提醒' + mark('a'), '默认：打开', sw('a', V.a, 'aria-label="新订单提醒"'))}${row('每周报告邮件' + mark('b'), '默认：打开', sw('b', V.b, 'aria-label="每日汇总邮件"'))}${row('显示已完成的任务' + mark('c'), '默认：关闭', sw('c', V.c, 'aria-label="声音提示"'))}${row('列表密度' + mark('d'), '默认：标准', `<span class="v">${V.d}</span>`)}<div style="height:8px"></div></div>`;
       },
       mount(el, s) {
         el.addEventListener('click', async e => {
-          if (e.target.closest('[data-reset]')) { if (!await Proto.confirm({ title: '恢复默认设置？', html: '将改回：新消息桌面提醒（打开）、显示已完成的任务（关闭）、列表密度（标准）。<br>恢复后 5 秒内可以撤销。', ok: '恢复默认' })) return; setSt('reset', 'reset'); T('已恢复默认设置', 'ok', { ms: 5000, undo: () => { setSt('reset', 'custom'); T('已撤销，回到你之前的设置'); } }); }
+          if (e.target.closest('[data-reset]')) { if (!await Proto.confirm({ title: '恢复默认设置？', html: '将改回：新消息桌面提醒（打开）、显示已完成的任务（关闭）、列表密度（标准）。<br>恢复后 5 秒内可以撤销。', ok: '恢复默认' })) return; setSt('reset', 'reset'); notify('已恢复默认设置', 'ok', { ms: 5000, undo: () => { setSt('reset', 'custom'); notify('已撤销，回到你之前的设置'); } }); }
           const b = e.target.closest('[data-sw]'); if (b && s === 'custom') { sec('reset').c[b.dataset.sw] = b.getAttribute('aria-checked') !== 'true'; Gallery.show('reset', 'custom'); }
         });
       } },
@@ -1112,7 +1113,7 @@ Gallery.init({
     { id: 'search', group: '结构', name: '设置项搜索', desc: '设置项上百个时，直接搜比翻分组快。',
       use: '设置项 > 30 个、分组 > 6 个；用户知道要改什么但不知道在哪个分组。',
       avoid: '设置项很少时不要放搜索框，占位置还显得复杂。',
-      states: [{ id: 'default', name: '默认' }, { id: 'hit', name: '有结果' }, { id: 'none', name: '无结果' }],
+      states: [{ id: 'default', name: '设置待操作' }, { id: 'hit', name: '有结果' }, { id: 'none', name: '无结果' }],
       spec: '输入即搜（停 0.2 秒）；结果显示「所在分组 › 设置项」，命中字高亮；结果里的开关可以直接改；无结果时给「常见设置」入口和「告诉我们想找什么」。',
       render(s) {
         const q = s === 'hit' ? '通知' : s === 'none' ? '打印机' : '';
@@ -1131,13 +1132,14 @@ Gallery.init({
         el.addEventListener('input', () => { clearTimeout(t); t = setTimeout(draw, 200); });
         el.addEventListener('click', e => {
           const f = e.target.closest('[data-fill]'); if (f) { $('[data-q]', el).value = f.dataset.fill; draw(); $('[data-q]', el).focus(); }
-          const b = e.target.closest('[data-sw]'); if (b) { const on = b.getAttribute('aria-checked') !== 'true'; b.setAttribute('aria-checked', on); T(`「${b.dataset.sw}」已${on ? '打开' : '关闭'}`, 'ok'); }
-          if (e.target.closest('[data-tell]')) T('已记下，我们会补上这个设置（示例）', 'ok');
+          const b = e.target.closest('[data-sw]'); if (b) { const on = b.getAttribute('aria-checked') !== 'true'; b.setAttribute('aria-checked', on); notify(`「${b.dataset.sw}」已${on ? '打开' : '关闭'}`, 'ok'); }
+          if (e.target.closest('[data-tell]')) notify('已记下，我们会补上这个设置（示例）', 'ok');
         });
         return () => clearTimeout(t);
       } }
   ]
-});
+};
+Gallery.init(GALLERY_CONFIG);
 Proto.prompts(PROMPTS);
 </script>
 </body>

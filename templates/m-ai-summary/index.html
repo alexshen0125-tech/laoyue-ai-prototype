@@ -421,6 +421,9 @@ body.gal{background:var(--bg)}
 .rb-panel input[type=radio]{width:24px;height:24px;accent-color:var(--accent);margin:0 6px 0 0}.rb-panel [role=group] label{display:inline-flex;align-items:center;min-width:64px;min-height:44px}.g-demo,.g-stage{min-width:0;max-width:100%;box-sizing:border-box}@media(max-width:700px){.g-states .seg,.g-sec-hd .acts{max-width:100%}.g-theme label{flex-wrap:wrap;max-width:100%}}
 
 /* END_REBUILD_STYLE */
+
+/* 深色指标沿用正文色；浅色保留原有主色。 */
+:root[data-theme="dark"] .rb-metric{color:var(--ink-900)}
 </style><body><script>
 /*@KIT_JS*/
 /* ==========================================================================
